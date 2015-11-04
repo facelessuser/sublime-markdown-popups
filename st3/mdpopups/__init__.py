@@ -143,7 +143,7 @@ def _get_scheme_lum(view):
     if scheme is not None:
         if scheme in _lum_cache:
             lum, t = _lum_cache[scheme]
-            delta_time = _get_setting('md_popup_cache_refresh_time', 30)
+            delta_time = _get_setting('mdpopups_cache_refresh_time', 30)
             if not isinstance(delta_time, int) or delta_time <= 0:
                 delta_time = 30
             if time.time() - t >= (delta_time * 60):
@@ -161,12 +161,12 @@ def _get_theme_by_lums(lums):
     """Get theme based on lums."""
 
     if lums <= LUM_MIDPOINT:
-        theme = _get_setting('md_popup_theme_dark', DEFAULT_DARK_THEME)
+        theme = _get_setting('mdpopups_theme_dark', DEFAULT_DARK_THEME)
         css_content = _get_css(theme)
         if css_content is None:
             css_content = _get_css(DEFAULT_DARK_THEME)
     else:
-        theme = _get_setting('md_popup_theme_light', DEFAULT_LIGHT_THEME)
+        theme = _get_setting('mdpopups_theme_light', DEFAULT_LIGHT_THEME)
         css_content = _get_css(theme)
         if css_content is None:
             css_content = _get_css(DEFAULT_LIGHT_THEME)
@@ -180,7 +180,7 @@ def _get_theme_by_scheme_map(view):
     """Get mapped scheme if available."""
 
     css = None
-    theme_map = _get_setting('md_popup_theme_map', {})
+    theme_map = _get_setting('mdpopups_theme_map', {})
 
     if theme_map:
         scheme = view.settings().get('color_scheme')
@@ -204,7 +204,7 @@ class _MdWrapper(markdown.Markdown):
     def __init__(self, *args, **kwargs):
         """Call original init."""
 
-        self.md_popup_debug = 'md_popup_debug' in kwargs and bool(kwargs['md_popup_debug'])
+        self.mdpopups_debug = 'mdpopups_debug' in kwargs and bool(kwargs['mdpopups_debug'])
 
         super(_MdWrapper, self).__init__(*args, **kwargs)
 
@@ -229,7 +229,7 @@ class _MdWrapper(markdown.Markdown):
                     ext = self.build_extension(ext, configs.get(ext, {}))
                 if isinstance(ext, Extension):
                     ext.extendMarkdown(self, globals())
-                    if self.md_popup_debug:
+                    if self.mdpopups_debug:
                         _log(
                             'Successfully loaded extension "%s.%s".'
                             % (ext.__class__.__module__, ext.__class__.__name__)
@@ -241,7 +241,7 @@ class _MdWrapper(markdown.Markdown):
                     )
             except Exception:
                 # We want to gracefully continue even if an extension fails.
-                if self.md_popup_debug:
+                if self.mdpopups_debug:
                     _log(str(traceback.format_exc()))
 
         return self
@@ -308,6 +308,7 @@ def _create_html(view, content, md=True, css=None, append_css=None, debug=False)
         content = _MdWrapper(
             extensions=extensions,
             extension_configs=configs,
+            mdpopups_debug=debug
         ).convert(content).replace('&quot;', '"').replace('\n', '')
 
     if debug:
@@ -364,7 +365,7 @@ def _get_css(css_file):
     if css_file in _css_cache:
         css, t = _css_cache[css_file]
 
-        delta_time = _get_setting('md_popup_cache_refresh_time', 30)
+        delta_time = _get_setting('mdpopups_cache_refresh_time', 30)
         if not isinstance(delta_time, int) or delta_time <= 0:
             delta_time = 30
         if time.time() - t >= (delta_time * 60):
@@ -405,8 +406,8 @@ def hide_popup(view):
 def update_popup(view, content, md=True, css=None, append_css=None):
     """Update the popup."""
 
-    debug = _get_setting('md_popup_debug')
-    disabled = _get_setting('md_popup_disable', False)
+    debug = _get_setting('mdpopups_debug')
+    disabled = _get_setting('mdpopups_disable', False)
     if disabled:
         if debug:
             _log('Popups disabled')
@@ -427,8 +428,8 @@ def show_popup(
 ):
     """Parse the color scheme if needed and show the styled pop-up."""
 
-    debug = _get_setting('md_popup_debug')
-    disabled = _get_setting('md_popup_disable', False)
+    debug = _get_setting('mdpopups_debug')
+    disabled = _get_setting('mdpopups_disable', False)
     if disabled:
         if debug:
             _log('Popups disabled')
