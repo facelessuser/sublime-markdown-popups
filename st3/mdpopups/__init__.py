@@ -11,8 +11,8 @@ import os
 import re
 import time
 
-DEFAULT_DARK_THEME = 'Packages/mdpopup/themes/dark.css'
-DEFAULT_LIGHT_THEME = 'Packages/mdpopup/themes/light.css'
+DEFAULT_DARK_THEME = 'Packages/mdpopups/themes/dark.css'
+DEFAULT_LIGHT_THEME = 'Packages/mdpopups/themes/light.css'
 
 
 def _log(msg):
@@ -257,17 +257,17 @@ def _create_html(view, content, md=True, css=None, append_css=None, debug=False)
     extensions = [
         "markdown.extensions.attr_list",
         "markdown.extensions.codehilite",
-        "mdpopup.mdx.superfences",
-        "mdpopup.mdx.betterem",
-        "mdpopup.mdx.magiclink",
-        "mdpopup.mdx.inlinehilite",
+        "mdpopups.mdx.superfences",
+        "mdpopups.mdx.betterem",
+        "mdpopups.mdx.magiclink",
+        "mdpopups.mdx.inlinehilite",
         "markdown.extensions.nl2br",
         "markdown.extensions.admonition",
         "markdown.extensions.def_list"
     ]
 
     configs = {
-        "mdpopup.mdx.inlinehilite": {
+        "mdpopups.mdx.inlinehilite": {
             "style_plain_text": True,
             "css_class": "inlinehilite",
             "use_codehilite_settings": False,
@@ -276,7 +276,7 @@ def _create_html(view, content, md=True, css=None, append_css=None, debug=False)
         "markdown.extensions.codehilite": {
             "guess_lang": False
         },
-        "mdpopup.mdx.superfences": {
+        "mdpopups.mdx.superfences": {
             "uml_flow": False,
             "uml_sequence": False
         }
