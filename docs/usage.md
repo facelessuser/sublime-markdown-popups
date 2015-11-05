@@ -64,6 +64,15 @@ mdpopups.clear_cache
 : 
     Clears the CSS theme related caches.
 
+### md2html
+mdpopups.md2html
+: 
+    Exposes the markdown to html converter in case it is desired to parse only a section of markdown.  This works well for someone who wants to work directly in HTML, but might want to still syntax highlight some code to insert into the HTML.
+
+    | Parameter | Required | Default | Description |
+    | --------- | -------- | ------- | ----------- |
+    | markup | Yes | | The markup code to be converted. |
+
 ## Global User Settings
 All settings for `mdpopups` are placed in Sublime's `Preferences.sublime-settings`.
 

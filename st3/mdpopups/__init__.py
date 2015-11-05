@@ -210,8 +210,6 @@ class _MdWrapper(markdown.Markdown):
     def __init__(self, *args, **kwargs):
         """Call original init."""
 
-        self.mdpopups_debug = 'mdpopups_debug' in kwargs and bool(kwargs['mdpopups_debug'])
-
         super(_MdWrapper, self).__init__(*args, **kwargs)
 
     def registerExtensions(self, extensions, configs):  # noqa
@@ -235,11 +233,6 @@ class _MdWrapper(markdown.Markdown):
                     ext = self.build_extension(ext, configs.get(ext, {}))
                 if isinstance(ext, Extension):
                     ext.extendMarkdown(self, globals())
-                    if self.mdpopups_debug:
-                        _log(
-                            'Successfully loaded extension "%s.%s".'
-                            % (ext.__class__.__module__, ext.__class__.__name__)
-                        )
                 elif ext is not None:
                     raise TypeError(
                         'Extension "%s.%s" must be of type: "markdown.Extension"'
@@ -247,8 +240,7 @@ class _MdWrapper(markdown.Markdown):
                     )
             except Exception:
                 # We want to gracefully continue even if an extension fails.
-                if self.mdpopups_debug:
-                    _log(str(traceback.format_exc()))
+                _log(str(traceback.format_exc()))
 
         return self
 
@@ -259,34 +251,6 @@ def _create_html(view, content, md=True, css=None, append_css=None, debug=False)
     if debug:
         _log('=====Content=====')
         _log(content)
-
-    extensions = [
-        "markdown.extensions.attr_list",
-        "markdown.extensions.codehilite",
-        "mdpopups.mdx.superfences",
-        "mdpopups.mdx.betterem",
-        "mdpopups.mdx.magiclink",
-        "mdpopups.mdx.inlinehilite",
-        "markdown.extensions.nl2br",
-        "markdown.extensions.admonition",
-        "markdown.extensions.def_list"
-    ]
-
-    configs = {
-        "mdpopups.mdx.inlinehilite": {
-            "style_plain_text": True,
-            "css_class": "inlinehilite",
-            "use_codehilite_settings": False,
-            "guess_lang": False
-        },
-        "markdown.extensions.codehilite": {
-            "guess_lang": False
-        },
-        "mdpopups.mdx.superfences": {
-            "uml_flow": False,
-            "uml_sequence": False
-        }
-    }
 
     if css is None:
         css_content = _get_theme_by_scheme_map(view)
@@ -306,11 +270,7 @@ def _create_html(view, content, md=True, css=None, append_css=None, debug=False)
         _log(css_content)
 
     if md:
-        content = _MdWrapper(
-            extensions=extensions,
-            extension_configs=configs,
-            mdpopups_debug=debug
-        ).convert(content).replace('&quot;', '"').replace('\n', '')
+        content = md2html(content)
 
     if debug:
         _log('=====HTML OUTPUT=====')
@@ -395,6 +355,43 @@ def get_css(css_file):
     """Get css file."""
 
     return _get_css(css_file)
+
+
+def md2html(markup):
+    """Convert Markdown to HTML."""
+
+    extensions = [
+        "markdown.extensions.attr_list",
+        "markdown.extensions.codehilite",
+        "mdpopups.mdx.superfences",
+        "mdpopups.mdx.betterem",
+        "mdpopups.mdx.magiclink",
+        "mdpopups.mdx.inlinehilite",
+        "markdown.extensions.nl2br",
+        "markdown.extensions.admonition",
+        "markdown.extensions.def_list"
+    ]
+
+    configs = {
+        "mdpopups.mdx.inlinehilite": {
+            "style_plain_text": True,
+            "css_class": "inlinehilite",
+            "use_codehilite_settings": False,
+            "guess_lang": False
+        },
+        "markdown.extensions.codehilite": {
+            "guess_lang": False
+        },
+        "mdpopups.mdx.superfences": {
+            "uml_flow": False,
+            "uml_sequence": False
+        }
+    }
+
+    return _MdWrapper(
+        extensions=extensions,
+        extension_configs=configs
+    ).convert(markup).replace('&quot;', '"').replace('\n', '')
 
 
 def clear_cache():
