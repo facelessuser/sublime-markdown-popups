@@ -288,11 +288,6 @@ def _create_html(view, content, md=True, css=None, append_css=None, debug=False)
         if css_content is None:
             lums = _get_scheme_lum(view)
             css_content = _get_theme_by_lums(lums)
-        else:
-            css_content = _get_css(css)
-            if css_content is None:
-                lums = _get_scheme_lum(view)
-                css_content = _get_theme_by_lums(lums)
 
     if append_css is not None and isinstance(append_css, str):
         if css_content:
