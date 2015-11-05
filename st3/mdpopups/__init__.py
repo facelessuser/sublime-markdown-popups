@@ -10,6 +10,7 @@ from plistlib import readPlistFromBytes
 import os
 import re
 import time
+from collections import OrderedDict
 
 DEFAULT_DARK_THEME = 'Packages/mdpopups/themes/dark.css'
 DEFAULT_LIGHT_THEME = 'Packages/mdpopups/themes/light.css'
@@ -51,8 +52,8 @@ def _can_show(view):
 ##############################
 # Theme/Scheme cache management
 ##############################
-_css_cache = {}
-_lum_cache = {}
+_css_cache = OrderedDict()
+_lum_cache = OrderedDict()
 
 
 def _clear_cache():
@@ -60,8 +61,8 @@ def _clear_cache():
 
     global _css_cache
     global _lum_cache
-    _css_cache = {}
-    _lum_cache = {}
+    _css_cache = OrderedDict()
+    _lum_cache = OrderedDict()
 
 ##############################
 # Scheme Brightness Detection
@@ -151,6 +152,11 @@ def _get_scheme_lum(view):
         if lum is None:
             try:
                 lum = _scheme_lums(scheme)
+                limit = _get_setting('mdpopups_cache_limit', 10)
+                if limit is None or not isinstance(limit, int) or limit <= 0:
+                    limit = 10
+                while len(_lum_cache) >= limit:
+                    _lum_cache.popitem(last=True)
                 _lum_cache[scheme] = (lum, time.time())
             except Exception:
                 pass
@@ -361,7 +367,7 @@ def _get_css(css_file):
         css, t = _css_cache[css_file]
 
         delta_time = _get_setting('mdpopups_cache_refresh_time', 30)
-        if not isinstance(delta_time, int) or delta_time <= 0:
+        if delta_time is None or not isinstance(delta_time, int) or delta_time <= 0:
             delta_time = 30
         if time.time() - t >= (delta_time * 60):
             css = None
@@ -370,6 +376,11 @@ def _get_css(css_file):
             css = _strip_css_comments(
                 sublime.load_resource(css_file).replace('\r', '')
             )
+            limit = _get_setting('mdpopups_cache_limit', 10)
+            if limit is None or not isinstance(limit, int) or limit <= 0:
+                limit = 10
+            while len(_css_cache) >= limit:
+                _css_cache.popitem(last=True)
             _css_cache[css_file] = (css, time.time())
         except Exception as e:
             print(e)
