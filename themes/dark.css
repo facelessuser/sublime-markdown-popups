@@ -1,43 +1,11 @@
 /* mdpopups: fg=#cccccc, bg=#232628 */
 /* General Markdown */
-html { background-color: #393b3d; } /* Html fake border color */
-/* Defines the general look of the font and provides a little margin. */
-body {
-    color: #CCCCCC;
-    background-color: #232628;
-    margin: 1px;
-    font-size: 1em;
-}
-/* Headers */
+html { background-color: #393b3d; }
 h1, h2, h3, h4, h5, h6 { color: #99cc99; }
-h1 { font-size: 1.5em; }
-h2, h3, h4, h5, h6 { font-size: 1.2em; }
-/* Blockquote support. */
-blockquote {
-    padding: 0.5em;
-    display: block;
-    color: #888888;
-    font-style: italic;
-}
-/* Horizontal rule support */
-hr {
-    display: block;
-    padding: 1px;
-    margin: 1em 3em;
-    background-color: #393b3d;
-}
-/* Description list support */
-dl {
-    display: block;
-    margin-top: 1em;
-    margin-bottom: 1em;
-    margin-left: 0;
-    margin-right: 0;
-}
-dt { display: block; font-style: italic; font-weight: bold; }
-dd { display: block; margin-left: 2em; }
-a { color: #66cccc; } /* Links */
-.content { margin: 0.5em; } /* Content wrapper div. */
+h3, h4, h5, h6 { color: #6699CC; }
+blockquote { color: #888888; }
+hr { background-color: #393b3d; }
+a { color: #66cccc; }
 
 /* General classes that give the feel of a theme. */
 .st-background { background-color: #232628 }
@@ -49,6 +17,7 @@ a { color: #66cccc; } /* Links */
 .st-entity { color: #6699CC; }
 .st-storage { color: #FFCC66; }
 .st-variable { color: #66CCCC; }
+.st-tag {color: #F2777A; }
 .st-invalid { color: #F2777A; }
 
 /*
@@ -58,17 +27,21 @@ we don't want to gamble with what color the st-classes will return.
 .neutral { color: #6699CC; }
 .positive { color: #99CC99; }
 .negative { color: #F2777A; }
-.mark-neutral { background-color: #6699CC; color: #fafdff; }
-.mark-positive { background-color: #99CC99; color: #fafdff; }
-.mark-negative { background-color: #F2777A; color: #fafdff; }
+.mark-neutral { background-color: #6699CC; color: #232628; }
+.mark-positive { background-color: #99CC99; color: #232628; }
+.mark-negative { background-color: #F2777A; color: #232628; }
 
 /* Admonition blocks */
 .admonition { padding: 0.5em; background-color: #293138; }
-.hint, .tip { padding: 0.5em; background-color: #2E3633; }
-.danger, .error { padding: 0.5em; background-color: #372D30; }
-.important, .attention { padding: 0.5em; background-color: #293638; }
-.caution, .warning { padding: 0.5em; background-color: #37302C; }
-.note { padding: 0.5em; background-color: #38362E; }
+.admonition.hint { background-color: #2E3633; }
+.admonition.tip { background-color: #2E3633; }
+.admonition.danger { background-color: #372D30; }
+.admonition.error { background-color: #372D30; }
+.admonition.important { background-color: #372D30; }
+.admonition.attention { background-color: #293638; }
+.admonition.caution { background-color: #372D30; }
+.admonition.warning { background-color: #37302C; }
+.admonition.note { background-color: #38362E; }
 
 /* Code Highlighting */
 .codehilite { padding: 0.5em; }

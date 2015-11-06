@@ -1,43 +1,11 @@
 /* mdpopups: fg=#4d4d4c, bg=#fcfcfc */
 /* General Markdown */
-html { background-color: #e6f5ff; } /* Html fake border color */
-/* Defines the general look of the font and provides a little margin. */
-body {
-    color: #4d4d4c;
-    background-color: #fcfcfc;
-    margin: 1px;
-    font-size: 1em;
-}
-/* Headers */
+html { background-color: #e6f5ff; }
 h1, h2, h3, h4, h5, h6 { color: #718c00; }
-h1 { font-size: 1.5em; }
-h2, h3, h4, h5, h6 { font-size: 1.2em; }
-/* Blockquote support. */
-blockquote {
-    padding: 0.5em;
-    display: block;
-    color: #8e908c;
-    font-style: italic;
-}
-/* Horizontal rule support. */
-hr {
-    display: block;
-    padding: 1px;
-    margin: 1em 3em;
-    background-color: #e6f5ff;
-}
-/* Description list support */
-dl {
-    display: block;
-    margin-top: 1em;
-    margin-bottom: 1em;
-    margin-left: 0;
-    margin-right: 0;
-}
-dt { display: block; font-style: italic; font-weight: bold; }
-dd { display: block; margin-left: 2em; }
-a { color: #3e999f; } /* Links */
-.content { margin: 0.5em; } /* Content wrapper div. */
+h3, h4, h5, h6 { color: #4271ae; }
+blockquote { color: #8e908c; }
+hr { background-color: #e6f5ff; }
+a { color: #3e999f; }
 
 /* General classes that give the feel of a theme. */
 .st-background { background-color: #fcfcfc }
@@ -49,6 +17,7 @@ a { color: #3e999f; } /* Links */
 .st-entity { color: #4271ae; }
 .st-storage { color: #eab700; }
 .st-variable { color: #3e999f; }
+.st-tag { color: #c82829; }
 .st-invalid { color: #c82829; }
 
 /*
@@ -64,11 +33,15 @@ we don't want to gamble with what color the st-classes will return.
 
 /* Admonition blocks */
 .admonition { padding: 0.5em; background-color: #E9EEF4; }
-.hint, .tip { padding: 0.5em; background-color: #EEF1E3; }
-.danger, .error { padding: 0.5em; background-color: #F6E7E7; }
-.important, .attention { padding: 0.5em; background-color: #E9F2F2; }
-.caution, .warning { padding: 0.5em; background-color: #FBF0E6; }
-.note { padding: 0.5em; background-color: #FAF5E3; }
+.admonition.hint { background-color: #EEF1E3; }
+.admonition.tip { background-color: #EEF1E3; }
+.admonition.danger { background-color: #F6E7E7; }
+.admonition.error { background-color: #F6E7E7; }
+.admonition.important { background-color: #E9F2F2; }
+.admonition.attention { background-color: #E9F2F2; }
+.admonition.caution { background-color: #FBF0E6; }
+.admonition.warning { background-color: #FBF0E6; }
+.admonition.note { background-color: #FAF5E3; }
 
 /* Code Highlighting */
 .codehilite { padding: 0.5em; }

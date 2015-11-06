@@ -47,17 +47,22 @@ mdpopups.hide_popup
     | --------- | -------- | ------- | ----------- |
     | view | Yes | | A Sublime Text view object. |
 
-### get_css
-mdpopups.get_css
+### get_theme
+mdpopups.get_theme
 : 
-    When using the `css` parameter for `mdpopups.shop_popup` or `mdpopups.update_popup`, the CSS content should be passed in, not the file name.  `get_css` will retrieve the CSS, strip out both comments and carriage returns (which break the tooltips).
+    For various reasons, a user may want to manually retrieve the CSS theme to be used, or potential process there own on the fly CSS text. `get_theme` will retrieve the current CSS that will be used, or process and return a user's own css string buffer.  It returns a `PopupTheme` object that contains the stripped CSS content (no carriage returns or comments), the base colors of the theme (foreground and background colors), and the brightness which can be retrieved with `#!python is_dark()` or `#!python is_light()`.
 
     | Parameter | Required | Default | Description |
     | --------- | -------- | ------- | ----------- |
-    | css_file | Yes | | The file that must be retrieved. |
+    | view | Yes | | target view to retrieve view for. |
+    | css | No | | A CSS string buffer.  If this is used, `mdpopups` will not calculate a theme to be used. |
+    | from_file | No | | When this is set to `True`, the `css` parameter will be treated as a relative file path.  File paths should be in the form `Packages/MyPluginFolder/mytheme.css`. Please use forward slashes. |
 
     !!! Note "Note"
-        CSS content is cached.  Up to X number of CSS files are cached at a time for T amount of time where X is 10 and T is 30 minutes by default.  X and T can be changed in the settings file.  If you need to bypass caching, you will have to clear the cache via [`mdpopups.clear_cache`](#clear_cache).
+        CSS content is cached except when using a CSS string buffer.  Up to X number of CSS files are cached at a time for T amount of time where X is 10 and T is 30 minutes by default.  X and T can be changed in the settings file.  If you need to bypass caching, you will have to clear the cache via [`mdpopups.clear_cache`](#clear_cache).
+
+    !!! Note "Under Construction"
+        Still working on what colors will be exposed to users.  Working on a way to easily find index and return them.
 
 ### clear_cache
 mdpopups.clear_cache
