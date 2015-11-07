@@ -238,6 +238,26 @@ class Scheme2CSS(object):
         self.env = jinja2.Environment()
         self.env.filters['css'] = self.retrieve_selector
         self.env.filters['pygments'] = get_pygments
+        self.env.filters['foreground'] = self.to_fg
+        self.env.filters['background'] = self.to_bg
+
+    def to_fg(self, css):
+        """Rename a CSS key value pair."""
+
+        parts = [c.strip() for c in css.split(':')]
+        if parts and parts[0] == 'background-color':
+            parts[0] = 'color'
+
+        return '%s: %s ' % (parts[0], ''.join(parts[1:]))
+
+    def to_bg(self, css):
+        """Rename a CSS key value pair."""
+
+        parts = [c.strip() for c in css.split(':')]
+        if parts and parts[0] == 'color':
+            parts[0] = 'background-color'
+
+        return '%s: %s ' % (parts[0], ''.join(parts[1:]))
 
     def retrieve_selector(self, selector, key=None):
         """Get the CSS key, value pairs for a rule."""
