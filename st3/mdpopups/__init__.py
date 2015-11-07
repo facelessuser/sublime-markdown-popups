@@ -95,7 +95,7 @@ def _get_scheme_css(view, css):
                 pass
 
     try:
-        return obj.get_css() + user_css + obj.apply_template(css) if obj is not None else ''
+        return obj.get_css() + obj.apply_template(css) + user_css if obj is not None else ''
     except Exception:
         _log(traceback.format_exc())
         return ''
