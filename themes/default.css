@@ -1,0 +1,7 @@
+/*Style with current theme.*/
+h1, h2, h3, h4, h5, h6 { {{'.string'|css}} }
+blockquote { {{'.comment'|css}} }
+a { {{'.support.function'|css('color')}} }
+hr { {{'.comment'|css('color')}} }
+.codehilite { padding: 0.5em }
+{{'default'|pygments}}

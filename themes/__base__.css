@@ -1,0 +1,36 @@
+/* Html fake border color */
+html { background-color: black; }
+/* Defines the general look of the font and provides a little margin. */
+body {
+    color: white;
+    margin: 1px;
+    font-size: 1em;
+}
+/* Headers */
+h1 { font-size: 1.5em; }
+h2, h3, h4, h5, h6 { font-size: 1.2em; }
+/* Blockquote support. */
+blockquote {
+    padding: 0.5em;
+    display: block;
+    font-style: italic;
+}
+/* Horizontal rule support. */
+hr {
+    display: block;
+    padding: 1px;
+    margin: 1em 3em;
+}
+/* Description list support */
+dl {
+    display: block;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+}
+dt { display: block; font-style: italic; font-weight: bold; }
+dd { display: block; margin-left: 2em; }
+/* Link */
+a { color: blue }
+div.content { padding: 0.5em; } /* Content wrapper div. */
