@@ -203,7 +203,7 @@ def _create_html(view, content, md=True, css=None, debug=False):
         _log(content)
 
     html = "<style>%s</style>" % (style)
-    html += '<div class="content background foreground">%s</div>' % content
+    html += '<div class="content">%s</div>' % content
     return html
 
 

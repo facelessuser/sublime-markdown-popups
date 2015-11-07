@@ -118,7 +118,7 @@ re_textmate_scopes = re.compile(
 )
 
 re_strip_xml_comments = re.compile(br"^[\r\n\s]*<!--[\s\S]*?-->[\s\r\n]*|<!--[\s\S]*?-->")
-re_base_colors = re.compile(r'^\s*\{([^}]+)\}', re.MULTILINE)
+re_base_colors = re.compile(r'^\s*\.dummy\s*\{([^}]+)\}', re.MULTILINE)
 re_color = re.compile(r'(?<!-)(color\s*:\s*#[A-Fa-z\d]{6})')
 re_bgcolor = re.compile(r'(?<!-)(background(?:-color)?\s*:\s*#[A-Fa-z\d]{6})')
 blocks = '.codehilite, .inlinehilite { %s; %s; }'
@@ -129,8 +129,7 @@ class Scheme2CSS(object):
 
     def __init__(self, scheme_file):
         """Initialize."""
-        self.color_scheme = os.path.normpath(scheme_file)
-        # self.scheme_file = os.path.basename(self.color_scheme)
+
         self.plist_file = readPlistFromBytes(
             re_strip_xml_comments.sub(
                 b'',
@@ -150,17 +149,17 @@ class Scheme2CSS(object):
         self.bground = self.strip_color(color_settings.get("background", '#FFFFFF'), simple_strip=True)
         rgba = RGBA(self.bground)
         self.lums = rgba.luminance()
-        self.is_dark = self.lums <= LUM_MIDPOINT
-        if self.is_dark:
-            rgba.brightness(1.1)
-        else:
-            rgba.brightness(0.9)
+        is_dark = self.lums <= LUM_MIDPOINT
+        self.variables = {
+            "is_dark": is_dark,
+            "is_light": not is_dark,
+            "color_scheme": self.scheme_file
+        }
         self.html_border = rgba.get_rgb()
         self.fground = self.strip_color(color_settings.get("foreground", '#000000'))
 
         # Intialize colors with the global foreground, background, and fake html_border
         self.colors = OrderedDict()
-        self.colors['html'] = OrderedDict([('background-color', 'background-color: %s; ' % self.html_border)])
         self.colors['.foreground'] = OrderedDict([('color', 'color: %s; ' % self.fground)])
         self.colors['.background'] = OrderedDict([('background-color', 'background-color: %s; ' % self.bground)])
 
@@ -237,27 +236,115 @@ class Scheme2CSS(object):
         # Create Jinja template
         self.env = jinja2.Environment()
         self.env.filters['css'] = self.retrieve_selector
-        self.env.filters['pygments'] = get_pygments
+        self.env.filters['pygments'] = self.pygments
         self.env.filters['foreground'] = self.to_fg
         self.env.filters['background'] = self.to_bg
+        self.env.filters['brightness'] = self.brightness
+        self.env.filters['colorize'] = self.colorize
+        self.env.filters['hue'] = self.hue
+        self.env.filters['invert'] = self.invert
+        self.env.filters['saturation'] = self.saturation
+        self.env.filters['grayscale'] = self.grayscale
+        self.env.filters['sepia'] = self.sepia
+
+    def colorize(self, css, degree):
+        """Colorize to the given hue."""
+
+        parts = [c.strip() for c in css.split(':')]
+        if len(parts) == 2 and parts[0] in ('background-color', 'color'):
+            rgba = RGBA(parts[1])
+            rgba.colorize(degree)
+            parts[1] = "%s; " % rgba.get_rgb()
+            return '%s: %s ' % (parts[0], parts[1])
+        return css
+
+    def hue(self, css, degree):
+        """Shift hue."""
+
+        parts = [c.strip() for c in css.split(':')]
+        if len(parts) == 2 and parts[0] in ('background-color', 'color'):
+            rgba = RGBA(parts[1])
+            rgba.hue(degree)
+            parts[1] = "%s; " % rgba.get_rgb()
+            return '%s: %s ' % (parts[0], parts[1])
+        return css
+
+    def invert(self, css):
+        """Invert color."""
+
+        parts = [c.strip() for c in css.split(':')]
+        if len(parts) == 2 and parts[0] in ('background-color', 'color'):
+            rgba = RGBA(parts[1])
+            rgba.invert(factor)
+            parts[1] = "%s; " % rgba.get_rgb()
+            return '%s: %s ' % (parts[0], parts[1])
+        return css
+
+    def saturation(self, factor):
+        """Apply saturation filter."""
+        parts = [c.strip() for c in css.split(':')]
+        if len(parts) == 2 and parts[0] in ('background-color', 'color'):
+            rgba = RGBA(parts[1])
+            rgba.saturation(factor)
+            parts[1] = "%s; " % rgba.get_rgb()
+            return '%s: %s ' % (parts[0], parts[1])
+        return css
+
+    def grayscale(self):
+        """Apply grayscale filter."""
+
+        parts = [c.strip() for c in css.split(':')]
+        if len(parts) == 2 and parts[0] in ('background-color', 'color'):
+            rgba = RGBA(parts[1])
+            rgba.grayscale(factor)
+            parts[1] = "%s; " % rgba.get_rgb()
+            return '%s: %s ' % (parts[0], parts[1])
+        return css
+
+    def sepia(self):
+        """Apply sepia filter."""
+
+        parts = [c.strip() for c in css.split(':')]
+        if len(parts) == 2 and parts[0] in ('background-color', 'color'):
+            rgba = RGBA(parts[1])
+            rgba.brightness(factor)
+            parts[1] = "%s; " % rgba.get_rgb()
+            return '%s: %s ' % (parts[0], parts[1])
+        return css
+
+    def brightness(self, css, factor):
+        """Adjust brightness."""
+
+        parts = [c.strip() for c in css.split(':')]
+        if len(parts) == 2 and parts[0] in ('background-color', 'color'):
+            rgba = RGBA(parts[1])
+            rgba.brightness(factor)
+            parts[1] = "%s; " % rgba.get_rgb()
+            return '%s: %s ' % (parts[0], parts[1])
+        return css
 
     def to_fg(self, css):
         """Rename a CSS key value pair."""
 
         parts = [c.strip() for c in css.split(':')]
-        if parts and parts[0] == 'background-color':
+        if len(parts) == 2 and parts[0] == 'background-color':
             parts[0] = 'color'
-
-        return '%s: %s ' % (parts[0], ''.join(parts[1:]))
+            return '%s: %s ' % (parts[0], parts[1])
+        return css
 
     def to_bg(self, css):
         """Rename a CSS key value pair."""
 
         parts = [c.strip() for c in css.split(':')]
-        if parts and parts[0] == 'color':
+        if len(parts) == 2 and parts[0] == 'color':
             parts[0] = 'background-color'
+            return '%s: %s ' % (parts[0], parts[1])
+        return css
 
-        return '%s: %s ' % (parts[0], ''.join(parts[1:]))
+    def pygments(self, style):
+        """Get pygments style."""
+
+        return get_pygments(style)
 
     def retrieve_selector(self, selector, key=None):
         """Get the CSS key, value pairs for a rule."""
@@ -273,7 +360,7 @@ class Scheme2CSS(object):
     def apply_template(self, css):
         """Apply template to css."""
 
-        return self.env.from_string(css).render(css=self.colors)
+        return self.env.from_string(css).render(var=self.variables, colors=self.colors)
 
     def get_css(self):
         """Get css."""
@@ -297,7 +384,7 @@ def get_pygments(style):
 
     try:
         # Lets see if we can find the pygments theme
-        text = HtmlFormatter(style=style).get_style_defs('')
+        text = HtmlFormatter(style=style).get_style_defs('.dummy')
     except Exception:
         return ''
 
@@ -332,8 +419,8 @@ def get_pygments(style):
                 (blocks % (bg, fg)) +
                 text[m.end(0):] +
                 '\n'
-            )
+            ).replace('.dummy ', '')
         )
     else:
-        css = clean_css((blocks % (bg, fg)) + '\n' + text + '\n')
+        css = clean_css(((blocks % (bg, fg)) + '\n' + text + '\n').replace('.dummy', ''))
     return css

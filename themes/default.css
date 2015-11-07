@@ -1,7 +1,17 @@
 /*Style with current theme.*/
+{% if var.is_light %}
+html{ {{'.background'|css|brightness(0.9)}} }
+{% else %}
+html{ {{'.background'|css|brightness(1.1)}} }
+{% endif %}
 h1, h2, h3, h4, h5, h6 { {{'.string'|css}} }
 blockquote { {{'.comment'|css}} }
 a { {{'.support.function'|css('color')}} }
 hr { {{'.comment'|css('color')|background}} }
-.codehilite { padding: 0.5em }
+div.content { padding: 0.5em; {{'.foreground'|css}}{{'.background'|css}} }
+.codehilite { padding: 0.5em; }
+{% if var.is_light %}
 {{'default'|pygments}}
+{% else %}
+{{'native'|pygments}}
+{% endif %}
