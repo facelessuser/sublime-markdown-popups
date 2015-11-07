@@ -91,7 +91,7 @@ from .st_clean_css import clean_css
 LUM_MIDPOINT = 127
 
 re_textmate_scopes = re.compile(
-    r'''(?x)^
+    r'''(?x)^(?:
     comment
       (?:\.(?:line(?:\.(?:double-slash|double-dash|number-sign|percentage|character))?|block(?:\.documentation)?))?|
     constant
@@ -112,12 +112,13 @@ re_textmate_scopes = re.compile(
     support
       (?:\.(?:function|class|type|constant|variable|other))?|
     variable
-      (?:\.(?:parameter|language|other))?$
+      (?:\.(?:parameter|language|other))?
+    )$
     '''
 )
 
 re_strip_xml_comments = re.compile(br"^[\r\n\s]*<!--[\s\S]*?-->[\s\r\n]*|<!--[\s\S]*?-->")
-re_base_colors = re.compile(r'^\s*\.highlight\s*\{([^}]+)\}', re.MULTILINE)
+re_base_colors = re.compile(r'^\s*\{([^}]+)\}', re.MULTILINE)
 re_color = re.compile(r'(?<!-)(color\s*:\s*#[A-Fa-z\d]{6})')
 re_bgcolor = re.compile(r'(?<!-)(background(?:-color)?\s*:\s*#[A-Fa-z\d]{6})')
 blocks = '.codehilite, .inlinehilite { %s; %s; }'
@@ -141,11 +142,10 @@ class Scheme2CSS(object):
         self.scheme_file = scheme_file
         self.gen_css()
 
-    def parse_scheme(self):
-        """Parse the color scheme."""
+    def parse_global(self):
+        """Parse global settings."""
 
         color_settings = self.plist_file["settings"][0]["settings"]
-
         # Get general theme colors from color scheme file
         self.bground = self.strip_color(color_settings.get("background", '#FFFFFF'), simple_strip=True)
         rgba = RGBA(self.bground)
@@ -158,30 +158,50 @@ class Scheme2CSS(object):
         self.html_border = rgba.get_rgb()
         self.fground = self.strip_color(color_settings.get("foreground", '#000000'))
 
+        # Intialize colors with the global foreground, background, and fake html_border
+        self.colors = OrderedDict()
+        self.colors['html'] = OrderedDict([('background-color', 'background-color: %s; ' % self.html_border)])
+        self.colors['.foreground'] = OrderedDict([('color', 'color: %s; ' % self.fground)])
+        self.colors['.background'] = OrderedDict([('background-color', 'background-color: %s; ' % self.bground)])
+
+    def parse_settings(self):
+        """Parse the color scheme."""
+
         # Create scope color mapping from color scheme file
-        colors = OrderedDict()
         for item in self.plist_file["settings"]:
             name = item.get('name', None)
             scope = item.get('scope', None)
             color = None
-            style = []
-            if 'settings' in item:
-                color = item['settings'].get('foreground', None)
-                bgcolor = item['settings'].get('background', None)
-                if 'fontStyle' in item['settings']:
-                    for s in item['settings']['fontStyle'].split(' '):
-                        if s == "bold" or s == "italic":  # or s == "underline":
-                            style.append(s)
+            bgcolor = None
 
-            if scope is not None and name is not None and (color is not None or bgcolor is not None):
-                fg = self.strip_color(color)
-                bg = self.strip_color(bgcolor)
-                colors[scope] = {
-                    "color": fg,
-                    "bgcolor": bg,
-                    "style": style
-                }
-        return colors
+            # Get font colors, backgrounds, and stylig
+            if scope and name and 'settings' in item:
+                for subscope in [subscope.strip() for subscope in scope.split(',')]:
+                    if not re_textmate_scopes.match(subscope):
+                        # Ignore complex scopes like:
+                        #    "myscope.that.is way.to.complex" or "myscope.that.is -way.to.complex"
+                        continue
+                    color = item['settings'].get('foreground', None)
+                    bgcolor = item['settings'].get('background', None)
+                    key_scope = '.' + subscope
+                    if color or bgcolor:
+                        if key_scope not in self.colors:
+                            self.colors[key_scope] = OrderedDict()
+                        if color:
+                            self.colors[key_scope]['color'] = 'color: %s; ' % self.strip_color(color)
+                        if bgcolor:
+                            self.colors[key_scope]['background-color'] = (
+                                'background-color: %s; ' % self.strip_color(bgcolor)
+                            )
+
+                        if 'fontStyle' in item['settings']:
+                            for s in item['settings']['fontStyle'].split(' '):
+                                if "bold" in s:
+                                    self.colors[key_scope]['font-weight'] = 'font-weight: %s; ' % 'bold'
+                                if "italic" in s:
+                                    self.colors[key_scope]['font-style'] = 'font-style: %s; ' % 'italic'
+                                if "underline" in s and False:  # disabled
+                                    self.colors[key_scope]['text-decoration'] = 'text-decoration: %s; ' % 'underline'
 
     def strip_color(self, color, simple_strip=False):
         """
@@ -202,33 +222,13 @@ class Scheme2CSS(object):
         return rgba.get_rgb()
 
     def gen_css(self):
-        """Get CSS."""
+        """Generate the CSS and the associated template environment."""
 
-        colors = self.parse_scheme()
         self.colors = OrderedDict()
-        self.colors['html'] = OrderedDict([('background-color', 'background-color: %s; ' % self.html_border)])
-        self.colors['.foreground'] = OrderedDict([('color', 'color: %s; ' % self.fground)])
-        self.colors['.background'] = OrderedDict([('background-color', 'background-color: %s; ' % self.bground)])
+        self.parse_global()
+        self.parse_settings()
 
-        for k, v in colors.items():
-            for scope in [scope.strip() for scope in k.split(',')]:
-                if ' ' in scope:
-                    # Ignore complex scopes like:
-                    #    "myscope.that.is way.to.complex" or "myscope.that.is -way.to.complex"
-                    continue
-
-                if re_textmate_scopes.match(scope):
-                    key_scope = '.' + scope
-                    self.colors[key_scope] = OrderedDict()
-                    if v['color']:
-                        self.colors[key_scope]['color'] = 'color: %s; ' % v['color']
-                    if v['bgcolor']:
-                        self.colors[key_scope]['background-color'] = 'background-color: %s; ' % v['bgcolor']
-                    if 'italic' in v['style']:
-                        self.colors[key_scope]['font-style'] = 'font-style: %s; ' % 'italic'
-                    if 'bold' in v['style']:
-                        self.colors[key_scope]['font-weight'] = 'font-weight: %s; ' % 'bold'
-
+        # Assemble the CSS text
         text = []
         for k, v in self.colors.items():
             text.append('%s { %s}' % (k, ''.join(v.values())))
@@ -242,7 +242,12 @@ class Scheme2CSS(object):
     def retrieve_selector(self, selector, key=None):
         """Get the CSS key, value pairs for a rule."""
 
-        sel = self.colors.get(selector, {})
+        wanted = [s.strip() for s in selector.split(',')]
+        sel = {}
+        for w in wanted:
+            if w in self.colors:
+                sel = self.colors[w]
+                break
         return ''.join(sel.values()) if key is None else sel.get(key, '')
 
     def apply_template(self, css):
@@ -257,37 +262,58 @@ class Scheme2CSS(object):
 
 
 def get_pygments(style):
-    """Get pygments style."""
+    """
+    Get pygments style.
+
+    Subllime CSS support is limited.  It cannot handle well
+    things like: `.class1 .class2`,  but it can handle things like:
+    `.class1.class2`.  So we will not use things like `.highlight` in front.
+
+    We will first find {...} which has no syntax class.  This will contain
+    our background and possibly foreground.  If for whatever reason we
+    have no background or foreground, we will use `#000000` or `#ffffff`
+    respectively.
+    """
 
     try:
-        text = HtmlFormatter(style=style).get_style_defs('.highlight')
+        # Lets see if we can find the pygments theme
+        text = HtmlFormatter(style=style).get_style_defs('')
     except Exception:
         return ''
 
     bg = None
     fg = None
 
-    # Find .highlight {} which has no syntax classes
-    # This contains the background and possibly the foreground
+    # Find {...} which has no syntax classes
     m = re_base_colors.search(text)
     if m:
+        # Find background
         m1 = re_bgcolor.search(m.group(1))
         if m1:
+            # Use `background-color` as it works better
+            # with Sublime CSS
             bg = m1.group(1).replace('background', 'background-color')
+        # Find foreground
         m1 = re_color.search(m.group(1))
         if m1:
             fg = m1.group(1)
+    # Use defaults if None found
     if bg is None:
         bg = 'background-color: #ffffff'
     if fg is None:
         fg = 'color: #000000'
 
-    # Reassemble replacing .highlight {} with .codehilite, .inlinehilite {}
-    return clean_css(
-        (
-            text[:m.start(0)] +
-            (blocks % (bg, fg)) +
-            text[m.end(0):] +
-            '\n'
-        ).replace('.highlight ', '')
-    )
+    # Reassemble replacing .highlight {...} with .codehilite, .inlinehilite {...}
+    # All other classes will be left bare with only their syntax class.
+    if m:
+        css = clean_css(
+            (
+                text[:m.start(0)] +
+                (blocks % (bg, fg)) +
+                text[m.end(0):] +
+                '\n'
+            )
+        )
+    else:
+        css = clean_css((blocks % (bg, fg)) + '\n' + text + '\n')
+    return css

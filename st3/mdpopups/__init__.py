@@ -10,8 +10,6 @@ https://manual.macromates.com/en/language_grammars#naming_conventions
 import sublime
 import markdown
 import traceback
-import os
-import re
 import time
 from collections import OrderedDict
 from .st_scheme_template import Scheme2CSS
@@ -91,17 +89,15 @@ def _get_scheme_css(view, css):
                 while len(_scheme_cache) >= limit:
                     _scheme_cache.popitem(last=True)
                 user_css = obj.apply_template(_get_user_css(view, scheme))
-                print('====user====')
-                print(user_css)
                 _scheme_cache[scheme] = (obj, user_css, time.time())
             except Exception:
-                print(traceback.format_exc())
+                _log(traceback.format_exc())
                 pass
 
     try:
         return obj.get_css() + user_css + obj.apply_template(css) if obj is not None else ''
     except Exception:
-        print(traceback.format_exc())
+        _log(traceback.format_exc())
         return ''
 
 
@@ -122,7 +118,6 @@ def _get_user_css(view, scheme):
             css = clean_css(sublime.load_resource(default_css))
         except Exception:
             css = clean_css(sublime.load_resource(DEFAULT_CSS))
-    print(css)
     return css if css else ''
 
 
