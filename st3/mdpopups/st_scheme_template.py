@@ -81,7 +81,6 @@ variable.other
 import sublime
 import re
 from .rgba import RGBA
-import os
 import jinja2
 from plistlib import readPlistFromBytes
 from pygments.formatters import HtmlFormatter
@@ -275,12 +274,12 @@ class Scheme2CSS(object):
         parts = [c.strip() for c in css.split(':')]
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = RGBA(parts[1])
-            rgba.invert(factor)
+            rgba.invert()
             parts[1] = "%s; " % rgba.get_rgb()
             return '%s: %s ' % (parts[0], parts[1])
         return css
 
-    def saturation(self, factor):
+    def saturation(self, css, factor):
         """Apply saturation filter."""
         parts = [c.strip() for c in css.split(':')]
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
@@ -290,24 +289,24 @@ class Scheme2CSS(object):
             return '%s: %s ' % (parts[0], parts[1])
         return css
 
-    def grayscale(self):
+    def grayscale(self, css):
         """Apply grayscale filter."""
 
         parts = [c.strip() for c in css.split(':')]
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = RGBA(parts[1])
-            rgba.grayscale(factor)
+            rgba.grayscale()
             parts[1] = "%s; " % rgba.get_rgb()
             return '%s: %s ' % (parts[0], parts[1])
         return css
 
-    def sepia(self):
+    def sepia(self, css):
         """Apply sepia filter."""
 
         parts = [c.strip() for c in css.split(':')]
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = RGBA(parts[1])
-            rgba.brightness(factor)
+            rgba.sepia()
             parts[1] = "%s; " % rgba.get_rgb()
             return '%s: %s ' % (parts[0], parts[1])
         return css
