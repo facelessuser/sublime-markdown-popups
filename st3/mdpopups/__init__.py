@@ -2,6 +2,73 @@
 Markdown popup.
 
 A markdown tooltip for SublimeText.
+
+TextMate theme to CSS.
+
+https://manual.macromates.com/en/language_grammars#naming_conventions
+
+foreground
+background
+comment
+comment.line
+comment.line.double-slash
+comment.line.double-dash
+comment.line.number-sign
+comment.line.percentage
+comment.line.character
+comment.block
+comment.block.documentation
+constant
+constant.numeric
+constant.character
+constant.language
+constant.other
+entity
+entity.name
+entity.other
+invalid
+invalid.illegal
+invalid.deprecated
+keyword
+keyword.control
+keyword.operator
+keyword.other
+markup
+markup.underline
+markup.underline.link
+markup.bold
+markup.heading
+markup.italic
+markup.list
+markup.list.numbered
+markup.list.unnumbered
+markup.quote
+markup.raw
+markup.other
+meta
+storage
+storage.type
+storage.modifier
+string
+string.quoted
+string.quoted.single
+string.quoted.double
+string.quoted.triple
+string.quoted.other
+string.unquoted
+string.interpolated
+string.regexp
+string.other
+support
+support.function
+support.class
+support.type
+support.constant
+support.variable
+support.other
+variable.parameter
+variable.language
+variable.other
 """
 import sublime
 import markdown
@@ -10,12 +77,183 @@ from plistlib import readPlistFromBytes
 import os
 import re
 import time
+from .rgba import RGBA
 from collections import OrderedDict, namedtuple
+import jinja2
 
 DARK = 0
 LIGHT = 1
 DEFAULT_DARK_THEME = 'Packages/mdpopups/themes/dark.css'
 DEFAULT_LIGHT_THEME = 'Packages/mdpopups/themes/light.css'
+
+
+re_textmate_scopes = re.compile(
+    r'''(?x)^
+    comment
+      (?:\.(?:line(?:\.(?:double-slash|double-dash|number-sign|percentage|character))?|block(?:\.documentation)?))?|
+    constant
+      (?:\.(?:numeric|character|langauge|other))?|
+    entity
+      (?:\.(?:name|other))?|
+    invalid
+      (?:\.(?:illegal|deprecated))?|
+    keyword
+      (?:\.(?:control|operator|other))?|
+    markup
+      (?:\.(?:underline(?:\.link)?|link|bold|heading|italic|list(?:\.(?:numbered|unnumbered))?|quote|raw|other))?|
+    meta|
+    storage
+      (?:\.(?:storage|type|modifier))?|
+    string
+      (?:\.(?:quoted(?:\.(?:single|double|triple|other))?|unquoted|interpolated|regexp|other))?|
+    support
+      (?:\.(?:function|class|type|constant|variable|other))?|
+    variable
+      (?:\.(?:parameter|language|other))?$
+    '''
+)
+
+re_strip_xml_comments = re.compile(br"^[\r\n\s]*<!--[\s\S]*?-->[\s\r\n]*|<!--[\s\S]*?-->")
+
+
+class Scheme2CSS(object):
+    """Determine color scheme colors and style for text in a Sublime view buffer."""
+
+    def __init__(self, scheme_file):
+        """Initialize."""
+        self.color_scheme = os.path.normpath(scheme_file)
+        # self.scheme_file = os.path.basename(self.color_scheme)
+        self.plist_file = readPlistFromBytes(
+            re.sub(
+                br"^[\r\n\s]*<!--[\s\S]*?-->[\s\r\n]*|<!--[\s\S]*?-->", b'',
+                sublime.load_binary_resource(_sublime_format_path(scheme_file))
+            )
+        )
+        self.text = ''
+        self.colors = OrderedDict()
+        self.scheme_file = scheme_file
+        self.gen_css()
+
+    def parse_scheme(self):
+        """Parse the color scheme."""
+
+        color_settings = self.plist_file["settings"][0]["settings"]
+
+        # Get general theme colors from color scheme file
+        self.bground = self.strip_color(color_settings.get("background", '#FFFFFF'), simple_strip=True)
+        rgba = RGBA(self.bground)
+        self.lums = rgba.luminance()
+        self.is_dark = self.lums <= 127
+        if self.is_dark:
+            rgba.brightness(1.1)
+        else:
+            rgba.brightness(0.9)
+        self.html_border = rgba.get_rgb()
+        self.fground = self.strip_color(color_settings.get("foreground", '#000000'))
+
+        # Create scope color mapping from color scheme file
+        colors = OrderedDict()
+        for item in self.plist_file["settings"]:
+            name = item.get('name', None)
+            scope = item.get('scope', None)
+            color = None
+            style = []
+            if 'settings' in item:
+                color = item['settings'].get('foreground', None)
+                bgcolor = item['settings'].get('background', None)
+                if 'fontStyle' in item['settings']:
+                    for s in item['settings']['fontStyle'].split(' '):
+                        if s == "bold" or s == "italic":  # or s == "underline":
+                            style.append(s)
+
+            if scope is not None and name is not None and (color is not None or bgcolor is not None):
+                fg = self.strip_color(color)
+                bg = self.strip_color(bgcolor)
+                colors[scope] = {
+                    "color": fg,
+                    "bgcolor": bg,
+                    "style": style
+                }
+        return colors
+
+    def strip_color(self, color, simple_strip=False):
+        """
+        Strip transparency from the color value.
+
+        Transparency can be stripped in one of two ways:
+            - Simply mask off the alpha channel.
+            - Apply the alpha channel to the color essential getting the color seen by the eye.
+        """
+
+        if color is None or color.strip() == "":
+            return None
+
+        rgba = RGBA(color.replace(" ", ""))
+        if not simple_strip:
+            rgba.apply_alpha(self.bground if self.bground != "" else "#FFFFFF")
+
+        return rgba.get_rgb()
+
+    def gen_css(self):
+        """Get CSS."""
+
+        colors = self.parse_scheme()
+        self.colors = OrderedDict()
+        self.colors['html'] = OrderedDict([('background-color', 'background-color: %s; ' % self.html_border)])
+        self.colors['html']['all'] = self.colors['html']['background-color']
+        self.colors['.foreground'] = OrderedDict([('color', 'color: %s; ' % self.fground)])
+        self.colors['.foreground']['all'] = self.colors['.foreground']['color']
+        self.colors['.background'] = OrderedDict([('background-color', 'background-color: %s; ' % self.bground)])
+        self.colors['.background']['all'] = self.colors['.background']['background-color']
+
+        for k, v in colors.items():
+            for scope in [scope.strip() for scope in k.split(',')]:
+                if ' ' in scope:
+                    # Ignore complex scopes like:
+                    #    "myscope.that.is way.to.complex" or "myscope.that.is -way.to.complex"
+                    continue
+
+                if re_textmate_scopes.match(scope):
+                    key_scope = '.' + scope
+                    self.colors[key_scope] = OrderedDict()
+                    all_css = ''
+                    if v['color']:
+                        value = 'color: %s; ' % v['color']
+                        self.colors[key_scope]['color'] = value
+                        all_css += value
+                    if v['bgcolor']:
+                        value = 'background-color: %s; ' % v['bgcolor']
+                        self.colors[key_scope]['background-color'] = value
+                        all_css += value
+                    if 'italic' in v['style']:
+                        value = 'font-style: %s; ' % 'italic'
+                        self.colors[key_scope]['font-style'] = value
+                        all_css += value
+                    if 'bold' in v['style']:
+                        value = 'font-weight: %s; ' % 'bold'
+                        self.colors[key_scope]['font-weight'] = value
+                        all_css += value
+                    self.colors[key_scope]['all'] = all_css
+
+        text = []
+        for k, v in self.colors.items():
+            print(k)
+            print(v)
+            text.append('%s { %s}' % (k, v['all']))
+        self.text = '\n'.join(text)
+
+        # Create Jinja template
+        self.env = jinja2.Environment()
+
+    def apply_template(self, css):
+        """Apply template to css."""
+
+        return self.env.from_string(css).render(css=self.colors)
+
+    def get_css(self):
+        """Get css."""
+
+        return self.text
 
 
 class PopupTheme (namedtuple('PopupTheme', ['css', 'fg', 'bg', 'brightness'], verbose=False)):
@@ -70,6 +308,7 @@ def _can_show(view):
 ##############################
 _css_cache = OrderedDict()
 _lum_cache = OrderedDict()
+_scheme_cache = OrderedDict()
 
 
 def _clear_cache():
@@ -77,81 +316,15 @@ def _clear_cache():
 
     global _css_cache
     global _lum_cache
+    global _scheme_cache
     _css_cache = OrderedDict()
     _lum_cache = OrderedDict()
+    _scheme_cache = OrderedDict()
 
 ##############################
 # Scheme Brightness Detection
 ##############################
 LUM_MIDPOINT = 127
-
-
-class _Luminance(object):
-    """Object for retrieving a color's luminance."""
-
-    r = None
-    g = None
-    b = None
-    a = None
-    color_pattern = re.compile(r"^#(?:([A-Fa-f\d]{6})([A-Fa-f\d]{2})?|([A-Fa-f\d]{3}))")
-
-    def __init__(self, s=None):
-        """Initialize."""
-
-        if s is None:
-            s = "#000000FF"
-        self.r, self.g, self.b, self.a = self._split_channels(s)
-
-    def _split_channels(self, s):
-        """Split the color into color channels: red, green, blue, alpha."""
-
-        def alpha_channel(alpha):
-            """Get alpha channel."""
-            return int(alpha, 16) if alpha else 0xFF
-
-        m = self.color_pattern.match(s)
-        assert(m is not None)
-        if m.group(1):
-            return int(s[1:3], 16), int(s[3:5], 16), int(s[5:7], 16), alpha_channel(m.group(2))
-        else:
-            return int(s[1] * 2, 16), int(s[2] * 2, 16), int(s[3] * 2, 16), 0xFF
-
-    def apply_alpha(self, background="#000000FF"):
-        """
-        Apply the given transparency with the given background.
-
-        This gives a color that represents what the eye sees with
-        the transparent color against the given background.
-        """
-
-        def tx_alpha(cf, af, cb, ab):
-            """Translate the color channel with the alpha channel and background channel color."""
-
-            return int(abs(cf * (af / 255.0) + cb * (ab / 255.0) * (1 - (af / 255.0)))) & 0xFF
-
-        if self.a < 0xFF:
-            r, g, b, a = self._split_channels(background)
-
-            self.r = tx_alpha(self.r, self.a, r, a)
-            self.g = tx_alpha(self.g, self.a, g, a)
-            self.b = tx_alpha(self.b, self.a, b, a)
-
-        return self.get_rgb()
-
-    def get_rgb(self):
-        """Get the RGB valuie."""
-
-        return "#%02X%02X%02X" % (self.r, self.g, self.b)
-
-    def get_luminance(self):
-        """Get percieved luminance."""
-
-        return self._clamp(int(round(0.299 * self.r + 0.587 * self.g + 0.114 * self.b)), 0, 255)
-
-    def _clamp(self, value, mn, mx):
-        """Clamp the value to the the given minimum and maximum."""
-
-        return max(min(value, mx), mn)
 
 
 def _sublime_format_path(pth):
@@ -163,48 +336,81 @@ def _sublime_format_path(pth):
     return pth.replace("\\", "/")
 
 
-def _scheme_lums(scheme_file):
-    """Get the scheme lumincance."""
-    color_scheme = os.path.normpath(scheme_file)
-    scheme_file = os.path.basename(color_scheme)
-    plist_file = readPlistFromBytes(
-        re.sub(
-            br"^[\r\n\s]*<!--[\s\S]*?-->[\s\r\n]*|<!--[\s\S]*?-->", b'',
-            sublime.load_binary_resource(_sublime_format_path(color_scheme))
-        )
-    )
-
-    color_settings = plist_file["settings"][0]["settings"]
-    lum = _Luminance(color_settings.get("background", '#FFFFFF'))
-    lum.apply_alpha('#FFFFFF')
-    return lum.get_luminance()
-
-
-def _get_scheme_lum(view):
-    """Get scheme lum."""
-
-    lum = None
+def _get_scheme_css(view, css):
+    """Get css from scheme."""
     scheme = view.settings().get('color_scheme')
+    obj = None
     if scheme is not None:
-        if scheme in _lum_cache:
-            lum, t = _lum_cache[scheme]
+        if scheme in _scheme_cache:
+            obj, t = _scheme_cache[scheme]
             delta_time = _get_setting('mdpopups_cache_refresh_time', 30)
             if not isinstance(delta_time, int) or delta_time <= 0:
                 delta_time = 30
             if time.time() - t >= (delta_time * 60):
-                lum = None
-        if lum is None:
+                obj = None
+        if obj is None:
             try:
-                lum = _scheme_lums(scheme)
+                obj = Scheme2CSS(scheme)
                 limit = _get_setting('mdpopups_cache_limit', 10)
                 if limit is None or not isinstance(limit, int) or limit <= 0:
                     limit = 10
-                while len(_lum_cache) >= limit:
-                    _lum_cache.popitem(last=True)
-                _lum_cache[scheme] = (lum, time.time())
+                while len(_scheme_cache) >= limit:
+                    _scheme_cache.popitem(last=True)
+                _scheme_cache[scheme] = (obj, time.time())
             except Exception:
+                print(traceback.format_exc())
                 pass
-    return lum if lum is not None else 255
+    try:
+        return obj.apply_template(DEFAULT_CSS) + obj.get_css() + obj.apply_template(css) if obj is not None else ''
+    except Exception:
+        print(traceback.format_exc())
+        return ''
+
+
+# def _scheme_lums(scheme_file):
+#     """Get the scheme lumincance."""
+#     color_scheme = os.path.normpath(scheme_file)
+#     scheme_file = os.path.basename(color_scheme)
+#     plist_file = readPlistFromBytes(
+#         re.sub(
+#             br"^[\r\n\s]*<!--[\s\S]*?-->[\s\r\n]*|<!--[\s\S]*?-->", b'',
+#             sublime.load_binary_resource(_sublime_format_path(color_scheme))
+#         )
+#     )
+
+#     color_settings = plist_file["settings"][0]["settings"]
+#     lum = _RGBA(color_settings.get("background", '#FFFFFF'))
+#     lum.apply_alpha('#FFFFFF')
+
+#     print(Scheme2CSS(color_scheme).get_css())
+#     return lum.get_luminance()
+
+
+# def _get_scheme_lum(view):
+#     """Get scheme lum."""
+
+#     lum = None
+#     scheme = view.settings().get('color_scheme')
+#     if scheme is not None:
+#         if scheme in _lum_cache:
+#             lum, t = _lum_cache[scheme]
+#             delta_time = _get_setting('mdpopups_cache_refresh_time', 30)
+#             if not isinstance(delta_time, int) or delta_time <= 0:
+#                 delta_time = 30
+#             if time.time() - t >= (delta_time * 60):
+#                 lum = None
+#         if lum is None:
+#             try:
+#                 lum = _scheme_lums(scheme)
+#                 limit = _get_setting('mdpopups_cache_limit', 10)
+#                 if limit is None or not isinstance(limit, int) or limit <= 0:
+#                     limit = 10
+#                 while len(_lum_cache) >= limit:
+#                     _lum_cache.popitem(last=True)
+#                 _lum_cache[scheme] = (lum, time.time())
+#             except Exception:
+#                 pass
+#     return lum if lum is not None else 255
 
 
 def _get_theme_by_lums(lums):
@@ -293,27 +499,28 @@ class _MdWrapper(markdown.Markdown):
 def _get_theme(view, css=None):
     """Get the theme."""
 
-    css_content = css
-    if css_content is None:
-        css_content, base_colors = _get_theme_by_scheme_map(view)
+    return _get_scheme_css(view, css)
+    # css_content = css
+    # if css_content is None:
+    #     css_content, base_colors = _get_theme_by_scheme_map(view)
 
-        if css_content is None:
-            lums = _get_scheme_lum(view)
-            css_content, base_colors = _get_theme_by_lums(lums)
-        else:
-            css_content, base_colors = _get_css(css)
-            if css_content is None:
-                lums = _get_scheme_lum(view)
-                css_content, base_colors = _get_theme_by_lums(lums)
-    else:
-        base_colors = _get_base_colors(css)
-        try:
-            css_content = _clean_css(css)
-        except Exception:
-            css_content = None
-    if css_content is None:
-        css_content = ''
-    return css_content, base_colors
+    #     if css_content is None:
+    #         lums = _get_scheme_lum(view)
+    #         css_content, base_colors = _get_theme_by_lums(lums)
+    #     else:
+    #         css_content, base_colors = _get_css(css)
+    #         if css_content is None:
+    #             lums = _get_scheme_lum(view)
+    #             css_content, base_colors = _get_theme_by_lums(lums)
+    # else:
+    #     base_colors = _get_base_colors(css)
+    #     try:
+    #         css_content = _clean_css(css)
+    #     except Exception:
+    #         css_content = None
+    # if css_content is None:
+    #     css_content = ''
+    # return DEFAULT_CSS + css
 
 
 def _create_html(view, content, md=True, css=None, append_css=None, debug=False):
@@ -323,17 +530,15 @@ def _create_html(view, content, md=True, css=None, append_css=None, debug=False)
         _log('=====Content=====')
         _log(content)
 
-    css_content = _get_theme(view, css)[0]
-
     if append_css is not None and isinstance(append_css, str):
         try:
             append_css = _clean_css(append_css)
         except Exception:
             append_css = ''
-        if css_content:
-            css_content += append_css
-        else:
-            css_content = append_css
+    else:
+        append_css = ''
+
+    css_content = _get_theme(view, append_css)
 
     if debug:
         _log('=====CSS=====')
@@ -346,8 +551,8 @@ def _create_html(view, content, md=True, css=None, append_css=None, debug=False)
         _log('=====HTML OUTPUT=====')
         _log(content)
 
-    html = "<style>%s</style>" % (DEFAULT_CSS + css_content)
-    html += '<div class="content st-background st-foreground">%s</div>' % content
+    html = "<style>%s</style>" % (css_content)
+    html += '<div class="content background foreground">%s</div>' % content
     return html
 
 ##############################
@@ -501,28 +706,32 @@ dl {
 }
 dt { display: block; font-style: italic; font-weight: bold; }
 dd { display: block; margin-left: 2em; }
-a { color: blue; } /* Links */
+/* Link */
+a { color: blue }
 div.content { padding: 0.5em; } /* Content wrapper div. */
+/*Style with current theme.*/
+h1, h2, h3, h4, h5, h6 { {{ css['.string']['all'] }} }
+a { {{css['.support.function']['all']}} }
     '''
 )
 
 
-def get_theme(view, css=None, from_file=False):
-    """
-    Get the current theme.
+# def get_theme(view, css=None, from_file=False):
+#     """
+#     Get the current theme.
 
-    Returns the theme, base_colors, and whether the background is DARK or LIGHT.
-    """
+#     Returns the theme, base_colors, and whether the background is DARK or LIGHT.
+#     """
 
-    css, base_colors = _get_css(from_file) if from_file else _get_theme(view, css)
-    lum = _Luminance(base_colors[1])
-    lum.apply_alpha('#FFFFFF')
-    brightness = lum.get_luminance()
-    if brightness is None:
-        brightness = 255
-    bg_lum = DARK if brightness <= LUM_MIDPOINT else LIGHT
-    ptheme = PopupTheme(css, base_colors[0], base_colors[1], bg_lum)
-    return ptheme
+#     css, base_colors = _get_css(from_file) if from_file else _get_theme(view, css)
+#     lum = _Luminance(base_colors[1])
+#     lum.apply_alpha('#FFFFFF')
+#     brightness = lum.get_luminance()
+#     if brightness is None:
+#         brightness = 255
+#     bg_lum = DARK if brightness <= LUM_MIDPOINT else LIGHT
+#     ptheme = PopupTheme(css, base_colors[0], base_colors[1], bg_lum)
+#     return ptheme
 
 
 def md2html(markup):
