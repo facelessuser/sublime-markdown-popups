@@ -125,7 +125,7 @@ Overrides the default CSS theme.  Value should be a relative path pointing to th
 ## CSS Styling
 `mdpopups` was design to give a universal way of displaying and styling tooltips via plugins, but also provide the user an easy way to control the look.
 
-`mdpopups` provides a simple base CSS that styles the basic HTML tags that can be used in the Markdown parser.  On top of that it then parses your current Sublime color scheme and generates CSS that includes styling for all the [standard TextMate scopes](https://manual.macromates.com/en/language_grammars#naming_conventions) (and only those listed scopes) found in your color scheme.  It then uses those scopes via in a default template to highlight your tooltips to match your current color scheme.
+`mdpopups` provides a simple base CSS that styles the basic HTML tags that can be used in the Markdown parser.  On top of that it then parses your current Sublime color scheme and generates CSS that includes styling for all the [standard TextMate scopes](./textmate_scopes.md) (and only those listed scopes) found in your color scheme.  It then uses those scopes via in a default template to highlight your tooltips to match your current color scheme.
 
 Templates are used so that a user can easily tap into all the colors, color filters, and other usefull logic to control their tooltips in one place without having to hard code a specific CSS for a specific color scheme.  Even though a plugin can additionally insert new scopes on demand when calling the popup API, a user can override anything and everything by providing their own [CSS template](#mdpopups_user_css).  The template is fairly powerful and flexible.
 
