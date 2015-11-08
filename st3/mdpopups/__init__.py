@@ -15,6 +15,7 @@ import time
 from collections import OrderedDict
 from .st_scheme_template import Scheme2CSS
 from .st_clean_css import clean_css
+from .st_code_highlight import syntax_highlight
 
 BASE_CSS = 'Packages/mdpopups/css/base.css'
 DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
@@ -242,12 +243,13 @@ def md2html(markup):
     configs = {
         "mdpopups.mdx.inlinehilite": {
             "style_plain_text": True,
-            "css_class": "inlinehilite",
+            "css_class": "inline-highlight",
             "use_codehilite_settings": False,
             "guess_lang": False
         },
         "markdown.extensions.codehilite": {
-            "guess_lang": False
+            "guess_lang": False,
+            "css_class": "highlight"
         },
         "mdpopups.mdx.superfences": {
             "uml_flow": False,

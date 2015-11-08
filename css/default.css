@@ -9,7 +9,7 @@ blockquote { {{'.comment'|css}} }
 a { {{'.support.function'|css('color')}} }
 hr { {{'.comment'|css('color')|background}} }
 div.content { padding: 0.5em; {{'.foreground'|css}}{{'.background'|css}} }
-.codehilite { padding: 0.5em; }
+.highlight { padding: 0.5em; }
 {% if var.is_light %}
 {{'default'|pygments}}
 {% else %}

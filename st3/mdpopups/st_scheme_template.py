@@ -120,7 +120,7 @@ re_strip_xml_comments = re.compile(br"^[\r\n\s]*<!--[\s\S]*?-->[\s\r\n]*|<!--[\s
 re_base_colors = re.compile(r'^\s*\.dummy\s*\{([^}]+)\}', re.MULTILINE)
 re_color = re.compile(r'(?<!-)(color\s*:\s*#[A-Fa-z\d]{6})')
 re_bgcolor = re.compile(r'(?<!-)(background(?:-color)?\s*:\s*#[A-Fa-z\d]{6})')
-CODE_BLOCKS = '.codehilite, .inlinehilite { %s; %s; }'
+CODE_BLOCKS = '.highlight, .inline-highlight { %s; %s; }'
 
 
 class Scheme2CSS(object):
