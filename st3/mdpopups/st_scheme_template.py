@@ -33,7 +33,13 @@ constant.language
 constant.other
 entity
 entity.name
+entity.name.function
+entity.name.type
+entity.name.tag
+entity.name.section
 entity.other
+entity.other.inherited-class
+entity.other.attribute-name
 invalid
 invalid.illegal
 invalid.deprecated
@@ -96,7 +102,7 @@ re_textmate_scopes = re.compile(
     constant
       (?:\.(?:numeric|character|langauge|other))?|
     entity
-      (?:\.(?:name|other))?|
+      (?:\.(?:name(?:\.(?:function|type|tag|section))?|other(?:\.(?:inherited-class|attribute-name))?))?|
     invalid
       (?:\.(?:illegal|deprecated))?|
     keyword
@@ -245,11 +251,39 @@ class Scheme2CSS(object):
         self.env.filters['saturation'] = self.saturation
         self.env.filters['grayscale'] = self.grayscale
         self.env.filters['sepia'] = self.sepia
+        self.env.filters['fade'] = self.fade
+        self.env.filters['getcss'] = self.read_css
+
+    def read_css(self, css):
+        """Read the CSS file."""
+
+        try:
+            return self.apply_template(clean_css(sublime.load_resource(css)))
+        except Exception:
+            return ''
+
+    def fade(self, css, factor):
+        """
+        Apply a fake transparency to color.
+
+        Fake transparency is preformed on top of the background color.
+        """
+        try:
+            parts = [c.strip('; ') for c in css.split(':')]
+            if len(parts) == 2 and parts[0] in ('background-color', 'color'):
+                bgcolor = self.colors.get('.background').get('background-color')
+                bgparts = [c.strip('; ') for c in bgcolor.split(':')]
+                rgba = RGBA(parts[1] + "%02f" % int(255 * factor))
+                rgba.apply_alpha(bgparts[1])
+                return '%s: %s; ' % (parts[0], rgba.get_rgb())
+        except Exception:
+            pass
+        return css
 
     def colorize(self, css, degree):
         """Colorize to the given hue."""
 
-        parts = [c.strip() for c in css.split(':')]
+        parts = [c.strip('; ') for c in css.split(':')]
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = RGBA(parts[1])
             rgba.colorize(degree)
@@ -260,7 +294,7 @@ class Scheme2CSS(object):
     def hue(self, css, degree):
         """Shift hue."""
 
-        parts = [c.strip() for c in css.split(':')]
+        parts = [c.strip('; ') for c in css.split(':')]
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = RGBA(parts[1])
             rgba.hue(degree)
@@ -271,7 +305,7 @@ class Scheme2CSS(object):
     def invert(self, css):
         """Invert color."""
 
-        parts = [c.strip() for c in css.split(':')]
+        parts = [c.strip('; ') for c in css.split(':')]
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = RGBA(parts[1])
             rgba.invert()
@@ -281,7 +315,7 @@ class Scheme2CSS(object):
 
     def saturation(self, css, factor):
         """Apply saturation filter."""
-        parts = [c.strip() for c in css.split(':')]
+        parts = [c.strip('; ') for c in css.split(':')]
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = RGBA(parts[1])
             rgba.saturation(factor)
@@ -292,7 +326,7 @@ class Scheme2CSS(object):
     def grayscale(self, css):
         """Apply grayscale filter."""
 
-        parts = [c.strip() for c in css.split(':')]
+        parts = [c.strip('; ') for c in css.split(':')]
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = RGBA(parts[1])
             rgba.grayscale()
@@ -303,7 +337,7 @@ class Scheme2CSS(object):
     def sepia(self, css):
         """Apply sepia filter."""
 
-        parts = [c.strip() for c in css.split(':')]
+        parts = [c.strip('; ') for c in css.split(':')]
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = RGBA(parts[1])
             rgba.sepia()
@@ -314,7 +348,7 @@ class Scheme2CSS(object):
     def brightness(self, css, factor):
         """Adjust brightness."""
 
-        parts = [c.strip() for c in css.split(':')]
+        parts = [c.strip('; ') for c in css.split(':')]
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = RGBA(parts[1])
             rgba.brightness(factor)
@@ -325,7 +359,7 @@ class Scheme2CSS(object):
     def to_fg(self, css):
         """Rename a CSS key value pair."""
 
-        parts = [c.strip() for c in css.split(':')]
+        parts = [c.strip('; ') for c in css.split(':')]
         if len(parts) == 2 and parts[0] == 'background-color':
             parts[0] = 'color'
             return '%s: %s ' % (parts[0], parts[1])
@@ -334,7 +368,7 @@ class Scheme2CSS(object):
     def to_bg(self, css):
         """Rename a CSS key value pair."""
 
-        parts = [c.strip() for c in css.split(':')]
+        parts = [c.strip('; ') for c in css.split(':')]
         if len(parts) == 2 and parts[0] == 'color':
             parts[0] = 'background-color'
             return '%s: %s ' % (parts[0], parts[1])
