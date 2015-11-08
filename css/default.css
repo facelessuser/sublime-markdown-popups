@@ -9,16 +9,23 @@ blockquote { {{'.comment'|css}} }
 a { {{'.support.function'|css('color')}} }
 hr { {{'.comment'|css('color')|background}} }
 body { padding: 1em; {{'.foreground'|css}}{{'.background'|css}} }
-div { margin-bottom: 0.5em; }
 .admonition { padding: 1em; {{ '.support.function'|css('color')|background|fade(0.8) }} }
 .hint, .tip { {{ '.keyword'|css('color')|background|fade(0.8) }} }
 .danger, .error { {{ '.entity.name.tag'|css('color')|background|fade(0.8) }} }
 .important, .attention { {{ '.string'|css('color')|background|fade(0.8) }} }
 .caution, .warning { {{ '.constant.numeric'|css('color')|background|fade(0.8) }} }
 .note { {{ '.variable.language'|css('color')|background|fade(0.8) }} }
-.highlight { padding: 1em; }
+.highlight{ padding: 1em; }
+{% if var.use_pygments %}
 {% if var.is_light %}
 {{'default'|pygments}}
 {% else %}
 {{'native'|pygments}}
+{% endif %}
+{% else %}
+{% if var.is_light %}
+.highlight, .inline-highlight { {{'.background'|css|brightness(0.9)}} }
+{% else %}
+.highlight, .inline-highlight { {{'.background'|css|brightness(1.1)}} }
+{% endif %}
 {% endif %}

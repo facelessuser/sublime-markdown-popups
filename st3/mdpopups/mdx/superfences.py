@@ -259,6 +259,7 @@ class SuperFencesCodeExtension(Extension):
     def __init__(self, *args, **kwargs):
         """Initialize."""
         self.config = {
+            'sublime_hl': [(False, None), "Sublime Highlighter object"],
             'disable_indented_code_blocks': [False, "Disable indented code blocks - Default: False"],
             'nested': [True, "Use nested fences - Default: True"],
             'uml_flow': [True, "Enable flowcharts - Default: True"],
@@ -519,17 +520,21 @@ class SuperFencesBlockPreprocessor(Preprocessor):
         is enabled, so we call into it to highlight the code.
         """
         if CodeHilite and self.codehilite_conf:
-            code = SublimeHighlight(
-                source,
-                linenums=self.codehilite_conf['linenums'][0],
-                guess_lang=self.codehilite_conf['guess_lang'][0],
-                css_class=self.codehilite_conf['css_class'][0],
-                style=self.codehilite_conf['pygments_style'][0],
-                lang=language,
-                noclasses=self.codehilite_conf['noclasses'][0],
-                hl_lines=parse_hl_lines(self.hl_lines),
-                use_pygments=self.codehilite_conf['use_pygments'][0]
-            ).hilite()
+            sublime_hl_enabled, sublime_hl = self.config.get("sublime_hl", None)
+            if sublime_hl_enabled:
+                code = sublime_hl.syntax_highlight(source, language)
+            else:
+                code = SublimeHighlight(
+                    source,
+                    linenums=self.codehilite_conf['linenums'][0],
+                    guess_lang=self.codehilite_conf['guess_lang'][0],
+                    css_class=self.codehilite_conf['css_class'][0],
+                    style=self.codehilite_conf['pygments_style'][0],
+                    lang=language,
+                    noclasses=self.codehilite_conf['noclasses'][0],
+                    hl_lines=parse_hl_lines(self.hl_lines),
+                    use_pygments=self.codehilite_conf['use_pygments'][0]
+                ).hilite()
         else:
             lang = self.CLASS_ATTR % language if language else ''
             code = self.CODE_WRAP % (lang, _escape(source))

@@ -31,3 +31,7 @@ dl {
 }
 dt { display: block; font-style: italic; font-weight: bold; }
 dd { display: block; margin-left: 2em; }
+/* Preformatted block */
+pre { display: block; }
+/* Divider */
+div { margin-bottom: 0.5em; }

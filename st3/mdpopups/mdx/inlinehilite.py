@@ -170,7 +170,10 @@ class InlineHilitePattern(Pattern):
         """Syntax highlite the inline code block."""
 
         process_text = self.style_plain_text or lang != 'text'
-        if pygments and self.use_pygments and process_text:
+        sublime_hl_enabled, sublime_hl = self.config.get("sublime_hl", None)
+        if sublime_hl_enabled:
+            code = sublime_hl.syntax_highlight(src, lang, True)
+        elif pygments and self.use_pygments and process_text:
             try:
                 lexer = get_lexer_by_name(lang)
             except ValueError:
@@ -223,6 +226,7 @@ class InlineHiliteExtension(Extension):
         """Initialize."""
 
         self.config = {
+            'sublime_hl': [(False, None), "Sublime Highlighter object"],
             'use_codehilite_settings': [
                 True,
                 "Use codehilite options if available. "

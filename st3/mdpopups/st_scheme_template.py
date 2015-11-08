@@ -92,6 +92,7 @@ from plistlib import readPlistFromBytes
 from pygments.formatters import HtmlFormatter
 from collections import OrderedDict
 from .st_clean_css import clean_css
+import copy
 
 LUM_MIDPOINT = 127
 
@@ -392,8 +393,11 @@ class Scheme2CSS(object):
 
     def apply_template(self, css):
         """Apply template to css."""
-
-        return self.env.from_string(css).render(var=self.variables, colors=self.colors)
+        var = copy.copy(self.variables)
+        var['use_pygments'] = not sublime.load_settings("Preferences.sublime-settings").get(
+            'mdpopus_use_sublime_highlighter', False
+        )
+        return self.env.from_string(css).render(var=var, colors=self.colors)
 
     def get_css(self):
         """Get css."""

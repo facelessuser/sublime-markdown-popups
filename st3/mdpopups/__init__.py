@@ -15,7 +15,8 @@ import time
 from collections import OrderedDict
 from .st_scheme_template import Scheme2CSS
 from .st_clean_css import clean_css
-from .st_code_highlight import syntax_hl
+from .st_pygments_highlight import syntax_hl as pyg_syntax_hl
+from .st_code_highlight import SublimeHighlight
 
 BASE_CSS = 'Packages/mdpopups/css/base.css'
 DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
@@ -64,13 +65,16 @@ def _can_show(view):
 # Theme/Scheme cache management
 ##############################
 _scheme_cache = OrderedDict()
+_highlighter_cache = OrderedDict()
 
 
 def _clear_cache():
     """Clear the css cache."""
 
     global _scheme_cache
+    global _highlighter_cache
     _scheme_cache = OrderedDict()
+    _highlighter_cache = OrderedDict()
 
 
 def is_cache_expired(cache_time):
@@ -90,6 +94,29 @@ def prune_cache():
         limit = 10
     while len(_scheme_cache) >= limit:
         _scheme_cache.popitem(last=True)
+    while len(_highlighter_cache) >= limit:
+        _highlighter_cache.popitem(last=True)
+
+
+def _get_sublime_highlighter(view):
+    """Get the SublimeHighlighter."""
+
+    scheme = view.settings().get('color_scheme')
+    obj = None
+    if scheme is not None:
+        if scheme in _highlighter_cache:
+            obj, t = _highlighter_cache[scheme]
+            if is_cache_expired(t):
+                obj = None
+        if obj is None:
+            try:
+                obj = SublimeHighlight(scheme)
+                prune_cache()
+                _highlighter_cache[scheme] = (obj, time.time())
+            except Exception:
+                _log(traceback.format_exc())
+                pass
+    return obj
 
 
 def _get_scheme_css(view, css):
@@ -212,7 +239,7 @@ def _create_html(view, content, md=True, css=None, debug=False):
         _log(style)
 
     if md:
-        content = md2html(content)
+        content = md2html(view, content)
 
     if debug:
         _log('=====HTML OUTPUT=====')
@@ -226,8 +253,13 @@ def _create_html(view, content, md=True, css=None, debug=False):
 ##############################
 # Public functions
 ##############################
-def md2html(markup):
+def md2html(view, markup):
     """Convert Markdown to HTML."""
+
+    if _get_setting('mdpopus_use_sublime_highlighter'):
+        sublime_hl = (True, _get_sublime_highlighter(view))
+    else:
+        sublime_hl = (False, None)
 
     extensions = [
         "markdown.extensions.attr_list",
@@ -246,7 +278,8 @@ def md2html(markup):
             "style_plain_text": True,
             "css_class": "inline-highlight",
             "use_codehilite_settings": False,
-            "guess_lang": False
+            "guess_lang": False,
+            "sublime_hl": sublime_hl
         },
         "markdown.extensions.codehilite": {
             "guess_lang": False,
@@ -254,7 +287,8 @@ def md2html(markup):
         },
         "mdpopups.mdx.superfences": {
             "uml_flow": False,
-            "uml_sequence": False
+            "uml_sequence": False,
+            "sublime_hl": sublime_hl
         }
     }
 
@@ -263,11 +297,15 @@ def md2html(markup):
         extension_configs=configs
     ).convert(markup).replace('&quot;', '"').replace('\n', '')
 
-
-def syntax_highlight(src, lang=None, guess_lang=False, inline=False):
+def syntax_highlight(view, src, lang=None, guess_lang=False, inline=False):
     """Syntax highlighting for code."""
 
-    syntax_hl(src, lang, guess_lang, inline)
+    if _get_setting('mdpopus_use_sublime_highlighter'):
+        highlighter = _get_sublime_highlighter(view)
+        code = highlighter.syntax_highlight(src, lang, inline)
+    else:
+        code = pyg_syntax_hl(src, lang, guess_lang, inline)
+    return code
 
 
 def clear_cache():
@@ -298,6 +336,7 @@ def update_popup(view, content, md=True, css=None):
     try:
         html = _create_html(view, content, md, css, debug)
     except Exception:
+        _log(traceback.format_exc())
         html = IDK
 
     view.update_popup(html)
@@ -323,6 +362,7 @@ def show_popup(
     try:
         html = _create_html(view, content, md, css, debug)
     except Exception:
+        _log(traceback.format_exc())
         html = IDK
 
     view.show_popup(
