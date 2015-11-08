@@ -3,6 +3,23 @@ Using and configuring Sublime Markdown Popups.
 
 ---
 
+## Dependencies
+Your plugin must include the following Package Control dependencies:
+
+```js
+{
+    "*": {
+        ">=3000": [
+            "pygments",
+            "markdown",
+            "mdpopups",
+            "jinja2",
+            "markupsafe"
+        ]
+    }
+}
+```
+
 ## API Usage
 Mdpopups provides a handful of accessible functions.
 
@@ -16,8 +33,7 @@ mdpopups.show_popup
     | view | Yes | | A Sublime Text view object. |
     | content | Yes | | Markdown/HTML content to be used to create a tooltip. |
     | md | No | True | Defines whether the content is Markdown and needs to be converterted. |
-    | css | No | None | CSS text that should be used instead of loading a theme. |
-    | append_css | No | None | CSS to append to the base theme being used. |
+    | css | No | None | Additional CSS that will be injected. |
     | flags | No | 0 | Flags to pass down to the Sublime Text `view.show_popup` call. |
     | location | No | -1 | Location to show popup in view.  -1 means to show right under the first cursor. |
     | max_width | No | 320 | Maximum width of the popup. |
@@ -36,33 +52,15 @@ mdpopups.update_popup
     | content | Yes | | Markdown/HTML content to be used to create a tooltip. |
     | md | No | True | Defines whether the content is Markdown and needs to be converterted. |
     | css | No | None | CSS text that should be used instead of loading a theme. |
-    | append_css | No | None | CSS to append to the base theme being used. |
 
 ### hide_popup
 mdpopups.hide_popup
 : 
-    Hides the current popup.
+    Hides the current popup.  Included for convenience and consistency.
 
     | Parameter | Required | Default | Description |
     | --------- | -------- | ------- | ----------- |
     | view | Yes | | A Sublime Text view object. |
-
-### get_theme
-mdpopups.get_theme
-: 
-    For various reasons, a user may want to manually retrieve the CSS theme to be used, or potential process there own on the fly CSS text. `get_theme` will retrieve the current CSS that will be used, or process and return a user's own css string buffer.  It returns a `PopupTheme` object that contains the stripped CSS content (no carriage returns or comments), the base colors of the theme (foreground and background colors), and the brightness which can be retrieved with `#!python is_dark()` or `#!python is_light()`.
-
-    | Parameter | Required | Default | Description |
-    | --------- | -------- | ------- | ----------- |
-    | view | Yes | | target view to retrieve view for. |
-    | css | No | | A CSS string buffer.  If this is used, `mdpopups` will not calculate a theme to be used. |
-    | from_file | No | | When this is set to `True`, the `css` parameter will be treated as a relative file path.  File paths should be in the form `Packages/MyPluginFolder/mytheme.css`. Please use forward slashes. |
-
-    !!! Note "Note"
-        CSS content is cached except when using a CSS string buffer.  Up to X number of CSS files are cached at a time for T amount of time where X is 10 and T is 30 minutes by default.  X and T can be changed in the settings file.  If you need to bypass caching, you will have to clear the cache via [`mdpopups.clear_cache`](#clear_cache).
-
-    !!! Note "Under Construction"
-        Still working on what colors will be exposed to users.  Working on a way to easily find index and return them.
 
 ### clear_cache
 mdpopups.clear_cache
@@ -72,14 +70,26 @@ mdpopups.clear_cache
 ### md2html
 mdpopups.md2html
 : 
-    Exposes the markdown to html converter in case it is desired to parse only a section of markdown.  This works well for someone who wants to work directly in HTML, but might want to still syntax highlight some code to insert into the HTML.
+    Exposes the Markdown to HTML converter in case it is desired to parse only a section of markdown.  This works well for someone who wants to work directly in HTML, but might want to still syntax highlight some code to insert into the HTML.
 
     | Parameter | Required | Default | Description |
     | --------- | -------- | ------- | ----------- |
     | markup | Yes | | The markup code to be converted. |
 
+### syntax_highlight
+mdpopups.syntax_highlight
+: 
+    Allows for syntax highlighting outside the Markdown environment.  You can just feed it code directly and give it the language of choice, and you will be returned a block of HTML that has been syntax highlighted.
+
+    | Parameter | Required | Default | Description |
+    | --------- | -------- | ------- | ----------- |
+    | markup | Yes | | The markup code to be converted. |
+    | lang | No | None | Specifies the language to highlight as. |
+    | guess_lang | No | False | If the language passed in does not render, or no language is passed at all, Pygments will attempt to guess the language. |
+    | inline | No | False | Will return the code formatted for inline display. |
+
 ## Global User Settings
-All settings for `mdpopups` are placed in Sublime's `Preferences.sublime-settings`.
+All settings for `mdpopups` are placed in Sublime's `Preferences.sublime-settings`.  They are global and work no for whatever plugin uses the `mdpopups` API.
 
 ### mdpopups_debug
 Turns on debug mode.  This will dump out all sorts of info to the console.  Such as content before parsing to HTML, final HTML output, etc.  This is more useful for plugin developers.
@@ -103,24 +113,23 @@ Control how long a CSS theme file will be in the cache before being refreshed.  
 ```
 
 ### mdpopups_cache_limit
-Control how many CSS theme files will be kept in cache at any given time.  Value should be a positive integer greater than 0.
+Control how many CSS theme files will be kept in cache at any given time.  Value should be a positive integer greater than or equal to 0.
 
 ```js
     "mdpopups_cache_limit": 10
 ```
 
-### mdpopups_theme_dark
-Overrides the default dark theme.  Value should be a relative path pointing to the CSS theme file: `Packages/User/my_dark_theme.css`.  Slashes should be forward slashes.
+### mdpopups_user_css
+Overrides the default CSS theme.  Value should be a relative path pointing to the CSS theme file: `Packages/User/my_custom_theme.css`.  Slashes should be forward slashes. By default, it will point to `Packages/User/mdpopups.css`.
 
-### mdpopups_theme_light
-Overrides the default light theme.  Value should be a relative path pointing to the CSS theme file: `Packages/User/my_light_theme.css`.  Slashes should be forward slashes.
+## CSS Styling
+`mdpopups` was design to give a universal way of displaying and styling tooltips via plugins, but also provide the user an easy way to control the look.
 
-### mdpopups_theme_map
-If a specific CSS thee should be paired with a specific color scheme, you can define the mapping in the theme map.  You can specify as many pairings as desired.
+`mdpopups` provides a simple base CSS that styles the basic HTML tags that can be used in the Markdown parser.  On top of that it then parses your current Sublime color scheme and generates CSS that includes styling for all the [standard TextMate scopes](https://manual.macromates.com/en/language_grammars#naming_conventions) (and only those listed scopes) found in your color scheme.  It then uses those scopes via in a default template to highlight your tooltips to match your current color scheme.
 
-```js
-    "mdpopups_theme_map":
-    {
-        "Packages/Theme - Aprosopo/Tomorrow-Morning.tmTheme": "Packages/User/mod_light.css"
-    },
-```
+Templates are used so that a user can easily tap into all the colors, color filters, and other usefull logic to control their tooltips in one place without having to hard code a specific CSS for a specific color scheme.  Even though a plugin can additionally insert new scopes on demand when calling the popup API, a user can override anything and everything by providing their own [CSS template](#mdpopups_user_css).  The template is fairly powerful and flexible.
+
+### CSS Templates
+
+!!! caution "Under Construction"
+    Currently under construction.
