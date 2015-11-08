@@ -106,7 +106,7 @@ class SublimeInlineHtmlFormatter(HtmlFormatter):
         yield 0, '</code>'
 
 
-def syntax_highlight(src, lang=None, guess_lang=False, inline=False):
+def syntax_hl(src, lang=None, guess_lang=False, inline=False):
     """Highlight."""
 
     css_class = 'inline-highlight' if inline else 'highlight'

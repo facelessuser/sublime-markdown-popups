@@ -15,7 +15,7 @@ import time
 from collections import OrderedDict
 from .st_scheme_template import Scheme2CSS
 from .st_clean_css import clean_css
-from . import st_code_highlight
+from .st_code_highlight import syntax_hl
 
 BASE_CSS = 'Packages/mdpopups/css/base.css'
 DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
@@ -267,7 +267,7 @@ def md2html(markup):
 def syntax_highlight(src, lang=None, guess_lang=False, inline=False):
     """Syntax highlighting for code."""
 
-    st_code_highlight.syntax_highlight(src, lang, guess_lang, inline)
+    syntax_hl(src, lang, guess_lang, inline)
 
 
 def clear_cache():
