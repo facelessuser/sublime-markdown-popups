@@ -1,8 +1,8 @@
 /* Html fake border color */
-html { background-color: black; }
 /* Defines the general look of the font and provides a little margin. */
 body {
-    color: white;
+    color: black;
+    background-color: white;
     margin: 1px;
     font-size: 1em;
 }
@@ -31,6 +31,3 @@ dl {
 }
 dt { display: block; font-style: italic; font-weight: bold; }
 dd { display: block; margin-left: 2em; }
-/* Link */
-a { color: blue }
-div.content { padding: 0.5em; } /* Content wrapper div. */

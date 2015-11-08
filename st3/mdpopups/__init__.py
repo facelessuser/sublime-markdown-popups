@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Markdown popup.
 
@@ -15,9 +16,13 @@ from collections import OrderedDict
 from .st_scheme_template import Scheme2CSS
 from .st_clean_css import clean_css
 
-BASE_CSS = 'Packages/mdpopups/themes/__base__.css'
-DEFAULT_CSS = 'Packages/mdpopups/themes/default.css'
+BASE_CSS = 'Packages/mdpopups/css/base.css'
+DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
 base_css = None
+IDK = '''
+<style>html {background-color: #333; color: red}</style>
+<div><p>¯\_(ツ)_/¯'</p></div>
+'''
 
 
 def _log(msg):
@@ -66,28 +71,45 @@ def _clear_cache():
     _scheme_cache = OrderedDict()
 
 
+def is_cache_expired(cache_time):
+    """Check if the cache entry is expired."""
+
+    delta_time = _get_setting('mdpopups_cache_refresh_time', 30)
+    if not isinstance(delta_time, int) or delta_time < 0:
+        delta_time = 30
+    return time.time() - cache_time >= (delta_time * 60)
+
+
+def prune_cache():
+    """Prune older items in cache (related to when they were inserted)."""
+
+    limit = _get_setting('mdpopups_cache_limit', 10)
+    if limit is None or not isinstance(limit, int) or limit <= 0:
+        limit = 10
+    while len(_scheme_cache) >= limit:
+        _scheme_cache.popitem(last=True)
+
+
 def _get_scheme_css(view, css):
-    """Get css from scheme."""
+    """
+    Get css from scheme.
+
+    Retrieve scheme if in cache, or compile CSS
+    if not in cache or entry is expired in cache.
+    """
     scheme = view.settings().get('color_scheme')
     obj = None
     user_css = ''
     if scheme is not None:
         if scheme in _scheme_cache:
             obj, user_css, t = _scheme_cache[scheme]
-            delta_time = _get_setting('mdpopups_cache_refresh_time', 30)
-            if not isinstance(delta_time, int) or delta_time < 0:
-                delta_time = 30
-            if time.time() - t >= (delta_time * 60):
+            if is_cache_expired(t):
                 obj = None
                 user_css = ''
         if obj is None:
             try:
                 obj = Scheme2CSS(scheme)
-                limit = _get_setting('mdpopups_cache_limit', 10)
-                if limit is None or not isinstance(limit, int) or limit <= 0:
-                    limit = 10
-                while len(_scheme_cache) >= limit:
-                    _scheme_cache.popitem(last=True)
+                prune_cache()
                 user_css = obj.apply_template(_get_user_css(view, scheme))
                 _scheme_cache[scheme] = (obj, user_css, time.time())
             except Exception:
@@ -104,20 +126,12 @@ def _get_scheme_css(view, css):
 def _get_user_css(view, scheme):
     """Get user css."""
     css = None
-    scheme_map = _get_setting('mdpopups_scheme_map', {})
 
-    if scheme_map:
-        if scheme is not None and scheme in scheme_map:
-            try:
-                css = clean_css(sublime.load_resource(scheme_map[scheme]))
-            except Exception:
-                pass
-    if css is None:
-        default_css = _get_setting('mdpopups_default', DEFAULT_CSS)
-        try:
-            css = clean_css(sublime.load_resource(default_css))
-        except Exception:
-            css = clean_css(sublime.load_resource(DEFAULT_CSS))
+    user_css = _get_setting('mdpopups_user_css', DEFAULT_CSS)
+    try:
+        css = clean_css(sublime.load_resource(user_css))
+    except Exception:
+        css = clean_css(sublime.load_resource(DEFAULT_CSS))
     return css if css else ''
 
 
@@ -272,7 +286,10 @@ def update_popup(view, content, md=True, css=None):
     if not _can_show(view):
         return
 
-    html = _create_html(view, content, md, css, debug)
+    try:
+        html = _create_html(view, content, md, css, debug)
+    except Exception:
+        html = IDK
 
     view.update_popup(html)
 
@@ -294,7 +311,10 @@ def show_popup(
     if not _can_show(view):
         return
 
-    html = _create_html(view, content, md, css, debug)
+    try:
+        html = _create_html(view, content, md, css, debug)
+    except Exception:
+        html = IDK
 
     view.show_popup(
         html, flags=flags, location=location, max_width=max_width,

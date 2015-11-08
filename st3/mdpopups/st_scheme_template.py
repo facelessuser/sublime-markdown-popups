@@ -120,7 +120,7 @@ re_strip_xml_comments = re.compile(br"^[\r\n\s]*<!--[\s\S]*?-->[\s\r\n]*|<!--[\s
 re_base_colors = re.compile(r'^\s*\.dummy\s*\{([^}]+)\}', re.MULTILINE)
 re_color = re.compile(r'(?<!-)(color\s*:\s*#[A-Fa-z\d]{6})')
 re_bgcolor = re.compile(r'(?<!-)(background(?:-color)?\s*:\s*#[A-Fa-z\d]{6})')
-blocks = '.codehilite, .inlinehilite { %s; %s; }'
+CODE_BLOCKS = '.codehilite, .inlinehilite { %s; %s; }'
 
 
 class Scheme2CSS(object):
@@ -415,11 +415,15 @@ def get_pygments(style):
         css = clean_css(
             (
                 text[:m.start(0)] +
-                (blocks % (bg, fg)) +
+                (CODE_BLOCKS % (bg, fg)) +
                 text[m.end(0):] +
                 '\n'
             ).replace('.dummy ', '')
         )
     else:
-        css = clean_css(((blocks % (bg, fg)) + '\n' + text + '\n').replace('.dummy', ''))
+        css = clean_css(
+            (
+                (CODE_BLOCKS % (bg, fg)) +'\n' +text +'\n'
+            )
+        ).replace('.dummy ', '')
     return css
