@@ -15,10 +15,11 @@ import time
 from collections import OrderedDict
 from .st_scheme_template import Scheme2CSS
 from .st_clean_css import clean_css
-from .st_code_highlight import syntax_highlight
+from . import st_code_highlight
 
 BASE_CSS = 'Packages/mdpopups/css/base.css'
 DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
+DEFAULT_USER_CSS = 'Packages/User/mdpopups.css'
 base_css = None
 IDK = '''
 <style>html {background-color: #333; color: red}</style>
@@ -111,7 +112,7 @@ def _get_scheme_css(view, css):
             try:
                 obj = Scheme2CSS(scheme)
                 prune_cache()
-                user_css = obj.apply_template(_get_user_css(view, scheme))
+                user_css = obj.apply_template(_get_user_css())
                 _scheme_cache[scheme] = (obj, user_css, time.time())
             except Exception:
                 _log(traceback.format_exc())
@@ -124,11 +125,11 @@ def _get_scheme_css(view, css):
         return ''
 
 
-def _get_user_css(view, scheme):
+def _get_user_css():
     """Get user css."""
     css = None
 
-    user_css = _get_setting('mdpopups_user_css', DEFAULT_CSS)
+    user_css = _get_setting('mdpopups_user_css', DEFAULT_USER_CSS)
     try:
         css = clean_css(sublime.load_resource(user_css))
     except Exception:
@@ -261,6 +262,12 @@ def md2html(markup):
         extensions=extensions,
         extension_configs=configs
     ).convert(markup).replace('&quot;', '"').replace('\n', '')
+
+
+def syntax_highlight(src, lang=None, guess_lang=False, inline=False):
+    """Syntax highlighting for code."""
+
+    st_code_highlight.syntax_highlight(src, lang, guess_lang, inline)
 
 
 def clear_cache():

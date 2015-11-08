@@ -1,3 +1,4 @@
+"""Sublime code highlighting for tooltips."""
 import re
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name, guess_lexer
@@ -104,10 +105,9 @@ class SublimeInlineHtmlFormatter(HtmlFormatter):
             yield i, text
         yield 0, '</code>'
 
-def syntax_highlight(src, lang, guess_lang=False, inline=False):
-    """
-    Highlight.
-    """
+
+def syntax_highlight(src, lang=None, guess_lang=False, inline=False):
+    """Highlight."""
 
     css_class = 'inline-highlight' if inline else 'highlight'
 

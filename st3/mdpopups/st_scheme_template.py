@@ -423,7 +423,7 @@ def get_pygments(style):
     else:
         css = clean_css(
             (
-                (CODE_BLOCKS % (bg, fg)) +'\n' +text +'\n'
+                (CODE_BLOCKS % (bg, fg)) + '\n' + text + '\n'
             )
         ).replace('.dummy ', '')
     return css
