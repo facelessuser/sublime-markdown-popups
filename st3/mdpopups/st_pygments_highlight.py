@@ -1,4 +1,9 @@
-"""Sublime code highlighting for tooltips."""
+"""
+Sublime code highlighting for tooltips.
+
+Licensed under MIT
+Copyright (c) 2015 Isaac Muse <isaacmuse@gmail.com>
+"""
 import re
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name, guess_lexer
