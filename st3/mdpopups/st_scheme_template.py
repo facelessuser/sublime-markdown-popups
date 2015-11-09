@@ -324,7 +324,7 @@ class Scheme2CSS(object):
         """Apply template to css."""
         var = copy.copy(self.variables)
         var['use_pygments'] = not sublime.load_settings("Preferences.sublime-settings").get(
-            'mdpopus_use_sublime_highlighter', False
+            'mdpopups_use_sublime_highlighter', False
         )
         return self.env.from_string(css).render(var=var, colors=self.colors)
 

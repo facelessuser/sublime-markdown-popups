@@ -256,7 +256,7 @@ def _create_html(view, content, md=True, css=None, debug=False):
 def md2html(view, markup):
     """Convert Markdown to HTML."""
 
-    if _get_setting('mdpopus_use_sublime_highlighter'):
+    if _get_setting('mdpopups_use_sublime_highlighter'):
         sublime_hl = (True, _get_sublime_highlighter(view))
     else:
         sublime_hl = (False, None)
@@ -301,7 +301,7 @@ def md2html(view, markup):
 def syntax_highlight(view, src, lang=None, guess_lang=False, inline=False):
     """Syntax highlighting for code."""
     try:
-        if _get_setting('mdpopus_use_sublime_highlighter'):
+        if _get_setting('mdpopups_use_sublime_highlighter'):
             highlighter = _get_sublime_highlighter(view)
             code = highlighter.syntax_highlight(src, lang, inline)
         else:
