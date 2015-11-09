@@ -246,13 +246,23 @@ class SublimeHighlight(object):
         # Write empty line to allow copying of last line and line number without issue
         self.html.append(INLINE_BODY_END if self.inline else BODY_END)
 
-    def syntax_highlight(self, src, lang, inline=False):
-        """Syntax Highlight."""
+    def set_view(self, src, lang):
+        """Setup view for conversion."""
 
+        # Get the output panel
         self.view = sublime.active_window().get_output_panel('mdpopups')
+        # Let all plugins no to leave this view alone
+        self.view.settings().set('is_widget', True)
+        # Don't translate anything.
+        self.view.settings().set("translate_tabs_to_spaces", False)
+        # Don't mess with my indenting Sublime!
+        self.view.settings().set("auto_indent", False)
+        # Insert into the view
         self.view.run_command('insert', {'characters': src})
+        # Setup the proper syntax
         lang = lang.lower()
         user_map = sublime.load_settings('Preferences.sublime-settings').get('mdpopups_sublime_user_lang_map', {})
+        loaded = False
         for k, v in lang_map.items():
             user_v = user_map.get(k, (tuple(), tuple()))
             if lang in (user_v[0] + v[0]):
@@ -264,6 +274,15 @@ class SublimeHighlight(object):
                         except Exception:
                             continue
                         self.view.set_syntax_file(sytnax_file)
+                        loaded = True
+                        break
+            if loaded:
+                break
+
+    def syntax_highlight(self, src, lang, inline=False):
+        """Syntax Highlight."""
+
+        self.set_view(src, lang)
         self.inline = inline
         self.setup()
         self.html = []
