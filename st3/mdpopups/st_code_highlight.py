@@ -55,31 +55,13 @@ class SublimeHighlight(object):
     def setup(self, **kwargs):
         """Get get general document preferences from sublime preferences."""
 
-        settings = sublime.load_settings('Preferences.sublime-settings')
-        self.tab_size = settings.get('tab_size', 4)
-        # self.char_limit = 4
-        self.bground = ''
-        self.fground = ''
-        self.sbground = ''
-        self.sfground = ''
-        self.sels = []
-        # self.multi_select = False
-        self.highlight_selections = False
-        self.hl_continue = None
-        self.curr_hl = None
+        self.tab_size = 4
         self.size = self.view.size()
         self.pt = 0
         self.end = 0
         self.curr_row = 0
-        self.tables = 0
         self.matched = {}
         self.ebground = self.bground
-
-        self.highlights = []
-        if self.highlight_selections:
-            for sel in self.view.sel():
-                if not sel.empty():
-                    self.highlights.append(sel)
 
     def setup_print_block(self, curr_sel, multi=False):
         """Determine start and end points and whether to parse whole file or selection."""
@@ -153,41 +135,17 @@ class SublimeHighlight(object):
         """Convert the line to its HTML representation."""
 
         line = []
-        hl_done = False
-
-        # Continue highlight form last line
-        if self.hl_continue is not None:
-            self.curr_hl = self.hl_continue
-            self.hl_continue = None
+        do_highlight = self.curr_row in self.hl_lines
 
         while self.end <= self.size:
-            # Get next highlight region
-            if self.highlight_selections and self.curr_hl is None and len(self.highlights) > 0:
-                self.curr_hl = self.highlights.pop(0)
-
-            # See if we are starting a highlight region
-            if self.curr_hl is not None and self.pt == self.curr_hl.begin():
-                # Get text of like scope up to a highlight
-                scope_name = self.view.scope_name(self.pt)
-                while self.view.scope_name(self.end) == scope_name and self.end < self.size:
-                    # Kick out if we hit a highlight region
-                    if self.end == self.curr_hl.end():
-                        break
-                    self.end += 1
-                if self.end < self.curr_hl.end():
-                    if self.end >= self.size:
-                        self.hl_continue = sublime.Region(self.end, self.curr_hl.end())
-                    else:
-                        self.curr_hl = sublime.Region(self.end, self.curr_hl.end())
-                else:
-                    hl_done = True
-                if hl_done and empty:
-                    color_match = self.csm.guess_color(self.view, self.pt, scope_name)
-                    color = color_match.fg_simulated
-                    style = color_match.style
-                    bgcolor = color_match.bg_simulated
-                elif self.sfground is None:
-                    color_match = self.csm.guess_color(self.view, self.pt, scope_name)
+            # Get text of like scope
+            scope_name = self.view.scope_name(self.pt)
+            while self.view.scope_name(self.end) == scope_name and self.end < self.size:
+                self.end += 1
+            color_match = self.csm.guess_color(self.view, self.pt, scope_name)
+            if do_highlight:
+                # Highlighted line
+                if self.sfground is None:
                     color = color_match.fg_simulated
                     style = color_match.style
                     bgcolor = self.sbground
@@ -195,14 +153,6 @@ class SublimeHighlight(object):
                     color, style = self.sfground, ""
                     bgcolor = self.sbground
             else:
-                # Get text of like scope up to a highlight
-                scope_name = self.view.scope_name(self.pt)
-                while self.view.scope_name(self.end) == scope_name and self.end < self.size:
-                    # Kick out if we hit a highlight region
-                    if self.curr_hl is not None and self.end == self.curr_hl.begin():
-                        break
-                    self.end += 1
-                color_match = self.csm.guess_color(self.view, self.pt, scope_name)
                 color = color_match.fg_simulated
                 style = color_match.style
                 bgcolor = color_match.bg_simulated
@@ -211,11 +161,6 @@ class SublimeHighlight(object):
             # Normal text formatting
             tidied_text = self.html_encode(self.view.substr(region))
             self.format_text(line, tidied_text, color, bgcolor, style, empty)
-
-            if hl_done:
-                # Clear highlight flags and variables
-                hl_done = False
-                self.curr_hl = None
 
             # Continue walking through line
             self.pt = self.end
@@ -241,7 +186,6 @@ class SublimeHighlight(object):
         processed_rows += "[" + str(self.curr_row) + ","
         self.convert_view_to_html()
         processed_rows += str(self.curr_row) + "],"
-        self.tables += 1
 
         # Write empty line to allow copying of last line and line number without issue
         self.html.append(INLINE_BODY_END if self.inline else BODY_END)
@@ -279,11 +223,12 @@ class SublimeHighlight(object):
             if loaded:
                 break
 
-    def syntax_highlight(self, src, lang, inline=False):
+    def syntax_highlight(self, src, lang, hl_lines=[], inline=False):
         """Syntax Highlight."""
 
         self.set_view(src, lang)
         self.inline = inline
+        self.hl_lines = hl_lines
         self.setup()
         self.html = []
         self.write_body()

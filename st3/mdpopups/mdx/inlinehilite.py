@@ -172,7 +172,7 @@ class InlineHilitePattern(Pattern):
         process_text = self.style_plain_text or lang != 'text'
         sublime_hl_enabled, sublime_hl = self.config.get("sublime_hl", None)
         if sublime_hl_enabled:
-            code = sublime_hl.syntax_highlight(src, lang, True)
+            code = sublime_hl.syntax_highlight(src, lang, inline=True)
         elif pygments and self.use_pygments and process_text:
             try:
                 lexer = get_lexer_by_name(lang)

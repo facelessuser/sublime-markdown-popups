@@ -522,7 +522,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
         if CodeHilite and self.codehilite_conf:
             sublime_hl_enabled, sublime_hl = self.config.get("sublime_hl", None)
             if sublime_hl_enabled:
-                code = sublime_hl.syntax_highlight(source, language)
+                code = sublime_hl.syntax_highlight(source, language, hl_lines=parse_hl_lines(self.hl_lines))
             else:
                 code = SublimeHighlight(
                     source,
