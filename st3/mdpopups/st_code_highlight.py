@@ -26,6 +26,7 @@ import sublime
 import sublime_plugin
 import re
 from .st_color_scheme_matcher import ColorSchemeMatcher
+from .st_mapping import lang_map
 
 INLINE_BODY_START = '<code class="inline-highlight">'
 BODY_START = '<div class="highlight"><pre>'
@@ -37,11 +38,6 @@ INLINE_BODY_END = '</code>'
 
 USE_ST_SYNTAX = int(sublime.version()) >= 3084
 ST_LANGUAGES = ('.sublime-syntax', '.tmLanguage') if USE_ST_SYNTAX else ('.tmLanguage',)
-
-lang_map = {
-    "text": ['Text/Plain text'],
-    "python": ['MagicPython/grammars/MagicPython']
-}
 
 
 class SublimeHighlight(object):
@@ -267,16 +263,23 @@ class MdpopupsCodeViewCommand(sublime_plugin.TextCommand):
     """Syntax Highlighting code view."""
 
     def run(self, edit, src, lang='text'):
-        syntax = lang_map.get(lang, [])
+        """Run command."""
+
+        lang = lang.lower()
         self.view.replace(edit, sublime.Region(0, self.view.size()), src)
-        for l in syntax:
-            for ext in ST_LANGUAGES:
-                sytnax_file = 'Packages/%s%s' % (l, ext)
-                try:
-                    sublime.load_binary_resource(sytnax_file)
-                except Exception as e:
-                    continue
-                self.view.set_syntax_file(sytnax_file)
+        user_map = sublime.load_settings('Preferences.sublime-settings').get('mdpopups_sublime_user_lang_map', {})
+        for k, v in lang_map.items():
+            user_v = user_map.get(k, (tuple(), tuple()))
+            if lang in (user_v[0] + v[0]):
+                for l in (user_v[1] + v[1]):
+                    for ext in ST_LANGUAGES:
+                        sytnax_file = 'Packages/%s%s' % (l, ext)
+                        try:
+                            sublime.load_binary_resource(sytnax_file)
+                        except Exception:
+                            continue
+                        self.view.set_syntax_file(sytnax_file)
+                        print(sytnax_file)
 
 
 sublime_plugin.text_command_classes.append(MdpopupsCodeViewCommand)
