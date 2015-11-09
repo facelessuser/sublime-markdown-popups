@@ -297,14 +297,17 @@ def md2html(view, markup):
         extension_configs=configs
     ).convert(markup).replace('&quot;', '"').replace('\n', '')
 
+
 def syntax_highlight(view, src, lang=None, guess_lang=False, inline=False):
     """Syntax highlighting for code."""
-
-    if _get_setting('mdpopus_use_sublime_highlighter'):
-        highlighter = _get_sublime_highlighter(view)
-        code = highlighter.syntax_highlight(src, lang, inline)
-    else:
-        code = pyg_syntax_hl(src, lang, guess_lang, inline)
+    try:
+        if _get_setting('mdpopus_use_sublime_highlighter'):
+            highlighter = _get_sublime_highlighter(view)
+            code = highlighter.syntax_highlight(src, lang, inline)
+        else:
+            code = pyg_syntax_hl(src, lang, guess_lang, inline)
+    except Exception:
+        _log(traceback.format_exc())
     return code
 
 
