@@ -23,7 +23,6 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR TH
 Original code has been heavily modifed by Isaac Muse <isaacmuse@gmail.com> for the ExportHtml project.
 """
 import sublime
-import sublime_plugin
 import re
 from .st_color_scheme_matcher import ColorSchemeMatcher
 from .st_mapping import lang_map
@@ -251,22 +250,8 @@ class SublimeHighlight(object):
         """Syntax Highlight."""
 
         self.view = sublime.active_window().get_output_panel('mdpopups')
-        self.view.run_command('mdpopups_code_view', {'src': src, 'lang': lang})
-        self.inline = inline
-        self.setup()
-        self.html = []
-        self.write_body()
-        return ''.join(self.html)
-
-
-class MdpopupsCodeViewCommand(sublime_plugin.TextCommand):
-    """Syntax Highlighting code view."""
-
-    def run(self, edit, src, lang='text'):
-        """Run command."""
-
+        self.view.run_command('insert', {'characters': src})
         lang = lang.lower()
-        self.view.replace(edit, sublime.Region(0, self.view.size()), src)
         user_map = sublime.load_settings('Preferences.sublime-settings').get('mdpopups_sublime_user_lang_map', {})
         for k, v in lang_map.items():
             user_v = user_map.get(k, (tuple(), tuple()))
@@ -279,8 +264,8 @@ class MdpopupsCodeViewCommand(sublime_plugin.TextCommand):
                         except Exception:
                             continue
                         self.view.set_syntax_file(sytnax_file)
-                        print(sytnax_file)
-
-
-sublime_plugin.text_command_classes.append(MdpopupsCodeViewCommand)
-store = MdpopupsCodeViewCommand
+        self.inline = inline
+        self.setup()
+        self.html = []
+        self.write_body()
+        return ''.join(self.html)
