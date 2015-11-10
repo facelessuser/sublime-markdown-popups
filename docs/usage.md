@@ -46,39 +46,39 @@ mdpopups.show_popup
 : 
     Accepts Markdown and creates a Sublime popup tooltip.
 
-    | Parameter | Required | Default | Description |
-    | --------- | -------- | ------- | ----------- |
-    | view | Yes | | A Sublime Text view object. |
-    | content | Yes | | Markdown/HTML content to be used to create a tooltip. |
-    | md | No | True | Defines whether the content is Markdown and needs to be converterted. |
-    | css | No | None | Additional CSS that will be injected. |
-    | flags | No | 0 | Flags to pass down to the Sublime Text `view.show_popup` call. |
-    | location | No | -1 | Location to show popup in view.  -1 means to show right under the first cursor. |
-    | max_width | No | 320 | Maximum width of the popup. |
-    | max_height | No | 240 | Maximum height of the popup. |
-    | on_navigate | No | None | Callback that receives one variable `href`. |
-    | on_hide | No | None | Callback for when teh tooltip is hidden. |
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | view | sublime.View | Yes | | A Sublime Text view object. |
+    | content | string | Yes | | Markdown/HTML content to be used to create a tooltip. |
+    | md | bool | No | True | Defines whether the content is Markdown and needs to be converterted. |
+    | css | string | No | None | Additional CSS that will be injected. |
+    | flags | int | No | 0 | Flags to pass down to the Sublime Text `view.show_popup` call. |
+    | location | int | No | -1 | Location to show popup in view.  -1 means to show right under the first cursor. |
+    | max_width | int | No | 320 | Maximum width of the popup. |
+    | max_height | int | No | 240 | Maximum height of the popup. |
+    | on_navigate | function | No | None | Callback that receives one variable `href`. |
+    | on_hide | function | No | None | Callback for when teh tooltip is hidden. |
 
 ## update_popup
 mdpopups.update_popup
 : 
     Updates the current existing popup.
 
-    | Parameter | Required | Default | Description |
-    | --------- | -------- | ------- | ----------- |
-    | view | Yes | | A Sublime Text view object. |
-    | content | Yes | | Markdown/HTML content to be used to create a tooltip. |
-    | md | No | True | Defines whether the content is Markdown and needs to be converterted. |
-    | css | No | None | CSS text that should be used instead of loading a theme. |
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | view | sublime.View | Yes | | A Sublime Text view object. |
+    | content | string | Yes | | Markdown/HTML content to be used to create a tooltip. |
+    | md | bool | No | True | Defines whether the content is Markdown and needs to be converterted. |
+    | css | string | No | None | CSS text that should be used instead of loading a theme. |
 
 ## hide_popup
 mdpopups.hide_popup
 : 
     Hides the current popup.  Included for convenience and consistency.
 
-    | Parameter | Required | Default | Description |
-    | --------- | -------- | ------- | ----------- |
-    | view | Yes | | A Sublime Text view object. |
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | view | sublime.View | Yes | | A Sublime Text view object. |
 
 ## clear_cache
 mdpopups.clear_cache
@@ -88,24 +88,24 @@ mdpopups.clear_cache
 ## md2html
 mdpopups.md2html
 : 
-    Exposes the Markdown to HTML converter in case it is desired to parse only a section of markdown.  This works well for someone who wants to work directly in HTML, but might want to still syntax highlight some code to insert into the HTML. Code highlighting will use either Pygments or the native Sublime syntax highlighter; this is controlled by [`mdpopups_use_sublime_highlighter`](#mdpopups_use_sublime_highlighter).
+    Exposes the Markdown to HTML converter in case it is desired to parse only a section of markdown.  This works well for someone who wants to work directly in HTML, but might want to still have fragments of markdown that they would like to occasionally convert. Code highlighting will use either Pygments or the native Sublime syntax highlighter; this is controlled by [`mdpopups_use_sublime_highlighter`](#mdpopups_use_sublime_highlighter).
 
-    | Parameter | Required | Default | Description |
-    | --------- | -------- | ------- | ----------- |
-    | view | Yes | | Sublime text View object. |
-    | markup | Yes | | The markup code to be converted. |
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | view | sublime.View |Yes | | Sublime text View object. |
+    | markup | bool | Yes | | The markup code to be converted. |
 
 ## syntax_highlight
 mdpopups.syntax_highlight
 : 
     Allows for syntax highlighting outside the Markdown environment.  You can just feed it code directly and give it the language of choice, and you will be returned a block of HTML that has been syntax highlighted.  `syntax_highlight` will use either Pygments or the native Sublime syntax highlighter; this is controlled by [`mdpopups_use_sublime_highlighter`](#mdpopups_use_sublime_highlighter).
 
-    | Parameter | Required | Default | Description |
-    | --------- | -------- | ------- | ----------- |
-    | view | Yes | | Sublime text View object. |
-    | markup | Yes | | The markup code to be converted. |
-    | language | No | None | Specifies the language to highlight as. |
-    | inline | No | False | Will return the code formatted for inline display. |
+    | Parameter | Type |Required | Default | Description |
+    | --------- | ---- | ------- | ------- | ----------- |
+    | view | sublime.View | Yes | | Sublime text View object. |
+    | markup | bool | Yes | | The markup code to be converted. |
+    | language | string | No | None | Specifies the language to highlight as. |
+    | inline | bool |No | False | Will return the code formatted for inline display. |
 
 # Global User Settings
 All settings for MdPopups` are placed in Sublime's `Preferences.sublime-settings`.  They are global and work no for whatever plugin uses the MdPopups API.
@@ -308,6 +308,13 @@ css
 
     ```css+jinja
     h1, h2, h3, h4, h5, h6 { color: #888888 }
+    ```
+
+    Some scopes might not be have colors assigned to them in a them, so multiple scopes can be defined, and the first one that matches will be used:
+
+    ```css+jinja
+    /* If `keyword.operator` is not explicitly used, fallback to `.keyword` */
+    h1, h2, h3, h4, h5, h6 { {{'.keyword.operator, .keyword'|css('color')}} }
     ```
 
 If desired you can convert a foreground color to a background color or vice versa.  To convert to a foreground color, you can use the `foreground` filter.  To convert to a background color, you can use tuse the `background` filter.
