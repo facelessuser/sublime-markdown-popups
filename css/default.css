@@ -1,8 +1,8 @@
 /*Style with current theme.*/
 {% if var.is_light %}
-html{ {{'.background'|css|brightness(0.9)}} }
+html{ {{'.background'|css('background-color')|brightness(0.9)}} }
 {% else %}
-html{ {{'.background'|css|brightness(1.1)}} }
+html{ {{'.background'|css('background-color')|brightness(1.1)}} }
 {% endif %}
 h1, h2, h3, h4, h5, h6 { {{'.string'|css}} }
 blockquote { {{'.comment'|css}} }
