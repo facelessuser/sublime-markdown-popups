@@ -298,14 +298,14 @@ def md2html(view, markup):
     ).convert(markup).replace('&quot;', '"').replace('\n', '')
 
 
-def syntax_highlight(view, src, lang=None, guess_lang=False, inline=False):
+def syntax_highlight(view, src, lang=None, inline=False):
     """Syntax highlighting for code."""
     try:
         if _get_setting('mdpopups_use_sublime_highlighter'):
             highlighter = _get_sublime_highlighter(view)
-            code = highlighter.syntax_highlight(src, lang, inline)
+            code = highlighter.syntax_highlight(src, lang, inline=inline)
         else:
-            code = pyg_syntax_hl(src, lang, guess_lang, inline)
+            code = pyg_syntax_hl(src, lang, inline=inline)
     except Exception:
         _log(traceback.format_exc())
     return code
