@@ -203,7 +203,7 @@ class Scheme2CSS(object):
             if len(parts) == 2 and parts[0] in ('background-color', 'color'):
                 bgcolor = self.colors.get('.background').get('background-color')
                 bgparts = [c.strip('; ') for c in bgcolor.split(':')]
-                rgba = RGBA(parts[1] + "%02f" % int(255 * factor))
+                rgba = RGBA(parts[1] + "%02f" % int(255.0 * max(min(float(factor), 1.0), 0.0)))
                 rgba.apply_alpha(bgparts[1])
                 return '%s: %s; ' % (parts[0], rgba.get_rgb())
         except Exception:
