@@ -60,7 +60,7 @@ mdpopups.show_popup
     | on_hide | function | No | None | Callback for when teh tooltip is hidden. |
 
 !!! caution "Developers Guidelines"
-    If injecting your own CSS class from a plugin, please namespace them by either giving them a very unique name (preferably with the plugin's name as part of the class) or use an additional namespace class (preferably with the plugin's name) and a specific class.  This way a user can target and override your class styling if desired.
+    If injecting your own CSS classes from a plugin, please namespace them by either giving them a very unique name (preferably with the plugin's name as part of the class) or use an additional namespace class (preferably with the plugin's name) and a specific class.  This way a user can target and override your class styling if desired.
 
     **Example - Unique Class Name**:
     ```css
@@ -406,7 +406,7 @@ saturation
     body { {{'.background'|css('background-color')|saturation(0.9)}} }
     ```
 
-    **Example - Lighten**:
+    **Example - Saturate**:
     ```css+jinja
     body { {{'.background'|css('background-color')|saturation(1.1)}} }
     ```
