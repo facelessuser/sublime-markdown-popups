@@ -222,11 +222,21 @@ class SublimeHighlight(object):
                         break
             if loaded:
                 break
+        if not loaded:
+            # Default to plain text
+            for ext in ST_LANGUAGES:
+                # Just in case text one day switches to 'sublime-syntax'
+                sytnax_file = 'Packages/Plain text%s' % ext
+                try:
+                    sublime.load_binary_resource(sytnax_file)
+                except Exception:
+                    continue
+                self.view.set_syntax_file(sytnax_file)
 
     def syntax_highlight(self, src, lang, hl_lines=[], inline=False):
         """Syntax Highlight."""
 
-        self.set_view(src, lang)
+        self.set_view(src, 'text' if lang is None else lang)
         self.inline = inline
         self.hl_lines = hl_lines
         self.setup()

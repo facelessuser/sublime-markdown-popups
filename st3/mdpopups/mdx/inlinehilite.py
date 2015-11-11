@@ -108,11 +108,11 @@ class SublimeInlineHtmlFormatter(HtmlFormatter):
                 else:
                     text += multi_space.sub(
                         replace_nbsp, m.group(2).replace('\t', ' ' * 4)
-                    ).replace('&#39;', '\'').replace('&quot;', '"')
+                    )
             if not matched:
                 text = multi_space.sub(
                     replace_nbsp, t.replace('\t', ' ' * 4)
-                ).replace('&#39;', '\'').replace('&quot;', '"')
+                )
             yield i, text
         yield 0, '</code>'
 
@@ -197,7 +197,7 @@ class InlineHilitePattern(Pattern):
             txt = src.replace('&', '&amp;')
             txt = txt.replace('<', '&lt;')
             txt = txt.replace('>', '&gt;')
-            # txt = txt.replace('"', '&quot;') Don't do this in sublime
+            txt = txt.replace('"', '&quot;')
             txt = multi_space.sub(replace_nbsp, txt.replace('\t', ' ' * 4))  # Special format for sublime.
 
             classes = [self.css_class] if self.css_class and process_text else []

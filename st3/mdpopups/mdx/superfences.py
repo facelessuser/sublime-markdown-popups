@@ -117,11 +117,11 @@ class SublimeBlockFormatter(HtmlFormatter):
                 else:
                     text += multi_space.sub(
                         replace_nbsp, m.group(2).replace('\t', ' ' * 4)
-                    ).replace('&#39;', '\'').replace('&quot;', '"')
+                    )
             if not matched:
                 text = multi_space.sub(
                     replace_nbsp, t.replace('\t', ' ' * 4)
-                ).replace('&#39;', '\'').replace('&quot;', '"')
+                )
             if i == 1:
                 # it's a line of formatted code
                 text += '<br>'
@@ -187,7 +187,7 @@ def _escape(txt):
     txt = txt.replace('&', '&amp;')
     txt = txt.replace('<', '&lt;')
     txt = txt.replace('>', '&gt;')
-    # txt = txt.replace('"', '&quot;') Not for sublime
+    txt = txt.replace('"', '&quot;')
     txt = multi_space.sub(replace_nbsp, txt.replace('\t', ' ' * 4))
     return txt
 

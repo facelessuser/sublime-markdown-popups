@@ -18,6 +18,7 @@ from .st_scheme_template import Scheme2CSS
 from .st_clean_css import clean_css
 from .st_pygments_highlight import syntax_hl as pyg_syntax_hl
 from .st_code_highlight import SublimeHighlight
+import re
 
 BASE_CSS = 'Packages/mdpopups/css/base.css'
 DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
@@ -27,6 +28,7 @@ IDK = '''
 <style>html {background-color: #333; color: red}</style>
 <div><p>¯\_(ツ)_/¯'</p></div>
 '''
+RE_BAD_ENTITIES = re.compile(r'(&(?!amp;|lt;|gt;|nbsp;)(?:\w+;|#\d+;))')
 
 
 def _log(msg):
@@ -223,6 +225,19 @@ def _get_theme(view, css=None):
     return base_css + _get_scheme_css(view, clean_css(css) if css else css)
 
 
+def _remove_entities(text):
+    """Remove unsupported HTML entities."""
+
+    import html.parser
+    html = html.parser.HTMLParser()
+
+    def repl(m):
+        """Replace entites except &, <, >, and nbsp."""
+        return html.unescape(m.group(1))
+
+    return RE_BAD_ENTITIES.sub(repl, text)
+
+
 def _create_html(view, content, md=True, css=None, debug=False):
     """Create html from content."""
 
@@ -247,7 +262,7 @@ def _create_html(view, content, md=True, css=None, debug=False):
         _log(content)
 
     html = "<style>%s</style>" % (style)
-    html += '<div class="content">%s</div>' % content
+    html += '<div class="content">%s</div>' % _remove_entities(content)
     return html
 
 
@@ -307,6 +322,7 @@ def color_box(colors, border, border2=None, height=32, width=32, border_size=1, 
 
 def syntax_highlight(view, src, language=None, inline=False):
     """Syntax highlighting for code."""
+
     try:
         if _get_setting('mdpopups_use_sublime_highlighter'):
             highlighter = _get_sublime_highlighter(view)
@@ -314,7 +330,9 @@ def syntax_highlight(view, src, language=None, inline=False):
         else:
             code = pyg_syntax_hl(src, language, inline=inline)
     except Exception:
+        code = src
         _log(traceback.format_exc())
+
     return code
 
 
