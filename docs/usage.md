@@ -95,6 +95,23 @@ mdpopups.md2html
     | view | sublime.View |Yes | | Sublime text View object. |
     | markup | bool | Yes | | The markup code to be converted. |
 
+
+## color_box
+mdpopups.color_box
+: 
+    Generates a color preview box image encoded in base64 and formated to be inserted right in your your Markdown or HTML code as an `img` tag.
+
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | colors | [string] | Yes | | A list of color strings formatted as `#RRGGBBAA` where `R` is the red channel, `G` is the green channel, `B` is the blue channel, and `A` is the alpha channel. |
+    | border | string | Yes | | The color for the color box border.  Input is a RGB color formatted as `#RRGGBB`. |
+    | border2 | string | No | None | The optional secondary border color.  This is great if you are going to have it on a light and dark backgrounds.  You can use a double border so the color stands out regardless of the background.  Input is a RGB color formatted as `#RRGGBB`. |
+    | height | int | No | 32 | Height of color box. |
+    | width | int | No | 32 | Width of color box. |
+    | border_size | int | No | 1 | Width of the color box border.  If using `border2`, the value should be set to at least 2 to see both colors. |
+    | check_size | int | No | 4 | Size of checkered box squares used for the background of transparent colors. |
+    | max_colors | int | No | 5 | Max number of colors that will be evaluated in the `colors` parameter.  Multiple colors are used to to create palette boxes showing multiple colors lined up horizontally. |
+
 ## syntax_highlight
 mdpopups.syntax_highlight
 : 

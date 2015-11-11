@@ -12,6 +12,7 @@ import sublime
 import markdown
 import traceback
 import time
+from . import colorbox
 from collections import OrderedDict
 from .st_scheme_template import Scheme2CSS
 from .st_clean_css import clean_css
@@ -296,6 +297,12 @@ def md2html(view, markup):
         extensions=extensions,
         extension_configs=configs
     ).convert(markup).replace('&quot;', '"').replace('\n', '')
+
+
+def color_box(colors, border, border2=None, height=32, width=32, border_size=1, check_size=4, max_colors=5):
+    """Color box."""
+
+    return colorbox.color_box(colors, border, border2, height, width, border_size, check_size, max_colors)
 
 
 def syntax_highlight(view, src, language=None, inline=False):
