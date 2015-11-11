@@ -59,6 +59,22 @@ mdpopups.show_popup
     | on_navigate | function | No | None | Callback that receives one variable `href`. |
     | on_hide | function | No | None | Callback for when teh tooltip is hidden. |
 
+!!! caution "Developers Guidelines"
+    If injecting your own CSS class from a plugin, please namespace them by either giving them a very unique name (preferably with the plugin's name as part of the class) or use an additional namespace class (preferably with the plugin's name) and a specific class.  This way a user can target and override your class styling if desired.
+
+    **Example - Unique Class Name**:
+    ```css
+    .myplugin-myclass { ... }
+    ```
+
+    **Example - Namespace Class**:
+    ```css
+    .myplugin.myclass { ... }
+    ```
+
+    Also, do not try to override the style of existing base classes and elements with plugin injection, but use custom plugin classes so that you will only target what your plugin as specifically added special classes to.
+
+
 ## update_popup
 mdpopups.update_popup
 : 
