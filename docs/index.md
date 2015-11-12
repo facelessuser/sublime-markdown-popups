@@ -8,7 +8,7 @@ Sublime Markdown Popups (mdpopups) is a library for Sublime Text plugins.  It ut
 
 Mdpopus provides both a dark and light CSS theme to style your popups, both of which can be overridden or extended.  Mdpopups will determine the brightness of your color scheme when deciding which theme to use.  If desired, a user can map their different color scheme files to custom tooltip CSS themes.
 
-![Screenshot](https://dl.dropboxusercontent.com/u/342698/sublime-markdown-tooltips/early_prototype.png)
+![Screenshot](images/tooltips_test.png)
 
 ## Features
 
