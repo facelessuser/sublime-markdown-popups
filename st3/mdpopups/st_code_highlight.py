@@ -30,6 +30,7 @@ from .st_mapping import lang_map
 INLINE_BODY_START = '<code class="inline-highlight">'
 BODY_START = '<div class="highlight"><pre>'
 LINE = '%(code)s<br>'
+INLINE_LINE = '%(code)s'
 CODE = '<span %(class)sstyle="color: %(color)s;">%(content)s</span>'
 CODEBG = '<span %(class)sstyle="background-color: %(highlight)s; color: %(color)s;">%(content)s</span>'
 BODY_END = '</pre></div>\n'
@@ -75,7 +76,7 @@ class SublimeHighlight(object):
     def print_line(self, line, num):
         """Print the line."""
 
-        html_line = LINE % {
+        html_line = (INLINE_LINE if self else LINE) % {
             "code": line,
         }
 
