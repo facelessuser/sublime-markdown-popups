@@ -136,7 +136,7 @@ mdpopups.syntax_highlight
     | Parameter | Type |Required | Default | Description |
     | --------- | ---- | ------- | ------- | ----------- |
     | view | sublime.View | Yes | | Sublime text View object. |
-    | src | bool | Yes | | The source code to be converted.  No ` ``` ` needed. |
+    | src | string | Yes | | The source code to be converted.  No ` ``` ` needed. |
     | language | string | No | None | Specifies the language to highlight as. |
     | inline | bool |No | False | Will return the code formatted for inline display. |
 
