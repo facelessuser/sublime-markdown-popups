@@ -131,12 +131,12 @@ mdpopups.color_box
 ### syntax_highlight
 mdpopups.syntax_highlight
 : 
-    Allows for syntax highlighting outside the Markdown environment.  You can just feed it code directly and give it the language of your choice, and you will be returned a block of HTML that has been syntax highlighted.  `syntax_highlight` will use either Pygments or the native Sublime syntax highlighter.  Set [`mdpopups_use_sublime_highlighter`](#mdpopups_use_sublime_highlighter) to `true` if you want to use the Sublime syntax highlighter.
+    Allows for syntax highlighting outside the Markdown environment.  You can just feed it code directly and give it the language of your choice, and you will be returned a block of HTML that has been syntax highlighted.  This does not have to be in markdown format.  Just give it plain text to convert to highlighted HTML. `syntax_highlight` will use either Pygments or the native Sublime syntax highlighter.  Set [`mdpopups_use_sublime_highlighter`](#mdpopups_use_sublime_highlighter) to `true` if you want to use the Sublime syntax highlighter.
 
     | Parameter | Type |Required | Default | Description |
     | --------- | ---- | ------- | ------- | ----------- |
     | view | sublime.View | Yes | | Sublime text View object. |
-    | markup | bool | Yes | | The markup code to be converted. |
+    | src | bool | Yes | | The source code to be converted.  No ` ``` ` needed. |
     | language | string | No | None | Specifies the language to highlight as. |
     | inline | bool |No | False | Will return the code formatted for inline display. |
 
