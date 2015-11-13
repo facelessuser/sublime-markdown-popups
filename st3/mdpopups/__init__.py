@@ -83,7 +83,7 @@ def _clear_cache():
 def is_cache_expired(cache_time):
     """Check if the cache entry is expired."""
 
-    delta_time = _get_setting('mdpopups_cache_refresh_time', 30)
+    delta_time = _get_setting('mdpopups.cache_refresh_time', 30)
     if not isinstance(delta_time, int) or delta_time < 0:
         delta_time = 30
     return time.time() - cache_time >= (delta_time * 60)
@@ -92,7 +92,7 @@ def is_cache_expired(cache_time):
 def prune_cache():
     """Prune older items in cache (related to when they were inserted)."""
 
-    limit = _get_setting('mdpopups_cache_limit', 10)
+    limit = _get_setting('mdpopups.cache_limit', 10)
     if limit is None or not isinstance(limit, int) or limit <= 0:
         limit = 10
     while len(_scheme_cache) >= limit:
@@ -159,7 +159,7 @@ def _get_user_css():
     """Get user css."""
     css = None
 
-    user_css = _get_setting('mdpopups_user_css', DEFAULT_USER_CSS)
+    user_css = _get_setting('mdpopups.user_css', DEFAULT_USER_CSS)
     try:
         css = clean_css(sublime.load_resource(user_css))
     except Exception:
@@ -272,7 +272,7 @@ def _create_html(view, content, md=True, css=None, debug=False):
 def md2html(view, markup):
     """Convert Markdown to HTML."""
 
-    if _get_setting('mdpopups_use_sublime_highlighter'):
+    if _get_setting('mdpopups.use_sublime_highlighter'):
         sublime_hl = (True, _get_sublime_highlighter(view))
     else:
         sublime_hl = (False, None)
@@ -324,7 +324,7 @@ def syntax_highlight(view, src, language=None, inline=False):
     """Syntax highlighting for code."""
 
     try:
-        if _get_setting('mdpopups_use_sublime_highlighter'):
+        if _get_setting('mdpopups.use_sublime_highlighter'):
             highlighter = _get_sublime_highlighter(view)
             code = highlighter.syntax_highlight(src, language, inline=inline)
         else:
@@ -351,8 +351,8 @@ def hide_popup(view):
 def update_popup(view, content, md=True, css=None):
     """Update the popup."""
 
-    debug = _get_setting('mdpopups_debug')
-    disabled = _get_setting('mdpopups_disable', False)
+    debug = _get_setting('mdpopups.debug')
+    disabled = _get_setting('mdpopups.disable', False)
     if disabled:
         if debug:
             _log('Popups disabled')
@@ -377,8 +377,8 @@ def show_popup(
 ):
     """Parse the color scheme if needed and show the styled pop-up."""
 
-    debug = _get_setting('mdpopups_debug')
-    disabled = _get_setting('mdpopups_disable', False)
+    debug = _get_setting('mdpopups.debug')
+    disabled = _get_setting('mdpopups.disable', False)
     if disabled:
         if debug:
             _log('Popups disabled')

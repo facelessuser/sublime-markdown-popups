@@ -206,7 +206,7 @@ class SublimeHighlight(object):
         self.view.run_command('insert', {'characters': src})
         # Setup the proper syntax
         lang = lang.lower()
-        user_map = sublime.load_settings('Preferences.sublime-settings').get('mdpopups_sublime_user_lang_map', {})
+        user_map = sublime.load_settings('Preferences.sublime-settings').get('mdpopups.sublime_user_lang_map', {})
         loaded = False
         for k, v in lang_map.items():
             user_v = user_map.get(k, (tuple(), tuple()))

@@ -44,7 +44,7 @@ MdPopups provides a handful of accessible functions.
 ### show_popup
 mdpopups.show_popup
 : 
-    Accepts Markdown and creates a Sublime popup tooltip.  By default, the Pygments syntax highlighter will be used for code highlighting.  Set [`mdpopups_use_sublime_highlighter`](#mdpopups_use_sublime_highlighter) to `true` in your `Preferences.sublime-settings` file if you would like to use the Sublime syntax highlighter.
+    Accepts Markdown and creates a Sublime popup tooltip.  By default, the Pygments syntax highlighter will be used for code highlighting.  Set [`mdpopups.use_sublime_highlighter`](#mdpopupsuse_sublime_highlighter) to `true` in your `Preferences.sublime-settings` file if you would like to use the Sublime syntax highlighter.
 
     | Parameter | Type | Required | Default | Description |
     | --------- | ---- | -------- | ------- | ----------- |
@@ -78,7 +78,7 @@ mdpopups.show_popup
 ## update_popup
 mdpopups.update_popup
 : 
-    Updates the current existing popup.  Set [`mdpopups_use_sublime_highlighter`](#mdpopups_use_sublime_highlighter) to `true` in your `Preferences.sublime-settings` file if you would like to use the Sublime syntax highlighter.
+    Updates the current existing popup.  Set [`mdpopups.use_sublime_highlighter`](#mdpopupsuse_sublime_highlighter) to `true` in your `Preferences.sublime-settings` file if you would like to use the Sublime syntax highlighter.
 
     | Parameter | Type | Required | Default | Description |
     | --------- | ---- | -------- | ------- | ----------- |
@@ -104,7 +104,7 @@ mdpopups.clear_cache
 ### md2html
 mdpopups.md2html
 : 
-    Exposes the Markdown to HTML converter in case it is desired to parse only a section of markdown.  This works well for someone who wants to work directly in HTML, but might want to still have fragments of markdown that they would like to occasionally convert. Code highlighting will use either Pygments or the native Sublime syntax highlighter.  Set [`mdpopups_use_sublime_highlighter`](#mdpopups_use_sublime_highlighter) to `true` if you want to use the Sublime syntax highlighter.
+    Exposes the Markdown to HTML converter in case it is desired to parse only a section of markdown.  This works well for someone who wants to work directly in HTML, but might want to still have fragments of markdown that they would like to occasionally convert. Code highlighting will use either Pygments or the native Sublime syntax highlighter.  Set [`mdpopups.use_sublime_highlighter`](#mdpopupsuse_sublime_highlighter) to `true` if you want to use the Sublime syntax highlighter.
 
     | Parameter | Type | Required | Default | Description |
     | --------- | ---- | -------- | ------- | ----------- |
@@ -131,7 +131,7 @@ mdpopups.color_box
 ### syntax_highlight
 mdpopups.syntax_highlight
 : 
-    Allows for syntax highlighting outside the Markdown environment.  You can just feed it code directly and give it the language of your choice, and you will be returned a block of HTML that has been syntax highlighted.  This does not have to be in markdown format.  Just give it plain text to convert to highlighted HTML. `syntax_highlight` will use either Pygments or the native Sublime syntax highlighter.  Set [`mdpopups_use_sublime_highlighter`](#mdpopups_use_sublime_highlighter) to `true` if you want to use the Sublime syntax highlighter.
+    Allows for syntax highlighting outside the Markdown environment.  You can just feed it code directly and give it the language of your choice, and you will be returned a block of HTML that has been syntax highlighted.  This does not have to be in markdown format.  Just give it plain text to convert to highlighted HTML. `syntax_highlight` will use either Pygments or the native Sublime syntax highlighter.  Set [`mdpopups.use_sublime_highlighter`](#mdpopupsuse_sublime_highlighter) to `true` if you want to use the Sublime syntax highlighter.
 
     | Parameter | Type |Required | Default | Description |
     | --------- | ---- | ------- | ------- | ----------- |
@@ -143,60 +143,60 @@ mdpopups.syntax_highlight
 ## Global User Settings
 All settings for MdPopups` are placed in Sublime's `Preferences.sublime-settings`.  They are global and work no for whatever plugin uses the MdPopups API.
 
-### mdpopups_debug
+### mdpopups.debug
 Turns on debug mode.  This will dump out all sorts of info to the console.  Such as content before parsing to HTML, final HTML output, etc.  This is more useful for plugin developers.
 
 ```js
-    "mdpopups_debug": true,
+    "mdpopups.debug": true,
 ```
 
-### mdpopups_disable
+### mdpopups.disable
 Global kill switch to prevent popups (created by MdPopups) from appearing.
 
 ```js
-    "mdpopups_disable": true,
+    "mdpopups.disable": true,
 ```
 
-### mdpopups_cache_refresh_time
+### mdpopups.cache_refresh_time
 Control how long a CSS theme file will be in the cache before being refreshed.  Value should be a positive integer greater than 0.  Units are in minutes.  Default is 30.
 
 ```js
-    "mdpopups_cache_refresh_time": 30,
+    "mdpopups.cache_refresh_time": 30,
 ```
 
-### mdpopups_cache_limit
+### mdpopups.cache_limit
 Control how many CSS theme files will be kept in cache at any given time.  Value should be a positive integer greater than or equal to 0.
 
 ```js
-    "mdpopups_cache_limit": 10
+    "mdpopups.cache_limit": 10
 ```
 
-### mdpopups_use_sublime_highlighter
+### mdpopups.use_sublime_highlighter
 Controls whether the Pygments or the native Sublime syntax highlighter is used for code highlighting.  This affects code highlighting in Markdown conversion] via and when [md2html](#md2html) and when code is directly processed using [syntax_highlight](#syntax_highlight). To learn more about the syntax highlighter see [Syntax Highlighting](#syntax-highlighting).
 
 ```js
-    "mdpopups_use_sublime_highlighter": true
+    "mdpopups.use_sublime_highlighter": true
 ```
 
-## mdpopups_user_css
+## mdpopups.user_css
 Overrides the default CSS theme.  Value should be a relative path pointing to the CSS theme file: `Packages/User/my_custom_theme.css`.  Slashes should be forward slashes. By default, it will point to `Packages/User/mdpopups.css`.
 
 ```js
-    "mdpopups_use_sublime_highlighter": "Packages/User/mdpopups.css"
+    "mdpopups.use_sublime_highlighter": "Packages/User/mdpopups.css"
 ```
 
-## mdpopups_sublime_user_lang_map
+## mdpopups.sublime_user_lang_map
 This is a special setting allowing the mapping of personal syntax languages which are not yet included or will not be included in the official mapping table.  You can either define your own new entry, or use the name of an existing entry to extend language keywords or syntax languages.  When extending, user keywords and languages will be cycled through first.
 
 ```js
-    'mdpopups_sublime_user_lang_map': {
+    'mdpopups.sublime_user_lang_map': {
         "language": (('keywords',), ('MyPackage/MySyntaxLanguage'))
     }
 ```
 
 **Example**:
 ```js
-'mdpopups_sublime_user_lang_map': {
+'mdpopups.sublime_user_lang_map': {
     'javascript': (('javascript', 'js'), ('JavaScript/JavaScript', 'JavaScriptNext - ES6 Syntax/JavaScriptNext'))
 }
 ```
@@ -298,7 +298,7 @@ MdPopups also needs both classes `#!css .highlgiht` and `#!css .inline-highlight
 ```
 
 ### Sublime Syntax Highlighter
-MdPopups can also use Sublime's internal syntax highlighter to highlight your code.  The benefit here is that you get code highlighting in your popup that matches your current theme.  The highlighting ability is dependent upon what syntax packages you have installed in Sublime.  It also depends on whether they are enabled and mapped to a language keyword.  Pull requests are welcome to expand and keep the [language mapping](https://github.com/facelessuser/sublime-markdown-popups/blob/master/st3/mdpopups/st_mapping.py) updated.  You can also define in your `Preferences.sublime-settings` file additional mappings to either personal syntax files, or while waiting for your mapping changes to be merged and released.  See [mdpopups_sublime_user_lang_map](#mdpopups_sublime_user_lang_map) for more info.
+MdPopups can also use Sublime's internal syntax highlighter to highlight your code.  The benefit here is that you get code highlighting in your popup that matches your current theme.  The highlighting ability is dependent upon what syntax packages you have installed in Sublime.  It also depends on whether they are enabled and mapped to a language keyword.  Pull requests are welcome to expand and keep the [language mapping](https://github.com/facelessuser/sublime-markdown-popups/blob/master/st3/mdpopups/st_mapping.py) updated.  You can also define in your `Preferences.sublime-settings` file additional mappings to either personal syntax files, or while waiting for your mapping changes to be merged and released.  See [`mdpopups.sublime_user_lang_map`](#mdpopupssublime_user_lang_map) for more info.
 
 In your CSS template it is usually a good idea to generically specify the code wrapper background colors.  With the [CSS templates](#css-templates), this is very easy:
 
@@ -311,7 +311,7 @@ MdPopups was design to give a universal way of displaying and styling tooltips v
 
 MdPopups provides a simple base CSS that styles the basic HTML tags that can be used in the Markdown parser.  On top of that it then parses your current Sublime color scheme and generates CSS that includes styling for all the [standard TextMate scopes](./textmate_scopes.md) (and only those listed scopes) found in your color scheme.  It then uses those scopes via in a default template to highlight your tooltips to match your current color scheme.
 
-Templates are used so that a user can easily tap into all the colors, color filters, and other usefull logic to control their tooltips in one place without having to hard code a specific CSS for a specific color scheme.  Even though a plugin can additionally insert new scopes on demand when calling the popup API, a user can override anything and everything by providing their own [CSS template](#mdpopups_user_css).  The template is fairly powerful and flexible.
+Templates are used so that a user can easily tap into all the colors, color filters, and other usefull logic to control their tooltips in one place without having to hard code a specific CSS for a specific color scheme.  Even though a plugin can additionally insert new scopes on demand when calling the popup API, a user can override anything and everything by providing their own [CSS template](#mdpopupsuser_css).  The template is fairly powerful and flexible.
 
 ## CSS Templates
 MdPoups provides a [`base.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/base.css) that formats the general look of the HTML elements (padding, size, etc.).  On top of that, it provides a [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css) template which applies more superficial styling such as colors, Pygments themes, etc.  It uses the Jinja2 template environment to give direct access to things like color scheme colors, names, and other useful information.  In general, `default.css` should provide most of what everyone **needs**.  But if you **want** greater control, you can create your own CSS template which MdPopups will use instead of `default.css`.
