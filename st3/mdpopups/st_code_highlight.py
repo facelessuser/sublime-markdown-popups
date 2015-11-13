@@ -76,7 +76,7 @@ class SublimeHighlight(object):
     def print_line(self, line, num):
         """Print the line."""
 
-        html_line = (INLINE_LINE if self else LINE) % {
+        html_line = (INLINE_LINE if self.inline else LINE) % {
             "code": line,
         }
 
