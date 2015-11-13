@@ -130,12 +130,17 @@ def _get_scheme_css(view, css):
     if not in cache or entry is expired in cache.
     """
     scheme = view.settings().get('color_scheme')
+    settings = sublime.load_settings("Preferences.sublime-settings")
     obj = None
     user_css = ''
     if scheme is not None:
         if scheme in _scheme_cache:
             obj, user_css, t = _scheme_cache[scheme]
-            if is_cache_expired(t):
+            # Check if cache expired or user changed pygments setting.
+            if (
+                is_cache_expired(t) or
+                obj.variables.get('use_pygments', True) != (not settings.get('mdpopups.use_sublime_highlighter', False))
+            ):
                 obj = None
                 user_css = ''
         if obj is None:

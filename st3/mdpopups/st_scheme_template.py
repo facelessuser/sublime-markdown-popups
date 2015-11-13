@@ -88,7 +88,10 @@ class Scheme2CSS(object):
         self.variables = {
             "is_dark": is_dark,
             "is_light": not is_dark,
-            "color_scheme": self.scheme_file
+            "color_scheme": self.scheme_file,
+            "use_pygments": not sublime.load_settings("Preferences.sublime-settings").get(
+                'mdpopups.use_sublime_highlighter', False
+            )
         }
         self.html_border = rgba.get_rgb()
         self.fground = self.strip_color(color_settings.get("foreground", '#000000'))
@@ -322,11 +325,8 @@ class Scheme2CSS(object):
 
     def apply_template(self, css):
         """Apply template to css."""
-        var = copy.copy(self.variables)
-        var['use_pygments'] = not sublime.load_settings("Preferences.sublime-settings").get(
-            'mdpopups.use_sublime_highlighter', False
-        )
-        return self.env.from_string(css).render(var=var, colors=self.colors)
+
+        return self.env.from_string(css).render(var=copy.copy(self.variables), colors=self.colors)
 
     def get_css(self):
         """Get css."""
