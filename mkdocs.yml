@@ -7,6 +7,7 @@ pages:
   - Installation: installation.md
   - User Guide: usage.md
   - TextMate Scopes: textmate_scopes.md
+  - F.A.Q: faq.md
   - Contributing &amp; Support: contributing.md
   - License: license.md
 theme: readthedocs

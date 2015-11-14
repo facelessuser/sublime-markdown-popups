@@ -218,7 +218,7 @@ Traditionally Pygments CSS classes are given not only syntax classes applied to 
 But the sublime CSS engine doesn't support parent and child classes like `#!css .highlight .w`; it supports either single or multiple classes on one element like `#!css .class1.class2`.  Because of this, the `#!css .highlight` class must be stripped out.
 
 ```css
-.w { color: #cccccc } /* Text.Whitespace
+.w { color: #cccccc } /* Text.Whitespace */
 ```
 
 MdPopups also needs both classes `#!css .highlgiht` and `#!css .inline-highlight` to be styled with the foreground and background color:
