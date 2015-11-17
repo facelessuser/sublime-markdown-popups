@@ -79,7 +79,10 @@ class Scheme2CSS(object):
     def parse_global(self):
         """Parse global settings."""
 
-        color_settings = self.plist_file["settings"][0]["settings"]
+        color_settings = {}
+        for item in self.plist_file["settings"]:
+            if item.get('scope', None) is None:
+                color_settings = item["settings"]
         # Get general theme colors from color scheme file
         self.bground = self.strip_color(color_settings.get("background", '#FFFFFF'), simple_strip=True)
         rgba = RGBA(self.bground)
@@ -106,13 +109,12 @@ class Scheme2CSS(object):
 
         # Create scope color mapping from color scheme file
         for item in self.plist_file["settings"]:
-            name = item.get('name', None)
             scope = item.get('scope', None)
             color = None
             bgcolor = None
 
             # Get font colors, backgrounds, and stylig
-            if scope and name and 'settings' in item:
+            if scope is not None and 'settings' in item:
                 for subscope in [subscope.strip() for subscope in scope.split(',')]:
                     if not re_textmate_scopes.match(subscope):
                         # Ignore complex scopes like:
