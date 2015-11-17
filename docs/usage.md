@@ -141,7 +141,7 @@ mdpopups.syntax_highlight
     | inline | bool |No | False | Will return the code formatted for inline display. |
 
 ## Global User Settings
-All settings for MdPopups` are placed in Sublime's `Preferences.sublime-settings`.  They are global and work no for whatever plugin uses the MdPopups API.
+All settings for `MdPopups` are placed in Sublime's `Preferences.sublime-settings`.  They are global and work no for whatever plugin uses the MdPopups API.
 
 ### mdpopups.debug
 Turns on debug mode.  This will dump out all sorts of info to the console.  Such as content before parsing to HTML, final HTML output, etc.  This is more useful for plugin developers.
@@ -178,14 +178,14 @@ Controls whether the Pygments or the native Sublime syntax highlighter is used f
     "mdpopups.use_sublime_highlighter": true
 ```
 
-## mdpopups.user_css
+### mdpopups.user_css
 Overrides the default CSS theme.  Value should be a relative path pointing to the CSS theme file: `Packages/User/my_custom_theme.css`.  Slashes should be forward slashes. By default, it will point to `Packages/User/mdpopups.css`.
 
 ```js
     "mdpopups.use_sublime_highlighter": "Packages/User/mdpopups.css"
 ```
 
-## mdpopups.sublime_user_lang_map
+### mdpopups.sublime_user_lang_map
 This is a special setting allowing the mapping of personal syntax languages which are not yet included or will not be included in the official mapping table.  You can either define your own new entry, or use the name of an existing entry to extend language keywords or syntax languages.  When extending, user keywords and languages will be cycled through first.
 
 ```js
