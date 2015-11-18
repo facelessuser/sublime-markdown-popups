@@ -87,8 +87,9 @@ class ColorSchemeMatcher(object):
 
         color_settings = {}
         for item in self.plist_file["settings"]:
-            if item.get('scope', None) is None:
+            if item.get('scope', None) is None and item.get('name', None) is None:
                 color_settings = item["settings"]
+                break
 
         # Get general theme colors from color scheme file
         self.bground, self.bground_sim = self.strip_color(
