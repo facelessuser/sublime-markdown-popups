@@ -122,13 +122,9 @@ def _get_sublime_highlighter(view):
     return obj
 
 
-def _get_scheme_css(view, css):
-    """
-    Get css from scheme.
+def _get_scheme(view):
+    """Get the scheme object and user CSS."""
 
-    Retrieve scheme if in cache, or compile CSS
-    if not in cache or entry is expired in cache.
-    """
     scheme = view.settings().get('color_scheme')
     settings = sublime.load_settings("Preferences.sublime-settings")
     obj = None
@@ -152,6 +148,18 @@ def _get_scheme_css(view, css):
             except Exception:
                 _log(traceback.format_exc())
                 pass
+    return obj, user_css
+
+
+def _get_scheme_css(view, css):
+    """
+    Get css from scheme.
+
+    Retrieve scheme if in cache, or compile CSS
+    if not in cache or entry is expired in cache.
+    """
+
+    obj, user_css = _get_scheme(view)
 
     try:
         return obj.get_css() + obj.apply_template(css) + user_css if obj is not None else ''
