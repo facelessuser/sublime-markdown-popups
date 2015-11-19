@@ -68,7 +68,11 @@ class RGBA(object):
         def tx_alpha(cf, af, cb, ab):
             """Translate the color channel with the alpha channel and background channel color."""
 
-            return int(abs(cf * (af / 255.0) + cb * (ab / 255.0) * (1 - (af / 255.0)))) & 0xFF
+            return int(
+                abs(
+                    cf * (af * RGB_CHANNEL_SCALE) + cb * (ab * RGB_CHANNEL_SCALE) * (1 - (af * RGB_CHANNEL_SCALE))
+                )
+            ) & 0xFF
 
         if self.a < 0xFF:
             r, g, b, a = self._split_channels(background)
@@ -83,6 +87,12 @@ class RGBA(object):
         """Get percieved luminance."""
 
         return clamp(int(round(0.299 * self.r + 0.587 * self.g + 0.114 * self.b)), 0, 255)
+
+    def get_true_luminance(self):
+        """"Get true liminance."""
+
+        l = self.tohls()[1]
+        return clamp(int(l * 255.0), 0, 255)
 
     def alpha(self, factor):
         """Adjust alpha."""
