@@ -127,6 +127,7 @@ mdpopups.color_box
     | border_size | int | No | 1 | Width of the color box border.  If using `border2`, the value should be set to at least 2 to see both colors. |
     | check_size | int | No | 4 | Size of checkered box squares used for the background of transparent colors. |
     | max_colors | int | No | 5 | Max number of colors that will be evaluated in the `colors` parameter.  Multiple colors are used to to create palette boxes showing multiple colors lined up horizontally. |
+    | alpha | bool | No | False | Will create color box images with a real alpha channel instead of simulating one with a checkered background. |
 
 ### syntax_highlight
 mdpopups.syntax_highlight
@@ -351,7 +352,7 @@ css
     h1, h2, h3, h4, h5, h6 { color: #888888 }
     ```
 
-    Some scopes might not be have colors assigned to them in a them, so multiple scopes can be defined, and the first one that matches will be used:
+    Some scopes might not have colors assigned to them, so multiple scopes can be defined, and the first one that matches will be used:
 
     ```css+jinja
     /* If `keyword.operator` is not explicitly used, fallback to `.keyword` */

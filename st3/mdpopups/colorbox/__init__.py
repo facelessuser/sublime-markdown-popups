@@ -18,28 +18,40 @@ DARK = 1
 __all__ = ('color_box',)
 
 
-def to_list(rgb):
+def to_list(rgb, alpha=False):
     """
     Break rgb channel itno a list.
 
     Take a color of the format #RRGGBBAA (alpha optional and will be stripped)
     and convert to a list with format [r, g, b].
     """
-    return [
-        int(rgb[1:3], 16),
-        int(rgb[3:5], 16),
-        int(rgb[5:7], 16)
-    ]
+    if alpha:
+        return [
+            int(rgb[1:3], 16),
+            int(rgb[3:5], 16),
+            int(rgb[5:7], 16),
+            int(rgb[7:9], 16) if len(rgb) > 7 else 255
+        ]
+    else:
+        return [
+            int(rgb[1:3], 16),
+            int(rgb[3:5], 16),
+            int(rgb[5:7], 16)
+        ]
 
 
 def checkered_color(color, background):
     """Mix color with the checkered color."""
+
     checkered = RGBA(color)
     checkered.apply_alpha(background)
     return checkered.get_rgb()
 
 
-def color_box(colors, border, border2=None, height=32, width=32, border_size=1, check_size=4, max_colors=5):
+def color_box(
+    colors, border="#000000", border2=None, height=32, width=32,
+    border_size=1, check_size=4, max_colors=5, alpha=False
+):
     """
     Generate palette preview.
 
@@ -64,9 +76,9 @@ def color_box(colors, border, border2=None, height=32, width=32, border_size=1, 
     preview_colors = []
     count = max_colors if len(colors) >= max_colors else len(colors)
 
-    border = to_list(border)
+    border = to_list(border, False)
     if border2 is not None:
-        border2 = to_list(border2)
+        border2 = to_list(border2, False)
 
     border1_size = border2_size = int(border_size / 2)
     border1_size += border_size % 2
@@ -76,16 +88,29 @@ def color_box(colors, border, border2=None, height=32, width=32, border_size=1, 
 
     if count:
         for c in range(0, count):
-            preview_colors.append(
-                (
-                    to_list(checkered_color(colors[c], CHECK_LIGHT)),
-                    to_list(checkered_color(colors[c], CHECK_DARK))
+            if alpha:
+                preview_colors.append(
+                    (
+                        to_list(colors[c], True),
+                        to_list(colors[c], True)
+                    )
                 )
-            )
+            else:
+                preview_colors.append(
+                    (
+                        to_list(checkered_color(colors[c], CHECK_LIGHT)),
+                        to_list(checkered_color(colors[c], CHECK_DARK))
+                    )
+                )
     else:
-        preview_colors.append(
-            (to_list(CHECK_LIGHT), to_list(CHECK_DARK))
-        )
+        if alpha:
+            preview_colors.append(
+                (to_list('#00000000'), to_list('#00000000'))
+            )
+        else:
+            preview_colors.append(
+                (to_list(CHECK_LIGHT), to_list(CHECK_DARK))
+            )
 
     color_height = height - (border_size * 2)
     color_width = width - (border_size * 2)
@@ -155,7 +180,7 @@ def color_box(colors, border, border2=None, height=32, width=32, border_size=1, 
     f = io.BytesIO()
 
     # Write out png
-    img = Writer(width, height)
+    img = Writer(width, height, alpha=alpha)
     img.write(f, p)
 
     # Read out png bytes and base64 encode
