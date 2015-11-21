@@ -20,6 +20,8 @@ from .st_pygments_highlight import syntax_hl as pyg_syntax_hl
 from .st_code_highlight import SublimeHighlight
 import re
 
+__version__ = (1, 3, 0)
+
 BASE_CSS = 'Packages/mdpopups/css/base.css'
 DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
 DEFAULT_USER_CSS = 'Packages/User/mdpopups.css'
@@ -282,6 +284,11 @@ def _create_html(view, content, md=True, css=None, debug=False):
 ##############################
 # Public functions
 ##############################
+def version():
+    """Get the current version."""
+
+    return __version__
+
 def md2html(view, markup):
     """Convert Markdown to HTML."""
 

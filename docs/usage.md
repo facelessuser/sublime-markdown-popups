@@ -41,6 +41,11 @@ MdPopups also includes a couple 3rd party extensions (some of which have been mo
 ## API Usage
 MdPopups provides a handful of accessible functions.
 
+### version
+mdpopups.version
+: 
+    Get the version of the MdPopups library.  Returns a tuple of integers which represents the major, minor, and patch version.
+
 ### show_popup
 mdpopups.show_popup
 : 
