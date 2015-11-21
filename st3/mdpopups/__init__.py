@@ -289,6 +289,7 @@ def version():
 
     return __version__
 
+
 def md2html(view, markup):
     """Convert Markdown to HTML."""
 
