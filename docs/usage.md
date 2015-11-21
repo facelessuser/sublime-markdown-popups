@@ -9,7 +9,7 @@ Your plugin must include the following Package Control dependencies:
 ```js
 {
     "*": {
-        ">=3000": [
+        ">=3080": [
             "pygments",
             "python-markdown",
             "mdpopups",
