@@ -329,13 +329,13 @@ def md2html(view, markup):
 
 def color_box(
     colors, border="#000000ff", border2=None, height=32, width=32,
-    border_size=1, check_size=4, max_colors=5, alpha=False
+    border_size=1, check_size=4, max_colors=5, alpha=False, border_map=0xF
 ):
     """Color box."""
 
     return colorbox.color_box(
         colors, border, border2, height, width,
-        border_size, check_size, max_colors, alpha
+        border_size, check_size, max_colors, alpha, border_map
     )
 
 

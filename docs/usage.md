@@ -128,6 +128,7 @@ mdpopups.color_box
     | check_size | int | No | 4 | Size of checkered box squares used for the background of transparent colors. |
     | max_colors | int | No | 5 | Max number of colors that will be evaluated in the `colors` parameter.  Multiple colors are used to to create palette boxes showing multiple colors lined up horizontally. |
     | alpha | bool | No | False | Will create color box images with a real alpha channel instead of simulating one with a checkered background. |
+    | border_map | int | No | 0xF | A mapping of which borders to show.  Where `0x1` is `TOP`, `0x2` is `LEFT`, `0x4` is `BOTTOM`, `0x8` is `RIGHT`.  Map flags can be accessed via `mdpopups.colorbox.TOP` etc. |
 
 ### syntax_highlight
 mdpopups.syntax_highlight

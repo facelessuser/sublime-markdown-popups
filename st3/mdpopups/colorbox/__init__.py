@@ -15,6 +15,14 @@ CHECK_DARK = "#CCCCCC"
 LIGHT = 0
 DARK = 1
 
+TOP = 1
+RIGHT = 2
+BOTTOM = 4
+LEFT = 8
+
+X = 0
+Y = 1
+
 __all__ = ('color_box',)
 
 
@@ -48,9 +56,26 @@ def checkered_color(color, background):
     return checkered.get_rgb()
 
 
+def get_border_size(dir, border_map):
+    """Get size of border map."""
+
+    size = 0
+    if dir == X:
+        if border_map & LEFT:
+            size += 1
+        if border_map & RIGHT:
+            size += 1
+    elif dir == Y:
+        if border_map & TOP:
+            size += 1
+        if border_map & BOTTOM:
+            size += 1
+    return size
+
+
 def color_box(
     colors, border="#000000", border2=None, height=32, width=32,
-    border_size=1, check_size=4, max_colors=5, alpha=False
+    border_size=1, check_size=4, max_colors=5, alpha=False, border_map=0xF
 ):
     """
     Generate palette preview.
@@ -112,8 +137,8 @@ def color_box(
                 (to_list(CHECK_LIGHT), to_list(CHECK_DARK))
             )
 
-    color_height = height - (border_size * 2)
-    color_width = width - (border_size * 2)
+    color_height = height - (border_size * get_border_size(Y, border_map))
+    color_width = width - (border_size * get_border_size(X, border_map))
 
     if count:
         dividers = int(color_width / count)
@@ -122,21 +147,34 @@ def color_box(
     else:
         dividers = 0
 
-    color_size_x = width - (border_size * 2)
+    color_size_x = color_width
 
     p = []
 
     # Top Border
-    for x in range(0, border1_size):
-        row = list(border * width)
-        p.append(row)
-    for x in range(0, border2_size):
-        row = list(border * border1_size)
-        row += list(border2 * border2_size)
-        row += list(border2 * color_width)
-        row += list(border2 * border2_size)
-        row += list(border * border1_size)
-        p.append(row)
+    if border_map & TOP:
+        for x in range(0, border1_size):
+            row = list(border * width)
+            p.append(row)
+        for x in range(0, border2_size):
+            row = []
+            if border_map & LEFT and border_map & RIGHT:
+                row += list(border * border1_size)
+                row += list(border2 * border2_size)
+                row += list(border2 * color_width)
+                row += list(border2 * border2_size)
+                row += list(border * border1_size)
+            elif border_map & RIGHT:
+                row += list(border2 * color_width)
+                row += list(border2 * border2_size)
+                row += list(border * border1_size)
+            elif border_map & LEFT:
+                row += list(border * border1_size)
+                row += list(border2 * border2_size)
+                row += list(border2 * color_width)
+            else:
+                row += list(border2 * color_width)
+            p.append(row)
 
     check_color_y = DARK
     for y in range(0, color_height):
@@ -145,9 +183,11 @@ def color_box(
             check_color_y = DARK if check_color_y == LIGHT else LIGHT
 
         # Left border
-        row = list(border * border1_size)
-        if border2:
-            row += list(border2 * border2_size)
+        row = []
+        if border_map & LEFT:
+            row += list(border * border1_size)
+            if border2:
+                row += list(border2 * border2_size)
 
         check_color_x = check_color_y
         for x in range(0, color_size_x):
@@ -157,24 +197,38 @@ def color_box(
                 check_color_x = DARK if check_color_x == LIGHT else LIGHT
             row += (preview_colors[index][1] if check_color_x == DARK else preview_colors[index][0])
 
-        # Right border
-        if border2:
-            row += list(border2 * border2_size)
-        row += list(border * border1_size)
+        if border_map & RIGHT:
+            # Right border
+            if border2:
+                row += list(border2 * border2_size)
+            row += list(border * border1_size)
 
         p.append(row)
 
-    # Bottom border
-    for x in range(0, border2_size):
-        row = list(border * border1_size)
-        row += list(border2 * border2_size)
-        row += list(border2 * color_width)
-        row += list(border2 * border2_size)
-        row += list(border * border1_size)
-        p.append(row)
-    for x in range(0, border1_size):
-        row = list(border * width)
-        p.append(row)
+    if border_map & BOTTOM:
+        # Bottom border
+        for x in range(0, border2_size):
+            row = []
+            if border_map & LEFT and border_map & RIGHT:
+                row += list(border * border1_size)
+                row += list(border2 * border2_size)
+                row += list(border2 * color_width)
+                row += list(border2 * border2_size)
+                row += list(border * border1_size)
+            elif border_map & LEFT:
+                row += list(border * border1_size)
+                row += list(border2 * border2_size)
+                row += list(border2 * color_width)
+            elif border_map & RIGHT:
+                row += list(border2 * color_width)
+                row += list(border2 * border2_size)
+                row += list(border * border1_size)
+            else:
+                row += list(border2 * color_width)
+            p.append(row)
+        for x in range(0, border1_size):
+            row = list(border * width)
+            p.append(row)
 
     # Create bytes buffer for png
     f = io.BytesIO()
