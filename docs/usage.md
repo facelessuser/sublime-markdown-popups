@@ -11,9 +11,9 @@ Your plugin must include the following Package Control dependencies:
     "*": {
         ">=3000": [
             "pygments",
-            "markdown",
+            "python-markdown",
             "mdpopups",
-            "jinja2",
+            "python-jinja2",
             "markupsafe"
         ]
     }
