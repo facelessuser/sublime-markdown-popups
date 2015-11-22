@@ -8,14 +8,13 @@ h1, h2, h3, h4, h5, h6 { {{'.string'|css}} }
 blockquote { {{'.comment'|css}} }
 a { {{'.support.function'|css('color')}} }
 hr { {{'.comment'|css('color')|background}} }
-body { padding: 1em; {{'.foreground'|css}}{{'.background'|css}} }
-.admonition { padding: 1em; {{ '.support.function'|css('color')|background|fade(0.8) }} }
+body { {{'.foreground'|css}}{{'.background'|css}} }
+.admonition { {{ '.support.function'|css('color')|background|fade(0.8) }} }
 .hint, .tip { {{ '.keyword'|css('color')|background|fade(0.8) }} }
 .danger, .error { {{ '.entity.name.tag'|css('color')|background|fade(0.8) }} }
 .important, .attention { {{ '.string'|css('color')|background|fade(0.8) }} }
 .caution, .warning { {{ '.constant.numeric'|css('color')|background|fade(0.8) }} }
 .note { {{ '.variable.language'|css('color')|background|fade(0.8) }} }
-.highlight{ padding: 1em; }
 {% if var.use_pygments %}
 {% if var.is_light %}
 {{'default'|pygments}}
