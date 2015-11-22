@@ -33,7 +33,7 @@ blockquote, ol, ul, dl, p, div {
     margin-right: 0;
     padding: 0.1em;
 }
-ul, ol { margin-left: 1em; }
+ul, ol { margin-left: 1.5em; }
 /* Special classes */
 .highlight { padding: 0.5em; }
 .admonition { padding: 0.5em; }
