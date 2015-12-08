@@ -33,10 +33,7 @@ from __future__ import unicode_literals
 from markdown.extensions import Extension
 from markdown.preprocessors import Preprocessor
 from markdown.blockprocessors import CodeBlockProcessor
-try:
-    from markdown.extensions.codehilite import CodeHilite, CodeHiliteExtension, parse_hl_lines
-except Exception:
-    CodeHilite = None
+from markdown.extensions.codehilite import CodeHilite, CodeHiliteExtension, parse_hl_lines
 try:
     from pygments import highlight
     from pygments.lexers import get_lexer_by_name, guess_lexer
@@ -281,12 +278,12 @@ class SuperFencesCodeExtension(Extension):
         if not hasattr(md, "superfences"):
             md.superfences = []
         md.superfences.insert(0, sf_entry)
-        if config.get("uml_flow", False):  # Disable for Sublime Text
+        if config.get("uml_flow", True):
             extend_super_fences(
                 md, "flow", "flow",
                 lambda s, l, c="uml-flowchart": uml_format(s, l, c)
             )
-        if config.get("uml_sequence", False):  # Disable for Sublime Text
+        if config.get("uml_sequence", True):
             extend_super_fences(
                 md, "sequence", "sequence",
                 lambda s, l, c="uml-sequence-diagram": uml_format(s, l, c)
@@ -358,11 +355,10 @@ class SuperFencesBlockPreprocessor(Preprocessor):
         """Check for code hilite extension to get its config."""
 
         if not self.checked_for_codehilite:
-            if CodeHilite:
-                for ext in self.markdown.registeredExtensions:
-                    if isinstance(ext, CodeHiliteExtension):
-                        self.codehilite_conf = ext.config
-                        break
+            for ext in self.markdown.registeredExtensions:
+                if isinstance(ext, CodeHiliteExtension):
+                    self.codehilite_conf = ext.config
+                    break
             self.checked_for_codehilite = True
 
     def clear(self):
@@ -389,7 +385,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
         elif len(m.group(1)) != self.ws_len and m.group(2) != '':
             # Not indented enough
             self.clear()
-        elif self.fence_end.match(m.group(0)) is not None:
+        elif self.fence_end.match(m.group(0)) is not None and not m.group(2).startswith(' '):
             # End of fence
             self.process_nested_block(m, start, end)
         else:

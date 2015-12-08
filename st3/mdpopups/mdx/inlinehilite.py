@@ -39,10 +39,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import Pattern
-try:
-    from markdown.extensions import codehilite
-except:
-    codehilite = None
+from markdown.extensions import codehilite
 # import traceback
 try:
     from pygments import highlight
@@ -155,7 +152,7 @@ class InlineHilitePattern(Pattern):
             self.use_pygments = self.config['use_pygments']
             self.use_codehilite_settings = self.config['use_codehilite_settings']
             self.style_plain_text = self.config['style_plain_text']
-            if codehilite and self.use_codehilite_settings:
+            if self.use_codehilite_settings:
                 for ext in self.markdown.registeredExtensions:
                     if isinstance(ext, codehilite.CodeHiliteExtension):
                         self.guess_lang = ext.config['guess_lang'][0]
@@ -169,7 +166,9 @@ class InlineHilitePattern(Pattern):
     def codehilite(self, lang, src):
         """Syntax highlite the inline code block."""
 
-        process_text = self.style_plain_text or lang != 'text'
+        process_text = self.style_plain_text or lang or self.guess_lang
+        if not lang and self.style_plain_text and not self.guess_lang:
+            lang = 'text'
         sublime_hl_enabled, sublime_hl = self.config.get("sublime_hl", None)
         if sublime_hl_enabled:
             code = sublime_hl.syntax_highlight(src, lang, inline=True)
@@ -213,7 +212,7 @@ class InlineHilitePattern(Pattern):
     def handleMatch(self, m):
         """Handle the pattern match."""
 
-        lang = m.group('lang') if m.group('lang') else 'text'
+        lang = m.group('lang') if m.group('lang') else ''
         src = m.group('code').strip()
         self.get_settings()
         return self.codehilite(lang, src)
