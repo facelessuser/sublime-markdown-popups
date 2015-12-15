@@ -20,7 +20,8 @@ from .st_pygments_highlight import syntax_hl as pyg_syntax_hl
 from .st_code_highlight import SublimeHighlight
 import re
 
-__version__ = (1, 3, 3)
+version_info = (1, 3, 4)
+__version__ = '.'.join([str(x) for x in version_info])
 
 BASE_CSS = 'Packages/mdpopups/css/base.css'
 DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
@@ -36,7 +37,14 @@ RE_BAD_ENTITIES = re.compile(r'(&(?!amp;|lt;|gt;|nbsp;)(?:\w+;|#\d+;))')
 def _log(msg):
     """Log."""
 
-    print('MarkdownPopup: %s' % msg)
+    print('MarkdownPopup: %s' % str(msg))
+
+
+def _debug(msg):
+    """Debug log."""
+
+    if _get_setting('mdpopups.debug', False):
+        _log(msg)
 
 
 def _get_setting(name, default=None):
@@ -82,16 +90,16 @@ def _clear_cache():
     _highlighter_cache = OrderedDict()
 
 
-def is_cache_expired(cache_time):
+def _is_cache_expired(cache_time):
     """Check if the cache entry is expired."""
 
     delta_time = _get_setting('mdpopups.cache_refresh_time', 30)
     if not isinstance(delta_time, int) or delta_time < 0:
         delta_time = 30
-    return time.time() - cache_time >= (delta_time * 60)
+    return delta_time == 0 or (time.time() - cache_time) >= (delta_time * 60)
 
 
-def prune_cache():
+def _prune_cache():
     """Prune older items in cache (related to when they were inserted)."""
 
     limit = _get_setting('mdpopups.cache_limit', 10)
@@ -111,15 +119,16 @@ def _get_sublime_highlighter(view):
     if scheme is not None:
         if scheme in _highlighter_cache:
             obj, t = _highlighter_cache[scheme]
-            if is_cache_expired(t):
+            if _is_cache_expired(t):
                 obj = None
         if obj is None:
             try:
                 obj = SublimeHighlight(scheme)
-                prune_cache()
+                _prune_cache()
                 _highlighter_cache[scheme] = (obj, time.time())
             except Exception:
-                _log(traceback.format_exc())
+                _log('Failed to get Sublime highlighter object!')
+                _debug(traceback.format_exc())
                 pass
     return obj
 
@@ -136,7 +145,7 @@ def _get_scheme(view):
             obj, user_css, t = _scheme_cache[scheme]
             # Check if cache expired or user changed pygments setting.
             if (
-                is_cache_expired(t) or
+                _is_cache_expired(t) or
                 obj.variables.get('use_pygments', True) != (not settings.get('mdpopups.use_sublime_highlighter', False))
             ):
                 obj = None
@@ -144,11 +153,12 @@ def _get_scheme(view):
         if obj is None:
             try:
                 obj = Scheme2CSS(scheme)
-                prune_cache()
+                _prune_cache()
                 user_css = obj.apply_template(_get_user_css())
                 _scheme_cache[scheme] = (obj, user_css, time.time())
             except Exception:
-                _log(traceback.format_exc())
+                _log('Failed to convert/retrieve scheme to CSS!')
+                _debug(traceback.format_exc())
                 pass
     return obj, user_css
 
@@ -166,7 +176,8 @@ def _get_scheme_css(view, css):
     try:
         return obj.get_css() + obj.apply_template(css) + user_css if obj is not None else ''
     except Exception:
-        _log(traceback.format_exc())
+        _log('Failed to retrieve scheme CSS!')
+        _debug(traceback.format_exc())
         return ''
 
 
@@ -227,7 +238,8 @@ class _MdWrapper(markdown.Markdown):
                     )
             except Exception:
                 # We want to gracefully continue even if an extension fails.
-                _log(str(traceback.format_exc()))
+                _log('Failed to load markdown module!')
+                _debug(traceback.format_exc())
 
         return self
 
@@ -256,6 +268,7 @@ def _remove_entities(text):
 def _create_html(view, content, md=True, css=None, debug=False):
     """Create html from content."""
 
+    debug = _get_setting('mdpopups.debug', False)
     if debug:
         _log('=====Content=====')
         _log(content)
@@ -287,7 +300,7 @@ def _create_html(view, content, md=True, css=None, debug=False):
 def version():
     """Get the current version."""
 
-    return __version__
+    return version_info
 
 
 def md2html(view, markup):
@@ -358,7 +371,8 @@ def syntax_highlight(view, src, language=None, inline=False):
             code = pyg_syntax_hl(src, language, inline=inline)
     except Exception:
         code = src
-        _log(traceback.format_exc())
+        _log('Failed to highlight code!')
+        _debug(traceback.format_exc())
 
     return code
 
@@ -378,18 +392,16 @@ def hide_popup(view):
 def update_popup(view, content, md=True, css=None):
     """Update the popup."""
 
-    debug = _get_setting('mdpopups.debug')
     disabled = _get_setting('mdpopups.disable', False)
     if disabled:
-        if debug:
-            _log('Popups disabled')
+        _debug('Popups disabled')
         return
 
     if not _can_show(view):
         return
 
     try:
-        html = _create_html(view, content, md, css, debug)
+        html = _create_html(view, content, md, css)
     except Exception:
         _log(traceback.format_exc())
         html = IDK
@@ -404,18 +416,16 @@ def show_popup(
 ):
     """Parse the color scheme if needed and show the styled pop-up."""
 
-    debug = _get_setting('mdpopups.debug')
     disabled = _get_setting('mdpopups.disable', False)
     if disabled:
-        if debug:
-            _log('Popups disabled')
+        _debug('Popups disabled')
         return
 
     if not _can_show(view):
         return
 
     try:
-        html = _create_html(view, content, md, css, debug)
+        html = _create_html(view, content, md, css)
     except Exception:
         _log(traceback.format_exc())
         html = IDK
