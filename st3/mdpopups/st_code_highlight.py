@@ -237,7 +237,7 @@ class SublimeHighlight(object):
     def syntax_highlight(self, src, lang, hl_lines=[], inline=False):
         """Syntax Highlight."""
 
-        self.set_view(src, 'text' if lang is None else lang)
+        self.set_view(src, 'text' if not lang else lang)
         self.inline = inline
         self.hl_lines = hl_lines
         self.setup()
