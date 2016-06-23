@@ -11,9 +11,9 @@ hr { {{'.comment'|css('color')|background}} }
 body { {{'.foreground'|css}}{{'.background'|css}} }
 .admonition { {{ '.support.function'|css('color')|background|fade(0.8) }} }
 .hint, .tip { {{ '.keyword'|css('color')|background|fade(0.8) }} }
-.danger, .error { {{ '.entity.name.tag'|css('color')|background|fade(0.8) }} }
+.danger { {{ '.entity.name.tag'|css('color')|background|fade(0.8) }} }
 .important, .attention { {{ '.string'|css('color')|background|fade(0.8) }} }
-.caution, .warning { {{ '.constant.numeric'|css('color')|background|fade(0.8) }} }
+.caution { {{ '.constant.numeric'|css('color')|background|fade(0.8) }} }
 .note { {{ '.variable.language'|css('color')|background|fade(0.8) }} }
 {% if var.use_pygments %}
 {% if var.is_light %}
