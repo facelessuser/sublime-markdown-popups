@@ -207,11 +207,13 @@ class SublimeHighlight(object):
         # Setup the proper syntax
         lang = lang.lower()
         user_map = sublime.load_settings('Preferences.sublime-settings').get('mdpopups.sublime_user_lang_map', {})
+        keys = set(list(user_map.keys()) + list(lang_map.keys()))
         loaded = False
-        for k, v in lang_map.items():
-            user_v = user_map.get(k, (tuple(), tuple()))
-            if lang in (user_v[0] + v[0]):
-                for l in (user_v[1] + v[1]):
+        for key in keys:
+            v = lang_map.get(key, (tuple(), tuple()))
+            user_v = user_map.get(key, (tuple(), tuple()))
+            if lang in (tuple(user_v[0]) + v[0]):
+                for l in (tuple(user_v[1]) + v[1]):
                     for ext in ST_LANGUAGES:
                         sytnax_file = 'Packages/%s%s' % (l, ext)
                         try:
@@ -220,6 +222,8 @@ class SublimeHighlight(object):
                             continue
                         self.view.set_syntax_file(sytnax_file)
                         loaded = True
+                        break
+                    if loaded:
                         break
             if loaded:
                 break
