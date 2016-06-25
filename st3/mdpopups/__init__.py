@@ -370,7 +370,6 @@ def get_language_from_view(view):
     """Guess current language from view."""
 
     lang = None
-    done = False
     user_map = sublime.load_settings('Preferences.sublime-settings').get('mdpopups.sublime_user_lang_map', {})
     syntax = os.path.splitext(view.settings().get('syntax').replace('Packages/', '', 1))[0]
     keys = set(list(lang_map.keys()) + list(user_map.keys()))
