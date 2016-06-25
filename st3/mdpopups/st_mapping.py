@@ -11,6 +11,7 @@ lang_map = {
     'c++': (('c++', 'cpp'), ('C++/C++',)),
     'c#': (('csharp', 'c#'), ('C#/C#',)),
     'clojure': (('clojure', 'clj'), ('Clojure/Clojure',)),
+    'cmake': (('cmake',), ('CMake/CMake',)),
     'css': (('css',), ('CSS/CSS',)),
     'd': (('d',), ('D/D',)),
     'diff': (('diff',), ('Diff/Diff',)),
