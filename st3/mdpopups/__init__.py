@@ -20,7 +20,7 @@ from .st_pygments_highlight import syntax_hl as pyg_syntax_hl
 from .st_code_highlight import SublimeHighlight
 import re
 
-version_info = (1, 3, 4)
+version_info = (1, 4, 2)
 __version__ = '.'.join([str(x) for x in version_info])
 
 BASE_CSS = 'Packages/mdpopups/css/base.css'
