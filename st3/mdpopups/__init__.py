@@ -69,7 +69,7 @@ def _can_show(view, location=-1):
         region = view.visible_region()
         if region.begin() > location or region.end() < location:
             can_show = False
-    if len(sel) >= 1:
+    elif len(sel) >= 1:
         region = view.visible_region()
         if region.begin() > sel[0].b or region.end() < sel[0].b:
             can_show = False
