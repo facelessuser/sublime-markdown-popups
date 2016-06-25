@@ -147,6 +147,15 @@ mdpopups.syntax_highlight
     | language | string | No | None | Specifies the language to highlight as. |
     | inline | bool |No | False | Will return the code formatted for inline display. |
 
+## get_language_from_view
+mdpopups.get_language_from_view
+: 
+    Allows a user to extract the equivalent language specifier for `mdpopups.syntax_highlight` from a view.  If the language cannot be determined, `None` will be returned.
+
+    | Parameter | Type |Required | Default | Description |
+    | --------- | ---- | ------- | ------- | ----------- |
+    | view | sublime.View | Yes | | Sublime text View object. |
+
 ## Global User Settings
 All settings for `MdPopups` are placed in Sublime's `Preferences.sublime-settings`.  They are global and work no for whatever plugin uses the MdPopups API.
 

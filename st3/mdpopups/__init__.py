@@ -18,9 +18,11 @@ from .st_scheme_template import Scheme2CSS
 from .st_clean_css import clean_css
 from .st_pygments_highlight import syntax_hl as pyg_syntax_hl
 from .st_code_highlight import SublimeHighlight
+from .st_mapping import lang_map
 import re
+import os
 
-version_info = (1, 4, 3)
+version_info = (1, 4, 4)
 __version__ = '.'.join([str(x) for x in version_info])
 
 BASE_CSS = 'Packages/mdpopups/css/base.css'
@@ -362,6 +364,23 @@ def color_box(
         colors, border, border2, height, width,
         border_size, check_size, max_colors, alpha, border_map
     )
+
+
+def get_language_from_view(view):
+    """Guess current language from view."""
+
+    lang = None
+    done = False
+    user_map = sublime.load_settings('Preferences.sublime-settings').get('mdpopups.sublime_user_lang_map', {})
+    syntax = os.path.splitext(view.settings().get('syntax').replace('Packages/', '', 1))[0]
+    keys = set(list(lang_map.keys()) + list(user_map.keys()))
+    for key in keys:
+        v1 = lang_map.get(key, (tuple(), tuple()))[1]
+        v2 = user_map.get(key, (tuple(), tuple()))[1]
+        if syntax in (tuple(v2) + v1):
+            lang = key
+            break
+    return lang
 
 
 def syntax_highlight(view, src, language=None, inline=False):
