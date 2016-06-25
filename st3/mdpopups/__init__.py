@@ -22,7 +22,7 @@ from .st_mapping import lang_map
 import re
 import os
 
-version_info = (1, 4, 4)
+version_info = (1, 5, 0)
 __version__ = '.'.join([str(x) for x in version_info])
 
 BASE_CSS = 'Packages/mdpopups/css/base.css'
