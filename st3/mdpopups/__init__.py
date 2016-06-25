@@ -53,7 +53,7 @@ def _get_setting(name, default=None):
     return sublime.load_settings('Preferences.sublime-settings').get(name, default)
 
 
-def _can_show(view):
+def _can_show(view, location=-1):
     """
     Check if popup can be shown.
 
@@ -65,6 +65,10 @@ def _can_show(view):
 
     can_show = True
     sel = view.sel()
+    if location >= 0:
+        region = view.visible_region()
+        if region.begin() > location or region.end() < location:
+            can_show = False
     if len(sel) >= 1:
         region = view.visible_region()
         if region.begin() > sel[0].b or region.end() < sel[0].b:
@@ -397,9 +401,6 @@ def update_popup(view, content, md=True, css=None):
         _debug('Popups disabled')
         return
 
-    if not _can_show(view):
-        return
-
     try:
         html = _create_html(view, content, md, css)
     except Exception:
@@ -421,7 +422,7 @@ def show_popup(
         _debug('Popups disabled')
         return
 
-    if not _can_show(view):
+    if not _can_show(view, location):
         return
 
     try:
