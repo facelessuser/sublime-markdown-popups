@@ -2,7 +2,7 @@
 """
 Markdown popup.
 
-A markdown tooltip for SublimeText.
+Markdown tooltips and phantoms for SublimeText.
 
 TextMate theme to CSS.
 
@@ -25,8 +25,10 @@ import os
 version_info = (1, 5, 0)
 __version__ = '.'.join([str(x) for x in version_info])
 
+PHANTOM_SUPPORT = int(sublime.version()) >= 3118
 BASE_CSS = 'Packages/mdpopups/css/base.css'
-DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
+DEFAULT_CSS = 'Packages/mdpopups/css/popups.css'
+DEFAULT_PHANTOM_CSS = 'Packages/mdpopups/css/phantoms.css'
 DEFAULT_USER_CSS = 'Packages/User/mdpopups.css'
 base_css = None
 IDK = '''
@@ -34,6 +36,8 @@ IDK = '''
 <div><p>¯\_(ツ)_/¯'</p></div>
 '''
 RE_BAD_ENTITIES = re.compile(r'(&(?!amp;|lt;|gt;|nbsp;)(?:\w+;|#\d+;))')
+POPUP = 0
+PHANTOM = 1
 
 
 def _log(msg):
@@ -139,37 +143,40 @@ def _get_sublime_highlighter(view):
     return obj
 
 
-def _get_scheme(view):
+def _get_scheme(view, css_type=POPUP):
     """Get the scheme object and user CSS."""
 
     scheme = view.settings().get('color_scheme')
     settings = sublime.load_settings("Preferences.sublime-settings")
     obj = None
-    user_css = ''
+    popup_user_css = ''
+    phantom_user_css = ''
     if scheme is not None:
         if scheme in _scheme_cache:
-            obj, user_css, t = _scheme_cache[scheme]
+            obj, popup_user_css, phantom_user_css, t = _scheme_cache[scheme]
             # Check if cache expired or user changed pygments setting.
             if (
                 _is_cache_expired(t) or
                 obj.variables.get('use_pygments', True) != (not settings.get('mdpopups.use_sublime_highlighter', False))
             ):
                 obj = None
-                user_css = ''
+                popup_user_css = ''
+                phantom_user_css = ''
         if obj is None:
             try:
                 obj = Scheme2CSS(scheme)
                 _prune_cache()
-                user_css = obj.apply_template(_get_user_css())
-                _scheme_cache[scheme] = (obj, user_css, time.time())
+                popup_user_css = obj.apply_template(_get_popup_user_css())
+                phantom_user_css = obj.apply_template(_get_phantom_user_css())
+                _scheme_cache[scheme] = (obj, popup_user_css, time.time())
             except Exception:
                 _log('Failed to convert/retrieve scheme to CSS!')
                 _debug(traceback.format_exc())
                 pass
-    return obj, user_css
+    return obj, popup_user_css if POPUP else phantom_user_css
 
 
-def _get_scheme_css(view, css):
+def _get_scheme_css(view, css, css_type=POPUP):
     """
     Get css from scheme.
 
@@ -177,7 +184,7 @@ def _get_scheme_css(view, css):
     if not in cache or entry is expired in cache.
     """
 
-    obj, user_css = _get_scheme(view)
+    obj, user_css = _get_scheme(view, css_type)
 
     try:
         return obj.get_css() + obj.apply_template(css) + user_css if obj is not None else ''
@@ -187,13 +194,32 @@ def _get_scheme_css(view, css):
         return ''
 
 
-def _get_user_css():
-    """Get user css."""
+def _get_popup_user_css():
+    """Get popup user css."""
+
     css = None
 
-    user_css = _get_setting('mdpopups.user_css', DEFAULT_USER_CSS)
+    popup_user_css = _get_setting('mdpopups.popup_user_css', DEFAULT_CSS)
+    legacy_css = _get_setting('mdpopups.user_css')
+    if legacy_css is not None:
+        popup_user_css = legacy_css
+        _log('DEPRECATED - "mdpopups.user_css" is deprecated, please use "mdpopups.popup_user_css"')
+
     try:
-        css = clean_css(sublime.load_resource(user_css))
+        css = clean_css(sublime.load_resource(popup_user_css))
+    except Exception:
+        css = clean_css(sublime.load_resource(DEFAULT_CSS))
+    return css if css else ''
+
+
+def _get_phantom_user_css():
+    """Get phantom user css."""
+
+    css = None
+
+    phantom_user_css = _get_setting('mdpopups.phantom_user_css', DEFAULT_USER_CSS)
+    try:
+        css = clean_css(sublime.load_resource(phantom_user_css))
     except Exception:
         css = clean_css(sublime.load_resource(DEFAULT_CSS))
     return css if css else ''
@@ -250,12 +276,12 @@ class _MdWrapper(markdown.Markdown):
         return self
 
 
-def _get_theme(view, css=None):
+def _get_theme(view, css=None, css_type=POPUP):
     """Get the theme."""
     global base_css
     if base_css is None:
         base_css = clean_css(sublime.load_resource(BASE_CSS))
-    return base_css + _get_scheme_css(view, clean_css(css) if css else css)
+    return base_css + _get_scheme_css(view, clean_css(css) if css else css, css_type)
 
 
 def _remove_entities(text):
@@ -271,7 +297,7 @@ def _remove_entities(text):
     return RE_BAD_ENTITIES.sub(repl, text)
 
 
-def _create_html(view, content, md=True, css=None, debug=False):
+def _create_html(view, content, md=True, css=None, debug=False, css_type=POPUP):
     """Create html from content."""
 
     debug = _get_setting('mdpopups.debug', False)
@@ -282,7 +308,7 @@ def _create_html(view, content, md=True, css=None, debug=False):
     if css is None or not isinstance(css, str):
         css = ''
 
-    style = _get_theme(view, css)
+    style = _get_theme(view, css, css_type)
 
     if debug:
         _log('=====CSS=====')
@@ -420,7 +446,7 @@ def update_popup(view, content, md=True, css=None):
         return
 
     try:
-        html = _create_html(view, content, md, css)
+        html = _create_html(view, content, md, css, POPUP)
     except Exception:
         _log(traceback.format_exc())
         html = IDK
@@ -444,7 +470,7 @@ def show_popup(
         return
 
     try:
-        html = _create_html(view, content, md, css)
+        html = _create_html(view, content, md, css, POPUP)
     except Exception:
         _log(traceback.format_exc())
         html = IDK
@@ -453,3 +479,51 @@ def show_popup(
         html, flags=flags, location=location, max_width=max_width,
         max_height=max_height, on_navigate=on_navigate, on_hide=on_hide
     )
+
+
+def is_popup_visible(view):
+    """Check if popup is visible."""
+
+    view.is_popup_visible()
+
+
+if PHANTOM_SUPPORT:
+    def add_phantom(view, key, region, content, layout, md=True, css=None, on_navigate=None):
+        """Add a phantom and return phantom id."""
+
+        disabled = _get_setting('mdpopups.disable', False)
+        if disabled:
+            _debug('Phantoms disabled')
+            return
+
+        try:
+            html = _create_html(view, content, md, css, PHANTOM)
+        except Exception:
+            _log(traceback.format_exc())
+            html = IDK
+
+        return view.add_phantom(key, region, html, layout, on_navigate)
+
+
+    def erase_phantoms(view, key):
+        """Erase phantoms."""
+
+        view.erase_phantoms(key)
+
+
+    def erase_phantom_by_id(view, pid):
+        """Erase phantom by ID."""
+
+        view.erase_phantom_by_id(pid)
+
+
+    def query_phantom(view, pid):
+        """Query phantom."""
+
+        view.query_phantom(pid)
+
+
+    def query_phantoms(view, pids):
+        """Query phantoms."""
+
+        view.query_phantoms(pids)
