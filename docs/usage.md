@@ -645,6 +645,9 @@ var.is_popup | var.is_phantom
     {% endif %}
     ```
 
+    !!! hint "New"
+            Added in `1.6.0`.
+
 var.use_pygments
 : 
     Checks if the Pygments syntax highlighter is being used.
