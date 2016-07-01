@@ -125,8 +125,8 @@ int mdpopups.add_phantom
     | view | sublime.View | Yes | | A Sublime Text view object. |
     | key | string | Yes | | A key that is associated with the given phantom.  Multiple phantoms can share the same key, but each phantom will have its own id. |
     | region | sublime.Region | Yes | Region in the view where the phantom should be inserted. |
-    | content | string | Yes | | Markdown/HTML content to be used to create a tooltip. |
-    | layout | int | Yes | | How the HTML content should be inserted.  Acceptable values are: |
+    | content | string | Yes | | Markdown/HTML content to be used to create a phantom. |
+    | layout | int | Yes | | How the HTML content should be inserted.  Acceptable values are: `sublime.LAYOUT_INLINE`, `sublime.LAYOUT_BLOCK`, and `sublime.LAYOUT_BELOW`. |
     | md | bool | No | True | Defines whether the content is Markdown and needs to be converterted. |
     | css | string | No | None | Additional CSS that will be injected. |
     | on_navigate | function | No | None | Callback that receives one variable `href`. |
@@ -496,7 +496,7 @@ background
     ```
 
 ### Template Color Filtering
-MdPopups also provides a number of color filters within the template environment that can manipulate the colors.  For instance, lets say you had your tooltip is the same color as the view window and it is difficult to see where the tooltip starts and ends.  You can take the color schemes background and apply a brightness filter to it allowing you now see the tooltip clearly.
+MdPopups also provides a number of color filters within the template environment that can manipulate the colors.  For instance, lets say you had your tooltip in the same color as the view window and it was difficult to see where the tooltip starts and ends.  You can take the color schemes background and apply a brightness filter to it allowing you now see the tooltip clearly.
 
 Here we can make the background of the tooltip darker:
 
