@@ -21,7 +21,7 @@ Your plugin must include the following Package Control dependencies:
 ```
 
 ## Markdown Support
-MdPopups uses [Python Markdown](https://pythonhosted.org/Markdown/) to parse Markdown and transform it into a tooltip.  The Markdown environment supports basic Markdown features, but also includes a number of specialty extensions to enhance the environment.  To keep the experience standardized for plugin use, tweaking the Markdown settings is not allowed.
+MdPopups uses [Python Markdown](https://pythonhosted.org/Markdown/) to parse Markdown and transform it into a tooltip or a phantom (HTML embedded in your file view).  The Markdown environment supports basic Markdown features, but also includes a number of specialty extensions to enhance the environment.  To keep the experience standardized for plugin use, tweaking the Markdown settings is not allowed.
 
 MdPopups enables the following Python Markdown extensions:
 
@@ -31,7 +31,7 @@ MdPopups enables the following Python Markdown extensions:
 - [admonition](https://pythonhosted.org/Markdown/extensions/admonition.html) provides admonition blocks.
 - [codehilite](https://pythonhosted.org/Markdown/extensions/code_hilite.html) provides syntax highlighted blocks.
 
-MdPopups also includes a couple 3rd party extensions (some of which have been modified to work better in the Sublime Text environment).
+MdPopups also includes a couple of 3rd party extensions (some of which have been modified to work better in the Sublime Text environment).
 
 - [superfences](http://facelessuser.github.io/pymdown-extensions/extensions/superfences/) provides support for nested fenced blocks. UML support is disabled.
 - [betterem](http://facelessuser.github.io/pymdown-extensions/extensions/betterem/) is extension that aims to improve emphasis support in Python Markdown. MdPopups leaves it configured in its default state where underscores are handled intelligently: `_handled_intelligently_` --> _handled_intelligently_.  Asterisks can be used to do mid word emphasis: `em*pha*sis` --> em*pha*sis.
@@ -42,7 +42,7 @@ MdPopups also includes a couple 3rd party extensions (some of which have been mo
 MdPopups provides a handful of accessible functions.
 
 ### version
-mdpopups.version
+(int,) mdpopups.version
 : 
     Get the version of the MdPopups library.  Returns a tuple of integers which represents the major, minor, and patch version.
 
@@ -64,8 +64,8 @@ mdpopups.show_popup
     | on_navigate | function | No | None | Callback that receives one variable `href`. |
     | on_hide | function | No | None | Callback for when the tooltip is hidden. |
 
-!!! caution "Developers Guidelines"
-    If injecting your own CSS classes from a plugin, please namespace them by either giving them a very unique name (preferably with the plugin's name as part of the class) or use an additional namespace class (preferably with the plugin's name) and a specific class.  This way a user can target and override your class styling if desired.
+    !!! caution "Developers Guidelines"
+        If injecting your own CSS classes from a plugin, please namespace them by either giving them a very unique name (preferably with the plugin's name as part of the class) or use an additional namespace class (preferably with the plugin's name) and a specific class.  This way a user can target and override your class styling if desired.
 
     **Example - Unique Class Name**:
     ```css
@@ -77,7 +77,7 @@ mdpopups.show_popup
     .myplugin.myclass { ... }
     ```
 
-    Also, do not try to override the style of existing base classes and elements with plugin injection, but use custom plugin classes so that you will only target what your plugin as specifically added special classes to.
+    Also, do not try to override the style of existing base classes and elements with plugin injection, but use custom plugin classes so that you will only target what your plugin has specifically added special classes to.
 
 
 ## update_popup
@@ -100,6 +100,107 @@ mdpopups.hide_popup
     | Parameter | Type | Required | Default | Description |
     | --------- | ---- | -------- | ------- | ----------- |
     | view | sublime.View | Yes | | A Sublime Text view object. |
+
+
+### is_popup_visible
+bool mdpopups.is_popup_visible
+: 
+    Checks if popup is visible in the view. Included for convenience and consistency.
+
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | view | sublime.View | Yes | | A Sublime Text view object. |
+
+    !!! hint "New"
+        Added in `1.6.0`.
+
+### add_phantom
+int mdpopups.add_phantom
+: 
+    Adds a phantom (embedded HTML in the file view) and returns the phantom id.  Returns an integer.
+    Accepts Markdown and creates a Sublime phantom (embedded HTML in the file view).  By default, the Pygments syntax highlighter will be used for code highlighting.  Set [`mdpopups.use_sublime_highlighter`](#mdpopupsuse_sublime_highlighter) to `true` in your `Preferences.sublime-settings` file if you would like to use the Sublime syntax highlighter.  On completion of the phantom, the function will return the phantom id which is an integer.
+
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | view | sublime.View | Yes | | A Sublime Text view object. |
+    | key | string | Yes | | A key that is associated with the given phantom.  Multiple phantoms can share the same key, but each phantom will have its own id. |
+    | region | sublime.Region | Yes | Region in the view where the phantom should be inserted. |
+    | content | string | Yes | | Markdown/HTML content to be used to create a tooltip. |
+    | layout | int | Yes | | How the HTML content should be inserted.  Acceptable values are: |
+    | md | bool | No | True | Defines whether the content is Markdown and needs to be converterted. |
+    | css | string | No | None | Additional CSS that will be injected. |
+    | on_navigate | function | No | None | Callback that receives one variable `href`. |
+
+    !!! caution "Developers Guidelines"
+        If injecting your own CSS classes from a plugin, please namespace them by either giving them a very unique name (preferably with the plugin's name as part of the class) or use an additional namespace class (preferably with the plugin's name) and a specific class.  This way a user can target and override your class styling if desired.
+
+    **Example - Unique Class Name**:
+    ```css
+    .myplugin-myclass { ... }
+    ```
+
+    **Example - Namespace Class**:
+    ```css
+    .myplugin.myclass { ... }
+    ```
+
+    Also, do not try to override the style of existing base classes and elements with plugin injection, but use custom plugin classes so that you will only target what your plugin has specifically added special classes to.
+
+    !!! hint "New"
+        Added in `1.6.0`.
+
+
+### erase_phantoms
+mdpopups.erase_phantoms
+: 
+    Erase all phantoms associated to the given key.  Included for convenience and consistency.
+
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | view | sublime.View | Yes | | A Sublime Text view object. |
+    | key | string | Yes | | A key that is associated with phantoms.  Multiple phantoms can share the same key, but each phantom will have its own id. |
+
+    !!! hint "New"
+        Added in `1.6.0`.
+
+### erase_phantom_by_id
+mdpopups.erase_phantom_by_id
+: 
+    Erase a single phantom by passing its id.  Included for convenience and consistency.
+
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | view | sublime.View | Yes | | A Sublime Text view object. |
+    | pid | string | Yes | | The id associated with a single phantom.  Multiple phantoms can share the same key, but each phantom will have its own id. |
+
+    !!! hint "New"
+        Added in `1.6.0`.
+
+### query_phantom
+[sublime.Region] mdpopups.query_phantom
+: 
+    Query the location of a phantom by specifying its id.  A list of `sublime.Region`s will be returned.  If the phantom with the given id is not found, the region will be returned with positions of `(-1, -1)`.  Included for convenience and consistency.
+
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | view | sublime.View | Yes | | A Sublime Text view object. |
+    | pid | int | Yes | | The id associated with a single phantom.  Multiple phantoms can share the same key, but each phantom will have its own id. |
+
+    !!! hint "New"
+        Added in `1.6.0`.
+
+### query_phantoms
+[sublime.Region] mdpopups.query_phantoms
+: 
+    Query the location of multiple phantoms by specifying their ids.  A list of `sublime.Region`s will be returned where each index corresponds to the index of ids that was passed in.  If a given phantom id is not found, that region will be returned with positions of `(-1, -1)`.  Included for convenience and consistency.
+
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | view | sublime.View | Yes | | A Sublime Text view object. |
+    | pids | [int] | Yes | | The id associated with a single phantom.  Multiple phantoms can share the same key, but each phantom will have its own id. |
+
+    !!! hint "New"
+        Added in `1.6.0`.
 
 ### clear_cache
 mdpopups.clear_cache
@@ -323,11 +424,11 @@ In your CSS template it is usually a good idea to generically specify the code w
 ```
 
 ## CSS Styling
-MdPopups was design to give a universal way of displaying and styling tooltips via plugins, but also provide the user an easy way to control the look.
+MdPopups was design to give a universal way of displaying and styling tooltips and phantoms via plugins, but also provide the user an easy way to control the look.
 
-MdPopups provides a simple base CSS that styles the basic HTML tags that can be used in the Markdown parser.  On top of that it then parses your current Sublime color scheme and generates CSS that includes styling for all the [standard TextMate scopes](./textmate_scopes.md) (and only those listed scopes) found in your color scheme.  It then uses those scopes via in a default template to highlight your tooltips to match your current color scheme.
+MdPopups provides a simple base CSS that styles the basic HTML tags that can be used in the Markdown parser.  On top of that it then parses your current Sublime color scheme and generates CSS that includes styling for all the [standard TextMate scopes](./textmate_scopes.md) (and only those listed scopes) found in your color scheme.  It then uses those scopes in a default template to highlight your tooltips and phantoms to match your current color scheme.
 
-Templates are used so that a user can easily tap into all the colors, color filters, and other usefull logic to control their tooltips in one place without having to hard code a specific CSS for a specific color scheme.  Even though a plugin can additionally insert new scopes on demand when calling the popup API, a user can override anything and everything by providing their own [CSS template](#mdpopupsuser_css).  The template is fairly powerful and flexible.
+Templates are used so that a user can easily tap into all the colors, color filters, and other useful logic to control their tooltips and phantoms in one place without having to hard code a specific CSS for a specific color scheme.  Even though a plugin can additionally insert new scopes on demand when calling the popup API, a user can override anything and everything by providing their own [CSS template](#mdpopupsuser_css).  The template is fairly powerful and flexible.
 
 ## CSS Templates
 MdPoups provides a [`base.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/base.css) that formats the general look of the HTML elements (padding, size, etc.).  On top of that, it provides a [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css) template which applies more superficial styling such as colors, Pygments themes, etc.  It uses the Jinja2 template environment to give direct access to things like color scheme colors, names, and other useful information.  In general, `default.css` should provide most of what everyone **needs**.  But if you **want** greater control, you can create your own CSS template which MdPopups will use instead of `default.css`.
@@ -525,6 +626,19 @@ var.is_dark | var.is_light
     **Example**:
     ```css+jinja
     {% if var.is_light %}
+    html{ {{'.background'|css('background-color')|brightness(0.9)}} }
+    {% else %}
+    html{ {{'.background'|css('background-color')|brightness(1.1)}} }
+    {% endif %}
+    ```
+
+var.is_popup | var.is_phantom
+: 
+    `is_phantom` checks if the current CSS is for a phantom instead of a popup.  Alternatively, `is_popup` checks if the current use of the CSS is for a popup.
+
+    **Example**:
+    ```css+jinja
+    {% if var.is_phantom %}
     html{ {{'.background'|css('background-color')|brightness(0.9)}} }
     {% else %}
     html{ {{'.background'|css('background-color')|brightness(1.1)}} }

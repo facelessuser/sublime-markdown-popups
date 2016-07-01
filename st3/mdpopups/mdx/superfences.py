@@ -179,7 +179,7 @@ class SublimeHighlight(CodeHilite):
 
 
 def _escape(txt):
-    """basic html escaping."""
+    """Basic html escaping."""
 
     txt = txt.replace('&', '&amp;')
     txt = txt.replace('<', '&lt;')

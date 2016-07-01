@@ -44,11 +44,11 @@ Feel free to use a virtual environment if you are concerned about installing any
 
 ### Running Validation Tests
 
-Linting is performed on the entire project with `flake8`, `flake8_docstrings`, and `pep8-naming`.  These can be installed via:
+Linting is performed on the entire project with `flake8`, `pydocstyle, and `pep8-naming`.  These can be installed via:
 
 ```
 pip install flake8
-pip install flake8_docstrings
+pip install pydocstye
 pip install pep8-naming
 ```
 
@@ -56,6 +56,7 @@ Linting is performed with the following command:
 
 ```
 flake8 .
+pydocstyle .
 ```
 
 ## Documentation Improvements
