@@ -5,7 +5,7 @@ Sublime Markdown Popups (mdpopups) is a library for Sublime Text plugins.  It ut
 
 Mdpopups will use your color scheme to create popups/phantoms that fit your editors look.
 
-![Screenshot](images/tooltips_test.png)
+![Screenshot](docs/images/tooltips_test.png)
 
 ## Features
 
