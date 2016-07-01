@@ -23,6 +23,9 @@ from collections import OrderedDict
 from .st_clean_css import clean_css
 import copy
 
+INVALID = -1
+POPUP = 0
+PHANTOM = 1
 LUM_MIDPOINT = 127
 
 re_textmate_scopes = re.compile(
@@ -74,6 +77,7 @@ class Scheme2CSS(object):
         self.text = ''
         self.colors = OrderedDict()
         self.scheme_file = scheme_file
+        self.css_type = INVALID
         self.gen_css()
 
     def parse_global(self):
@@ -195,7 +199,7 @@ class Scheme2CSS(object):
         """Read the CSS file."""
 
         try:
-            return self.apply_template(clean_css(sublime.load_resource(css)))
+            return self.apply_template(clean_css(sublime.load_resource(css)), self.css_type)
         except Exception:
             return ''
 
@@ -327,10 +331,21 @@ class Scheme2CSS(object):
                 break
         return ''.join(sel.values()) if key is None else sel.get(key, '')
 
-    def apply_template(self, css):
+    def apply_template(self, css, css_type):
         """Apply template to css."""
 
-        return self.env.from_string(css).render(var=copy.copy(self.variables), colors=self.colors)
+        if css_type not in (POPUP, PHANTOM):
+            return ''
+
+        var = copy.copy(self.variables)
+        var.update(
+            {
+                'is_phantom': self.css_type == PHANTOM,
+                'is_popup': self.css_type == POPUP
+            }
+        )
+
+        return self.env.from_string(css).render(var=var, colors=self.colors)
 
     def get_css(self):
         """Get css."""
