@@ -124,7 +124,7 @@ int mdpopups.add_phantom
     | --------- | ---- | -------- | ------- | ----------- |
     | view | sublime.View | Yes | | A Sublime Text view object. |
     | key | string | Yes | | A key that is associated with the given phantom.  Multiple phantoms can share the same key, but each phantom will have its own id. |
-    | region | sublime.Region | Yes | Region in the view where the phantom should be inserted. |
+    | region | sublime.Region | Yes | | Region in the view where the phantom should be inserted. |
     | content | string | Yes | | Markdown/HTML content to be used to create a phantom. |
     | layout | int | Yes | | How the HTML content should be inserted.  Acceptable values are: `sublime.LAYOUT_INLINE`, `sublime.LAYOUT_BLOCK`, and `sublime.LAYOUT_BELOW`. |
     | md | bool | No | True | Defines whether the content is Markdown and needs to be converterted. |
@@ -201,6 +201,57 @@ mdpopups.erase_phantom_by_id
 
     !!! hint "New"
         Added in `1.6.0`.
+
+### class Phantom
+mdpopups.Phantoms
+: 
+    A phantom object for use with [PhantomSet](#class-phantomset).
+
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | region | sublime.Region | Yes | | Region in the view where the phantom should be inserted. |
+    | content | string | Yes | | Markdown/HTML content to be used to create a phantom. |
+    | layout | int | Yes | | How the HTML content should be inserted.  Acceptable values are: `sublime.LAYOUT_INLINE`, `sublime.LAYOUT_BLOCK`, and `sublime.LAYOUT_BELOW`. |
+    | md | bool | No | True | Defines whether the content is Markdown and needs to be converterted. |
+    | css | string | No | None | Additional CSS that will be injected. |
+    | on_navigate | function | No | None | Callback that receives one variable `href`. |
+
+    **Attributes**
+
+    | Attribute | Type | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | region | sublime.Region |  Region in the view where the phantom should be inserted. |
+    | content | string |  Markdown/HTML content to be used to create a phantom. |
+    | layout | int |  How the HTML content should be inserted.  Acceptable values are: `sublime.LAYOUT_INLINE`, `sublime.LAYOUT_BLOCK`, and `sublime.LAYOUT_BELOW`. |
+    | md | bool | Defines whether the content is Markdown and needs to be converterted. |
+    | css | string | Additional CSS that will be injected. |
+    | on_navigate | function | Callback that receives one variable `href`. |
+
+    !!! hint "New"
+        Added in `1.6.1`.
+
+### class PhantomSet
+mdpopups.PhantomsSet
+: 
+    A class that allows you to update phantoms under the specified key.
+
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | view | sublime.View | Yes | | A Sublime Text view object. |
+    | key | string | Yes | | The key that should be associated with all related phantoms in the set. |
+
+    **Methods**
+
+    mdpopups.PhantomsSet.update
+    : 
+        Update all the phantoms in the set with the given phantom list.
+
+        | Parameter | Type | Required | Default | Description |
+        | --------- | ---- | -------- | ------- | ----------- |
+        | new_phantoms | [[mdpopups.Phantom](#class-phantom)] | Yes | | A list of mdpopup phantoms (don't use sublime.Phantoms). |
+
+    !!! hint "New"
+        Added in `1.6.1`.
 
 ### clear_cache
 mdpopups.clear_cache
