@@ -5,7 +5,7 @@ Converts scheme to css provides templating for
 additonal so that they can access the colors.
 
 Licensed under MIT
-Copyright (c) 2015 Isaac Muse <isaacmuse@gmail.com>
+Copyright (c) 2015 - 2016 Isaac Muse <isaacmuse@gmail.com>
 
 ----------------------
 
