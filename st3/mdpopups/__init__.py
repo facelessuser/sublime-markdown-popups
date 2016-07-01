@@ -22,7 +22,7 @@ from .st_mapping import lang_map
 import re
 import os
 
-version_info = (1, 6, 0)
+version_info = (1, 6, 1)
 __version__ = '.'.join([str(x) for x in version_info])
 
 PHANTOM_SUPPORT = int(sublime.version()) >= 3118
@@ -502,3 +502,68 @@ if PHANTOM_SUPPORT:
         """Query phantoms."""
 
         return view.query_phantoms(pids)
+
+    class Phantom(sublime.Phantom):
+        """A phantom object."""
+
+        def __init__(self, region, content, layout, md=True, css=None, on_navigate=None):
+            """Initialize."""
+
+            super().__init__(region, content, layout, on_navigate)
+            self.md = md
+            self.css = css
+
+        def __eq__(self, rhs):
+            """Check if phantoms are equal."""
+
+            # Note that self.id is not considered
+            return (
+                self.region == rhs.region and self.content == rhs.content and
+                self.layout == rhs.layout and self.on_navigate == rhs.on_navigate and
+                self.md == rhs.md and self.css == rhs.css
+            )
+
+    class PhantomSet(sublime.PhantomSet):
+        """Object that allows easy updating of phantoms."""
+
+        def __init__(self, view, key=""):
+            """Initialize."""
+
+            super().__init__(view, key)
+
+        def __del__(self):
+            """Delete phantoms."""
+
+            for p in self.phantoms:
+                erase_phantom_by_id(self.view, p.id)
+
+        def update(self, new_phantoms):
+            """Update the list of phantoms that exist in the text buffer with their current location."""
+
+            regions = query_phantoms(self.view, [p.id for p in self.phantoms])
+            for i in range(len(regions)):
+                self.phantoms[i].region = regions[i]
+
+            for p in new_phantoms:
+                try:
+                    # Phantom already exists, copy the id from the current one
+                    idx = self.phantoms.index(p)
+                    p.id = self.phantoms[idx].id
+                except ValueError:
+                    p.id = add_phantom(
+                        self.view,
+                        self.key,
+                        p.region,
+                        p.content,
+                        p.layout,
+                        p.md,
+                        p.css,
+                        p.on_navigate
+                    )
+
+            for p in self.phantoms:
+                # if the region is -1, then it's already been deleted, no need to call erase
+                if p not in new_phantoms and p.region != sublime.Region(-1):
+                    erase_phantom_by_id(self.view, p.id)
+
+            self.phantoms = new_phantoms
