@@ -7,3 +7,4 @@ install:
   - pip install pep8-naming
 script:
   - flake8 .
+  - pydocstyle .
