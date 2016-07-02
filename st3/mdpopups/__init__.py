@@ -22,7 +22,7 @@ from .st_mapping import lang_map
 import re
 import os
 
-version_info = (1, 6, 1)
+version_info = (1, 6, 3)
 __version__ = '.'.join([str(x) for x in version_info])
 
 PHANTOM_SUPPORT = int(sublime.version()) >= 3118
