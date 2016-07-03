@@ -49,9 +49,8 @@ class SublimeHighlight(object):
         self.view = None
         self.csm = ColorSchemeMatcher(scheme)
 
-        (
-            self.bground, self.fground, self.sbground, self.sfground
-        ) = self.csm.get_general_colors(simulate_transparency=True)
+        self.fground = self.csm.get_special_color('foreground', simulate_transparency=True)
+        self.bground = self.csm.get_special_color('background', simulate_transparency=True)
 
     def setup(self, **kwargs):
         """Get get general document preferences from sublime preferences."""
@@ -61,7 +60,6 @@ class SublimeHighlight(object):
         self.pt = 0
         self.end = 0
         self.curr_row = 0
-        self.matched = {}
         self.ebground = self.bground
 
     def setup_print_block(self, curr_sel, multi=False):
@@ -143,20 +141,10 @@ class SublimeHighlight(object):
             scope_name = self.view.scope_name(self.pt)
             while self.view.scope_name(self.end) == scope_name and self.end < self.size:
                 self.end += 1
-            color_match = self.csm.guess_color(self.view, self.pt, scope_name)
-            if do_highlight:
-                # Highlighted line
-                if self.sfground is None:
-                    color = color_match.fg_simulated
-                    style = color_match.style
-                    bgcolor = self.sbground
-                else:
-                    color, style = self.sfground, ""
-                    bgcolor = self.sbground
-            else:
-                color = color_match.fg_simulated
-                style = color_match.style
-                bgcolor = color_match.bg_simulated
+            color_match = self.csm.guess_color(scope_name, selected=do_highlight, explicit_background=True)
+            color = color_match.fg_simulated
+            bgcolor = color_match.bg_simulated
+            style = color_match.style
 
             region = sublime.Region(self.pt, self.end)
             # Normal text formatting
@@ -170,7 +158,7 @@ class SublimeHighlight(object):
         # Get the color for the space at the end of a line
         if self.end < self.view.size():
             end_key = self.view.scope_name(self.pt)
-            color_match = self.csm.guess_color(self.view, self.pt, end_key)
+            color_match = self.csm.guess_color(end_key, explicit_background=True)
             self.ebground = color_match.bg_simulated
 
         # Join line segments
