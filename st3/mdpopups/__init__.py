@@ -413,7 +413,7 @@ def syntax_highlight(view, src, language=None, inline=False):
     return code
 
 
-def scope2style(view, scope, explicit_background):
+def scope2style(view, scope, explicit_background=False):
     """Convert the scope to a style."""
 
     style = {
