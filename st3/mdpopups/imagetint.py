@@ -32,7 +32,6 @@ def tint_raw(byte_string, color, opacity=255):
         for x in range(columns):
             rgba = RGBA(color)
             rgba.a = opacity
-            pixel = row[start:start + 4]
             rgba.apply_alpha(background='#%02X%02X%02XFF' % tuple(row[start:start + 3]))
             p[y] += [rgba.r, rgba.g, rgba.b, row[start + 3]]
             start += 4

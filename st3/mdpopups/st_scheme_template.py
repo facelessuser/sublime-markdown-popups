@@ -18,9 +18,8 @@ import re
 from .rgba import RGBA
 from .st_color_scheme_matcher import ColorSchemeMatcher
 import jinja2
-from plistlib import readPlistFromBytes
 from pygments.formatters import HtmlFormatter
-from collections import OrderedDict, namedtuple
+from collections import OrderedDict
 from .st_clean_css import clean_css
 import copy
 import decimal
@@ -240,7 +239,7 @@ class Scheme2CSS(object):
         self.env.filters['sepia'] = self.sepia
         self.env.filters['fade'] = self.fade
         self.env.filters['getcss'] = self.read_css
-        self.env.filters['relativesize'] =  self.relativesize
+        self.env.filters['relativesize'] = self.relativesize
 
     def read_css(self, css):
         """Read the CSS file."""
