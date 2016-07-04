@@ -16,50 +16,111 @@ https://manual.macromates.com/en/language_grammars#naming_conventions
 import sublime
 import re
 from .rgba import RGBA
+from .st_color_scheme_matcher import ColorSchemeMatcher
 import jinja2
 from plistlib import readPlistFromBytes
 from pygments.formatters import HtmlFormatter
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 from .st_clean_css import clean_css
 import copy
+import decimal
 
 INVALID = -1
 POPUP = 0
 PHANTOM = 1
 LUM_MIDPOINT = 127
 
-re_textmate_scopes = re.compile(
-    r'''(?x)^(?:
-    comment
-      (?:\.(?:line(?:\.(?:double-slash|double-dash|number-sign|percentage|character))?|block(?:\.documentation)?))?|
-    constant
-      (?:\.(?:numeric|character|langauge|other))?|
-    entity
-      (?:\.(?:name(?:\.(?:function|type|tag|section))?|other(?:\.(?:inherited-class|attribute-name))?))?|
-    invalid
-      (?:\.(?:illegal|deprecated))?|
-    keyword
-      (?:\.(?:control|operator|other))?|
-    markup
-      (?:\.(?:underline(?:\.link)?|link|bold|heading|italic|list(?:\.(?:numbered|unnumbered))?|quote|raw|other))?|
-    meta|
-    storage
-      (?:\.(?:storage|type|modifier))?|
-    string
-      (?:\.(?:quoted(?:\.(?:single|double|triple|other))?|unquoted|interpolated|regexp|other))?|
-    support
-      (?:\.(?:function|class|type|constant|variable|other))?|
-    variable
-      (?:\.(?:parameter|language|other))?
-    )$
-    '''
-)
+re_float_trim = re.compile(r'^(?P<keep>\d+)(?P<trash>\.0+|(?P<keep2>\.\d*[1-9])0+)$')
+re_valid_custom_scopes = re.compile(r'[a-zA-Z\d]+[a-zA-Z\d._\-]*')
 
-re_strip_xml_comments = re.compile(br"^[\r\n\s]*<!--[\s\S]*?-->[\s\r\n]*|<!--[\s\S]*?-->")
+textmate_scopes = [
+    'comment',
+    'comment.line',
+    'comment.line.double-slash',
+    'comment.line.double-dash',
+    'comment.line.number-sign',
+    'comment.line.percentage',
+    'comment.line.character',
+    'comment.block',
+    'comment.block.documentation',
+    'constant',
+    'constant.numeric',
+    'constant.character',
+    'constant.language',
+    'constant.other',
+    'entity',
+    'entity.name',
+    'entity.name.function',
+    'entity.name.type',
+    'entity.name.tag',
+    'entity.name.section',
+    'entity.other',
+    'entity.other.inherited-class',
+    'entity.other.attribute-name',
+    'invalid',
+    'invalid.illegal',
+    'invalid.deprecated',
+    'keyword',
+    'keyword.control',
+    'keyword.operator',
+    'keyword.other',
+    'markup',
+    'markup.underline',
+    'markup.underline.link',
+    'markup.bold',
+    'markup.heading',
+    'markup.italic',
+    'markup.list',
+    'markup.list.numbered',
+    'markup.list.unnumbered',
+    'markup.quote',
+    'markup.raw',
+    'markup.other',
+    'meta',
+    'storage',
+    'storage.type',
+    'storage.modifier',
+    'string',
+    'string.quoted',
+    'string.quoted.single',
+    'string.quoted.double',
+    'string.quoted.triple',
+    'string.quoted.other',
+    'string.unquoted',
+    'string.interpolated',
+    'string.regexp',
+    'string.other',
+    'support',
+    'support.function',
+    'support.class',
+    'support.type',
+    'support.constant',
+    'support.variable',
+    'support.other',
+    'variable.parameter',
+    'variable.language',
+    'variable.other'
+]
+
 re_base_colors = re.compile(r'^\s*\.dummy\s*\{([^}]+)\}', re.MULTILINE)
 re_color = re.compile(r'(?<!-)(color\s*:\s*#[A-Fa-z\d]{6})')
 re_bgcolor = re.compile(r'(?<!-)(background(?:-color)?\s*:\s*#[A-Fa-z\d]{6})')
 CODE_BLOCKS = '.highlight, .inline-highlight { %s; %s; }'
+
+
+def fmt_float(f, p=0):
+    """Set float precision and trim precision zeros."""
+
+    string = str(
+        decimal.Decimal(f).quantize(decimal.Decimal('0.' + ('0' * p) if p > 0 else '0'), decimal.ROUND_HALF_UP)
+    )
+
+    m = re_float_trim.match(string)
+    if m:
+        string = m.group('keep')
+        if m.group('keep2'):
+            string += m.group('keep2')
+    return string
 
 
 class Scheme2CSS(object):
@@ -68,23 +129,23 @@ class Scheme2CSS(object):
     def __init__(self, scheme_file):
         """Initialize."""
 
-        self.plist_file = readPlistFromBytes(
-            re_strip_xml_comments.sub(
-                b'',
-                sublime.load_binary_resource(scheme_file)
-            )
-        )
+        self.csm = ColorSchemeMatcher(scheme_file)
         self.text = ''
         self.colors = OrderedDict()
         self.scheme_file = scheme_file
         self.css_type = INVALID
         self.gen_css()
 
+    def guess_style(self, scope, selected=False, explicit_background=False):
+        """Guess color."""
+
+        return self.csm.guess_color(scope, selected, explicit_background)
+
     def parse_global(self):
         """Parse global settings."""
 
         color_settings = {}
-        for item in self.plist_file["settings"]:
+        for item in self.csm.plist_file["settings"]:
             if item.get('scope', None) is None and item.get('name', None) is None:
                 color_settings = item["settings"]
                 break
@@ -113,40 +174,25 @@ class Scheme2CSS(object):
     def parse_settings(self):
         """Parse the color scheme."""
 
-        # Create scope color mapping from color scheme file
-        for item in self.plist_file["settings"]:
-            scope = item.get('scope', None)
-            color = None
-            bgcolor = None
+        for tscope in textmate_scopes:
+            scope = self.guess_style(tscope, explicit_background=True)
+            key_scope = '.' + tscope
+            color = scope.fg_simulated
+            bgcolor = scope.bg_simulated
+            if color or bgcolor:
+                self.colors[key_scope] = OrderedDict()
+                if color:
+                    self.colors[key_scope]['color'] = 'color: %s; ' % color
+                if bgcolor:
+                    self.colors[key_scope]['background-color'] = 'background-color: %s; ' % bgcolor
 
-            # Get font colors, backgrounds, and stylig
-            if scope is not None and 'settings' in item:
-                for subscope in [subscope.strip() for subscope in scope.split(',')]:
-                    if not re_textmate_scopes.match(subscope):
-                        # Ignore complex scopes like:
-                        #    "myscope.that.is way.to.complex" or "myscope.that.is -way.to.complex"
-                        continue
-                    color = item['settings'].get('foreground', None)
-                    bgcolor = item['settings'].get('background', None)
-                    key_scope = '.' + subscope
-                    if color or bgcolor:
-                        if key_scope not in self.colors:
-                            self.colors[key_scope] = OrderedDict()
-                        if color:
-                            self.colors[key_scope]['color'] = 'color: %s; ' % self.strip_color(color)
-                        if bgcolor:
-                            self.colors[key_scope]['background-color'] = (
-                                'background-color: %s; ' % self.strip_color(bgcolor)
-                            )
-
-                        if 'fontStyle' in item['settings']:
-                            for s in item['settings']['fontStyle'].split(' '):
-                                if "bold" in s:
-                                    self.colors[key_scope]['font-weight'] = 'font-weight: %s; ' % 'bold'
-                                if "italic" in s:
-                                    self.colors[key_scope]['font-style'] = 'font-style: %s; ' % 'italic'
-                                if "underline" in s and False:  # disabled
-                                    self.colors[key_scope]['text-decoration'] = 'text-decoration: %s; ' % 'underline'
+                for s in scope.style.split(' '):
+                    if "bold" in s:
+                        self.colors[key_scope]['font-weight'] = 'font-weight: %s; ' % 'bold'
+                    if "italic" in s:
+                        self.colors[key_scope]['font-style'] = 'font-style: %s; ' % 'italic'
+                    if "underline" in s and False:  # disabled
+                        self.colors[key_scope]['text-decoration'] = 'text-decoration: %s; ' % 'underline'
 
     def strip_color(self, color, simple_strip=False):
         """
@@ -194,14 +240,47 @@ class Scheme2CSS(object):
         self.env.filters['sepia'] = self.sepia
         self.env.filters['fade'] = self.fade
         self.env.filters['getcss'] = self.read_css
+        self.env.filters['relativesize'] =  self.relativesize
 
     def read_css(self, css):
         """Read the CSS file."""
 
         try:
-            return self.apply_template(clean_css(sublime.load_resource(css)), self.css_type)
+            var = copy.copy(self.variables)
+            var.update(
+                {
+                    'is_phantom': self.css_type == PHANTOM,
+                    'is_popup': self.css_type == POPUP
+                }
+            )
+
+            return self.env.from_string(clean_css(sublime.load_resource(css))).render(var=var, colors=self.colors)
         except Exception:
             return ''
+
+    def relativesize(self, offset, unit):
+        """Create a relative font from the current font."""
+
+        if unit == 'em':
+            size = self.font_size / 12.0
+            precision = 3
+        elif unit == 'px':
+            size = self.font_size / 16.0
+            precision = 3
+        elif unit == 'pt':
+            size = self.font_size
+            precision = 3
+
+        op = offset[0]
+        if op in ('+', '-', '*'):
+            value = size * float(offset[1:]) if op == '*' else size + float(offset)
+        else:
+            value = 0.0
+
+        if value < 0.0:
+            value = 0.0
+
+        return '%s%s' % (fmt_float(value, precision), unit)
 
     def fade(self, css, factor):
         """
@@ -256,6 +335,7 @@ class Scheme2CSS(object):
 
     def saturation(self, css, factor):
         """Apply saturation filter."""
+
         parts = [c.strip('; ') for c in css.split(':')]
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = RGBA(parts[1])
@@ -331,11 +411,14 @@ class Scheme2CSS(object):
                 break
         return ''.join(sel.values()) if key is None else sel.get(key, '')
 
-    def apply_template(self, css, css_type):
+    def apply_template(self, css, css_type, font_size):
         """Apply template to css."""
 
         if css_type not in (POPUP, PHANTOM):
             return ''
+
+        self.font_size = float(font_size)
+        self.css_type = css_type
 
         var = copy.copy(self.variables)
         var.update(

@@ -4,16 +4,16 @@ body {
     color: black;
     background-color: white;
     margin: 1px;
-    font-size: 1em;
+    font-size: {{'+0'|relativesize('em')}};
     padding: 0.2em;
 }
 /* Headers */
-h1 { font-size: 1.5em; }
-h2 { font-size: 1.4em; }
-h3 { font-size: 1.3em; }
-h4 { font-size: 1.2em; }
-h5 { font-size: 1.1em; }
-h6 { font-size: 1em; }
+h1 { font-size: {{'+.375'|relativesize('em')}}; }
+h2 { font-size: {{'+.3'|relativesize('em')}}; }
+h3 { font-size: {{'+.225'|relativesize('em')}}; }
+h4 { font-size: {{'+.15'|relativesize('em')}}; }
+h5 { font-size: {{'+.075'|relativesize('em')}}; }
+h6 { font-size: {{'+0'|relativesize('em')}}; }
 h1, h2, h3, h4, h5, h6 { margin-top: 0.2em; margin-bottom: 0.2em; }
 /* Blockquote support. */
 blockquote { display: block; font-style: italic; }
