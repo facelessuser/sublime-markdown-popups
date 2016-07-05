@@ -417,7 +417,7 @@ class Scheme2CSS(object):
         scale = 1.0
         if sublime.platform() == 'windows':
             try:
-                import cytypes
+                import ctypes
 
                 LOGPIXELSY = 90
                 dc = ctypes.windll.user32.GetDC(0)
