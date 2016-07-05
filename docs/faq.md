@@ -12,7 +12,7 @@ Frequently asked questions.
 
 - **Why in code blocks do tabs get converted to 4 spaces?**
 
-    Because I like it that way.  If you are planning on have a snippet of text sent through the syntax highlighter and do not want your tabs to be converted to 4 spaces, you should convert it to the number of spaces you do like **before** sending it through the syntax highlighter.
+    Because I like it that way.  If you are planning on having a snippet of text sent through the syntax highlighter and do not want your tabs to be converted to 4 spaces, you should convert it to the number of spaces you like **before** sending it through the syntax highlighter.
     {: style="font-style: italic"}
 
 - **Why does &lt;insert element&gt; not work, or cause the tooltip not to show?**
