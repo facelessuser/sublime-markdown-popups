@@ -130,6 +130,7 @@ class Scheme2CSS(object):
 
         self.csm = ColorSchemeMatcher(scheme_file)
         self.text = ''
+        self.font_scale = self.get_font_scale()
         self.colors = OrderedDict()
         self.scheme_file = scheme_file
         self.css_type = INVALID
@@ -410,13 +411,30 @@ class Scheme2CSS(object):
                 break
         return ''.join(sel.values()) if key is None else sel.get(key, '')
 
+    def get_font_scale(self):
+        """Get font scale."""
+
+        scale = 1.0
+        if sublime.platform() == 'windows':
+            try:
+                import cytypes
+
+                LOGPIXELSY = 90
+                dc = ctypes.windll.user32.GetDC(0)
+                height = ctypes.windll.gdi32.GetDeviceCaps(dc, LOGPIXELSY)
+                scale = float(height) / 96.0
+            except Exception:
+                pass
+
+        return scale
+
     def apply_template(self, css, css_type, font_size):
         """Apply template to css."""
 
         if css_type not in (POPUP, PHANTOM):
             return ''
 
-        self.font_size = float(font_size)
+        self.font_size = float(font_size) * self.font_scale
         self.css_type = css_type
 
         var = copy.copy(self.variables)
