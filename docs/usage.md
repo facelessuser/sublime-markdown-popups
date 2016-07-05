@@ -364,6 +364,7 @@ dict mdpopups.scope2style
     | --------- | ---- | -------- | ------- | ----------- |
     | view | sublime.View |Yes | | Sublime text View object so that the correct color scheme will be searched. |
     | scope | string | Yes | | The scope to search for. |
+    | selected | bool | No | False | Whether this scope is in a selected state (selected text). |
     | explicit_background | bool | No | False | Only return a background if one is explicitly defined in the color scheme. |
 
     !!! hint "New"

@@ -436,7 +436,7 @@ def syntax_highlight(view, src, language=None, inline=False):
     return code
 
 
-def scope2style(view, scope, explicit_background=False):
+def scope2style(view, scope, selected=False, explicit_background=False):
     """Convert the scope to a style."""
 
     style = {
@@ -445,7 +445,7 @@ def scope2style(view, scope, explicit_background=False):
         'style': ''
     }
     obj = _get_scheme(view)[0]
-    style_obj = obj.guess_style(scope, explicit_background)
+    style_obj = obj.guess_style(scope, selected, explicit_background)
     style['color'] = style_obj.fg_simulated
     style['background'] = style_obj.bg_simulated
     style['style'] = style_obj.style
