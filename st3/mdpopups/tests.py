@@ -58,6 +58,13 @@ format_text = dedent(
 
     ## Lists
 
+    Apple
+    : 1) The round fruit of a tree of the rose family, which typically has thin red or green skin and crisp flesh.
+
+        Many varieties have been developed as dessert or cooking fruit or for making cider.
+
+    : 2) The tree which bears apples.
+
     - Fruit
         - Apples
         - Bannanas
@@ -65,16 +72,9 @@ format_text = dedent(
         - Grapes
 
     1. Meat
-        2. Chicken
-        3. Pork
-        4. Beef
-
-    Apple
-    : 1) The round fruit of a tree of the rose family, which typically has thin red or green skin and crisp flesh.
-
-        Many varieties have been developed as dessert or cooking fruit or for making cider.
-
-    : 2) The tree which bears apples.
+        1. Chicken
+        2. Pork
+        3. Beef
 
     # Blocks
 
