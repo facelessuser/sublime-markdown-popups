@@ -37,17 +37,22 @@ IDK = '''
 '''
 RE_BAD_ENTITIES = re.compile(r'(&(?!amp;|lt;|gt;|nbsp;)(?:\w+;|#\d+;))')
 
+NODEBUG = 0
+ERROR = 1
+WARNING = 2
+INFO = 3
+
 
 def _log(msg):
     """Log."""
 
-    print('MarkdownPopup: %s' % str(msg))
+    print('mdpopups: %s' % str(msg))
 
 
-def _debug(msg):
+def _debug(msg, level):
     """Debug log."""
 
-    if _get_setting('mdpopups.debug', False):
+    if int(_get_setting('mdpopups.debug', NODEBUG)) >= level:
         _log(msg)
 
 
@@ -94,6 +99,8 @@ def _clear_cache():
 
     global _scheme_cache
     global _highlighter_cache
+    global base_css
+    base_css = None
     _scheme_cache = OrderedDict()
     _highlighter_cache = OrderedDict()
 
@@ -136,7 +143,7 @@ def _get_sublime_highlighter(view):
                 _highlighter_cache[scheme] = (obj, time.time())
             except Exception:
                 _log('Failed to get Sublime highlighter object!')
-                _debug(traceback.format_exc())
+                _debug(traceback.format_exc(), ERROR)
                 pass
     return obj
 
@@ -166,7 +173,7 @@ def _get_scheme(view):
                 _scheme_cache[scheme] = (obj, user_css, time.time())
             except Exception:
                 _log('Failed to convert/retrieve scheme to CSS!')
-                _debug(traceback.format_exc())
+                _debug(traceback.format_exc(), ERROR)
     return obj, user_css
 
 
@@ -229,7 +236,7 @@ class _MdWrapper(markdown.Markdown):
             except Exception:
                 # We want to gracefully continue even if an extension fails.
                 _log('Failed to load markdown module!')
-                _debug(traceback.format_exc())
+                _debug(traceback.format_exc(), ERROR)
 
         return self
 
@@ -253,7 +260,7 @@ def _get_theme(view, css=None, css_type=POPUP):
         ) if obj is not None else ''
     except Exception:
         _log('Failed to retrieve scheme CSS!')
-        _debug(traceback.format_exc())
+        _debug(traceback.format_exc(), ERROR)
         return ''
 
 
@@ -273,10 +280,10 @@ def _remove_entities(text):
 def _create_html(view, content, md=True, css=None, debug=False, css_type=POPUP):
     """Create html from content."""
 
-    debug = _get_setting('mdpopups.debug', False)
+    debug = _get_setting('mdpopups.debug', NODEBUG)
     if debug:
-        _log('=====Content=====')
-        _log(content)
+        _debug('=====Content=====', INFO)
+        _debug(content, INFO)
 
     if css is None or not isinstance(css, str):
         css = ''
@@ -284,15 +291,15 @@ def _create_html(view, content, md=True, css=None, debug=False, css_type=POPUP):
     style = _get_theme(view, css, css_type)
 
     if debug:
-        _log('=====CSS=====')
-        _log(style)
+        _debug('=====CSS=====', INFO)
+        _debug(style, INFO)
 
     if md:
         content = md2html(view, content)
 
     if debug:
-        _log('=====HTML OUTPUT=====')
-        _log(content)
+        _debug('=====HTML OUTPUT=====', INFO)
+        _debug(content, INFO)
 
     html = "<style>%s</style>" % (style)
     html += _remove_entities(content)
@@ -385,7 +392,7 @@ def tint(img, color, opacity=255, height=None, width=None):
             img = sublime.load_binary_resource(img)
         except Exception:
             _log('Could not open binary file!')
-            _debug(traceback.format_exc())
+            _debug(traceback.format_exc(), ERROR)
             return ''
     return imagetint.tint(img, color, opacity, height, width)
 
@@ -398,7 +405,7 @@ def tint_raw(img, color, opacity=255):
             img = sublime.load_binary_resource(img)
         except Exception:
             _log('Could not open binary file!')
-            _debug(traceback.format_exc())
+            _debug(traceback.format_exc(), ERROR)
             return ''
     return imagetint.tint_raw(img, color, opacity)
 
@@ -431,7 +438,7 @@ def syntax_highlight(view, src, language=None, inline=False):
     except Exception:
         code = src
         _log('Failed to highlight code!')
-        _debug(traceback.format_exc())
+        _debug(traceback.format_exc(), ERROR)
 
     return code
 
@@ -469,7 +476,7 @@ def update_popup(view, content, md=True, css=None):
 
     disabled = _get_setting('mdpopups.disable', False)
     if disabled:
-        _debug('Popups disabled')
+        _debug('Popups disabled', WARNING)
         return
 
     try:
@@ -490,7 +497,7 @@ def show_popup(
 
     disabled = _get_setting('mdpopups.disable', False)
     if disabled:
-        _debug('Popups disabled')
+        _debug('Popups disabled', WARNING)
         return
 
     if not _can_show(view, location):
@@ -520,7 +527,7 @@ if PHANTOM_SUPPORT:
 
         disabled = _get_setting('mdpopups.disable', False)
         if disabled:
-            _debug('Phantoms disabled')
+            _debug('Phantoms disabled', WARNING)
             return
 
         try:
