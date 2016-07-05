@@ -395,10 +395,10 @@ mdpopups.get_language_from_view
 All settings for `MdPopups` are placed in Sublime's `Preferences.sublime-settings`.  They are global and work no for whatever plugin uses the MdPopups API.
 
 ### mdpopups.debug
-Turns on debug mode.  This will dump out all sorts of info to the console.  Such as content before parsing to HTML, final HTML output, etc.  This is more useful for plugin developers.
+Turns on debug mode.  This will dump out all sorts of info to the console.  Content before parsing to HTML, final HTML output, traceback from failures, etc..  This is more useful for plugin developers.  It works by specifying an error level.  `0` or `false` would disable it.  1 would trigger on errors. 2 would trigger on warnings.  3 would be general info (like HTML output).
 
 ```js
-    "mdpopups.debug": true,
+    "mdpopups.debug": 1,
 ```
 
 ### mdpopups.disable
