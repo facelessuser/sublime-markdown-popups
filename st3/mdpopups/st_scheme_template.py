@@ -419,9 +419,9 @@ class Scheme2CSS(object):
             try:
                 import ctypes
 
-                LOGPIXELSY = 90
+                logpixelsy = 90
                 dc = ctypes.windll.user32.GetDC(0)
-                height = ctypes.windll.gdi32.GetDeviceCaps(dc, LOGPIXELSY)
+                height = ctypes.windll.gdi32.GetDeviceCaps(dc, logpixelsy)
                 scale = float(height) / 96.0
             except Exception:
                 pass
