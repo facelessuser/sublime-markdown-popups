@@ -270,7 +270,7 @@ mdpopups.md2html
 
 
 ### color_box
-mdpopups.color_box
+string mdpopups.color_box
 : 
     Generates a color preview box image encoded in base64 and formated to be inserted right in your your Markdown or HTML code as an `img` tag.
 
@@ -286,6 +286,88 @@ mdpopups.color_box
     | max_colors | int | No | 5 | Max number of colors that will be evaluated in the `colors` parameter.  Multiple colors are used to to create palette boxes showing multiple colors lined up horizontally. |
     | alpha | bool | No | False | Will create color box images with a real alpha channel instead of simulating one with a checkered background. |
     | border_map | int | No | 0xF | A mapping of which borders to show.  Where `0x1` is `TOP`, `0x2` is `LEFT`, `0x4` is `BOTTOM`, `0x8` is `RIGHT`.  Map flags can be accessed via `mdpopups.colorbox.TOP` etc. |
+
+### color_box_raw
+bytes mdpopups.color_box
+: 
+    Generates a color preview box image and returns the raw byte string of the image.
+
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | colors | [string] | Yes | | A list of color strings formatted as `#RRGGBBAA` where `R` is the red channel, `G` is the green channel, `B` is the blue channel, and `A` is the alpha channel. |
+    | border | string | Yes | | The color for the color box border.  Input is a RGB color formatted as `#RRGGBB`. |
+    | border2 | string | No | None | The optional secondary border color.  This is great if you are going to have it on a light and dark backgrounds.  You can use a double border so the color stands out regardless of the background.  Input is a RGB color formatted as `#RRGGBB`. |
+    | height | int | No | 32 | Height of color box. |
+    | width | int | No | 32 | Width of color box. |
+    | border_size | int | No | 1 | Width of the color box border.  If using `border2`, the value should be set to at least 2 to see both colors. |
+    | check_size | int | No | 4 | Size of checkered box squares used for the background of transparent colors. |
+    | max_colors | int | No | 5 | Max number of colors that will be evaluated in the `colors` parameter.  Multiple colors are used to to create palette boxes showing multiple colors lined up horizontally. |
+    | alpha | bool | No | False | Will create color box images with a real alpha channel instead of simulating one with a checkered background. |
+    | border_map | int | No | 0xF | A mapping of which borders to show.  Where `0x1` is `TOP`, `0x2` is `LEFT`, `0x4` is `BOTTOM`, `0x8` is `RIGHT`.  Map flags can be accessed via `mdpopups.colorbox.TOP` etc. |
+
+    !!! hint "New"
+        Added in `1.7.0`.
+
+### tint
+string mdpopups.tint
+: 
+    Takes a either a path to an png or a byte string of a png and tints it with a specific color and returns a string containing the base64 encoded png in an HTML element.
+
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | img | string/bytes | Yes | | Either a string in the form `Packages/Package/resource.png` or a byte string of a png image. |
+    | color | string | Yes | | A string in the form of `#RRGGBB` or `#RRGGBBAA` (alpha layer will be stripped and ignored and is only allowed to make it easy to pass in colors from a color scheme). |
+    | opacity | int | No | 255 | An integer value between 0 - 255 that specifies the opacity of the tint. |
+    | height | int | No | None | Height that should be specified in the return HTML element. |
+    | width | int | No | None | Width that should be specified in the return HTML element. |
+
+    !!! hint "New"
+        Added in `1.7.0`.
+
+### tint_raw
+bytes mdpopups.tint_raw
+: 
+    Takes a either a path to an png or a byte string of a png and tints it with a specific color and returns a byte string of the modified png.
+
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | img | string/bytes | Yes | | Either a string in the form `Packages/Package/resource.png` or a byte string of a png image. |
+    | color | string | Yes | | A string in the form of `#RRGGBB` or `#RRGGBBAA` (alpha layer will be stripped and ignored and is only allowed to make it easy to pass in colors from a color scheme). |
+    | opacity | int | No | 255 | An integer value between 0 - 255 that specifies the opacity of the tint. |
+
+    !!! hint "New"
+        Added in `1.7.0`.
+
+### scope2style
+dict mdpopups.scope2style
+: 
+    Takes a sublime scope (complexity doesn't matter), and guesses the style that would be applied.  While there may be untested corner cases with complex scopes where it fails, in general, it is usually accurate.  The returned dictionary is in the form:
+
+    ```python
+    {
+        # Colors will be None if not found,
+        # though usually, even if the scope has no color
+        # it will return the overall theme foreground.
+        #
+        # Background might be None if using `explicit_background`
+        # as it only returns a background if that style specifically
+        # defines a background.
+        "color": "#RRGGBB",
+        "background": "#RRGGBB",
+        # Style will usually be either 'bold', 'italic'.
+        # Multiple styles may be returned 'bold italic' or an empty string ''.
+        "style": 'bold italic'
+    }
+    ```
+
+    | Parameter | Type | Required | Default | Description |
+    | --------- | ---- | -------- | ------- | ----------- |
+    | view | sublime.View |Yes | | Sublime text View object so that the correct color scheme will be searched. |
+    | scope | string | Yes | | The scope to search for. |
+    | explicit_background | bool | No | False | Only return a background if one is explicitly defined in the color scheme. |
+
+    !!! hint "New"
+        Added in `1.7.0`.
 
 ### syntax_highlight
 mdpopups.syntax_highlight
@@ -483,6 +565,44 @@ Templates are used so that a user can easily tap into all the colors, color filt
 
 ## CSS Templates
 MdPoups provides a [`base.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/base.css) that formats the general look of the HTML elements (padding, size, etc.).  On top of that, it provides a [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css) template which applies more superficial styling such as colors, Pygments themes, etc.  It uses the Jinja2 template environment to give direct access to things like color scheme colors, names, and other useful information.  In general, `default.css` should provide most of what everyone **needs**.  But if you **want** greater control, you can create your own CSS template which MdPopups will use instead of `default.css`.
+
+### Sizes Relative to View's Font Size
+Sizes can be defined relative to the current Sublime file view's font size.  An example would be ensuring font sizes in a popup or phantom match the size of the font in the Sublime Text file view.  The sizes that can be adjusted are `pt`, `em`, `px`.
+
+relativesize
+: 
+    Takes a relative specifier and inserts the size in the provided unit relative to the font size in the current Sublime Text file view. The filter is applied to a string that consists of a leading relative operator `+`, `-`, or `*` and then a positive number.  The `relativesize` call takes the type `em`, `px`, or `pt`.
+
+    | Operator | Description |
+    |----------|-------------|
+    | `+` | Adds the specified value to the current font size. |
+    | `-` | Subtracts the specified value from the current font size. |
+    | `*` | Multiplies the value to the current font size. This allows both dividing and multiplying the font size by a given factor.  To cut in half: `*.5`.  To double the size `*2`. |
+
+    **Example**:
+
+    ```css+jinja
+    h1 { font-size: {{'+.375'|relativesize('em')}}; }
+    h2 { font-size: {{'+.3'|relativesize('em')}}; }
+    h3 { font-size: {{'+.225'|relativesize('em')}}; }
+    h4 { font-size: {{'+.15'|relativesize('em')}}; }
+    h5 { font-size: {{'+.075'|relativesize('em')}}; }
+    h6 { font-size: {{'+0'|relativesize('em')}}; }
+    ```
+
+    Would become this (assuming a font size of 12pt):
+
+    ```css+jinja
+    h1 { font-size: 1.625em; }
+    h2 { font-size: 1.55em; }
+    h3 { font-size: 1.475em; }
+    h4 { font-size: 1.4em; }
+    h5 { font-size: 1.325em; }
+    h6 { font-size: 1.25em; }
+    ```
+
+    !!! hint "New"
+        Added in `1.7.0`.
 
 ### Template Colors
 With the template environment, colors from the current Sublime color scheme can be accessed and manipulated.  Access to the Sublime color scheme styles are done via the `css` filter.
