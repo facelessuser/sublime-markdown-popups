@@ -19,7 +19,7 @@ from .st_clean_css import clean_css
 from .st_pygments_highlight import syntax_hl as pyg_syntax_hl
 from .st_code_highlight import SublimeHighlight
 from .st_mapping import lang_map
-from .imagetint import tint, tint_raw
+from . import imagetint
 import re
 import os
 
@@ -355,19 +355,29 @@ def md2html(view, markup):
 
 def color_box(
     colors, border="#000000ff", border2=None, height=32, width=32,
-    border_size=1, check_size=4, max_colors=5, alpha=False, border_map=0xF, raw=False
+    border_size=1, check_size=4, max_colors=5, alpha=False, border_map=0xF
 ):
     """Color box."""
 
-    method = 'color_box_raw' if raw else 'color_box'
-
-    return getattr(colorbox, method)(
+    return colorbox.color_box(
         colors, border, border2, height, width,
         border_size, check_size, max_colors, alpha, border_map
     )
 
 
-def tint_image(img, color, opacity=255, height=None, width=None, raw=False):
+def color_box_raw(
+    colors, border="#000000ff", border2=None, height=32, width=32,
+    border_size=1, check_size=4, max_colors=5, alpha=False, border_map=0xF
+):
+    """Color box raw."""
+
+    return colorbox.color_box_raw(
+        colors, border, border2, height, width,
+        border_size, check_size, max_colors, alpha, border_map
+    )
+
+
+def tint(img, color, opacity=255, height=None, width=None):
     """Tint the image."""
 
     if isinstance(img, str):
@@ -377,7 +387,20 @@ def tint_image(img, color, opacity=255, height=None, width=None, raw=False):
             _log('Could not open binary file!')
             _debug(traceback.format_exc())
             return ''
-    return tint_raw(img, color, opacity) if raw else tint(img, color, opacity, height, width)
+    return imagetint.tint(img, color, opacity, height, width)
+
+
+def tint_raw(img, color, opacity=255):
+    """Tint the image."""
+
+    if isinstance(img, str):
+        try:
+            img = sublime.load_binary_resource(img)
+        except Exception:
+            _log('Could not open binary file!')
+            _debug(traceback.format_exc())
+            return ''
+    return imagetint.tint_raw(img, color, opacity)
 
 
 def get_language_from_view(view):
