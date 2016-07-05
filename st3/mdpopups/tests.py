@@ -22,7 +22,7 @@ import sys
 this = sys.modules[__name__]
 
 format_text = dedent(
-    r'''
+    '''
     # H1
     ## H2
     ### H3
@@ -51,12 +51,9 @@ format_text = dedent(
 
     [mdpopups link](https://github.com/facelessuser/sublime-markdown-popups)
 
-    ## Line Breaks and quotes
+    ## Line Breaks and Quotes
 
     > This is a line break.
-    > This is a line.
-    >
-    > This is not a line break. \
     > This is a line.
 
     ## Lists
