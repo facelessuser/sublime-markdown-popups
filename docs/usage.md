@@ -111,8 +111,8 @@ bool mdpopups.is_popup_visible
     | --------- | ---- | -------- | ------- | ----------- |
     | view | sublime.View | Yes | | A Sublime Text view object. |
 
-    !!! hint "New"
-        Added in `1.6.0`.
+    !!! hint "New 1.6.0"
+        Feature added in `1.6.0`.
 
 ### add_phantom
 int mdpopups.add_phantom
@@ -146,8 +146,8 @@ int mdpopups.add_phantom
 
     Also, do not try to override the style of existing base classes and elements with plugin injection, but use custom plugin classes so that you will only target what your plugin has specifically added special classes to.
 
-    !!! hint "New"
-        Added in `1.6.0`.
+    !!! hint "New 1.6.0"
+        Feature added in `1.6.0`.
 
 
 ### erase_phantoms
@@ -160,8 +160,8 @@ mdpopups.erase_phantoms
     | view | sublime.View | Yes | | A Sublime Text view object. |
     | key | string | Yes | | A key that is associated with phantoms.  Multiple phantoms can share the same key, but each phantom will have its own id. |
 
-    !!! hint "New"
-        Added in `1.6.0`.
+    !!! hint "New 1.6.0"
+        Feature added in `1.6.0`.
 
 ### erase_phantom_by_id
 mdpopups.erase_phantom_by_id
@@ -173,8 +173,8 @@ mdpopups.erase_phantom_by_id
     | view | sublime.View | Yes | | A Sublime Text view object. |
     | pid | string | Yes | | The id associated with a single phantom.  Multiple phantoms can share the same key, but each phantom will have its own id. |
 
-    !!! hint "New"
-        Added in `1.6.0`.
+    !!! hint "New 1.6.0"
+        Feature dded in `1.6.0`.
 
 ### query_phantom
 [sublime.Region] mdpopups.query_phantom
@@ -186,8 +186,8 @@ mdpopups.erase_phantom_by_id
     | view | sublime.View | Yes | | A Sublime Text view object. |
     | pid | int | Yes | | The id associated with a single phantom.  Multiple phantoms can share the same key, but each phantom will have its own id. |
 
-    !!! hint "New"
-        Added in `1.6.0`.
+    !!! hint "New 1.6.0"
+        Feature added in `1.6.0`.
 
 ### query_phantoms
 [sublime.Region] mdpopups.query_phantoms
@@ -199,8 +199,8 @@ mdpopups.erase_phantom_by_id
     | view | sublime.View | Yes | | A Sublime Text view object. |
     | pids | [int] | Yes | | The id associated with a single phantom.  Multiple phantoms can share the same key, but each phantom will have its own id. |
 
-    !!! hint "New"
-        Added in `1.6.0`.
+    !!! hint "New 1.6.0"
+        Feature added in `1.6.0`.
 
 ### class Phantom
 mdpopups.Phantoms
@@ -227,8 +227,8 @@ mdpopups.Phantoms
     | css | string | Additional CSS that will be injected. |
     | on_navigate | function | Callback that receives one variable `href`. |
 
-    !!! hint "New"
-        Added in `1.6.1`.
+    !!! hint "New 1.6.1"
+        Feature added in `1.6.1`.
 
 ### class PhantomSet
 mdpopups.PhantomsSet
@@ -250,8 +250,8 @@ mdpopups.PhantomsSet
         | --------- | ---- | -------- | ------- | ----------- |
         | new_phantoms | [[mdpopups.Phantom](#class-phantom)] | Yes | | A list of mdpopup phantoms (don't use sublime.Phantoms). |
 
-    !!! hint "New"
-        Added in `1.6.1`.
+    !!! hint "New 1.6.1"
+        Feature added in `1.6.1`.
 
 ### clear_cache
 mdpopups.clear_cache
@@ -305,8 +305,8 @@ bytes mdpopups.color_box
     | alpha | bool | No | False | Will create color box images with a real alpha channel instead of simulating one with a checkered background. |
     | border_map | int | No | 0xF | A mapping of which borders to show.  Where `0x1` is `TOP`, `0x2` is `LEFT`, `0x4` is `BOTTOM`, `0x8` is `RIGHT`.  Map flags can be accessed via `mdpopups.colorbox.TOP` etc. |
 
-    !!! hint "New"
-        Added in `1.7.0`.
+    !!! hint "New 1.7.0"
+        Feature dded in `1.7.0`.
 
 ### tint
 string mdpopups.tint
@@ -321,8 +321,8 @@ string mdpopups.tint
     | height | int | No | None | Height that should be specified in the return HTML element. |
     | width | int | No | None | Width that should be specified in the return HTML element. |
 
-    !!! hint "New"
-        Added in `1.7.0`.
+    !!! hint "New 1.7.0"
+        Feature added in `1.7.0`.
 
 ### tint_raw
 bytes mdpopups.tint_raw
@@ -335,8 +335,8 @@ bytes mdpopups.tint_raw
     | color | string | Yes | | A string in the form of `#RRGGBB` or `#RRGGBBAA` (alpha layer will be stripped and ignored and is only allowed to make it easy to pass in colors from a color scheme). |
     | opacity | int | No | 255 | An integer value between 0 - 255 that specifies the opacity of the tint. |
 
-    !!! hint "New"
-        Added in `1.7.0`.
+    !!! hint "New 1.7.0"
+        Feature added in `1.7.0`.
 
 ### scope2style
 dict mdpopups.scope2style
@@ -367,8 +367,8 @@ dict mdpopups.scope2style
     | selected | bool | No | False | Whether this scope is in a selected state (selected text). |
     | explicit_background | bool | No | False | Only return a background if one is explicitly defined in the color scheme. |
 
-    !!! hint "New"
-        Added in `1.7.0`.
+    !!! hint "New 1.7.0"
+        Feature added in `1.7.0`.
 
 ### syntax_highlight
 mdpopups.syntax_highlight
@@ -629,17 +629,17 @@ relativesize
 
     The conversion factor between **px**, **pt**, and **em** is assummed to be 16px --> 1em --> 12pt.  Whether this is what sublime is actually doing is another question.  We assume that the Sublime `font_size` setting is in **px** as this has given the best overall feel.  **em** are not recommened for font sizes as I've seen some strange behaviour when scaling **em** (even though the numbers seem to calculate correctly).  **em** issues may not exists with elements that are not font, but please report any issues you find.
 
-    !!! hint "New"
+    !!! hint "New 1.7.0"
         Added in `1.7.0`.
 
         This was the `1.7.0` format which was cumbersome: `{{'+5'|relativesize('px')}}`.  In `1.7.1`, it changed, but the old way is still supported.
 
 
-    !!! hint "New"
+    !!! hint "New 1.7.1"
         `1.7.1` introduced the more simple format of `{{'+5px'|relativesize}}`.  It is encouraged to adopt this format instead of `1.7.0` format as it will be removed in the future.
 
-    !!! hint "New"
-        Integer rounded added in `1.7.2`.
+    !!! hint "New 1.7.2"
+        Integer rounded added in `1.7.2`.  Rounding not supported in old style call from `1.7.0`.
 
 ### Template Colors
 With the template environment, colors from the current Sublime color scheme can be accessed and manipulated.  Access to the Sublime color scheme styles are done via the `css` filter.
@@ -853,7 +853,7 @@ var.is_popup | var.is_phantom
     {% endif %}
     ```
 
-    !!! hint "New"
+    !!! hint "New 1.6.0"
             Added in `1.6.0`.
 
 var.use_pygments
