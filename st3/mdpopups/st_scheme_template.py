@@ -130,7 +130,6 @@ class Scheme2CSS(object):
 
         self.csm = ColorSchemeMatcher(scheme_file)
         self.text = ''
-        self.font_scale = self.get_font_scale()
         self.colors = OrderedDict()
         self.scheme_file = scheme_file
         self.css_type = INVALID
@@ -258,17 +257,29 @@ class Scheme2CSS(object):
         except Exception:
             return ''
 
-    def relativesize(self, offset, unit):
+    def relativesize(self, css, unit=None):
         """Create a relative font from the current font."""
 
+        # Handle things the new way '+1.25em'
+        if css.endswith(('em', 'px', 'pt')):
+            if unit is None:
+                offset = css[:-2]
+                unit = css[-2:]
+            else:
+                return css
+        elif unit is None:
+            return css
+        else:
+            offset = css
+
         if unit == 'em':
-            size = self.font_size / 12.0
-            precision = 3
-        elif unit == 'px':
             size = self.font_size / 16.0
             precision = 3
-        elif unit == 'pt':
+        elif unit == 'px':
             size = self.font_size
+            precision = 3
+        elif unit == 'pt':
+            size = (self.font_size / 16.0) * 12.0
             precision = 3
 
         op = offset[0]
@@ -434,7 +445,7 @@ class Scheme2CSS(object):
         if css_type not in (POPUP, PHANTOM):
             return ''
 
-        self.font_size = float(font_size) * self.font_scale
+        self.font_size = float(font_size)
         self.css_type = css_type
 
         var = copy.copy(self.variables)

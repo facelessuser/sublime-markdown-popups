@@ -572,7 +572,7 @@ Sizes can be defined relative to the current Sublime file view's font size.  An 
 
 relativesize
 : 
-    Takes a relative specifier and inserts the size in the provided unit relative to the font size in the current Sublime Text file view. The filter is applied to a string that consists of a leading relative operator `+`, `-`, or `*` and then a positive number.  The `relativesize` call takes the type `em`, `px`, or `pt`.
+    Takes a relative specifier and inserts the size in the provided unit relative to the font size in the current Sublime Text file view. The filter is applied to a string that consists of a leading relative operator (`+`, `-`, or `*`), a positive number, and one of three size types (`em`, `px`, or `pt`): `#!css+jinja {{'+.375em'|relativesize}}`.
 
     | Operator | Description |
     |----------|-------------|
@@ -583,23 +583,23 @@ relativesize
     **Example**:
 
     ```css+jinja
-    h1 { font-size: {{'+.375'|relativesize('em')}}; }
-    h2 { font-size: {{'+.3'|relativesize('em')}}; }
-    h3 { font-size: {{'+.225'|relativesize('em')}}; }
-    h4 { font-size: {{'+.15'|relativesize('em')}}; }
-    h5 { font-size: {{'+.075'|relativesize('em')}}; }
-    h6 { font-size: {{'+0'|relativesize('em')}}; }
+    h1 { font-size: {{'+5px'|relativesize}}; }
+    h2 { font-size: {{'+4px'|relativesize}}; }
+    h3 { font-size: {{'+3px'|relativesize}}; }
+    h4 { font-size: {{'+2px'|relativesize}}; }
+    h5 { font-size: {{'+1px'|relativesize}}; }
+    h6 { font-size: {{'+0px'|relativesize}}; }
     ```
 
-    Would become this (assuming a font size of 12pt):
+    Would become this (assuming a font size of 19px):
 
     ```css+jinja
-    h1 { font-size: 1.625em; }
-    h2 { font-size: 1.55em; }
-    h3 { font-size: 1.475em; }
-    h4 { font-size: 1.4em; }
-    h5 { font-size: 1.325em; }
-    h6 { font-size: 1.25em; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 22px; }
+    h4 { font-size: 21px; }
+    h5 { font-size: 20px; }
+    h6 { font-size: 19px; }
     ```
 
     !!! hint "New"
