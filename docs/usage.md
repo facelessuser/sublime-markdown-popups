@@ -603,7 +603,11 @@ relativesize
     ```
 
     !!! hint "New"
-        Added in `1.7.0`.
+        Added in `1.7.1`.
+
+        This was the `1.7.0` format which was cumbersome: `{{'+5'|relativesize('px')}}`.
+
+        `1.7.1` introduced the more simple format of `{{'+5px'|relativesize}}`, but the old way is still supported.  It is encouraged to skip adopting this in `1.7.0` and instead adopt this starting in `1.7.1`.
 
 ### Template Colors
 With the template environment, colors from the current Sublime color scheme can be accessed and manipulated.  Access to the Sublime color scheme styles are done via the `css` filter.
