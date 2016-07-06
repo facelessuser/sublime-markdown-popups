@@ -454,6 +454,19 @@ This is a special setting allowing the mapping of personal syntax languages whic
 
 For a list of all currently supported syntax mappings, see the official [mapping file](https://github.com/facelessuser/sublime-markdown-popups/blob/master/st3/mdpopups/st_mapping.py).
 
+### mdpopups.font_scale
+Sublime currently doesn't account for font scaling.  For example, if you have a 4K monitor on Windows, and you set the OS font scaling to 125% in your system settings, all your font sizes in your popups and phantoms will be approximately 25% too small.  This feature aims to fix this.  By default, mdpopups will try to guess the scaling on Windows, but it can only guess on Windows currently.  If you don't like what it guesses, or you are on Linux or OSX, you can specify a scale here.
+
+All sizes that are run through the `relativesize` filter use the size of the `font_size` variable found in the a file view's settings as the reference.  It seems that this value is closest to a **px** font size.  `mdpopups.font_scale` will only be applied to sizes run through the `relativesize` filter, and I personally recommend using **px** for fonts (or maybe even **pt** as they seemed all right, but I've seen funny things when using **em** sizes even though seem to calculate fine).
+
+Value should be a positive integer or float.  The default value is `0`. On Windows, if you set it to `0`, it will guess your font scale.  Setting this value to `1` effectively disables it and since you are using a scale of one, no adjustments are made.  On Linux and OSX, either `0` or `1` effectively disables the feature.
+
+So if your OS font scaling is set to 125%, you would probably want to set the scale factor to `1.25` to increase your popup/phantom font sizes to 125% from its calculated 100%.
+
+```js
+'mdpopups.font_scale': 0,
+```
+
 ## Syntax Highlighting
 MdPopups has two syntax highlighting methods: one is Pygments, the other is Sublimes native syntax highlighters.  When developing a plugin, it is wise to test out both as a syntax mapping may be needed for the Sublime Syntax Highlighter; mappings can be added locally and/or to the main repository via pull requests.
 
@@ -613,6 +626,8 @@ relativesize
     ```css+jinja
     ul, ol { padding-left: 1em; }
     ```
+
+    The conversion factor between **px**, **pt**, and **em** is assummed to be 16px --> 1em --> 12pt.  Whether this is what sublime is actually doing is another question.  We assume that the Sublime `font_size` setting is in **px** as this has given the best overall feel.  **em** are not recommened for font sizes as I've seen some strange behaviour when scaling **em** (even though the numbers seem to calculate correctly).  **em** issues may not exists with elements that are not font, but please report any issues you find.
 
     !!! hint "New"
         Added in `1.7.0`.

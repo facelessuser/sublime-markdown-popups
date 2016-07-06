@@ -269,6 +269,7 @@ class Scheme2CSS(object):
             else:
                 offset = css
                 unit = args[0]
+                integer = False
                 assert isinstance(unit, str) and unit in ('em', 'px', 'pt'), 'Bad Arguments!'
         except Exception:
             return css
@@ -426,7 +427,12 @@ class Scheme2CSS(object):
         """Get font scale."""
 
         scale = 1.0
-        if sublime.platform() == 'windows':
+        try:
+            pref_scale = float(sublime.load_settings('Preferences.sublime-settings').get('mdpopups.font_scale', 0.0))
+        except Exception:
+            pref_scale = 0.0
+
+        if sublime.platform() == 'windows' and pref_scale <= 0.0:
             try:
                 import ctypes
 
@@ -436,6 +442,8 @@ class Scheme2CSS(object):
                 scale = float(height) / 96.0
             except Exception:
                 pass
+        elif pref_scale > 0.0:
+            scale = pref_scale
 
         return scale
 
@@ -445,7 +453,7 @@ class Scheme2CSS(object):
         if css_type not in (POPUP, PHANTOM):
             return ''
 
-        self.font_size = float(font_size)
+        self.font_size = float(font_size) * self.get_font_scale()
         self.css_type = css_type
 
         var = copy.copy(self.variables)
