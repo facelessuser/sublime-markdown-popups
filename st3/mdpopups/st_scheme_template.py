@@ -257,30 +257,30 @@ class Scheme2CSS(object):
         except Exception:
             return ''
 
-    def relativesize(self, css, unit=None):
+    def relativesize(self, css, *args):
         """Create a relative font from the current font."""
 
         # Handle things the new way '+1.25em'
-        if css.endswith(('em', 'px', 'pt')):
-            if unit is None:
+        try:
+            if css.endswith(('em', 'px', 'pt')):
                 offset = css[:-2]
                 unit = css[-2:]
+                integer = bool(len(args) and args[0])
             else:
-                return css
-        elif unit is None:
+                offset = css
+                unit = args[0]
+                assert isinstance(unit, str) and unit in ('em', 'px', 'pt'), 'Bad Arguments!'
+        except Exception:
             return css
-        else:
-            offset = css
 
         if unit == 'em':
             size = self.font_size / 16.0
-            precision = 3
         elif unit == 'px':
             size = self.font_size
-            precision = 3
         elif unit == 'pt':
             size = (self.font_size / 16.0) * 12.0
-            precision = 3
+
+        precision = 0 if integer else 3
 
         op = offset[0]
         if op in ('+', '-', '*'):

@@ -572,7 +572,7 @@ Sizes can be defined relative to the current Sublime file view's font size.  An 
 
 relativesize
 : 
-    Takes a relative specifier and inserts the size in the provided unit relative to the font size in the current Sublime Text file view. The filter is applied to a string that consists of a leading relative operator (`+`, `-`, or `*`), a positive number, and one of three size types (`em`, `px`, or `pt`): `#!css+jinja {{'+.375em'|relativesize}}`.
+    Takes a relative specifier and inserts the size in the provided unit relative to the font size in the current Sublime Text file view. The filter is applied to a string that consists of a leading relative operator (`+`, `-`, or `*`), a positive number, and one of three size types (`em`, `px`, or `pt`). `relativesize` can also take a boolean to turn the the float value into a rounded int.
 
     | Operator | Description |
     |----------|-------------|
@@ -602,12 +602,29 @@ relativesize
     h6 { font-size: 19px; }
     ```
 
+    **Example - Integer Rounding**
+
+    ```css+jinja
+    ul, ol { padding-left: {{'*.5em'|relativesize(True)}}; }
+    ```
+
+    Would become this (assuming a font size of 19px):
+
+    ```css+jinja
+    ul, ol { padding-left: 1em; }
+    ```
+
     !!! hint "New"
-        Added in `1.7.1`.
+        Added in `1.7.0`.
 
-        This was the `1.7.0` format which was cumbersome: `{{'+5'|relativesize('px')}}`.
+        This was the `1.7.0` format which was cumbersome: `{{'+5'|relativesize('px')}}`.  In `1.7.1`, it changed, but the old way is still supported.
 
-        `1.7.1` introduced the more simple format of `{{'+5px'|relativesize}}`, but the old way is still supported.  It is encouraged to skip adopting this in `1.7.0` and instead adopt this starting in `1.7.1`.
+
+    !!! hint "New"
+        `1.7.1` introduced the more simple format of `{{'+5px'|relativesize}}`.  It is encouraged to adopt this format instead of `1.7.0` format as it will be removed in the future.
+
+    !!! hint "New"
+        Integer rounded added in `1.7.2`.
 
 ### Template Colors
 With the template environment, colors from the current Sublime color scheme can be accessed and manipulated.  Access to the Sublime color scheme styles are done via the `css` filter.
