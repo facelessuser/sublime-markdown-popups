@@ -440,6 +440,7 @@ class Scheme2CSS(object):
                 dc = ctypes.windll.user32.GetDC(0)
                 height = ctypes.windll.gdi32.GetDeviceCaps(dc, logpixelsy)
                 scale = float(height) / 96.0
+                ctypes.windll.user32.ReleaseDC(0, dc)
             except Exception:
                 pass
         elif pref_scale > 0.0:
