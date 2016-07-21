@@ -3,7 +3,11 @@
 body {
     color: black;
     background-color: white;
+    {% if var.is_popup %}
     margin: 1px;
+    {% else %}
+    margin: 0;
+    {% endif %}
     font-size: {{'+0px'|relativesize}};
     padding: 0.2em;
 }
