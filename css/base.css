@@ -5,8 +5,10 @@ body {
     background-color: white;
     {% if var.is_popup %}
     margin: 1px;
+    padding: 0.2em;
     {% else %}
     margin: 0;
+    padding: 0;
     {% endif %}
     font-size: {{'+0px'|relativesize}};
     padding: 0.2em;
