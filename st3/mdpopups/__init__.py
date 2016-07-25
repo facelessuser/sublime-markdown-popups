@@ -23,7 +23,7 @@ from . import imagetint
 import re
 import os
 
-version_info = (1, 7, 5)
+version_info = (1, 7, 6)
 __version__ = '.'.join([str(x) for x in version_info])
 
 PHANTOM_SUPPORT = int(sublime.version()) >= 3118
