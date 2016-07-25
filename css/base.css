@@ -1,5 +1,6 @@
 /* Html fake border color */
 /* Defines the general look of the font and provides a little margin. */
+html { padding: 0; margin: 0; }
 body {
     color: black;
     background-color: white;
