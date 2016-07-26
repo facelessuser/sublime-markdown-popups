@@ -833,7 +833,7 @@ The template environment provides a couple of variables that can be used to cond
 
 var.sublime_version
 : 
-    `sublime-version` contains the current SublimeText version.  This allows you conditionally handle CSS features that are specific to a SublimeText version.
+    `sublime_version` contains the current SublimeText version.  This allows you conditionally handle CSS features that are specific to a SublimeText version.
 
     **Example**
     ```css+jinja
