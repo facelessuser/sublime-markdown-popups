@@ -581,6 +581,10 @@ Templates are used so that a user can easily tap into all the colors, color filt
 MdPoups provides a [`base.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/base.css) that formats the general look of the HTML elements (padding, size, etc.).  On top of that, it provides a [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css) template which applies more superficial styling such as colors, Pygments themes, etc.  It uses the Jinja2 template environment to give direct access to things like color scheme colors, names, and other useful information.  In general, `default.css` should provide most of what everyone **needs**.  But if you **want** greater control, you can create your own CSS template which MdPopups will use instead of `default.css`.
 
 ### Sizes Relative to View's Font Size
+
+!!! caution "Notice"
+    It is recommended moving forward (starting with mdpopups version 1.8.0 and SublimeText build 3119) to use `rem` units for relative sizes.  If you need to dynamically choose whether to use `rem` or  not, you can check the template variable `var.sublime_version`.
+
 Sizes can be defined relative to the current Sublime file view's font size.  An example would be ensuring font sizes in a popup or phantom match the size of the font in the Sublime Text file view.  The sizes that can be adjusted are `pt`, `em`, `px`.
 
 relativesize
@@ -827,6 +831,22 @@ getcss
 ## Template Variables
 The template environment provides a couple of variables that can be used to conditionally alter the CSS output.  Variables are found under `var`.
 
+var.sublime_version
+: 
+    `sublime-version` contains the current SublimeText version.  This allows you conditionally handle CSS features that are specific to a SublimeText version.
+
+    **Example**
+    ```css+jinja
+    {% if var.sublime_version >= 3119 %}
+    padding: 0.2rem;
+    {% else %}
+    padding: 0.2em;
+    {% endif %}
+    ```
+
+    !!! hint "New 1.8.0"
+        Added in `1.8.0`.
+
 var.is_dark | var.is_light
 : 
     `is_dark` checks if the color scheme is a dark color scheme.  Alternatively, `is_light` checks if the color scheme is a light color scheme.
@@ -854,7 +874,7 @@ var.is_popup | var.is_phantom
     ```
 
     !!! hint "New 1.6.0"
-            Added in `1.6.0`.
+        Added in `1.6.0`.
 
 var.use_pygments
 : 
