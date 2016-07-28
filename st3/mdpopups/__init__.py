@@ -23,7 +23,7 @@ from . import imagetint
 import re
 import os
 
-version_info = (1, 8, 0)
+version_info = (1, 8, 1)
 __version__ = '.'.join([str(x) for x in version_info])
 
 PHANTOM_SUPPORT = int(sublime.version()) >= 3118
@@ -277,7 +277,7 @@ def _remove_entities(text):
     return RE_BAD_ENTITIES.sub(repl, text)
 
 
-def _create_html(view, content, md=True, css=None, debug=False, css_type=POPUP):
+def _create_html(view, content, md=True, css=None, debug=False, css_type=POPUP, nl2br=True):
     """Create html from content."""
 
     debug = _get_setting('mdpopups.debug', NODEBUG)
@@ -295,7 +295,7 @@ def _create_html(view, content, md=True, css=None, debug=False, css_type=POPUP):
         _debug(style, INFO)
 
     if md:
-        content = md2html(view, content)
+        content = md2html(view, content, nl2br=nl2br)
 
     if debug:
         _debug('=====HTML OUTPUT=====', INFO)
@@ -315,7 +315,7 @@ def version():
     return version_info
 
 
-def md2html(view, markup):
+def md2html(view, markup, nl2br=True):
     """Convert Markdown to HTML."""
 
     if _get_setting('mdpopups.use_sublime_highlighter'):
@@ -330,10 +330,12 @@ def md2html(view, markup):
         "mdpopups.mdx.betterem",
         "mdpopups.mdx.magiclink",
         "mdpopups.mdx.inlinehilite",
-        "markdown.extensions.nl2br",
         "markdown.extensions.admonition",
         "markdown.extensions.def_list"
     ]
+
+    if nl2br:
+        extensions.append('markdown.extensions.nl2br')
 
     configs = {
         "mdpopups.mdx.inlinehilite": {
@@ -471,7 +473,7 @@ def hide_popup(view):
     view.hide_popup()
 
 
-def update_popup(view, content, md=True, css=None):
+def update_popup(view, content, md=True, css=None, nl2br=True):
     """Update the popup."""
 
     disabled = _get_setting('mdpopups.disable', False)
@@ -480,7 +482,7 @@ def update_popup(view, content, md=True, css=None):
         return
 
     try:
-        html = _create_html(view, content, md, css, css_type=POPUP)
+        html = _create_html(view, content, md, css, css_type=POPUP, nl2br=nl2br)
     except Exception:
         _log(traceback.format_exc())
         html = IDK
@@ -491,7 +493,7 @@ def update_popup(view, content, md=True, css=None):
 def show_popup(
     view, content, md=True, css=None,
     flags=0, location=-1, max_width=320, max_height=240,
-    on_navigate=None, on_hide=None
+    on_navigate=None, on_hide=None, nl2br=True
 ):
     """Parse the color scheme if needed and show the styled pop-up."""
 
@@ -504,7 +506,7 @@ def show_popup(
         return
 
     try:
-        html = _create_html(view, content, md, css, css_type=POPUP)
+        html = _create_html(view, content, md, css, css_type=POPUP, nl2br=nl2br)
     except Exception:
         _log(traceback.format_exc())
         html = IDK
@@ -522,7 +524,7 @@ def is_popup_visible(view):
 
 
 if PHANTOM_SUPPORT:
-    def add_phantom(view, key, region, content, layout, md=True, css=None, on_navigate=None):
+    def add_phantom(view, key, region, content, layout, md=True, css=None, on_navigate=None, nl2br=True):
         """Add a phantom and return phantom id."""
 
         disabled = _get_setting('mdpopups.disable', False)
@@ -531,7 +533,7 @@ if PHANTOM_SUPPORT:
             return
 
         try:
-            html = _create_html(view, content, md, css, css_type=PHANTOM)
+            html = _create_html(view, content, md, css, css_type=PHANTOM, nl2br=nl2br)
         except Exception:
             _log(traceback.format_exc())
             html = IDK
@@ -561,12 +563,13 @@ if PHANTOM_SUPPORT:
     class Phantom(sublime.Phantom):
         """A phantom object."""
 
-        def __init__(self, region, content, layout, md=True, css=None, on_navigate=None):
+        def __init__(self, region, content, layout, md=True, css=None, on_navigate=None, nl2br=True):
             """Initialize."""
 
             super().__init__(region, content, layout, on_navigate)
             self.md = md
             self.css = css
+            self.nl2br = nl2br
 
         def __eq__(self, rhs):
             """Check if phantoms are equal."""
@@ -575,7 +578,7 @@ if PHANTOM_SUPPORT:
             return (
                 self.region == rhs.region and self.content == rhs.content and
                 self.layout == rhs.layout and self.on_navigate == rhs.on_navigate and
-                self.md == rhs.md and self.css == rhs.css
+                self.md == rhs.md and self.css == rhs.css and self.nl2br == nl2br
             )
 
     class PhantomSet(sublime.PhantomSet):
@@ -599,7 +602,15 @@ if PHANTOM_SUPPORT:
             for i in range(len(regions)):
                 self.phantoms[i].region = regions[i]
 
+            count = 0
             for p in new_phantoms:
+                if not isinstance(p, Phantom):
+                    # Convert sublime.Phantom to mdpopups.Phantom
+                    p = Phantom(
+                        p.region, p.content, p.layout,
+                        md=False, css=None, on_navigate=p.on_navigate, nl2br=False
+                    )
+                    new_phantoms[count] = p
                 try:
                     # Phantom already exists, copy the id from the current one
                     idx = self.phantoms.index(p)
@@ -613,8 +624,10 @@ if PHANTOM_SUPPORT:
                         p.layout,
                         p.md,
                         p.css,
-                        p.on_navigate
+                        p.on_navigate,
+                        p.nl2br
                     )
+                count += 1
 
             for p in self.phantoms:
                 # if the region is -1, then it's already been deleted, no need to call erase
