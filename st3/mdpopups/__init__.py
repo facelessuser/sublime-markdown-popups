@@ -578,7 +578,7 @@ if PHANTOM_SUPPORT:
             return (
                 self.region == rhs.region and self.content == rhs.content and
                 self.layout == rhs.layout and self.on_navigate == rhs.on_navigate and
-                self.md == rhs.md and self.css == rhs.css and self.nl2br == nl2br
+                self.md == rhs.md and self.css == rhs.css and self.nl2br == rhs.nl2br
             )
 
     class PhantomSet(sublime.PhantomSet):
