@@ -21,7 +21,7 @@ Your plugin must include the following Package Control dependencies:
 ```
 
 ## Markdown Support
-MdPopups uses [Python Markdown](https://pythonhosted.org/Markdown/) to parse Markdown and transform it into a tooltip or a phantom (HTML embedded in your file view).  The Markdown environment supports basic Markdown features, but also includes a number of specialty extensions to enhance the environment.  To keep the experience standardized for plugin use, tweaking the Markdown settings is not allowed except for `nl2br` as it is not critical and can actually get in the way of formatting the Markdown if not desired (in `1.9.0` it will be disabled by default, but will remain for legacy use).
+MdPopups uses [Python Markdown](https://pythonhosted.org/Markdown/) to parse Markdown and transform it into a tooltip or a phantom (HTML embedded in your file view).  The Markdown environment supports basic Markdown features, but also includes a number of specialty extensions to enhance the environment.  To keep the experience standardized for plugin use, tweaking the Markdown settings is not allowed except for `nl2br` as it is not critical and can actually get in the way of formatting the Markdown if not desired.
 
 MdPopups includes the following Python Markdown extensions:
 
@@ -66,7 +66,7 @@ mdpopups.show_popup
     | max_height | int | No | 240 | Maximum height of the popup. |
     | on_navigate | function | No | None | Callback that receives one variable `href`. |
     | on_hide | function | No | None | Callback for when the tooltip is hidden. |
-    | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. It is advised to explicitly set this because in the `1.9.0` the `nl2br` extension will be set to `False` by default; setting this explicitly will ensure expected output will remain the same when this change occurs. |
+    | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
 
     !!! caution "Developers Guidelines"
         If injecting your own CSS classes from a plugin, please namespace them by either giving them a very unique name (preferably with the plugin's name as part of the class) or use an additional namespace class (preferably with the plugin's name) and a specific class.  This way a user can target and override your class styling if desired.
@@ -98,7 +98,7 @@ mdpopups.update_popup
     | content | string | Yes | | Markdown/HTML content to be used to create a tooltip. |
     | md | bool | No | True | Defines whether the content is Markdown and needs to be converterted. |
     | css | string | No | None | CSS text that should be used instead of loading a theme. |
-    | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. It is advised to explicitly set this because in the `1.9.0` the `nl2br` extension will be set to `False` by default; setting this explicitly will ensure expected output will remain the same when this change occurs. |
+    | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
 
     !!! hint "New 1.8.1"
         `nl2br` option added in `1.8.1`.
@@ -141,7 +141,7 @@ int mdpopups.add_phantom
     | md | bool | No | True | Defines whether the content is Markdown and needs to be converterted. |
     | css | string | No | None | Additional CSS that will be injected. |
     | on_navigate | function | No | None | Callback that receives one variable `href`. |
-    | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. It is advised to explicitly set this because in the `1.9.0` the `nl2br` extension will be set to `False` by default; setting this explicitly will ensure expected output will remain the same when this change occurs. |
+    | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
 
     !!! caution "Developers Guidelines"
         If injecting your own CSS classes from a plugin, please namespace them by either giving them a very unique name (preferably with the plugin's name as part of the class) or use an additional namespace class (preferably with the plugin's name) and a specific class.  This way a user can target and override your class styling if desired.
@@ -241,7 +241,7 @@ mdpopups.Phantoms
     | md | bool | Defines whether the content is Markdown and needs to be converterted. |
     | css | string | Additional CSS that will be injected. |
     | on_navigate | function | Callback that receives one variable `href`. |
-    | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. It is advised to explicitly set this because in the `1.9.0` the `nl2br` extension will be set to `False` by default; setting this explicitly will ensure expected output will remain the same when this change occurs. |
+    | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
 
     !!! hint "New 1.8.1"
         `nl2br` option added in `1.8.1`.
@@ -286,7 +286,7 @@ mdpopups.md2html
     | --------- | ---- | -------- | ------- | ----------- |
     | view | sublime.View |Yes | | Sublime text View object. |
     | markup | bool | Yes | | The markup code to be converted. |
-    | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. It is advised to explicitly set this because in the `1.9.0` the `nl2br` extension will be set to `False` by default; setting this explicitly will ensure expected output will remain the same when this change occurs. |
+    | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
 
     !!! hint "New 1.8.1"
         `nl2br` option added in `1.8.1`.
