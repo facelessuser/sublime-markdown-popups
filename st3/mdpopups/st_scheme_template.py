@@ -261,8 +261,8 @@ class Scheme2CSS(object):
             )
 
             return self.env.from_string(
-                clean_css(sublime.load_resource(css))).render(var=var, colors=self.colors, plugin=self.plugin_vars
-            )
+                clean_css(sublime.load_resource(css))
+            ).render(var=var, colors=self.colors, plugin=self.plugin_vars)
         except Exception:
             return ''
 
