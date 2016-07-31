@@ -12,6 +12,7 @@ import sublime
 import markdown
 import traceback
 import time
+from . import version as ver
 from . import colorbox
 from collections import OrderedDict
 from .st_scheme_template import Scheme2CSS, POPUP, PHANTOM
@@ -22,9 +23,10 @@ from .st_mapping import lang_map
 from . import imagetint
 import re
 import os
-
-version_info = (1, 8, 1)
-__version__ = '.'.join([str(x) for x in version_info])
+try:
+    import bs4
+except Exception:
+    bs4 = None
 
 PHANTOM_SUPPORT = int(sublime.version()) >= 3118
 BASE_CSS = 'Packages/mdpopups/css/base.css'
@@ -253,7 +255,7 @@ def _get_theme(view, css=None, css_type=POPUP):
         return obj.apply_template(
             base_css +
             obj.get_css() +
-            (css if css else '') +
+            (clean_css(css) if css else '') +
             user_css,
             css_type,
             font_size
@@ -281,9 +283,6 @@ def _create_html(view, content, md=True, css=None, debug=False, css_type=POPUP, 
     """Create html from content."""
 
     debug = _get_setting('mdpopups.debug', NODEBUG)
-    if debug:
-        _debug('=====Content=====', INFO)
-        _debug(content, INFO)
 
     if css is None or not isinstance(css, str):
         css = ''
@@ -299,7 +298,11 @@ def _create_html(view, content, md=True, css=None, debug=False, css_type=POPUP, 
 
     if debug:
         _debug('=====HTML OUTPUT=====', INFO)
-        _debug(content, INFO)
+        if bs4:
+            soup = bs4.BeautifulSoup('<body class="mdpopups">%s</body>' % content, "html.parser")
+            _debug('\n' + soup.prettify(), INFO)
+        else:
+            _debug('\n<body class="mdpopups">%s</body>' % content, INFO)
 
     html = "<style>%s</style>" % (style)
     html += _remove_entities(content)
@@ -312,7 +315,7 @@ def _create_html(view, content, md=True, css=None, debug=False, css_type=POPUP, 
 def version():
     """Get the current version."""
 
-    return version_info
+    return ver.version()
 
 
 def md2html(view, markup, nl2br=True):
@@ -506,7 +509,7 @@ def show_popup(
         return
 
     try:
-        html = _create_html(view, content, md, css, css_type=POPUP, nl2br=nl2br)
+        html = '<body class="mdpopups">%s</body>' % _create_html(view, content, md, css, css_type=POPUP, nl2br=nl2br)
     except Exception:
         _log(traceback.format_exc())
         html = IDK
@@ -533,7 +536,7 @@ if PHANTOM_SUPPORT:
             return
 
         try:
-            html = _create_html(view, content, md, css, css_type=PHANTOM, nl2br=nl2br)
+            html = '<body class="mdpopups">%s</body>' % _create_html(view, content, md, css, css_type=PHANTOM, nl2br=nl2br)
         except Exception:
             _log(traceback.format_exc())
             html = IDK
