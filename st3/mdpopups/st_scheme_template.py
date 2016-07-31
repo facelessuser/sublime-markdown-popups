@@ -222,7 +222,7 @@ class Scheme2CSS(object):
         # Assemble the CSS text
         text = []
         for k, v in self.colors.items():
-            text.append('%s { %s}' % (k, ''.join(v.values())))
+            text.append('.mdpopups %s { %s}' % (k, ''.join(v.values())))
         self.text = '\n'.join(text)
 
         # Create Jinja template

@@ -1,8 +1,9 @@
-/* Defines the general formatting. */
+/* Html fake border color */
+/* Defines the general look of the font and provides a little margin. */
 /* TODO: next beta remove checks for 3119. */
 {%- if var.default_formatting %}
 html { padding: 0; margin: 0; }
-body {
+.mdpopups {
   margin: 0;
   {%- if var.is_popup %}
   padding: {% if var.sublime_version >= 3119 %}0.2rem{% else %}0.2em{% endif %};
@@ -10,51 +11,54 @@ body {
   padding: 0;
   {%- endif %}
   font-size: {% if var.sublime_version >= 3119 %}1rem{% else %}{{'+0px'|relativesize}}{% endif %};
+  {% if var.sublime_version >= 3119 %}
+  line-height: 1.2rem;
+  {%- endif %}
 }
 /* Headers */
-h1 { font-size: {% if var.sublime_version >= 3119 %}1.5rem{% else %}{{'+5px'|relativesize}}{% endif %}; }
-h2 { font-size: {% if var.sublime_version >= 3119 %}1.4rem{% else %}{{'+4px'|relativesize}}{% endif %}; }
-h3 { font-size: {% if var.sublime_version >= 3119 %}1.3rem{% else %}{{'+3px'|relativesize}}{% endif %}; }
-h4 { font-size: {% if var.sublime_version >= 3119 %}1.2rem{% else %}{{'+2px'|relativesize}}{% endif %}; }
-h5 { font-size: {% if var.sublime_version >= 3119 %}1.1rem{% else %}{{'+1px'|relativesize}}{% endif %}; }
-h6 { font-size: {% if var.sublime_version >= 3119 %}1rem{% else %}{{'+0px'|relativesize}}{% endif %}; }
-h1, h2, h3, h4, h5, h6 {
+.mdpopups h1 { font-size: {% if var.sublime_version >= 3119 %}1.5rem{% else %}{{'+5px'|relativesize}}{% endif %}; }
+.mdpopups h2 { font-size: {% if var.sublime_version >= 3119 %}1.4rem{% else %}{{'+4px'|relativesize}}{% endif %}; }
+.mdpopups h3 { font-size: {% if var.sublime_version >= 3119 %}1.3rem{% else %}{{'+3px'|relativesize}}{% endif %}; }
+.mdpopups h4 { font-size: {% if var.sublime_version >= 3119 %}1.2rem{% else %}{{'+2px'|relativesize}}{% endif %}; }
+.mdpopups h5 { font-size: {% if var.sublime_version >= 3119 %}1.1rem{% else %}{{'+1px'|relativesize}}{% endif %}; }
+.mdpopups h6 { font-size: {% if var.sublime_version >= 3119 %}1rem{% else %}{{'+0px'|relativesize}}{% endif %}; }
+.mdpopups h1, .mdpopups h2, .mdpopups h3, .mdpopups h4, .mdpopups h5, .mdpopups h6 {
     margin-top: {% if var.sublime_version >= 3119 %}0.2rem{% else %}0.2em{% endif %};
     margin-bottom: {% if var.sublime_version >= 3119 %}0.2rem{% else %}0.2em{% endif %};
 }
 /* Blockquote support. */
-blockquote { display: block; font-style: italic; }
+.mdpopups blockquote { display: block; font-style: italic; }
 /* Horizontal rule support. */
-hr {
+.mdpopups hr {
     display: block;
     padding: 1px;
     margin: {% if var.sublime_version >= 3119 %}1rem{% else %}1em{% endif %};
 }
 /* Description list support */
-dl { display: block; }
-dt {
+.mdpopups dl { display: block; }
+.mdpopups dt {
     display: block;
     font-style: italic;
     font-weight: bold;
     margin-bottom: {% if var.sublime_version >= 3119 %}0.5rem{% else %}0.5em{% endif %};
 }
-dd {
+.mdpopups dd {
     display: block;
     margin-left: {% if var.sublime_version >= 3119 %}1.5rem{% else %}1.5em{% endif %};
     margin-bottom: {% if var.sublime_version >= 3119 %}0.5rem{% else %}0.5em{% endif %};
 }
 /* Preformatted block */
-pre { display: block; }
+.mdpopups pre { display: block; }
 /* Blocks */
-blockquote, ol, ul, dl, p, div {
+.mdpopups blockquote, .mdpopups ol, .mdpopups ul, .mdpopups dl, .mdpopups p, .mdpopups div {
     padding: 0;
     margin-top: 0;
     margin-bottom: {% if var.sublime_version >= 3119 %}0.5rem{% else %}0.5em{% endif %};
     margin-left: 0;
     margin-right: 0;
 }
-ul, ol { padding-left: {% if var.sublime_version >= 3119 %}2rem{% else %}2em{% endif %}; }
+.mdpopups ul, .mdpopups ol { padding-left: {% if var.sublime_version >= 3119 %}2rem{% else %}2em{% endif %}; }
 /* Special classes */
-.highlight { padding: {% if var.sublime_version >= 3119 %}0.5rem{% else %}0.5em{% endif %}; }
-.admonition { padding: {% if var.sublime_version >= 3119 %}0.5rem{% else %}0.5em{% endif %}; }
+.mdpopups .highlight { padding: {% if var.sublime_version >= 3119 %}0.5rem{% else %}0.5em{% endif %}; }
+.mdpopups .admonition { padding: {% if var.sublime_version >= 3119 %}0.5rem{% else %}0.5em{% endif %}; }
 {% endif %}

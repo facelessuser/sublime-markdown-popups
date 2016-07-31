@@ -1,12 +1,12 @@
 /*Style with current theme.*/
 {% if var.sublime_version < 3119 %}
-body {
+html {
   {{'.background'|css('background-color')|brightness(1.025)}}
   {{'.foreground'|css}}
 }
-a { {{'.support.function'|css('color')}} }
+.mdpopups a { {{'.support.function'|css('color')}} }
 {% endif %}
-hr { {{'.comment'|css('color')|background}} }
+.mdpopups hr { {{'.foreground'|css('color')|background}} }
 {%- if var.use_pygments %}
   {% if var.is_light %}
 {{'default'|pygments}}
@@ -15,8 +15,8 @@ hr { {{'.comment'|css('color')|background}} }
   {% endif %}
 {%- else %}
   {%- if var.is_light %}
-.highlight, .inline-highlight { {{'.background'|css|brightness(0.985)}} }
+.mdpopups .highlight, .mdpopups .inline-highlight { {{'.background'|css|brightness(0.985)}} }
   {%- else %}
-.highlight, .inline-highlight { {{'.background'|css|brightness(0.985)}} }
+.mdpopups .highlight, .mdpopups .inline-highlight { {{'.background'|css|brightness(0.985)}} }
   {%- endif %}
 {%- endif %}
