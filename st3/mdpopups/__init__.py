@@ -286,7 +286,7 @@ def _remove_entities(text):
 
 def _create_html(
     view, content, md=True, css=None, debug=False, css_type=POPUP,
-    template_vars=None, template_env_options=None, nl2br=True
+    wrapper_class=None, template_vars=None, template_env_options=None, nl2br=True
 ):
     """Create html from content."""
 
@@ -303,17 +303,17 @@ def _create_html(
 
     if md:
         content = md2html(
-            view, content, template_vars=template_vars,
+            view, content, wrapper_class=wrapper_class, template_vars=template_vars,
             template_env_options=template_env_options, nl2br=nl2br
         )
 
     if debug:
         _debug('=====HTML OUTPUT=====', INFO)
         if bs4:
-            soup = bs4.BeautifulSoup('<body class="mdpopups">%s</body>' % content, "html.parser")
+            soup = bs4.BeautifulSoup(content, "html.parser")
             _debug('\n' + soup.prettify(), INFO)
         else:
-            _debug('\n<body class="mdpopups">%s</body>' % content, INFO)
+            _debug('\n' + content, INFO)
 
     html = "<style>%s</style>" % (style)
     html += _remove_entities(content)
@@ -338,7 +338,7 @@ def version():
     return ver.version()
 
 
-def md2html(view, markup, template_vars=None, template_env_options=None, nl2br=True):
+def md2html(view, markup, wrapper_class=None, template_vars=None, template_env_options=None, nl2br=True):
     """Convert Markdown to HTML."""
 
     if _get_setting('mdpopups.use_sublime_highlighter'):
@@ -379,7 +379,12 @@ def md2html(view, markup, template_vars=None, template_env_options=None, nl2br=T
         }
     }
 
-    return _MdWrapper(
+    if wrapper_class:
+        wrapper = ('<body class="mdpopups"><div class="%s">' % wrapper_class) + '%s</div></body>'
+    else:
+        wrapper = '<body class="mdpopups">%s</body>'
+
+    return wrapper % _MdWrapper(
         extensions=extensions,
         extension_configs=configs
     ).convert(_markup_template(markup, template_vars, template_env_options)).replace('&quot;', '"').replace('\n', '')
@@ -496,7 +501,10 @@ def hide_popup(view):
     view.hide_popup()
 
 
-def update_popup(view, content, md=True, css=None, template_vars=None, template_env_options=None, nl2br=True):
+def update_popup(
+    view, content, md=True, css=None, wrapper_class=None,
+    template_vars=None, template_env_options=None, nl2br=True
+):
     """Update the popup."""
 
     disabled = _get_setting('mdpopups.disable', False)
@@ -506,7 +514,7 @@ def update_popup(view, content, md=True, css=None, template_vars=None, template_
 
     try:
         html = _create_html(
-            view, content, md, css, css_type=POPUP,
+            view, content, md, css, css_type=POPUP, wrapper_class=None,
             template_vars=template_vars, template_env_options=template_env_options, nl2br=nl2br
         )
     except Exception:
@@ -519,7 +527,8 @@ def update_popup(view, content, md=True, css=None, template_vars=None, template_
 def show_popup(
     view, content, md=True, css=None,
     flags=0, location=-1, max_width=320, max_height=240,
-    on_navigate=None, on_hide=None, template_vars=None, template_env_options=None, nl2br=True
+    on_navigate=None, on_hide=None, wrapper_class=None,
+    template_vars=None, template_env_options=None, nl2br=True
 ):
     """Parse the color scheme if needed and show the styled pop-up."""
 
@@ -532,8 +541,8 @@ def show_popup(
         return
 
     try:
-        html = '<body class="mdpopups">%s</body>' % _create_html(
-            view, content, md, css, css_type=POPUP,
+        html = _create_html(
+            view, content, md, css, css_type=POPUP, wrapper_class=wrapper_class,
             template_vars=template_vars, template_env_options=template_env_options,
             nl2br=nl2br
         )
@@ -556,8 +565,8 @@ def is_popup_visible(view):
 if PHANTOM_SUPPORT:
     def add_phantom(
         view, key, region, content, layout, md=True,
-        css=None, on_navigate=None, template_vars=None,
-        template_env_options=None, nl2br=True
+        css=None, on_navigate=None, wrapper_class=None,
+        template_vars=None, template_env_options=None, nl2br=True
     ):
         """Add a phantom and return phantom id."""
 
@@ -567,8 +576,8 @@ if PHANTOM_SUPPORT:
             return
 
         try:
-            html = '<body class="mdpopups">%s</body>' % _create_html(
-                view, content, md, css, css_type=PHANTOM,
+            html = _create_html(
+                view, content, md, css, css_type=PHANTOM, wrapper_class=wrapper_class,
                 template_vars=template_vars, template_env_options=template_env_options,
                 nl2br=nl2br
             )
@@ -603,14 +612,15 @@ if PHANTOM_SUPPORT:
 
         def __init__(
             self, region, content, layout, md=True,
-            css=None, on_navigate=None, template_vars=None,
-            template_env_options=None, nl2br=True
+            css=None, on_navigate=None, wrapper_class=None,
+            template_vars=None, template_env_options=None, nl2br=True
         ):
             """Initialize."""
 
             super().__init__(region, content, layout, on_navigate)
             self.md = md
             self.css = css
+            self.wrapper_class = wrapper_class
             self.template_vars = template_vars
             self.template_env_options = template_env_options
             self.nl2br = nl2br
@@ -623,7 +633,8 @@ if PHANTOM_SUPPORT:
                 self.region == rhs.region and self.content == rhs.content and
                 self.layout == rhs.layout and self.on_navigate == rhs.on_navigate and
                 self.md == rhs.md and self.css == rhs.css and self.nl2br == rhs.nl2br and
-                self.template_vars == rhs.template_vars and self.template_env_options == rhs.template_env_options
+                self.wrapper_class == rhs.wrapper_class and self.template_vars == rhs.template_vars and
+                self.template_env_options == rhs.template_env_options
             )
 
     class PhantomSet(sublime.PhantomSet):
@@ -653,7 +664,7 @@ if PHANTOM_SUPPORT:
                     # Convert sublime.Phantom to mdpopups.Phantom
                     p = Phantom(
                         p.region, p.content, p.layout,
-                        md=False, css=None, on_navigate=p.on_navigate,
+                        md=False, css=None, on_navigate=p.on_navigate, wrapper_class=None,
                         template_vars=None, template_env_options=None, nl2br=False
                     )
                     new_phantoms[count] = p
@@ -671,6 +682,7 @@ if PHANTOM_SUPPORT:
                         p.md,
                         p.css,
                         p.on_navigate,
+                        p.wrapper_class,
                         p.template_vars,
                         p.template_env_options,
                         p.nl2br
