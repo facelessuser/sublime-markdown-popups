@@ -251,17 +251,17 @@ mdpopups.Phantoms
     **Attributes**
 
     | Attribute | Type | Description |
-    | --------- | ---- | -------- | ------- | ----------- |
+    | --------- | ---- | -------- |
     | region | sublime.Region |  Region in the view where the phantom should be inserted. |
     | content | string |  Markdown/HTML content to be used to create a phantom. |
     | layout | int |  How the HTML content should be inserted.  Acceptable values are: `sublime.LAYOUT_INLINE`, `sublime.LAYOUT_BLOCK`, and `sublime.LAYOUT_BELOW`. |
     | md | bool | Defines whether the content is Markdown and needs to be converterted. |
     | css | string | Additional CSS that will be injected. |
     | on_navigate | function | Callback that receives one variable `href`. |
-    | wrapper_class | string | No | None | A string containing the class name you wish wrap your content in.  A `div` will be created with the given class. |
-    | template_vars | dict | No | None | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. |
-    | template_env_options | dict | No | None | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`. |
-    | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
+    | wrapper_class | string | A string containing the class name you wish wrap your content in.  A `div` will be created with the given class. |
+    | template_vars | dict | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. |
+    | template_env_options | dict | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`. |
+    | nl2br | bool | Determines whether the newline to br Python Markdown extension is enabled or not. |
 
     !!! hint "New 1.9.0"
         `wrapper_class`, `template_vars`, `template_env_options`, and `nl2br` option added in `1.9.0`.
@@ -480,6 +480,12 @@ Overrides the default CSS theme.  Value should be a relative path pointing to th
 ```js
     "mdpopups.use_sublime_highlighter": "Packages/User/mdpopups.css"
 ```
+
+### mdpopups.default_formatting
+Controls whether mdpopups default formatting (contained in [`base.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/base.css)) will be applied or not.  There is no setting for [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css) as it can be overridden simply by creating your own mdpopups.css file in `Packages/User`.
+
+!!! hint "New 1.9.0"
+        Added in `1.9.0`.
 
 ### mdpopups.sublime_user_lang_map
 This is a special setting allowing the mapping of personal syntax languages which are not yet included or will not be included in the official mapping table.  You can either define your own new entry, or use the name of an existing entry to extend language keywords or syntax languages.  When extending, user keywords and languages will be cycled through first.
@@ -908,6 +914,29 @@ var.sublime_version
 
     !!! hint "New 1.8.0"
         Added in `1.8.0`.
+
+var.mdpopups_version
+: 
+    `mdpopups_version` contains the current mdpopup version which you can use in your CSS templates if needed.
+
+    **Example**
+    ```css+jinja
+    {% if var.mdpopups_version >= (1.9.0) %}
+    /* do something */
+    {% else %}
+    /* do something else */
+    {% endif %}
+    ```
+
+    !!! hint "New 1.9.0"
+        Added in `1.9.0`.
+
+var.default_formatting
+: 
+    Flag specifying whether default formatting is being used.  See [mdpopups.default_formatting](#mdpopupsdefault_formatting) for how to control this flag.  And see [`base.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/base.css) for an example of how it is used.
+
+    !!! hint "New 1.9.0"
+        Added in `1.9.0`.
 
 var.is_dark | var.is_light
 : 
