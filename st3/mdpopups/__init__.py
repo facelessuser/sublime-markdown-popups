@@ -10,6 +10,7 @@ https://manual.macromates.com/en/language_grammars#naming_conventions
 """
 import sublime
 import markdown
+import jinja2
 import traceback
 import time
 from . import version as ver
@@ -243,7 +244,7 @@ class _MdWrapper(markdown.Markdown):
         return self
 
 
-def _get_theme(view, css=None, css_type=POPUP):
+def _get_theme(view, css=None, css_type=POPUP, template_vars=None):
     """Get the theme."""
 
     global base_css
@@ -258,7 +259,8 @@ def _get_theme(view, css=None, css_type=POPUP):
             (clean_css(css) if css else '') +
             user_css,
             css_type,
-            font_size
+            font_size,
+            template_vars
         ) if obj is not None else ''
     except Exception:
         _log('Failed to retrieve scheme CSS!')
@@ -279,7 +281,10 @@ def _remove_entities(text):
     return RE_BAD_ENTITIES.sub(repl, text)
 
 
-def _create_html(view, content, md=True, css=None, debug=False, css_type=POPUP, nl2br=True):
+def _create_html(
+    view, content, md=True, css=None, debug=False, css_type=POPUP,
+    template_vars=None, template_env_options=None, nl2br=True
+):
     """Create html from content."""
 
     debug = _get_setting('mdpopups.debug', NODEBUG)
@@ -287,14 +292,17 @@ def _create_html(view, content, md=True, css=None, debug=False, css_type=POPUP, 
     if css is None or not isinstance(css, str):
         css = ''
 
-    style = _get_theme(view, css, css_type)
+    style = _get_theme(view, css, css_type, template_vars)
 
     if debug:
         _debug('=====CSS=====', INFO)
         _debug(style, INFO)
 
     if md:
-        content = md2html(view, content, nl2br=nl2br)
+        content = md2html(
+            view, content, template_vars=template_vars,
+            template_env_options=template_env_options, nl2br=nl2br
+        )
 
     if debug:
         _debug('=====HTML OUTPUT=====', INFO)
@@ -309,6 +317,15 @@ def _create_html(view, content, md=True, css=None, debug=False, css_type=POPUP, 
     return html
 
 
+def _markup_template(markup, variables, options):
+    """Template for markup."""
+
+    if options:
+        env = jinja2.Environment(**options)
+        return env.from_string(markup).render(plugin=variables)
+    return markup
+
+
 ##############################
 # Public functions
 ##############################
@@ -318,7 +335,7 @@ def version():
     return ver.version()
 
 
-def md2html(view, markup, nl2br=True):
+def md2html(view, markup, template_vars=None, template_env_options=None, nl2br=True):
     """Convert Markdown to HTML."""
 
     if _get_setting('mdpopups.use_sublime_highlighter'):
@@ -362,7 +379,7 @@ def md2html(view, markup, nl2br=True):
     return _MdWrapper(
         extensions=extensions,
         extension_configs=configs
-    ).convert(markup).replace('&quot;', '"').replace('\n', '')
+    ).convert(_markup_template(markup, template_vars, template_env_options)).replace('&quot;', '"').replace('\n', '')
 
 
 def color_box(
@@ -476,7 +493,7 @@ def hide_popup(view):
     view.hide_popup()
 
 
-def update_popup(view, content, md=True, css=None, nl2br=True):
+def update_popup(view, content, md=True, css=None, template_vars=None, template_env_options=None, nl2br=True):
     """Update the popup."""
 
     disabled = _get_setting('mdpopups.disable', False)
@@ -485,7 +502,10 @@ def update_popup(view, content, md=True, css=None, nl2br=True):
         return
 
     try:
-        html = _create_html(view, content, md, css, css_type=POPUP, nl2br=nl2br)
+        html = _create_html(
+            view, content, md, css, css_type=POPUP,
+            template_vars=template_vars, template_env_options=template_env_options, nl2br=nl2br
+        )
     except Exception:
         _log(traceback.format_exc())
         html = IDK
@@ -496,7 +516,7 @@ def update_popup(view, content, md=True, css=None, nl2br=True):
 def show_popup(
     view, content, md=True, css=None,
     flags=0, location=-1, max_width=320, max_height=240,
-    on_navigate=None, on_hide=None, nl2br=True
+    on_navigate=None, on_hide=None, template_vars=None, template_env_options=None, nl2br=True
 ):
     """Parse the color scheme if needed and show the styled pop-up."""
 
@@ -509,7 +529,11 @@ def show_popup(
         return
 
     try:
-        html = '<body class="mdpopups">%s</body>' % _create_html(view, content, md, css, css_type=POPUP, nl2br=nl2br)
+        html = '<body class="mdpopups">%s</body>' % _create_html(
+            view, content, md, css, css_type=POPUP,
+            template_vars=template_vars, template_env_options=template_env_options,
+            nl2br=nl2br
+        )
     except Exception:
         _log(traceback.format_exc())
         html = IDK
@@ -527,7 +551,11 @@ def is_popup_visible(view):
 
 
 if PHANTOM_SUPPORT:
-    def add_phantom(view, key, region, content, layout, md=True, css=None, on_navigate=None, nl2br=True):
+    def add_phantom(
+        view, key, region, content, layout, md=True,
+        css=None, on_navigate=None, template_vars=None,
+        template_env_options=None, nl2br=True
+    ):
         """Add a phantom and return phantom id."""
 
         disabled = _get_setting('mdpopups.disable', False)
@@ -536,7 +564,11 @@ if PHANTOM_SUPPORT:
             return
 
         try:
-            html = '<body class="mdpopups">%s</body>' % _create_html(view, content, md, css, css_type=PHANTOM, nl2br=nl2br)
+            html = '<body class="mdpopups">%s</body>' % _create_html(
+                view, content, md, css, css_type=PHANTOM,
+                template_vars=template_vars, template_env_options=template_env_options,
+                nl2br=nl2br
+            )
         except Exception:
             _log(traceback.format_exc())
             html = IDK
@@ -566,12 +598,18 @@ if PHANTOM_SUPPORT:
     class Phantom(sublime.Phantom):
         """A phantom object."""
 
-        def __init__(self, region, content, layout, md=True, css=None, on_navigate=None, nl2br=True):
+        def __init__(
+            self, region, content, layout, md=True,
+            css=None, on_navigate=None, template_vars=None,
+            template_env_options=None, nl2br=True
+        ):
             """Initialize."""
 
             super().__init__(region, content, layout, on_navigate)
             self.md = md
             self.css = css
+            self.template_vars = template_vars
+            self.template_env_options = template_env_options
             self.nl2br = nl2br
 
         def __eq__(self, rhs):
@@ -581,7 +619,8 @@ if PHANTOM_SUPPORT:
             return (
                 self.region == rhs.region and self.content == rhs.content and
                 self.layout == rhs.layout and self.on_navigate == rhs.on_navigate and
-                self.md == rhs.md and self.css == rhs.css and self.nl2br == rhs.nl2br
+                self.md == rhs.md and self.css == rhs.css and self.nl2br == rhs.nl2br and
+                self.template_vars == rhs.template_vars and self.template_env_options == rhs.template_env_options
             )
 
     class PhantomSet(sublime.PhantomSet):
@@ -611,7 +650,8 @@ if PHANTOM_SUPPORT:
                     # Convert sublime.Phantom to mdpopups.Phantom
                     p = Phantom(
                         p.region, p.content, p.layout,
-                        md=False, css=None, on_navigate=p.on_navigate, nl2br=False
+                        md=False, css=None, on_navigate=p.on_navigate,
+                        template_vars=None, template_env_options=None, nl2br=False
                     )
                     new_phantoms[count] = p
                 try:
@@ -628,6 +668,8 @@ if PHANTOM_SUPPORT:
                         p.md,
                         p.css,
                         p.on_navigate,
+                        p.template_vars,
+                        p.template_env_options,
                         p.nl2br
                     )
                 count += 1

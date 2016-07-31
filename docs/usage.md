@@ -38,7 +38,7 @@ MdPopups also includes a couple of 3rd party extensions (some of which have been
 - [magiclink](http://facelessuser.github.io/pymdown-extensions/extensions/magiclink/) auto links HTML links.
 - [inlinehilite](http://facelessuser.github.io/pymdown-extensions/extensions/inlinehilite/) allows for inline code highlighting: `` `#!python import module` `` --> `#!python import module`.
 
-!!! hint "New 1.8.1"
+!!! hint "New 1.9.0"
     `nl2br` can be turned off via the `nl2br` parameter in `show_popup`, `add_phantom`, `update_popup`, `md2html`, and `Phantom`.
 
 ## API Usage
@@ -66,6 +66,8 @@ mdpopups.show_popup
     | max_height | int | No | 240 | Maximum height of the popup. |
     | on_navigate | function | No | None | Callback that receives one variable `href`. |
     | on_hide | function | No | None | Callback for when the tooltip is hidden. |
+    | template_vars | dict | No | None | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. |
+    | template_env_options | dict | No | None | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. |
     | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
 
     !!! caution "Developers Guidelines"
@@ -83,8 +85,8 @@ mdpopups.show_popup
 
     Also, do not try to override the style of existing base classes and elements with plugin injection, but use custom plugin classes so that you will only target what your plugin has specifically added special classes to.
 
-    !!! hint "New 1.8.1"
-        `nl2br` option added in `1.8.1`.
+    !!! hint "New 1.9.0"
+        `nl2br`, `template_vars`, and `template_env_options` option added in `1.9.0`.
 
 
 ## update_popup
@@ -98,10 +100,12 @@ mdpopups.update_popup
     | content | string | Yes | | Markdown/HTML content to be used to create a tooltip. |
     | md | bool | No | True | Defines whether the content is Markdown and needs to be converterted. |
     | css | string | No | None | CSS text that should be used instead of loading a theme. |
+    | template_vars | dict | No | None | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. |
+    | template_env_options | dict | No | None | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. |
     | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
 
-    !!! hint "New 1.8.1"
-        `nl2br` option added in `1.8.1`.
+    !!! hint "New 1.9.0"
+        `nl2br`, `template_vars`, and `template_env_options` option added in `1.9.0`.
 
 ### hide_popup
 mdpopups.hide_popup
@@ -141,6 +145,8 @@ int mdpopups.add_phantom
     | md | bool | No | True | Defines whether the content is Markdown and needs to be converterted. |
     | css | string | No | None | Additional CSS that will be injected. |
     | on_navigate | function | No | None | Callback that receives one variable `href`. |
+    | template_vars | dict | No | None | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. |
+    | template_env_options | dict | No | None | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. |
     | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
 
     !!! caution "Developers Guidelines"
@@ -158,8 +164,8 @@ int mdpopups.add_phantom
 
     Also, do not try to override the style of existing base classes and elements with plugin injection, but use custom plugin classes so that you will only target what your plugin has specifically added special classes to.
 
-    !!! hint "New 1.8.1"
-        `nl2br` option added in `1.8.1`.
+    !!! hint "New 1.9.0"
+        `nl2br`, `template_vars`, and `template_env_options` option added in `1.9.0`.
 
     !!! hint "New 1.6.0"
         Feature added in `1.6.0`.
@@ -241,10 +247,12 @@ mdpopups.Phantoms
     | md | bool | Defines whether the content is Markdown and needs to be converterted. |
     | css | string | Additional CSS that will be injected. |
     | on_navigate | function | Callback that receives one variable `href`. |
+    | template_vars | dict | No | None | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. |
+    | template_env_options | dict | No | None | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. |
     | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
 
-    !!! hint "New 1.8.1"
-        `nl2br` option added in `1.8.1`.
+    !!! hint "New 1.9.0"
+        `nl2br`, `template_vars`, and `template_env_options` option added in `1.9.0`.
 
     !!! hint "New 1.6.1"
         Feature added in `1.6.1`.
@@ -286,10 +294,12 @@ mdpopups.md2html
     | --------- | ---- | -------- | ------- | ----------- |
     | view | sublime.View |Yes | | Sublime text View object. |
     | markup | bool | Yes | | The markup code to be converted. |
+    | template_vars | dict | No | None | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. |
+    | template_env_options | dict | No | None | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. |
     | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
 
-    !!! hint "New 1.8.1"
-        `nl2br` option added in `1.8.1`.
+    !!! hint "New 1.9.0"
+        `nl2br`, `template_vars`, and `template_env_options` option added in `1.9.0`.
 
 ### color_box
 string mdpopups.color_box

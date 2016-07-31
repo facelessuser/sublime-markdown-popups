@@ -15,6 +15,7 @@ https://manual.macromates.com/en/language_grammars#naming_conventions
 """
 import sublime
 import re
+from . import version as ver
 from .rgba import RGBA
 from .st_color_scheme_matcher import ColorSchemeMatcher
 import jinja2
@@ -159,6 +160,7 @@ class Scheme2CSS(object):
             "is_dark": is_dark,
             "is_light": not is_dark,
             "sublime_version": int(sublime.version()),
+            "mdpopups_version": ver.version(),
             "color_scheme": self.scheme_file,
             "use_pygments": not settings.get('mdpopups.use_sublime_highlighter', False),
             "default_formatting": settings.get('mdpopups.default_formatting', True)
@@ -254,7 +256,9 @@ class Scheme2CSS(object):
                 }
             )
 
-            return self.env.from_string(clean_css(sublime.load_resource(css))).render(var=var, colors=self.colors)
+            return self.env.from_string(
+                clean_css(sublime.load_resource(css))).render(var=var, colors=self.colors, plugin=self.plugin_vars
+            )
         except Exception:
             return ''
 
@@ -449,7 +453,7 @@ class Scheme2CSS(object):
 
         return scale
 
-    def apply_template(self, css, css_type, font_size):
+    def apply_template(self, css, css_type, font_size, template_vars=None):
         """Apply template to css."""
 
         if css_type not in (POPUP, PHANTOM):
@@ -459,6 +463,11 @@ class Scheme2CSS(object):
         self.css_type = css_type
 
         var = copy.copy(self.variables)
+        if template_vars and isinstance(template_vars, (dict, OrderedDict)):
+            self.plugin_vars = copy.deepcopy(template_vars)
+        else:
+            self.plugin_vars = {}
+
         var.update(
             {
                 'is_phantom': self.css_type == PHANTOM,
@@ -466,7 +475,7 @@ class Scheme2CSS(object):
             }
         )
 
-        return self.env.from_string(css).render(var=var, colors=self.colors)
+        return self.env.from_string(css).render(var=var, colors=self.colors, plugin=self.plugin_vars)
 
     def get_css(self):
         """Get css."""
