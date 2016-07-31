@@ -3,8 +3,6 @@
 {%- if var.default_formatting %}
 html { padding: 0; margin: 0; }
 body {
-  color: black;
-  background-color: white;
   margin: 0;
   {%- if var.is_popup %}
   padding: {% if var.sublime_version >= 3119 %}0.2rem{% else %}0.2em{% endif %};
