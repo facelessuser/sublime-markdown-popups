@@ -684,8 +684,10 @@ css
     Might become this:
 
     ```css+jinja
-    h1, h2, h3, h4, h5, h6 { color: #888888, font-style: italic }
+    h1, h2, h3, h4, h5, h6 { color: #888888; font-style: italic; }
     ```
+
+    Notice that the format of insertion is `key: value; `.  You do not need a semicolon after.  If you add one, you may get multiple semicolons which may break some things.
 
     If you need to get at a specific CSS attribute, you can specify its name in the `css` filter (available attributes are `color`, `background-color`, `font-style`, and `font-weight`).
 
