@@ -154,14 +154,14 @@ class Scheme2CSS(object):
         rgba = RGBA(self.bground)
         self.lums = rgba.get_luminance()
         is_dark = self.lums <= LUM_MIDPOINT
+        settings = sublime.load_settings("Preferences.sublime-settings")
         self.variables = {
             "is_dark": is_dark,
             "is_light": not is_dark,
             "sublime_version": int(sublime.version()),
             "color_scheme": self.scheme_file,
-            "use_pygments": not sublime.load_settings("Preferences.sublime-settings").get(
-                'mdpopups.use_sublime_highlighter', False
-            )
+            "use_pygments": not settings.get('mdpopups.use_sublime_highlighter', False),
+            "default_formatting": settings.get('mdpopups.default_formatting', True)
         }
         self.html_border = rgba.get_rgb()
         self.fground = self.strip_color(color_settings.get("foreground", '#000000'))
