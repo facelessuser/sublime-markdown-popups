@@ -32,6 +32,7 @@ LUM_MIDPOINT = 127
 
 re_float_trim = re.compile(r'^(?P<keep>\d+)(?P<trash>\.0+|(?P<keep2>\.\d*[1-9])0+)$')
 re_valid_custom_scopes = re.compile(r'[a-zA-Z\d]+[a-zA-Z\d._\-]*')
+re_missing_semi_colon = re.compile(r'(?<!;) \}')
 
 textmate_scopes = [
     'comment',
@@ -102,10 +103,12 @@ textmate_scopes = [
     'variable.other'
 ]
 
-re_base_colors = re.compile(r'^\s*\.dummy\s*\{([^}]+)\}', re.MULTILINE)
+re_base_colors = re.compile(r'^\s*\.(?:dummy)\s*\{([^}]+)\}', re.MULTILINE)
 re_color = re.compile(r'(?<!-)(color\s*:\s*#[A-Fa-z\d]{6})')
 re_bgcolor = re.compile(r'(?<!-)(background(?:-color)?\s*:\s*#[A-Fa-z\d]{6})')
-CODE_BLOCKS = '.highlight, .inline-highlight { %s; %s; }'
+re_pygments_selectors = re.compile(r'\.dummy (\.[a-zA-Z\d]+) ')
+CODE_BLOCKS = '.mdpopups .highlight, .mdpopups .inline-highlight { %s; %s; }'
+CODE_BLOCKS_LEGACY = '.highlight, .inline-highlight { %s; %s; }'
 
 
 def fmt_float(f, p=0):
@@ -223,8 +226,9 @@ class Scheme2CSS(object):
 
         # Assemble the CSS text
         text = []
+        css_entry = '%s { %s}' if int(sublime.version()) < 3119 else '.mdpopups %s { %s}'
         for k, v in self.colors.items():
-            text.append('.mdpopups %s { %s}' % (k, ''.join(v.values())))
+            text.append(css_entry % (k, ''.join(v.values())))
         self.text = '\n'.join(text)
 
         # Create Jinja template
@@ -409,7 +413,7 @@ class Scheme2CSS(object):
         parts = [c.strip('; ') for c in css.split(':')]
         if len(parts) == 2 and parts[0] == 'color':
             parts[0] = 'background-color'
-            return '%s: %s ' % (parts[0], parts[1])
+            return '%s: %s; ' % (parts[0], parts[1])
         return css
 
     def pygments(self, style):
@@ -500,6 +504,7 @@ def get_pygments(style):
     try:
         # Lets see if we can find the pygments theme
         text = HtmlFormatter(style=style).get_style_defs('.dummy')
+        text = re_missing_semi_colon.sub('; }', text)
     except Exception:
         return ''
 
@@ -527,19 +532,24 @@ def get_pygments(style):
 
     # Reassemble replacing .highlight {...} with .codehilite, .inlinehilite {...}
     # All other classes will be left bare with only their syntax class.
+    code_blocks = CODE_BLOCKS_LEGACY if int(sublime.version()) < 3119 else CODE_BLOCKS
     if m:
         css = clean_css(
             (
                 text[:m.start(0)] +
-                (CODE_BLOCKS % (bg, fg)) +
+                (code_blocks % (bg, fg)) +
                 text[m.end(0):] +
                 '\n'
-            ).replace('.dummy ', '')
+            )
         )
     else:
         css = clean_css(
             (
-                (CODE_BLOCKS % (bg, fg)) + '\n' + text + '\n'
+                (code_blocks % (bg, fg)) + '\n' + text + '\n'
             )
-        ).replace('.dummy ', '')
-    return css
+        )
+
+    if int(sublime.version()) < 3119:
+        return css.replace('.dummy ', '')
+    else:
+        return re_pygments_selectors.sub(r'.mdpopups .highlight \1, .mdpopups .inline-highlight \1', css)

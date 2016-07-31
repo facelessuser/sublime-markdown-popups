@@ -2,29 +2,26 @@
 /* Defines the general look of the font and provides a little margin. */
 /* TODO: next beta remove checks for 3119. */
 {%- if var.default_formatting %}
+{%- if var.sublime_version < 3119 %}
+{{'Packages/mdpopups/css/base-legacy.css'|getcss}}
+{%- else %}
 html { padding: 0; margin: 0; }
 .mdpopups {
   margin: 0;
-  {%- if var.is_popup %}
-  padding: {% if var.sublime_version >= 3119 %}0.2rem{% else %}0.2em{% endif %};
-  {%- else %}
-  padding: 0;
-  {%- endif %}
-  font-size: {% if var.sublime_version >= 3119 %}1rem{% else %}{{'+0px'|relativesize}}{% endif %};
-  {% if var.sublime_version >= 3119 %}
+  padding: {% if var.is_popup %}0.2rem{% else %}0{% endif %};
+  font-size: 1rem;
   line-height: 1.2rem;
-  {%- endif %}
 }
 /* Headers */
-.mdpopups h1 { font-size: {% if var.sublime_version >= 3119 %}1.5rem{% else %}{{'+5px'|relativesize}}{% endif %}; }
-.mdpopups h2 { font-size: {% if var.sublime_version >= 3119 %}1.4rem{% else %}{{'+4px'|relativesize}}{% endif %}; }
-.mdpopups h3 { font-size: {% if var.sublime_version >= 3119 %}1.3rem{% else %}{{'+3px'|relativesize}}{% endif %}; }
-.mdpopups h4 { font-size: {% if var.sublime_version >= 3119 %}1.2rem{% else %}{{'+2px'|relativesize}}{% endif %}; }
-.mdpopups h5 { font-size: {% if var.sublime_version >= 3119 %}1.1rem{% else %}{{'+1px'|relativesize}}{% endif %}; }
-.mdpopups h6 { font-size: {% if var.sublime_version >= 3119 %}1rem{% else %}{{'+0px'|relativesize}}{% endif %}; }
+.mdpopups h1 { font-size: 1.5rem; }
+.mdpopups h2 { font-size: 1.4rem; }
+.mdpopups h3 { font-size: 1.3rem; }
+.mdpopups h4 { font-size: 1.2rem; }
+.mdpopups h5 { font-size: 1.1rem; }
+.mdpopups h6 { font-size: 1rem; }
 .mdpopups h1, .mdpopups h2, .mdpopups h3, .mdpopups h4, .mdpopups h5, .mdpopups h6 {
-    margin-top: {% if var.sublime_version >= 3119 %}0.2rem{% else %}0.2em{% endif %};
-    margin-bottom: {% if var.sublime_version >= 3119 %}0.2rem{% else %}0.2em{% endif %};
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
 }
 /* Blockquote support. */
 .mdpopups blockquote { display: block; font-style: italic; }
@@ -32,7 +29,7 @@ html { padding: 0; margin: 0; }
 .mdpopups hr {
     display: block;
     padding: 1px;
-    margin: {% if var.sublime_version >= 3119 %}1rem{% else %}1em{% endif %};
+    margin: 1rem;
 }
 /* Description list support */
 .mdpopups dl { display: block; }
@@ -40,12 +37,12 @@ html { padding: 0; margin: 0; }
     display: block;
     font-style: italic;
     font-weight: bold;
-    margin-bottom: {% if var.sublime_version >= 3119 %}0.5rem{% else %}0.5em{% endif %};
+    margin-bottom: 0.5rem;
 }
 .mdpopups dd {
     display: block;
-    margin-left: {% if var.sublime_version >= 3119 %}1.5rem{% else %}1.5em{% endif %};
-    margin-bottom: {% if var.sublime_version >= 3119 %}0.5rem{% else %}0.5em{% endif %};
+    margin-left: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 /* Preformatted block */
 .mdpopups pre { display: block; }
@@ -53,12 +50,13 @@ html { padding: 0; margin: 0; }
 .mdpopups blockquote, .mdpopups ol, .mdpopups ul, .mdpopups dl, .mdpopups p, .mdpopups div {
     padding: 0;
     margin-top: 0;
-    margin-bottom: {% if var.sublime_version >= 3119 %}0.5rem{% else %}0.5em{% endif %};
+    margin-bottom: 0.5rem;
     margin-left: 0;
     margin-right: 0;
 }
-.mdpopups ul, .mdpopups ol { padding-left: {% if var.sublime_version >= 3119 %}2rem{% else %}2em{% endif %}; }
+.mdpopups ul, .mdpopups ol { padding-left: 2rem; }
 /* Special classes */
-.mdpopups .highlight { padding: {% if var.sublime_version >= 3119 %}0.5rem{% else %}0.5em{% endif %}; }
-.mdpopups .admonition { padding: {% if var.sublime_version >= 3119 %}0.5rem{% else %}0.5em{% endif %}; }
+.mdpopups .highlight { padding: 0.5rem; }
+.mdpopups .admonition { padding: 0.5rem; }
+{% endif %}
 {% endif %}

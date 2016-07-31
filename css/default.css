@@ -1,22 +1,15 @@
 /*Style with current theme.*/
-{% if var.sublime_version < 3119 %}
-html {
-  {{'.background'|css('background-color')|brightness(1.025)}}
-  {{'.foreground'|css}}
-}
-.mdpopups a { {{'.support.function'|css('color')}} }
-{% endif %}
+{%- if var.sublime_version < 3119 %}
+{{'Packages/mdpopups/css/default-legacy.css'|getcss}}
+{%- else %}
 .mdpopups hr { {{'.foreground'|css('color')|background}} }
 {%- if var.use_pygments %}
-  {% if var.is_light %}
+  {%- if var.is_light %}
 {{'default'|pygments}}
-  {% else %}
+  {%- else %}
 {{'native'|pygments}}
   {% endif %}
 {%- else %}
-  {%- if var.is_light %}
 .mdpopups .highlight, .mdpopups .inline-highlight { {{'.background'|css|brightness(0.985)}} }
-  {%- else %}
-.mdpopups .highlight, .mdpopups .inline-highlight { {{'.background'|css|brightness(0.985)}} }
-  {%- endif %}
+{%- endif %}
 {%- endif %}
