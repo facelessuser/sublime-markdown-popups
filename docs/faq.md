@@ -22,10 +22,10 @@ Frequently asked questions.
 
 - **Why can't I get CSS selectors like this to work: `#!css div p { ... }`?**
 
-    Sublime's CSS handling is very limited and cannot handle parent and child selectors etc.  It handles one element at a time only.  You can chain classes: `#!css .myclass.myotherclass`, but you **cannot** have a parent and a child class selector or elementes: `#!css .myclass .myotherclass`.
+    This now work in Sublime Text build 3119+, but read on if you are below that build. Sublime's CSS handling is very limited and cannot handle parent and child selectors etc.  It handles one element at a time only.  You can chain classes: `#!css .myclass.myotherclass`, but you **cannot** have a parent and a child class selector or elementes: `#!css .myclass .myotherclass`.
     {: style="font-style: italic"}
 
 - **I tried pushing a massive amount of HTML through the tooltip and Sublime crashed.  What do I do?**
 
-    Don't do that.  I won't bother getting into the fact that technically Sublime should handle these situation gracefully, so I'll just say that the tooltip API has some limitations; use it reasonably.
+    This may be more stable now, but I will leave this here just in case.  I won't bother getting into the fact that technically Sublime should handle these situation gracefully, so I'll just say that the tooltip API has some limitations; use it reasonably.
     {: style="font-style: italic"}
