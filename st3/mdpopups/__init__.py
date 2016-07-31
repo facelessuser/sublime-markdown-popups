@@ -38,6 +38,8 @@ IDK = '''
 <style>html {background-color: #333; color: red}</style>
 <div><p>¯\_(ツ)_/¯'</p></div>
 '''
+HL_SETTING = 'mdpopups.use_sublime_highlighter'
+FORMAT_SETTING = 'mdpopups.default_formatting'
 RE_BAD_ENTITIES = re.compile(r'(&(?!amp;|lt;|gt;|nbsp;)(?:\w+;|#\d+;))')
 
 NODEBUG = 0
@@ -164,7 +166,8 @@ def _get_scheme(view):
             # Check if cache expired or user changed pygments setting.
             if (
                 _is_cache_expired(t) or
-                obj.variables.get('use_pygments', True) != (not settings.get('mdpopups.use_sublime_highlighter', False))
+                obj.variables.get('use_pygments', True) != (not settings.get(HL_SETTING, False)) or
+                obj.variables.get('default_formatting', True) != settings.get(FORMAT_SETTING, True)
             ):
                 obj = None
                 user_css = ''
