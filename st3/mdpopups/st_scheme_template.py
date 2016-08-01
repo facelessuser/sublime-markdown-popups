@@ -34,55 +34,42 @@ re_float_trim = re.compile(r'^(?P<keep>\d+)(?P<trash>\.0+|(?P<keep2>\.\d*[1-9])0
 re_valid_custom_scopes = re.compile(r'[a-zA-Z\d]+[a-zA-Z\d._\-]*')
 re_missing_semi_colon = re.compile(r'(?<!;) \}')
 
-textmate_scopes = [
-    'comment',
-    'comment.line',
+# Just track the deepest level.  We'll unravel it.
+# https://manual.macromates.com/en/language_grammars#naming_conventions
+textmate_scopes = {
     'comment.line.double-slash',
     'comment.line.double-dash',
     'comment.line.number-sign',
     'comment.line.percentage',
     'comment.line.character',
-    'comment.block',
     'comment.block.documentation',
-    'constant',
     'constant.numeric',
     'constant.character',
     'constant.language',
     'constant.other',
-    'entity',
-    'entity.name',
     'entity.name.function',
     'entity.name.type',
     'entity.name.tag',
     'entity.name.section',
-    'entity.other',
     'entity.other.inherited-class',
     'entity.other.attribute-name',
-    'invalid',
     'invalid.illegal',
     'invalid.deprecated',
-    'keyword',
     'keyword.control',
     'keyword.operator',
     'keyword.other',
-    'markup',
-    'markup.underline',
     'markup.underline.link',
     'markup.bold',
     'markup.heading',
     'markup.italic',
-    'markup.list',
     'markup.list.numbered',
     'markup.list.unnumbered',
     'markup.quote',
     'markup.raw',
     'markup.other',
     'meta',
-    'storage',
     'storage.type',
     'storage.modifier',
-    'string',
-    'string.quoted',
     'string.quoted.single',
     'string.quoted.double',
     'string.quoted.triple',
@@ -91,7 +78,6 @@ textmate_scopes = [
     'string.interpolated',
     'string.regexp',
     'string.other',
-    'support',
     'support.function',
     'support.class',
     'support.type',
@@ -101,7 +87,92 @@ textmate_scopes = [
     'variable.parameter',
     'variable.language',
     'variable.other'
-]
+}
+# http://www.sublimetext.com/docs/3/scope_naming.html
+sublime_scopes = {
+    "comment.block.documentation",
+    "punctuation.definition.comment",
+    "constant.numeric.integer",
+    "constant.numeric.float",
+    "constant.numeric.hex",
+    "constant.numeric.octal",
+    "constant.language",
+    "constant.character.escape",
+    "constant.other.placeholder",
+    "entity.name.struct",
+    "entity.name.enum",
+    "entity.name.union",
+    "entity.name.trait",
+    "entity.name.interface",
+    "entity.name.type",
+    "entity.name.class.forward-decl",
+    "entity.other.inherited-class",
+    "entity.name.function.constructor",
+    "entity.name.function.destructor",
+    "entity.name.namespace",
+    "entity.name.constant",
+    "entity.name.label",
+    "entity.name.section",
+    "entity.name.tag",
+    "entity.other.attribute-name",
+    "invalid.illegal",
+    "invalid.deprecated",
+    "keyword.control.conditional",
+    "keyword.control.import",
+    "punctuation.definition.keyword",
+    "keyword.operator.assignment",
+    "keyword.operator.arithmetic",
+    "keyword.operator.bitwise",
+    "keyword.operator.logical",
+    "keyword.operator.word",
+    "markup.heading",
+    "markup.list.unnumbered",
+    "markup.list.numbered",
+    "markup.bold",
+    "markup.italic",
+    "markup.underline",
+    "markup.inserted",
+    "markup.deleted",
+    "markup.underline.link",
+    "markup.quote",
+    "markup.raw.inline",
+    "markup.raw.block",
+    "markup.other",
+    "punctuation.terminator",
+    "punctuation.separator.continuation",
+    "punctuation.accessor",
+    "source",
+    "storage.type",
+    "storage.modifier",
+    "string.quoted.single",
+    "string.quoted.double",
+    "string.quoted.triple",
+    "string.quoted.other",
+    "punctuation.definition.string.begin",
+    "punctuation.definition.string.end",
+    "string.unquoted",
+    "string.regexp",
+    "support.constant",
+    "support.function",
+    "support.module",
+    "support.type",
+    "support.class",
+    "text.html",
+    "text.xml",
+    "variable.other.readwrite",
+    "variable.other.constant",
+    "variable.language",
+    "variable.parameter",
+    "variable.other.member",
+    "variable.function"
+}
+
+# Merge the sets together
+all_scopes = set()
+for ss in (sublime_scopes | textmate_scopes):
+    parts = ss.split('.')
+    for index in range(1, len(parts) + 1):
+        all_scopes.add('.'.join(parts[:index]))
 
 re_base_colors = re.compile(r'^\s*\.(?:dummy)\s*\{([^}]+)\}', re.MULTILINE)
 re_color = re.compile(r'(?<!-)(color\s*:\s*#[A-Fa-z\d]{6})')
@@ -179,7 +250,7 @@ class Scheme2CSS(object):
     def parse_settings(self):
         """Parse the color scheme."""
 
-        for tscope in textmate_scopes:
+        for tscope in sorted(all_scopes):
             scope = self.guess_style(tscope, explicit_background=True)
             key_scope = '.' + tscope
             color = scope.fg_simulated
