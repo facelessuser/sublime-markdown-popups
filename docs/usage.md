@@ -306,13 +306,12 @@ mdpopups.md2html
     | --------- | ---- | -------- | ------- | ----------- |
     | view | sublime.View |Yes | | Sublime text View object. |
     | markup | bool | Yes | | The markup code to be converted. |
-    | wrapper_class | string | No | None | A string containing the class name you wish wrap your content in.  A `div` will be created with the given class. |
     | template_vars | dict | No | None | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. |
     | template_env_options | dict | No | None | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`. |
     | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
 
     !!! hint "New 1.9.0"
-        `wrapper_class`, `template_vars`, `template_env_options`, and `nl2br` option added in `1.9.0`.
+        `template_vars`, `template_env_options`, and `nl2br` option added in `1.9.0`.
 
 ### color_box
 string mdpopups.color_box

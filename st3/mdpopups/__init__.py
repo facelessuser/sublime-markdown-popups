@@ -303,9 +303,11 @@ def _create_html(
 
     if md:
         content = md2html(
-            view, content, wrapper_class=wrapper_class, template_vars=template_vars,
+            view, content, template_vars=template_vars,
             template_env_options=template_env_options, nl2br=nl2br
         )
+    else:
+        content = _markup_template(content, template_vars, template_env_options)
 
     if debug:
         _debug('=====HTML OUTPUT=====', INFO)
@@ -315,8 +317,13 @@ def _create_html(
         else:
             _debug('\n' + content, INFO)
 
+    if wrapper_class:
+        wrapper = ('<body class="mdpopups"><div class="%s">' % wrapper_class) + '%s</div></body>'
+    else:
+        wrapper = '<body class="mdpopups">%s</body>'
+
     html = "<style>%s</style>" % (style)
-    html += _remove_entities(content)
+    html += _remove_entities(wrapper % content)
     return html
 
 
@@ -338,7 +345,7 @@ def version():
     return ver.version()
 
 
-def md2html(view, markup, wrapper_class=None, template_vars=None, template_env_options=None, nl2br=True):
+def md2html(view, markup, template_vars=None, template_env_options=None, nl2br=True):
     """Convert Markdown to HTML."""
 
     if _get_setting('mdpopups.use_sublime_highlighter'):
@@ -379,12 +386,7 @@ def md2html(view, markup, wrapper_class=None, template_vars=None, template_env_o
         }
     }
 
-    if wrapper_class:
-        wrapper = ('<body class="mdpopups"><div class="%s">' % wrapper_class) + '%s</div></body>'
-    else:
-        wrapper = '<body class="mdpopups">%s</body>'
-
-    return wrapper % _MdWrapper(
+    return _MdWrapper(
         extensions=extensions,
         extension_configs=configs
     ).convert(_markup_template(markup, template_vars, template_env_options)).replace('&quot;', '"').replace('\n', '')
