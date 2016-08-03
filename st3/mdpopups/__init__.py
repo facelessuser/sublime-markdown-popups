@@ -330,7 +330,9 @@ def _create_html(
 def _markup_template(markup, variables, options):
     """Template for markup."""
 
-    if options:
+    if variables:
+        if options is None:
+            options = {}
         env = jinja2.Environment(**options)
         return env.from_string(markup).render(plugin=variables)
     return markup
