@@ -518,7 +518,7 @@ def update_popup(
 
     try:
         html = _create_html(
-            view, content, md, css, css_type=POPUP, wrapper_class=None,
+            view, content, md, css, css_type=POPUP, wrapper_class=wrapper_class,
             template_vars=template_vars, template_env_options=template_env_options, nl2br=nl2br
         )
     except Exception:
