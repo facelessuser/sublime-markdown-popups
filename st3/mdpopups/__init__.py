@@ -318,9 +318,9 @@ def _create_html(
             _debug('\n' + content, INFO)
 
     if wrapper_class:
-        wrapper = ('<body class="mdpopups"><div class="%s">' % wrapper_class) + '%s</div></body>'
+        wrapper = ('<div class="mdpopups"><div class="%s">' % wrapper_class) + '%s</div></div>'
     else:
-        wrapper = '<body class="mdpopups">%s</body>'
+        wrapper = '<div class="mdpopups">%s</div>'
 
     html = "<style>%s</style>" % (style)
     html += _remove_entities(wrapper % content)

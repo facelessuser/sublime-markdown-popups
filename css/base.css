@@ -5,7 +5,7 @@
 {%- if var.sublime_version < 3119 %}
 {{'Packages/mdpopups/css/base-legacy.css'|getcss}}
 {%- else %}
-html { padding: 0; margin: 0; }
+html, body { padding: 0; margin: 0; }
 .mdpopups {
   margin: 0;
   padding: {% if var.is_popup %}0.2rem{% else %}0{% endif %};
