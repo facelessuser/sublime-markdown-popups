@@ -33,7 +33,7 @@ from __future__ import unicode_literals
 from markdown.extensions import Extension
 from markdown.preprocessors import Preprocessor
 from markdown.blockprocessors import CodeBlockProcessor
-from markdown.extensions.codehilite import CodeHilite, CodeHiliteExtension, parse_hl_lines
+from markdown.extensions.codehilite import CodeHilite, CodeHiliteExtension, HiliteTreeprocessor, parse_hl_lines
 try:
     from pygments import highlight
     from pygments.lexers import get_lexer_by_name, guess_lexer
@@ -307,6 +307,9 @@ class SuperFencesCodeExtension(Extension):
         fenced.config = config
         indented_code.config = config
         indented_code.markdown = self.markdown
+        hiliter = SuperFencesHiliteTreeprocessor(self.markdown)
+        hiliter.config = self.getConfigs()
+        self.markdown.treeprocessors["hilite"] = hiliter
         self.markdown.superfences[0]["formatter"] = fenced.highlight
         self.markdown.parser.blockprocessors['code'] = indented_code
         self.markdown.preprocessors.add('fenced_code_block', fenced, ">normalize_whitespace")
@@ -635,6 +638,53 @@ class SuperFencesCodeBlockProcessor(CodeBlockProcessor):
                     blocks[0] = self.revert_greedy_fences(blocks[0])
                 handled = CodeBlockProcessor.run(self, parent, blocks) is not False
         return handled
+
+
+class SuperFencesHiliteTreeprocessor(HiliteTreeprocessor):
+    """Hilight source code in code blocks."""
+
+    def __init__(self, md):
+        """Initialize."""
+
+        super(SuperFencesHiliteTreeprocessor, self).__init__(md)
+        self.markdown = md
+        self.checked_for_codehilite = False
+        self.codehilite_conf = {}
+
+    def check_codehilite(self):
+        """Check for code hilite extension to get its config."""
+
+        if not self.checked_for_codehilite:
+            for ext in self.markdown.registeredExtensions:
+                if isinstance(ext, CodeHiliteExtension):
+                    self.codehilite_conf = ext.config
+                    break
+            self.checked_for_codehilite = True
+
+    def run(self, root):
+        """Find code blocks and store in htmlStash."""
+        self.check_codehilite()
+
+        blocks = root.iter('pre')
+        for block in blocks:
+            if len(block) == 1 and block[0].tag == 'code':
+                code = SublimeHighlight(
+                    block[0].text,
+                    linenums=self.codehilite_conf['linenums'][0],
+                    guess_lang=self.codehilite_conf['guess_lang'][0],
+                    css_class=self.codehilite_conf['css_class'][0],
+                    style=self.codehilite_conf['pygments_style'][0],
+                    noclasses=self.codehilite_conf['noclasses'][0],
+                    use_pygments=self.codehilite_conf['use_pygments'][0]
+                )
+                placeholder = self.markdown.htmlStash.store(code.hilite(),
+                                                            safe=True)
+                # Clear codeblock in etree instance
+                block.clear()
+                # Change to p element which will later
+                # be removed when inserting raw html
+                block.tag = 'p'
+                block.text = placeholder
 
 
 def makeExtension(*args, **kwargs):
