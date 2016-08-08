@@ -6,7 +6,8 @@
 {{'Packages/mdpopups/css/base-legacy.css'|getcss}}
 {%- else %}
 html, body { padding: 0; margin: 0; }
-.mdpopups {
+div.mdpopups {
+  display: block;
   margin: 0;
   padding: {% if var.is_popup %}0.2rem{% else %}0{% endif %};
   font-size: 1rem;
