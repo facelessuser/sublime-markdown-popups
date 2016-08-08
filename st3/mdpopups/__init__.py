@@ -362,6 +362,7 @@ def md2html(view, markup, template_vars=None, template_env_options=None, nl2br=T
         "mdpopups.mdx.betterem",
         "mdpopups.mdx.magiclink",
         "mdpopups.mdx.inlinehilite",
+        "mdpopups.mdx.extrarawhtml",
         "markdown.extensions.admonition",
         "markdown.extensions.def_list"
     ]
