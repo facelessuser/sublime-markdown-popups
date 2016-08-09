@@ -37,6 +37,10 @@ MdPopups also includes a couple of 3rd party extensions (some of which have been
 - [betterem](http://facelessuser.github.io/pymdown-extensions/extensions/betterem/) is extension that aims to improve emphasis support in Python Markdown. MdPopups leaves it configured in its default state where underscores are handled intelligently: `_handled_intelligently_` --> _handled_intelligently_.  Asterisks can be used to do mid word emphasis: `em*pha*sis` --> em*pha*sis.
 - [magiclink](http://facelessuser.github.io/pymdown-extensions/extensions/magiclink/) auto links HTML links.
 - [inlinehilite](http://facelessuser.github.io/pymdown-extensions/extensions/inlinehilite/) allows for inline code highlighting: `` `#!python import module` `` --> `#!python import module`.
+- [extrarawhtml](http://facelessuser.github.io/pymdown-extensions/extensions/extrarawhtml/) allows you to add `markdown="1"` to block html elements to allow content under them to be parsed with Python markdown (inline tags should already have their content parsed).  All this module does is expose this specific functionality from the [Python Markdown’s Extra extension](https://pythonhosted.org/Markdown/extensions/extra.html#nested-markdown-inside-html-blocks) as this functionality could not be enabled without including all of the `Extra` extensions other features.  You can read the Python Markdown's Extra extension documentation to learn more about this feature.
+
+!!! hint "New 1.10.0"
+    `extrarawhtml` was added.
 
 !!! hint "New 1.9.0"
     `nl2br` can be turned off via the `nl2br` parameter in `show_popup`, `add_phantom`, `update_popup`, `md2html`, and `Phantom`.
