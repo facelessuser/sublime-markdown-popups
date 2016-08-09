@@ -1,9 +1,11 @@
 html { padding: 0; margin: 0; }
 .markdown {
+  display:  block;
   margin: 0;
   padding: {% if var.is_popup %}0.2em{% else %}0{% endif %};
   font-size: {{'+0px'|relativesize}};
 }
+div {display: block;}
 /* Headers */
 h1 { font-size: {{'+5px'|relativesize}}; }
 h2 { font-size: {{'+4px'|relativesize}}; }
