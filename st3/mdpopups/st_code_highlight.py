@@ -101,7 +101,7 @@ class SublimeHighlight(object):
         }
 
         return re.sub(
-            r'(?!\s($|\S))\s',
+            (r'(?!\s($|\S))\s' if self.inline else r'\s'),
             '&nbsp;',
             ''.join(
                 encode_table.get(c, c) for c in text
