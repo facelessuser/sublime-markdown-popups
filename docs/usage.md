@@ -309,7 +309,7 @@ mdpopups.md2html
     | Parameter | Type | Required | Default | Description |
     | --------- | ---- | -------- | ------- | ----------- |
     | view | sublime.View |Yes | | Sublime text View object. |
-    | markup | bool | Yes | | The markup code to be converted. |
+    | markup | string | Yes | | The markup code to be converted. |
     | template_vars | dict | No | None | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. |
     | template_env_options | dict | No | None | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`. |
     | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
