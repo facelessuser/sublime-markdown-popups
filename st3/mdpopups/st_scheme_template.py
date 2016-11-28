@@ -17,7 +17,7 @@ import sublime
 import re
 from . import version as ver
 from .rgba import RGBA
-from . import csscolors
+from . import x11colors
 from .st_color_scheme_matcher import ColorSchemeMatcher
 import jinja2
 from pygments.formatters import HtmlFormatter
@@ -284,7 +284,7 @@ class Scheme2CSS(object):
             return None
 
         if not color.startswith('#'):
-            color = csscolors.name2hex(color)
+            color = x11colors.name2hex(color)
             if color is None:
                 return None
 
