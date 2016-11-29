@@ -533,13 +533,13 @@ MdPopups has two syntax highlighting methods: one is Pygments, the other is Subl
 ### Pygments
 
 !!! note "Note"
-    Sublime Text 3119 allows for parent and child class in the form `#!css .class1 class2`.  If you are on 3119 or later, Pygments class will be formatted as `#!css .mdpopups .highight .class, .mdpopups .inline-highlight .class`.  Keep this in mind as you are reading.  The main thing you need to know is that you can customize the background and/or main font color by using the following for ST 3119+:
+    Sublime Text 3119 allows for parent and child class in the form `#!css .class1 .class2`.  If you are on 3119 or later, Pygments class will be formatted as `#!css .mdpopups .highight .class, .mdpopups .inline-highlight .class`.  Keep this in mind as you are reading.  The main thing you need to know is that you can customize the background and/or main font color by using the following for ST 3119+:
 
     ```css
     .mdpopups .highlight, .mdpopups .inline-highlight { background-color: #f8f8f8; color: #4d4d4c }
     ```
 
-    Or for ST <3199:
+    On ST < 3119, you cannot use the parent and child classes, so the CSS is limited:
 
     ```css
     .highlight, .inline-highlight { background-color: #f8f8f8; color: #4d4d4c }
