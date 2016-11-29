@@ -40,6 +40,7 @@ IDK = '''
 '''
 HL_SETTING = 'mdpopups.use_sublime_highlighter'
 FORMAT_SETTING = 'mdpopups.default_formatting'
+STYLE_SETTING = 'mdpopups.default_style'
 RE_BAD_ENTITIES = re.compile(r'(&(?!amp;|lt;|gt;|nbsp;)(?:\w+;|#\d+;))')
 
 NODEBUG = 0
@@ -160,27 +161,37 @@ def _get_scheme(view):
     settings = sublime.load_settings("Preferences.sublime-settings")
     obj = None
     user_css = ''
+    default_css = ''
     if scheme is not None:
         if scheme in _scheme_cache:
-            obj, user_css, t = _scheme_cache[scheme]
+            obj, user_css, default_css, t = _scheme_cache[scheme]
             # Check if cache expired or user changed pygments setting.
             if (
                 _is_cache_expired(t) or
                 obj.variables.get('use_pygments', True) != (not settings.get(HL_SETTING, False)) or
-                obj.variables.get('default_formatting', True) != settings.get(FORMAT_SETTING, True)
+                obj.variables.get('default_formatting', True) != settings.get(FORMAT_SETTING, True) or
+                obj.variables.get('default_style', True) != settings.get(STYLE_SETTING, True)
             ):
                 obj = None
                 user_css = ''
+                default_css = ''
         if obj is None:
             try:
                 obj = Scheme2CSS(scheme)
                 _prune_cache()
                 user_css = _get_user_css()
-                _scheme_cache[scheme] = (obj, user_css, time.time())
+                default_css = _get_default_css()
+                _scheme_cache[scheme] = (obj, user_css, default_css, time.time())
             except Exception:
                 _log('Failed to convert/retrieve scheme to CSS!')
                 _debug(traceback.format_exc(), ERROR)
-    return obj, user_css
+    return obj, user_css, default_css
+
+
+def _get_default_css():
+    """Get default CSS."""
+
+    return clean_css(sublime.load_resource(DEFAULT_CSS))
 
 
 def _get_user_css():
@@ -192,7 +203,7 @@ def _get_user_css():
     try:
         css = clean_css(sublime.load_resource(user_css))
     except Exception:
-        css = clean_css(sublime.load_resource(DEFAULT_CSS))
+        pass
     return css if css else ''
 
 
@@ -253,11 +264,12 @@ def _get_theme(view, css=None, css_type=POPUP, template_vars=None):
     global base_css
     if base_css is None:
         base_css = clean_css(sublime.load_resource(BASE_CSS))
-    obj, user_css = _get_scheme(view)
+    obj, user_css, default_css = _get_scheme(view)
     font_size = view.settings().get('font_size', 12)
     try:
         return obj.apply_template(
             base_css +
+            default_css +
             obj.get_css() +
             (clean_css(css) if css else '') +
             user_css,

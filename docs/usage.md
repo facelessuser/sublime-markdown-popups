@@ -478,17 +478,23 @@ Controls whether the Pygments or the native Sublime syntax highlighter is used f
 ```
 
 ### mdpopups.user_css
-Overrides the default CSS theme.  Value should be a relative path pointing to the CSS theme file: `Packages/User/my_custom_theme.css`.  Slashes should be forward slashes. By default, it will point to `Packages/User/mdpopups.css`.
+Overrides the default CSS theme.  Value should be a relative path pointing to the CSS theme file: `Packages/User/my_custom_theme.css`.  Slashes should be forward slashes. By default, it will point to `Packages/User/mdpopups.css`.  User CSS overrides all CSS: base, default, plugin, etc.
 
 ```js
     "mdpopups.use_sublime_highlighter": "Packages/User/mdpopups.css"
 ```
 
 ### mdpopups.default_formatting
-Controls whether mdpopups default formatting (contained in [`base.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/base.css)) will be applied or not.  There is no setting for [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css) as it can be overridden simply by creating your own mdpopups.css file in `Packages/User`.
+Controls whether mdpopups default formatting (contained in [`base.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/base.css)) will be applied or not.
 
 !!! hint "New 1.9.0"
         Added in `1.9.0`.
+
+### mdpopups.default_style
+Controls whether mdpopups default styling (contained in [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css)) will be applied or not.
+
+!!! hint "New 1.13.0"
+        Added in `1.13.0`.
 
 ### mdpopups.sublime_user_lang_map
 This is a special setting allowing the mapping of personal syntax languages which are not yet included or will not be included in the official mapping table.  You can either define your own new entry, or use the name of an existing entry to extend language keywords or syntax languages.  When extending, user keywords and languages will be cycled through first.
@@ -646,9 +652,12 @@ MdPopups provides a simple base CSS that styles the basic HTML tags that can be 
 Templates are used so that a user can easily tap into all the colors, color filters, and other useful logic to control their tooltips and phantoms in one place without having to hard code a specific CSS for a specific color scheme.  Even though a plugin can additionally insert new scopes on demand when calling the popup API, a user can override anything and everything by providing their own [CSS template](#mdpopupsuser_css).  The template is fairly powerful and flexible.
 
 ## CSS Templates
-MdPoups provides a [`base.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/base.css) that formats the general look of the HTML elements (padding, size, etc.).  On top of that, it provides a [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css) template which applies more superficial styling such as colors, Pygments themes, etc.  It uses the Jinja2 template environment to give direct access to things like color scheme colors, names, and other useful information.  In general, `default.css` should provide most of what everyone **needs**.  But if you **want** greater control, you can create your own CSS template which MdPopups will use instead of `default.css`.
+MdPoups provides a [`base.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/base.css) that formats the general look of the HTML elements (padding, size, etc.).  On top of that, it provides a [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css) template which applies more superficial styling such as colors, Pygments themes, etc.  It uses the Jinja2 template environment to give direct access to things like color scheme colors, names, and other useful information.  In general, `base.css` and `default.css` should provide most of what everyone **needs**.  But if you **want** greater control, you can create your own CSS template which MdPopups which will override anything in `base.css` and `default.css`.
 
 All variables and filters below only apply the CSS, not the content.  The content only receives the variables **you** give it via `template_vars` and any options and filters you give it via the `template_env_options`.  The css will receive the variables fed in through `template_vars`, and in the case of CSS and content, both will place the plugin variables under the object `plugin`.
+
+!!! hint "New 1.13.0"
+    User CSS now overrides `base.css` and `default.css` instead of replacing `default.css`.  You can get the same effect as legacy by disabling [default styling](#) and creating your own user CSS.
 
 ### Sizes Relative to View's Font Size
 
@@ -940,6 +949,13 @@ var.default_formatting
 
     !!! hint "New 1.9.0"
         Added in `1.9.0`.
+
+var.default_style
+: 
+    Flag specifying whether default styling is being used.  See [mdpopups.default_style](#mdpopupsdefault_style) for how to control this flag.  And see [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css) for an example of how it is used.
+
+    !!! hint "New 1.13.0"
+        Added in `1.13.0`.
 
 var.is_dark | var.is_light
 : 
