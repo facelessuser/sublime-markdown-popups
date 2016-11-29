@@ -1,5 +1,3 @@
-/* Html fake border color */
-/* Defines the general look of the font and provides a little margin. */
 /* TODO: next beta remove checks for 3119. */
 {%- if var.default_formatting %}
 {%- if var.sublime_version < 3119 %}
