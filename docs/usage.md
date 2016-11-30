@@ -46,7 +46,16 @@ MdPopups also includes a couple of 3rd party extensions (some of which have been
     `nl2br` can be turned off via the `nl2br` parameter in `show_popup`, `add_phantom`, `update_popup`, `md2html`, and `Phantom`.
 
 ## API Usage
-MdPopups provides a handful of accessible functions.
+MdPopups provides a number of accessible functions.
+
+!!! caution "Developer Guidelines"
+    Plugin developers should not try to override the style of existing base classes and elements with plugin injection, but they should use custom plugin classes so that only the specific special elements that must be handled uniquely for the plugin get targeted.  You should use very unique class names (preferably with the plugin's name as part of the class). This way a user can target and override your class styling if desired. There are a couple of ways to approach this.
+
+    - For Sublime Text 3119+, it is advised to use the `wrapper_class` option of the `show_popup`, `update_popup`, and `add_phantom` commands to wrap your content in a div with the provided class.  That way the developer can provide CSS to style their specific elements via `#!css .mdpopups .myplugin-wrapper .myclass {}` or simply `#!css .myplugin-wrapper .myclass {}`. This is one of the easiest ways, but it is for 3119+ only.
+
+    - For Sublime Text <3119, when injecting your own CSS classes from a plugin, wrapper classes won't work as Sublime didn't add CSS support for parent child classes until later. In this case, it is recommend you namespace your classes by appending the plugin name as a prefix so it can be targeted like this: `#!css .myplugin-myclass {}`.  This will give your elements very unique classes that the user can target and override if they choose.
+
+    - To add classes to inline and some block markdown elements you can use the Python Markdown [attr_list extension syntax](https://pythonhosted.org/Markdown/extensions/attr_list.html).  This will work on inline elements and a number of block elements (though sometimes it can be difficult to target certain kinds of block elements).  If all else fails, you can insert raw HTML into your markdown and apply classes directly to the element.
 
 ### version
 (int,) mdpopups.version
@@ -75,28 +84,11 @@ mdpopups.show_popup
     | template_env_options | dict | No | None | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`. |
     | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
 
-    !!! caution "Developers Guidelines"
-        For 3119+, it is advised you use the `wrapper_class` option to wrap your content in a div with the given class.  That way you can provide CSS to style your elements via `#!css .mdpopups .wrapper-class .myclass {}` or even simply `#!css .wrapper-class .myclass {}`.
-
-        For <3119, when injecting your own CSS classes from a plugin, please namespace them by either giving them a very unique name (preferably with the plugin's name as part of the class) or use an additional namespace class (preferably with the plugin's name) and a specific class.  This way a user can target and override your class styling if desired.
-
-        **Example - Unique Class Name**:
-        ```css
-        .myplugin-myclass { ... }
-        ```
-
-        **Example - Namespace Class**:
-        ```css
-        .myplugin.myclass { ... }
-        ```
-
-        Also, do not try to override the style of existing base classes and elements with plugin injection, but use custom plugin classes so that you will only target what your plugin has specifically added special classes to.
-
     !!! hint "New 1.9.0"
         `wrapper_class`, `template_vars`, `template_env_options`, and `nl2br` option added in `1.9.0`.
 
 
-## update_popup
+### update_popup
 mdpopups.update_popup
 : 
     Updates the current existing popup.  Set [`mdpopups.use_sublime_highlighter`](#mdpopupsuse_sublime_highlighter) to `true` in your `Preferences.sublime-settings` file if you would like to use the Sublime syntax highlighter.
@@ -157,23 +149,6 @@ int mdpopups.add_phantom
     | template_vars | dict | No | None | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. |
     | template_env_options | dict | No | None | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`. |
     | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
-
-    !!! caution "Developers Guidelines"
-        For 3119+, it is advised you use the `wrapper_class` option to wrap your content in a div with the give class.  That way you can provide CSS to style your elements via `#!css .wrapper-class .myclass {}`.
-
-        For <3119, when injecting your own CSS classes from a plugin, please namespace them by either giving them a very unique name (preferably with the plugin's name as part of the class) or use an additional namespace class (preferably with the plugin's name) and a specific class.  This way a user can target and override your class styling if desired.
-
-        **Example - Unique Class Name**:
-        ```css
-        .myplugin-myclass { ... }
-        ```
-
-        **Example - Namespace Class**:
-        ```css
-        .myplugin.myclass { ... }
-        ```
-
-        Also, do not try to override the style of existing base classes and elements with plugin injection, but use custom plugin classes so that you will only target what your plugin has specifically added special classes to.
 
     !!! hint "New 1.9.0"
         `wrapper_class`, `template_vars`, `template_env_options`, and `nl2br` option added in `1.9.0`.
@@ -430,7 +405,7 @@ mdpopups.syntax_highlight
     | language | string | No | None | Specifies the language to highlight as. |
     | inline | bool |No | False | Will return the code formatted for inline display. |
 
-## get_language_from_view
+### get_language_from_view
 mdpopups.get_language_from_view
 : 
     Allows a user to extract the equivalent language specifier for `mdpopups.syntax_highlight` from a view.  If the language cannot be determined, `None` will be returned.
