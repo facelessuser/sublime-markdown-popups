@@ -76,7 +76,7 @@ mdpopups.show_popup
     | nl2br | bool | No | True | Determines whether the newline to br Python Markdown extension is enabled or not. |
 
     !!! caution "Developers Guidelines"
-        For 3119+, it is advised you use the `wrapper_class` option to wrap your content in a div with the give class.  That way you can provide CSS to style your elements via `#!css .wrapper-class .myclass {}`.
+        For 3119+, it is advised you use the `wrapper_class` option to wrap your content in a div with the given class.  That way you can provide CSS to style your elements via `#!css .mdpopups .wrapper-class .myclass {}` or even simply `#!css .wrapper-class .myclass {}`.
 
         For <3119, when injecting your own CSS classes from a plugin, please namespace them by either giving them a very unique name (preferably with the plugin's name as part of the class) or use an additional namespace class (preferably with the plugin's name) and a specific class.  This way a user can target and override your class styling if desired.
 
