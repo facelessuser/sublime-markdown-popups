@@ -9,7 +9,7 @@ div.mdpopups {
   margin: 0;
   padding: {% if var.is_popup %}0.2rem{% else %}0{% endif %};
   font-size: 1rem;
-  line-height: 1.2rem;
+  line-height: 1.1rem;
 }
 .mdpopups div { display: block; }
 /* Headers */
