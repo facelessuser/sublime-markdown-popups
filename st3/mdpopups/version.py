@@ -1,6 +1,6 @@
 """Version."""
 
-_version_info = (1, 13, 0)
+_version_info = (1, 13, 1)
 __version__ = '.'.join([str(x) for x in _version_info])
 
 
