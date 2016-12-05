@@ -482,7 +482,7 @@ class Scheme2CSS(object):
         parts = [c.strip('; ') for c in css.split(':')]
         if len(parts) == 2 and parts[0] == 'background-color':
             parts[0] = 'color'
-            return '%s: %s ' % (parts[0], parts[1])
+            return '%s: %s; ' % (parts[0], parts[1])
         return css
 
     def to_bg(self, css):
