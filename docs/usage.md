@@ -732,7 +732,7 @@ css
     Would then only include the color:
 
     ```css+jinja
-    h1, h2, h3, h4, h5, h6 { color: #888888 }
+    h1, h2, h3, h4, h5, h6 { color: #888888; }
     ```
 
     Some scopes might not have colors assigned to them, so multiple scopes can be defined, and the first one that matches will be used:

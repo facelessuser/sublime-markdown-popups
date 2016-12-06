@@ -246,8 +246,8 @@ class Scheme2CSS(object):
 
         # Intialize colors with the global foreground, background, and fake html_border
         self.colors = OrderedDict()
-        self.colors['.foreground'] = OrderedDict([('color', 'color: %s; ' % self.fground)])
-        self.colors['.background'] = OrderedDict([('background-color', 'background-color: %s; ' % self.bground)])
+        self.colors['.foreground'] = OrderedDict([('color', self.fground)])
+        self.colors['.background'] = OrderedDict([('background-color', self.bground)])
 
     def parse_settings(self):
         """Parse the color scheme."""
@@ -260,17 +260,17 @@ class Scheme2CSS(object):
             if color or bgcolor:
                 self.colors[key_scope] = OrderedDict()
                 if color:
-                    self.colors[key_scope]['color'] = 'color: %s; ' % color
+                    self.colors[key_scope]['color'] = color
                 if bgcolor:
-                    self.colors[key_scope]['background-color'] = 'background-color: %s; ' % bgcolor
+                    self.colors[key_scope]['background-color'] = bgcolor
 
                 for s in scope.style.split(' '):
                     if "bold" in s:
-                        self.colors[key_scope]['font-weight'] = 'font-weight: %s; ' % 'bold'
+                        self.colors[key_scope]['font-weight'] = 'bold'
                     if "italic" in s:
-                        self.colors[key_scope]['font-style'] = 'font-style: %s; ' % 'italic'
+                        self.colors[key_scope]['font-style'] = 'italic'
                     if "underline" in s and False:  # disabled
-                        self.colors[key_scope]['text-decoration'] = 'text-decoration: %s; ' % 'underline'
+                        self.colors[key_scope]['text-decoration'] = 'underline'
 
     def process_color(self, color, simple_strip=False):
         """
@@ -306,7 +306,7 @@ class Scheme2CSS(object):
         text = []
         css_entry = '%s { %s}' if int(sublime.version()) < 3119 else '.mdpopups %s { %s}'
         for k, v in self.colors.items():
-            text.append(css_entry % (k, ''.join(v.values())))
+            text.append(css_entry % (k, ''.join(['%s: %s;' % (k1, v1) for k1, v1 in v.items()])))
         self.text = '\n'.join(text)
 
         # Create Jinja template
@@ -325,6 +325,7 @@ class Scheme2CSS(object):
         self.env.filters['fade'] = self.fade
         self.env.filters['getcss'] = self.read_css
         self.env.filters['relativesize'] = self.relativesize
+        self.env.filters['property'] = self.get_property
 
     def read_css(self, css):
         """Read the CSS file."""
@@ -334,13 +335,14 @@ class Scheme2CSS(object):
             var.update(
                 {
                     'is_phantom': self.css_type == PHANTOM,
-                    'is_popup': self.css_type == POPUP
+                    'is_popup': self.css_type == POPUP,
+                    'has_property': lambda s, p: self.colors.get(s, {}).get(p) is not None
                 }
             )
 
             return self.env.from_string(
                 clean_css(sublime.load_resource(css))
-            ).render(var=var, colors=self.colors, plugin=self.plugin_vars)
+            ).render(var=var, plugin=self.plugin_vars)
         except Exception:
             return ''
 
@@ -390,10 +392,9 @@ class Scheme2CSS(object):
         try:
             parts = [c.strip('; ') for c in css.split(':')]
             if len(parts) == 2 and parts[0] in ('background-color', 'color'):
-                bgcolor = self.colors.get('.background').get('background-color')
-                bgparts = [c.strip('; ') for c in bgcolor.split(':')]
+                bg = self.colors.get('.background').get('background-color')
                 rgba = RGBA(parts[1] + "%02f" % int(255.0 * max(min(float(factor), 1.0), 0.0)))
-                rgba.apply_alpha(bgparts[1])
+                rgba.apply_alpha(bg)
                 return '%s: %s; ' % (parts[0], rgba.get_rgb())
         except Exception:
             pass
@@ -499,6 +500,23 @@ class Scheme2CSS(object):
 
         return get_pygments(style)
 
+    def get_property(self, selector, css_property):
+        """Get the css property."""
+
+        value = None
+        if selector in self.colors:
+            value = self.colors[selector].get(css_property)
+            if value is None:
+                if css_property.startswith('font-'):
+                    value = 'normal'
+                elif css_property.startswith('text-'):
+                    value = 'none'
+                elif css_property == 'color':
+                    value = self.colors['.foreground']['color']
+                elif css_property == 'background-color':
+                    value = self.colors['.background']['background-color']
+        return value
+
     def retrieve_selector(self, selector, key=None):
         """Get the CSS key, value pairs for a rule."""
 
@@ -508,7 +526,11 @@ class Scheme2CSS(object):
             if w in self.colors:
                 sel = self.colors[w]
                 break
-        return ''.join(sel.values()) if key is None else sel.get(key, '')
+        if key is not None:
+            value = sel.get(key, '')
+            return '%s: %s;' % (key, value) if value else value
+        else:
+            return ''.join(['%s: %s;' % (k1, v1) for k1, v1 in sel.items()]) if key is None else sel.get(key, '')
 
     def get_font_scale(self):
         """Get font scale."""
@@ -553,11 +575,12 @@ class Scheme2CSS(object):
         var.update(
             {
                 'is_phantom': self.css_type == PHANTOM,
-                'is_popup': self.css_type == POPUP
+                'is_popup': self.css_type == POPUP,
+                'has_property': lambda s, p: self.colors.get(s, {}).get(p) is not None
             }
         )
 
-        return self.env.from_string(css).render(var=var, colors=self.colors, plugin=self.plugin_vars)
+        return self.env.from_string(css).render(var=var, plugin=self.plugin_vars)
 
     def get_css(self):
         """Get css."""

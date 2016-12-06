@@ -30,10 +30,8 @@ except Exception:
     bs4 = None
 
 PHANTOM_SUPPORT = int(sublime.version()) >= 3118
-BASE_CSS = 'Packages/mdpopups/css/base.css'
 DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
 DEFAULT_USER_CSS = 'Packages/User/mdpopups.css'
-base_css = None
 IDK = '''
 <style>html {background-color: #333; color: red}</style>
 <div><p>¯\_(ツ)_/¯'</p></div>
@@ -105,8 +103,6 @@ def _clear_cache():
 
     global _scheme_cache
     global _highlighter_cache
-    global base_css
-    base_css = None
     _scheme_cache = OrderedDict()
     _highlighter_cache = OrderedDict()
 
@@ -261,14 +257,10 @@ class _MdWrapper(markdown.Markdown):
 def _get_theme(view, css=None, css_type=POPUP, template_vars=None):
     """Get the theme."""
 
-    global base_css
-    if base_css is None:
-        base_css = clean_css(sublime.load_resource(BASE_CSS))
     obj, user_css, default_css = _get_scheme(view)
     font_size = view.settings().get('font_size', 12)
     try:
         return obj.apply_template(
-            base_css +
             default_css +
             obj.get_css() +
             (clean_css(css) if css else '') +
