@@ -55,8 +55,22 @@ div.mdpopups {
     margin-right: 0;
 }
 .mdpopups ul, .mdpopups ol { padding-left: 2rem; }
+/* kbd */
+.mdpopups kbd {
+  display: inline;
+  padding-left: 0.25rem;
+  padding-right:  0.25rem;
+}
 /* Special classes */
 .mdpopups .highlight { padding: 0.5rem; }
 .mdpopups .admonition { padding: 0.5rem; }
-{% endif %}
-{% endif %}
+.mdpopups .inline-highlight{
+  padding-left: 0.25rem;
+  padding-right:  0.25rem;
+}
+/* Cosmetic rounding */
+{% if var.sublime_version < 3124 %}
+.mdpopups kbd, .mdpopups .highlight, .mdpopups .inline-highlight{ border-radius: 0.25rem; }
+{%- endif %}
+{%- endif %}
+{%- endif %}

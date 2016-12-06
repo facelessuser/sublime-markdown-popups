@@ -4,6 +4,10 @@
 {{'Packages/mdpopups/css/default-legacy.css'|getcss}}
 {%- else %}
 .mdpopups hr { {{'.foreground'|css('color')|background}} }
+.mdpopups kbd {
+    {{'.foreground'|css('color')|background}}
+    {{'.background'|css('background-color')|foreground}}
+}
 {%- if var.use_pygments %}
   {%- if var.is_light %}
 {{'default'|pygments}}

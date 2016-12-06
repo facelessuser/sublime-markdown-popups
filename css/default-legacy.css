@@ -5,6 +5,10 @@ html {
 }
 a { {{'.support.function'|css('color')}} }
 hr { {{'.foreground'|css('color')|background}} }
+kbd {
+    {{'.foreground'|css('color')|background}}
+    {{'.background'|css('background-color')|foreground}}
+}
 {%- if var.use_pygments %}
   {%- if var.is_light %}
 {{'default'|pygments}}
