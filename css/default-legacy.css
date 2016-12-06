@@ -1,3 +1,5 @@
+{%- if var.sublime_version < 3119 %}
+/* var.sublime_version < 3124 */
 /*Style with current theme.*/
 html {
   {{'.background'|css('background-color')|brightness(1.025)}}
@@ -6,8 +8,8 @@ html {
 a { {{'.support.function'|css('color')}} }
 hr { {{'.foreground'|css('color')|background}} }
 kbd {
-    {{'.foreground'|css('color')|background}}
-    {{'.background'|css('background-color')|foreground}}
+  {{'.foreground'|css('color')|background}}
+  {{'.background'|css('background-color')|foreground}}
 }
 {%- if var.use_pygments %}
   {%- if var.is_light %}
@@ -17,4 +19,21 @@ kbd {
   {%- endif %}
 {%- else %}
 .highlight, .inline-highlight { {{'.background'|css|brightness(0.985)}} }
+{%- endif %}
+{%- else %}
+/* var.sublime_version < 3124 */
+.mdpopups hr { {{'.foreground'|css('color')|background}} }
+.mdpopups kbd {
+  {{'.foreground'|css('color')|background}}
+  {{'.background'|css('background-color')|foreground}}
+}
+{%- if var.use_pygments %}
+  {%- if var.is_light %}
+{{'default'|pygments}}
+  {%- else %}
+{{'native'|pygments}}
+  {% endif %}
+{%- else %}
+.mdpopups .highlight, .mdpopups .inline-highlight { {{'.background'|css|brightness(0.985)}} }
+{%- endif %}
 {%- endif %}
