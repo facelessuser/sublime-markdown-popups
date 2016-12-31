@@ -4,11 +4,54 @@
 {%- if var.sublime_version < 3124 %}
 {{'Packages/mdpopups/css/default-legacy.css'|getcss}}
 {%- else %}
-.mdpopups hr { background-color: {{'.foreground'|property('color')}} }
+.mdpopups hr { background-color: var(--foreground); }
 .mdpopups kbd {
-  background-color: {{'.foreground'|property('color')}};
-  color: {{'.background'|property('background-color')}};
+  background-color: var(--foreground);
+  color: var(--background);
 }
+.mdpopups .admonition {
+  background-color: color(var(--background) blend(var(--foreground) 30%));
+  color: var(--background);
+}
+
+.mdpopups .admonition-title {
+  color:  var(--foreground);
+  background-color: color(var(--background) blend(var(--foreground) 50%));
+}
+
+/* Colorized Admonitions classes. */
+.mdpopups .admonition.panel-success .admonition-title {
+  background-color: color(var(--background) blend(var(--greenish) 50%));
+}
+
+.mdpopups .admonition.panel-success {
+  background-color: color(var(--background) blend(var(--greenish) 30%));
+}
+
+.mdpopups .admonition.panel-warning .admonition-title {
+  background-color: color(var(--background) blend(var(--orangish) 50%));
+}
+
+.mdpopups .admonition.panel-warning {
+  background-color: color(var(--background) blend(var(--orangish) 30%));
+}
+
+.mdpopups .admonition.panel-error .admonition-title {
+  background-color: color(var(--background) blend(var(--redish) 50%));
+}
+
+.mdpopups .admonition.panel-error {
+  background-color: color(var(--background) blend(var(--redish) 30%));
+}
+
+.mdpopups .admonition.panel-info .admonition-title {
+  background-color: color(var(--background) blend(var(--bluish) 50%));
+}
+
+.mdpopups .admonition.panel-info {
+  background-color: color(var(--background) blend(var(--bluish) 30%));
+}
+/* Syntax Highlighting */
 {%- if var.use_pygments %}
   {%- if var.is_light %}
 {{'default'|pygments}}
@@ -17,7 +60,7 @@
   {%- endif %}
 {%- else %}
 .mdpopups .highlight, .mdpopups .inline-highlight {
-  background-color: color({{'.background'|property('background-color')}} blend(black 98%));
+  background-color: color(var(--background) blend(black 98%));
 }
 {%- endif %}
 {%- endif %}

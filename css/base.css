@@ -3,13 +3,23 @@
 {%- if var.sublime_version < 3119 %}
 {{'Packages/mdpopups/css/base-legacy.css'|getcss}}
 {%- else %}
+html {
+  --mdpopps-font-mono: "sf mono", "Liberation Mono", Menlo, Courier, monospace;
+}
 html, body { padding: 0; margin: 0; }
 div.mdpopups {
   display: block;
   margin: 0;
-  padding: {% if var.is_popup %}0.2rem{% else %}0{% endif %};
+  padding: 0;
   font-size: 1rem;
   line-height: 1.1rem;
+}
+.mdpopups-ui .inline-highlight,
+.mdpopups-ui .highlight,
+.mdpopups-ui code,
+.mdpopups-ui var,
+.mdpopups-ui tt {
+  font-family: var(--mdpopps-font-mono);
 }
 .mdpopups div { display: block; }
 /* Headers */
@@ -58,19 +68,26 @@ div.mdpopups {
 /* kbd */
 .mdpopups kbd {
   display: inline;
-  padding-left: 0.25rem;
-  padding-right:  0.25rem;
+  padding: 0.05rem 0.25rem;
+  border-radius: 0.25rem;
+}
+/* Admontions/Panels */
+.mdpopups .admonition {
+  display: block;
+  padding: 0 0.5rem 0.5rem 0.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.mdpopups .admonition-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 0 -0.5rem 0.5rem -0.5rem;
+  padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
 }
 /* Special classes */
-.mdpopups .highlight { padding: 0.5rem; }
-.mdpopups .admonition { padding: 0.5rem; }
-.mdpopups .inline-highlight{
-  padding-left: 0.25rem;
-  padding-right:  0.25rem;
-}
-/* Cosmetic rounding */
-{%- if var.sublime_version >= 3124 %}
-.mdpopups kbd, .mdpopups .highlight, .mdpopups .inline-highlight{ border-radius: 0.25rem; }
-{%- endif %}
+.mdpopups .highlight { padding: 0.5rem; border-radius: 0.5rem; }
+.mdpopups .inline-highlight{ padding: 0.05rem 0.25rem; border-radius: 0.25rem; }
 {%- endif %}
 {%- endif %}
