@@ -205,7 +205,6 @@ class Scheme2CSS(object):
         """Initialize."""
 
         self.csm = ColorSchemeMatcher(scheme_file)
-        self.text = ''
         self.colors = OrderedDict()
         self.scheme_file = scheme_file
         self.css_type = INVALID
@@ -238,7 +237,6 @@ class Scheme2CSS(object):
             "mdpopups_version": ver.version(),
             "color_scheme": self.scheme_file,
             "use_pygments": not settings.get('mdpopups.use_sublime_highlighter', False),
-            "default_formatting": settings.get('mdpopups.default_formatting', True),
             "default_style": settings.get('mdpopups.default_style', True)
         }
         self.html_border = rgba.get_rgb()
@@ -301,13 +299,6 @@ class Scheme2CSS(object):
         self.colors = OrderedDict()
         self.parse_global()
         self.parse_settings()
-
-        # Assemble the CSS text
-        text = []
-        css_entry = '%s { %s}' if int(sublime.version()) < 3119 else '.mdpopups %s { %s}'
-        for k, v in self.colors.items():
-            text.append(css_entry % (k, ''.join(['%s: %s;' % (k1, v1) for k1, v1 in v.items()])))
-        self.text = '\n'.join(text)
 
         # Create Jinja template
         self.env = jinja2.Environment()
@@ -585,7 +576,13 @@ class Scheme2CSS(object):
     def get_css(self):
         """Get css."""
 
-        return self.text
+        # Assemble the CSS text
+        text = []
+        css_entry = '%s { %s}'
+        for k, v in self.colors.items():
+            text.append(css_entry % (k, ''.join(['%s: %s;' % (k1, v1) for k1, v1 in v.items()])))
+
+        return '\n'.join(text) + '\n'
 
 
 def get_pygments(style):

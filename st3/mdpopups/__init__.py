@@ -37,7 +37,6 @@ IDK = '''
 <div><p>¯\_(ツ)_/¯'</p></div>
 '''
 HL_SETTING = 'mdpopups.use_sublime_highlighter'
-FORMAT_SETTING = 'mdpopups.default_formatting'
 STYLE_SETTING = 'mdpopups.default_style'
 RE_BAD_ENTITIES = re.compile(r'(&(?!amp;|lt;|gt;|nbsp;)(?:\w+;|#\d+;))')
 
@@ -165,7 +164,6 @@ def _get_scheme(view):
             if (
                 _is_cache_expired(t) or
                 obj.variables.get('use_pygments', True) != (not settings.get(HL_SETTING, False)) or
-                obj.variables.get('default_formatting', True) != settings.get(FORMAT_SETTING, True) or
                 obj.variables.get('default_style', True) != settings.get(STYLE_SETTING, True)
             ):
                 obj = None
@@ -261,9 +259,8 @@ def _get_theme(view, css=None, css_type=POPUP, template_vars=None):
     font_size = view.settings().get('font_size', 12)
     try:
         return obj.apply_template(
-            default_css +
-            obj.get_css() +
-            (clean_css(css) if css else '') +
+            default_css + '\n' +
+            ((clean_css(css) + '\n') if css else '') +
             user_css,
             css_type,
             font_size,
