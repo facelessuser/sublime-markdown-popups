@@ -358,7 +358,7 @@ def md2html(view, markup, template_vars=None, template_env_options=None, nl2br=T
 
     extensions = [
         "markdown.extensions.attr_list",
-        "markdown.extensions.codehilite",
+        "mdpopups.mdx.highlight",
         "mdpopups.mdx.superfences",
         "mdpopups.mdx.betterem",
         "mdpopups.mdx.magiclink",
@@ -374,19 +374,15 @@ def md2html(view, markup, template_vars=None, template_env_options=None, nl2br=T
     configs = {
         "mdpopups.mdx.inlinehilite": {
             "style_plain_text": True,
-            "css_class": "inline-highlight",
-            "use_codehilite_settings": False,
-            "guess_lang": False,
-            "sublime_hl": sublime_hl
-        },
-        "markdown.extensions.codehilite": {
-            "guess_lang": False,
-            "css_class": "highlight"
+            "css_class": "inline-highlight"
         },
         "mdpopups.mdx.superfences": {
-            "uml_flow": False,
-            "uml_sequence": False,
-            "sublime_hl": sublime_hl
+            "custom_fences": [],
+            "css_class": "highlight"
+        },
+        "mdpopups.mdx.highlight": {
+            "sublime_hl": sublime_hl,
+            "guess_lang": False
         }
     }
 

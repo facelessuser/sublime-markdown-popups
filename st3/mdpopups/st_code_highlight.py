@@ -168,7 +168,8 @@ class SublimeHighlight(object):
         """Write the body of the HTML."""
 
         processed_rows = ""
-        self.html.append(INLINE_BODY_START if self.inline else BODY_START)
+        if not self.no_wrap:
+            self.html.append(INLINE_BODY_START if self.inline else BODY_START)
 
         # Convert view to HTML
         self.setup_print_block(self.view.sel()[0])
@@ -177,7 +178,8 @@ class SublimeHighlight(object):
         processed_rows += str(self.curr_row) + "],"
 
         # Write empty line to allow copying of last line and line number without issue
-        self.html.append(INLINE_BODY_END if self.inline else BODY_END)
+        if not self.no_wrap:
+            self.html.append(INLINE_BODY_END if self.inline else BODY_END)
 
     def set_view(self, src, lang):
         """Setup view for conversion."""
@@ -226,12 +228,13 @@ class SublimeHighlight(object):
                     continue
                 self.view.set_syntax_file(sytnax_file)
 
-    def syntax_highlight(self, src, lang, hl_lines=[], inline=False):
+    def syntax_highlight(self, src, lang, hl_lines=[], inline=False, no_wrap=False):
         """Syntax Highlight."""
 
         self.set_view(src, 'text' if not lang else lang)
         self.inline = inline
         self.hl_lines = hl_lines
+        self.no_wrap = no_wrap
         self.setup()
         self.html = []
         self.write_body()

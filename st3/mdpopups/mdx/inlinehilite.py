@@ -3,67 +3,37 @@ Inline Hilite.
 
 pymdownx.inlinehilite
 
----
-pymdownx.inlinehilite
-Inline codehilite variant
-
-This is a modification of the original CodeHilite extension.
-It relies on codehilite's config, and adds a processor that
-can highlite backtick regions content if it is preceeded with
-a language specifier like so:
+An alternative inline code extension that highlights code.  Can
+use CodeHilite to source its settings or pymdownx.highlight.
 
     `:::javascript var test = 0;`
             - or -
     `#!javascript var test = 0;`
 
-Modified: 2014 - 2016 Isaac Muse <isaacmuse@gmail.com>
----
-
-CodeHilite Extension for Python-Markdown
-========================================
-
-Adds code/syntax highlighting to standard Python-Markdown code blocks.
-
-See <https://pythonhosted.org/Markdown/extensions/code_hilite.html>
-for documentation.
-
-Original code Copyright 2006-2008 [Waylan Limberg](http://achinghead.com/).
-
-All changes Copyright 2008-2014 The Python Markdown Project
-
-License: [BSD](http://www.opensource.org/licenses/bsd-license.php)
-
+Copyright 2014 - 2017 Isaac Muse <isaacmuse@gmail.com>
 """
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import Pattern
-from markdown.extensions import codehilite
-# import traceback
-try:
-    from pygments import highlight
-    from pygments.lexers import get_lexer_by_name, guess_lexer
-    from pygments.formatters import find_formatter_class
-    HtmlFormatter = find_formatter_class('html')
-    pygments = True
-except ImportError:
-    pygments = False
+from markdown import util as md_util
+from . import highlight as hl
+from .util import PymdownxDeprecationWarning
+import warnings
 import re
 
+ESCAPED_BSLASH = '%s%s%s' % (md_util.STX, ord('\\'), md_util.ETX)
+DOUBLE_BSLASH = '\\\\'
 BACKTICK_CODE_RE = r'''(?x)
+(?:
+(?<!\\)(?P<escapes>(?:\\{2})+)(?=`+) |  # Process code escapes before code
 (?<!\\)(?P<tic>`+)
-((?:\:{3,}|\#!)(?P<lang>[a-zA-Z0-9_+-]*)\s+)? # Optional language
-(?P<code>.+?)                                 # Code
-(?<!`)(?P=tic)(?!`)                           # Closing
-'''
-
-html_re = re.compile(
-    r'''(?x)
-    (?P<start><span [^<>]+>)|(?P<content>[^<>]+)|(?P<end></span>)
-    '''
+((?:\:{3,}|\#!)(?P<lang>[\w#.+-]*)\s+)? # Optional language
+(?P<code>.+?)                           # Code
+(?<!`)(?P=tic)(?!`)                     # Closing
 )
-
+'''
 multi_space = re.compile(r'(?<= ) {2,}')
 
 
@@ -73,62 +43,15 @@ def replace_nbsp(m):
     return '&nbsp;' * len(m.group(0))
 
 
-class SublimeInlineHtmlFormatter(HtmlFormatter):
-    """Format the code blocks."""
+def _escape(txt):
+    """Basic html escaping."""
 
-    def wrap(self, source, outfile):
-        """Overload wrap."""
-
-        return self._wrap_code(source)
-
-    def _wrap_code(self, source):
-        """
-        Wrap the pygmented code.
-
-        Sublime popups don't really support 'code', but since it doesn't
-        hurt anything, we leave it in for the possiblity of future support.
-        We get around the lack of proper 'code' support by converting any
-        spaces after the intial space to nbsp.  We go ahead and convert tabs
-        to 4 spaces as well.
-        """
-
-        yield 0, '<code class="%s">' % self.cssclass
-        for i, t in source:
-            text = ''
-            matched = False
-            for m in html_re.finditer(t):
-                matched = True
-                if m.group(1):
-                    text += m.group(1)
-                elif m.group(3):
-                    text += m.group(3)
-                else:
-                    text += multi_space.sub(
-                        replace_nbsp, m.group(2).replace('\t', ' ' * 4)
-                    )
-            if not matched:
-                text = multi_space.sub(
-                    replace_nbsp, t.replace('\t', ' ' * 4)
-                )
-            yield i, text
-        yield 0, '</code>'
-
-
-class InlineCodeHtmlFormatter(HtmlFormatter):
-    """Format the code blocks."""
-
-    def wrap(self, source, outfile):
-        """Overload wrap."""
-
-        return self._wrap_code(source)
-
-    def _wrap_code(self, source):
-        """Return source wrapped in simple inline <code> block."""
-
-        yield 0, '<code class="%s">' % self.cssclass
-        for i, t in source:
-            yield i, t.strip()
-        yield 0, '</code>'
+    txt = txt.replace('&', '&amp;')
+    txt = txt.replace('<', '&lt;')
+    txt = txt.replace('>', '&gt;')
+    txt = txt.replace('"', '&quot;')
+    txt = multi_space.sub(replace_nbsp, txt.replace('\t', ' ' * 4))  # Special format for sublime.
+    return txt
 
 
 class InlineHilitePattern(Pattern):
@@ -139,83 +62,58 @@ class InlineHilitePattern(Pattern):
 
         Pattern.__init__(self, pattern)
         self.markdown = md
-        self.checked_for_codehilite = False
+        self.get_hl_settings = False
 
     def get_settings(self):
         """Check for code hilite extension and gather its settings."""
 
-        if not self.checked_for_codehilite:
-            self.guess_lang = self.config['guess_lang']
-            self.css_class = self.config['css_class']
-            self.style = self.config['pygments_style']
-            self.noclasses = self.config['noclasses']
-            self.use_pygments = self.config['use_pygments']
-            self.use_codehilite_settings = self.config['use_codehilite_settings']
+        if not self.get_hl_settings:
+            self.get_hl_settings = True
             self.style_plain_text = self.config['style_plain_text']
-            if self.use_codehilite_settings:
-                for ext in self.markdown.registeredExtensions:
-                    if isinstance(ext, codehilite.CodeHiliteExtension):
-                        self.guess_lang = ext.config['guess_lang'][0]
-                        self.css_class = ext.config['css_class'][0]
-                        self.style = ext.config['pygments_style'][0]
-                        self.use_pygments = ext.config['use_pygments'][0]
-                        self.noclasses = ext.config['noclasses'][0]
-                        break
-            self.checked_for_codehilite = True
+            config = hl.get_hl_settings(self.markdown)
 
-    def codehilite(self, lang, src):
+            if 'extend_pygments_lang' not in config:
+                self.css_class = config['css_class']
+            else:
+                self.css_class = self.config['css_class']
+
+            self.extend_pygments_lang = config.get('extend_pygments_lang', None)
+            self.guess_lang = config['guess_lang']
+            self.pygments_style = config['pygments_style']
+            self.use_pygments = config['use_pygments']
+            self.noclasses = config['noclasses']
+            self.sublime_hl = config['sublime_hl']
+
+    def highlight_code(self, language, src):
         """Syntax highlite the inline code block."""
 
-        process_text = self.style_plain_text or lang or self.guess_lang
-        if not lang and self.style_plain_text and not self.guess_lang:
-            lang = 'text'
-        sublime_hl_enabled, sublime_hl = self.config.get("sublime_hl", None)
-        if sublime_hl_enabled:
-            code = sublime_hl.syntax_highlight(src, lang, inline=True)
-        elif pygments and self.use_pygments and process_text:
-            try:
-                lexer = get_lexer_by_name(lang)
-            except ValueError:
-                try:
-                    if self.guess_lang:
-                        lexer = guess_lexer(src)
-                    else:
-                        lexer = get_lexer_by_name('text')
-                except ValueError:
-                    lexer = get_lexer_by_name('text')
+        process_text = self.style_plain_text or language or self.guess_lang
 
-            formatter = SublimeInlineHtmlFormatter(
-                style=self.style,
-                cssclass=self.css_class,
+        if process_text:
+            el = hl.Highlight(
+                guess_lang=self.guess_lang,
+                pygments_style=self.pygments_style,
+                use_pygments=self.use_pygments,
                 noclasses=self.noclasses,
-                classprefix=self.css_class + ' '  # Insert class prefix for styling Sublime
-            )
-            code = highlight(src, lexer, formatter)
+                extend_pygments_lang=self.extend_pygments_lang,
+                sublime_hl=self.sublime_hl
+            ).highlight(src, language, self.css_class, inline=True)
+            el.text = self.markdown.htmlStash.store(el.text, safe=True)
         else:
-            # Just escape and build markup usable by JS highlighting libs
-            txt = src.replace('&', '&amp;')
-            txt = txt.replace('<', '&lt;')
-            txt = txt.replace('>', '&gt;')
-            txt = txt.replace('"', '&quot;')
-            txt = multi_space.sub(replace_nbsp, txt.replace('\t', ' ' * 4))  # Special format for sublime.
-
-            classes = [self.css_class] if self.css_class and process_text else []
-            if lang and process_text:
-                classes.append('language-%s' % lang)
-            class_str = ''
-            if len(classes):
-                class_str = ' class="%s"' % ' '.join(classes)
-            code = '<code%s>%s</code>' % (class_str, txt)
-        placeholder = self.markdown.htmlStash.store(code, safe=True)
-        return placeholder
+            el = md_util.etree.Element('code')
+            el.text = self.markdown.htmlStash.store(_escape(src), safe=True)
+        return el
 
     def handleMatch(self, m):
         """Handle the pattern match."""
 
-        lang = m.group('lang') if m.group('lang') else ''
-        src = m.group('code').strip()
-        self.get_settings()
-        return self.codehilite(lang, src)
+        if m.group('escapes'):
+            return m.group('escapes').replace(DOUBLE_BSLASH, ESCAPED_BSLASH)
+        else:
+            lang = m.group('lang') if m.group('lang') else ''
+            src = m.group('code').strip()
+            self.get_settings()
+            return self.highlight_code(lang, src)
 
 
 class InlineHiliteExtension(Extension):
@@ -225,17 +123,10 @@ class InlineHiliteExtension(Extension):
         """Initialize."""
 
         self.config = {
-            'sublime_hl': [(False, None), "Sublime Highlighter object"],
             'use_codehilite_settings': [
-                True,
-                "Use codehilite options if available. "
-                "If codehilite not available or this is False,"
-                "Inlinehilite will use its own settings. - "
+                None,
+                "Deprecated and does nothing. "
                 "- Default: True"
-            ],
-            'guess_lang': [
-                True,
-                "Automatic language detection - Default: True"
             ],
             'style_plain_text': [
                 False,
@@ -246,25 +137,9 @@ class InlineHiliteExtension(Extension):
                 "- Default: False"
             ],
             'css_class': [
-                "inlinehilite",
+                "highight",
                 "Set class name for wrapper <div> - "
-                "Default: codehilite"
-            ],
-            'pygments_style': [
-                'default',
-                'Pygments HTML Formatter Style '
-                '(Colorscheme) - Default: default'
-            ],
-            'noclasses': [
-                False,
-                'Use inline styles instead of CSS classes - '
-                'Default false'
-            ],
-            'use_pygments': [
-                True,
-                'Use Pygments to Highlight code blocks. '
-                'Disable if using a JavaScript library. '
-                'Default: True'
+                "Default: inlinehilite"
             ]
         }
         super(InlineHiliteExtension, self).__init__(*args, **kwargs)
@@ -272,8 +147,19 @@ class InlineHiliteExtension(Extension):
     def extendMarkdown(self, md, md_globals):
         """Add support for :::language`code` code hiliting."""
 
+        config = self.getConfigs()
+
+        if config.get('use_codehilite_settings'):  # pragma: no coverage
+            warnings.warn(
+                "'use_codehilite_settings' is deprecated and does nothing.\n"
+                "\nCodeHilite settings will only be used if CodeHilite is configured\n"
+                " and 'pymdownx.highlight' is not configured.\n"
+                "Please discontinue use of this setting as it will be removed in the future.",
+                PymdownxDeprecationWarning
+            )
+
         inline_hilite = InlineHilitePattern(BACKTICK_CODE_RE, md)
-        inline_hilite.config = self.getConfigs()
+        inline_hilite.config = config
         md.inlinePatterns['backtick'] = inline_hilite
 
 
