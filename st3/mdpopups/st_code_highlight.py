@@ -101,7 +101,7 @@ class SublimeHighlight(object):
         }
 
         return re.sub(
-            (r'(?!\s($|\S))\s' if self.inline else r'\s'),
+            (r'(?!\s($|\S))\s' if self.inline or self.code_wrap else r'\s'),
             '&nbsp;',
             ''.join(
                 encode_table.get(c, c) for c in text
@@ -228,13 +228,14 @@ class SublimeHighlight(object):
                     continue
                 self.view.set_syntax_file(sytnax_file)
 
-    def syntax_highlight(self, src, lang, hl_lines=[], inline=False, no_wrap=False):
+    def syntax_highlight(self, src, lang, hl_lines=[], inline=False, no_wrap=False, code_wrap=False):
         """Syntax Highlight."""
 
         self.set_view(src, 'text' if not lang else lang)
         self.inline = inline
         self.hl_lines = hl_lines
         self.no_wrap = no_wrap
+        self.code_wrap = code_wrap
         self.setup()
         self.html = []
         self.write_body()

@@ -83,9 +83,6 @@ def _escape(txt):
     txt = txt.replace('<', '&lt;')
     txt = txt.replace('>', '&gt;')
     txt = txt.replace('"', '&quot;')
-    # Special format for sublime.
-    txt = txt.replace('\t', '&nbsp;' * 4)
-    txt = txt.replace(' ', '&nbsp;')
     return txt
 
 
@@ -300,6 +297,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
             self.noclasses = config['noclasses']
             self.linenums = config['linenums']
             self.sublime_hl = config['sublime_hl']
+            self.sublime_wrap = config['sublime_wrap']
 
     def clear(self):
         """Reset the class variables."""
@@ -480,7 +478,8 @@ class SuperFencesBlockPreprocessor(Preprocessor):
                 noclasses=self.noclasses,
                 linenums=self.linenums,
                 extend_pygments_lang=self.extend_pygments_lang,
-                sublime_hl=self.sublime_hl
+                sublime_hl=self.sublime_hl,
+                sublime_wrap=self.sublime_wrap
             ).highlight(
                 src,
                 language,

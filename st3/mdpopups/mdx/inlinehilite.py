@@ -21,7 +21,6 @@ from markdown import util as md_util
 from . import highlight as hl
 from .util import PymdownxDeprecationWarning
 import warnings
-import re
 
 ESCAPED_BSLASH = '%s%s%s' % (md_util.STX, ord('\\'), md_util.ETX)
 DOUBLE_BSLASH = '\\\\'
@@ -34,13 +33,6 @@ BACKTICK_CODE_RE = r'''(?x)
 (?<!`)(?P=tic)(?!`)                     # Closing
 )
 '''
-multi_space = re.compile(r'(?<= ) {2,}')
-
-
-def replace_nbsp(m):
-    """Replace spaces with nbsp."""
-
-    return '&nbsp;' * len(m.group(0))
 
 
 def _escape(txt):
@@ -50,7 +42,6 @@ def _escape(txt):
     txt = txt.replace('<', '&lt;')
     txt = txt.replace('>', '&gt;')
     txt = txt.replace('"', '&quot;')
-    txt = multi_space.sub(replace_nbsp, txt.replace('\t', ' ' * 4))  # Special format for sublime.
     return txt
 
 

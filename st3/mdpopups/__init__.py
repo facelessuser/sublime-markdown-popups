@@ -287,7 +287,8 @@ def _remove_entities(text):
 
 def _create_html(
     view, content, md=True, css=None, debug=False, css_type=POPUP,
-    wrapper_class=None, template_vars=None, template_env_options=None, nl2br=True
+    wrapper_class=None, template_vars=None, template_env_options=None, nl2br=True,
+    allow_code_wrap=False
 ):
     """Create html from content."""
 
@@ -305,7 +306,8 @@ def _create_html(
     if md:
         content = md2html(
             view, content, template_vars=template_vars,
-            template_env_options=template_env_options, nl2br=nl2br
+            template_env_options=template_env_options, nl2br=nl2br,
+            allow_code_wrap=allow_code_wrap
         )
     else:
         content = _markup_template(content, template_vars, template_env_options)
@@ -348,7 +350,10 @@ def version():
     return ver.version()
 
 
-def md2html(view, markup, template_vars=None, template_env_options=None, nl2br=True):
+def md2html(
+    view, markup, template_vars=None, template_env_options=None,
+    nl2br=True, allow_code_wrap=False
+):
     """Convert Markdown to HTML."""
 
     if _get_setting('mdpopups.use_sublime_highlighter'):
@@ -382,6 +387,7 @@ def md2html(view, markup, template_vars=None, template_env_options=None, nl2br=T
         },
         "mdpopups.mdx.highlight": {
             "sublime_hl": sublime_hl,
+            "sublime_wrap": allow_code_wrap,
             "guess_lang": False
         }
     }
@@ -458,15 +464,19 @@ def get_language_from_view(view):
     return lang
 
 
-def syntax_highlight(view, src, language=None, inline=False):
+def syntax_highlight(view, src, language=None, inline=False, allow_code_wrap=False):
     """Syntax highlighting for code."""
 
     try:
         if _get_setting('mdpopups.use_sublime_highlighter'):
             highlighter = _get_sublime_highlighter(view)
-            code = highlighter.syntax_highlight(src, language, inline=inline)
+            code = highlighter.syntax_highlight(
+                src, language, inline=inline, code_wrap=(not inline and allow_code_wrap)
+            )
         else:
-            code = pyg_syntax_hl(src, language, inline=inline)
+            code = pyg_syntax_hl(
+                src, language, inline=inline, code_wrap=(not inline and allow_code_wrap)
+            )
     except Exception:
         code = src
         _log('Failed to highlight code!')
@@ -505,7 +515,8 @@ def hide_popup(view):
 
 def update_popup(
     view, content, md=True, css=None, wrapper_class=None,
-    template_vars=None, template_env_options=None, nl2br=True
+    template_vars=None, template_env_options=None, nl2br=True,
+    allow_code_wrap=False
 ):
     """Update the popup."""
 
@@ -517,7 +528,8 @@ def update_popup(
     try:
         html = _create_html(
             view, content, md, css, css_type=POPUP, wrapper_class=wrapper_class,
-            template_vars=template_vars, template_env_options=template_env_options, nl2br=nl2br
+            template_vars=template_vars, template_env_options=template_env_options, nl2br=nl2br,
+            allow_code_wrap=allow_code_wrap
         )
     except Exception:
         _log(traceback.format_exc())
@@ -530,7 +542,8 @@ def show_popup(
     view, content, md=True, css=None,
     flags=0, location=-1, max_width=320, max_height=240,
     on_navigate=None, on_hide=None, wrapper_class=None,
-    template_vars=None, template_env_options=None, nl2br=True
+    template_vars=None, template_env_options=None, nl2br=True,
+    allow_code_wrap=False
 ):
     """Parse the color scheme if needed and show the styled pop-up."""
 
@@ -546,7 +559,7 @@ def show_popup(
         html = _create_html(
             view, content, md, css, css_type=POPUP, wrapper_class=wrapper_class,
             template_vars=template_vars, template_env_options=template_env_options,
-            nl2br=nl2br
+            nl2br=nl2br, allow_code_wrap=allow_code_wrap
         )
     except Exception:
         _log(traceback.format_exc())
@@ -568,7 +581,8 @@ if PHANTOM_SUPPORT:
     def add_phantom(
         view, key, region, content, layout, md=True,
         css=None, on_navigate=None, wrapper_class=None,
-        template_vars=None, template_env_options=None, nl2br=True
+        template_vars=None, template_env_options=None, nl2br=True,
+        allow_code_wrap=False
     ):
         """Add a phantom and return phantom id."""
 
@@ -581,7 +595,7 @@ if PHANTOM_SUPPORT:
             html = _create_html(
                 view, content, md, css, css_type=PHANTOM, wrapper_class=wrapper_class,
                 template_vars=template_vars, template_env_options=template_env_options,
-                nl2br=nl2br
+                nl2br=nl2br, allow_code_wrap=allow_code_wrap
             )
         except Exception:
             _log(traceback.format_exc())
@@ -615,7 +629,8 @@ if PHANTOM_SUPPORT:
         def __init__(
             self, region, content, layout, md=True,
             css=None, on_navigate=None, wrapper_class=None,
-            template_vars=None, template_env_options=None, nl2br=True
+            template_vars=None, template_env_options=None, nl2br=True,
+            allow_code_wrap=False
         ):
             """Initialize."""
 
@@ -626,6 +641,7 @@ if PHANTOM_SUPPORT:
             self.template_vars = template_vars
             self.template_env_options = template_env_options
             self.nl2br = nl2br
+            self.allow_code_wrap = allow_code_wrap
 
         def __eq__(self, rhs):
             """Check if phantoms are equal."""
@@ -636,7 +652,8 @@ if PHANTOM_SUPPORT:
                 self.layout == rhs.layout and self.on_navigate == rhs.on_navigate and
                 self.md == rhs.md and self.css == rhs.css and self.nl2br == rhs.nl2br and
                 self.wrapper_class == rhs.wrapper_class and self.template_vars == rhs.template_vars and
-                self.template_env_options == rhs.template_env_options
+                self.template_env_options == rhs.template_env_options and
+                self.allow_code_wrap == rhs.allow_code_wrap
             )
 
     class PhantomSet(sublime.PhantomSet):
@@ -667,7 +684,8 @@ if PHANTOM_SUPPORT:
                     p = Phantom(
                         p.region, p.content, p.layout,
                         md=False, css=None, on_navigate=p.on_navigate, wrapper_class=None,
-                        template_vars=None, template_env_options=None, nl2br=False
+                        template_vars=None, template_env_options=None, nl2br=False,
+                        allow_code_wrap=False
                     )
                     new_phantoms[count] = p
                 try:
@@ -687,7 +705,8 @@ if PHANTOM_SUPPORT:
                         p.wrapper_class,
                         p.template_vars,
                         p.template_env_options,
-                        p.nl2br
+                        p.nl2br,
+                        p.allow_code_wrap
                     )
                 count += 1
 
