@@ -1,6 +1,6 @@
 {%- if var.default_style %}
 html {
-  --mdpopps-font-mono: "sf mono", "Liberation Mono", Menlo, Courier, monospace;
+  --mdpopups-font-mono: "sf mono", "Liberation Mono", Menlo, Courier, monospace;
 }
 html, body { padding: 0; margin: 0; }
 div.mdpopups {
@@ -10,12 +10,12 @@ div.mdpopups {
   font-size: 1rem;
   line-height: 1.1rem;
 }
-.mdpopups-ui .inline-highlight,
-.mdpopups-ui .highlight,
-.mdpopups-ui code,
-.mdpopups-ui var,
-.mdpopups-ui tt {
-  font-family: var(--mdpopps-font-mono);
+.mdpopups .inline-highlight,
+.mdpopups .highlight,
+.mdpopups code,
+.mdpopups var,
+.mdpopups tt {
+  font-family: var(--mdpopups-font-mono);
 }
 .mdpopups div { display: block; }
 /* Headers */
