@@ -294,7 +294,7 @@ class Highlight(object):
                 lexer = get_lexer_by_name('text')
         return lexer
 
-    def escape(self, txt, inline):
+    def escape(self, txt, code_wrap):
         """Basic html escaping."""
 
         txt = txt.replace('&', '&amp;')
@@ -302,7 +302,7 @@ class Highlight(object):
         txt = txt.replace('>', '&gt;')
         txt = txt.replace('"', '&quot;')
         # Special format for sublime.
-        if inline:
+        if code_wrap:
             txt = multi_space.sub(replace_nbsp, txt.replace('\t', ' ' * 4))
         else:
             txt = txt.replace('\t', '&nbsp;' * 4)
@@ -381,7 +381,7 @@ class Highlight(object):
             if classes:
                 class_str = CLASS_ATTR % ' '.join(classes)
             higlight_class = (CLASS_ATTR % css_class) if css_class else ''
-            code = CODE_WRAP % (higlight_class, class_str, self.escape(src, False))
+            code = CODE_WRAP % (higlight_class, class_str, self.escape(src, self.sublime_wrap))
 
         if inline:
             el = md_util.etree.Element('code', {'class': class_str} if class_str else {})
