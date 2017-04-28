@@ -26,7 +26,7 @@ def replace_nbsp(m):
     return '&nbsp;' * len(m.group(0))
 
 
-class SublimeBlockFormatter(HtmlFormatter):
+class SublimeWrapBlockFormatter(HtmlFormatter):
     """Format the code blocks."""
 
     def wrap(self, source, outfile):
@@ -70,7 +70,7 @@ class SublimeBlockFormatter(HtmlFormatter):
         yield 0, '</pre></div>'
 
 
-class SublimeWrapBlockFormatter(HtmlFormatter):
+class SublimeBlockFormatter(HtmlFormatter):
     """Format the code blocks with wrapping."""
 
     def wrap(self, source, outfile):
