@@ -1,9 +1,5 @@
-# TextMate Scopes {: .doctitle}
-Standardized scopes supported by TextMate
-
----
-
 ## Supported Scopes
+
 Markdown Popups supports the standard TextMate scopes found in the [manual](https://manual.macromates.com/en/language_grammars#naming_conventions) plus `foreground` and `background`.
 
 - comment

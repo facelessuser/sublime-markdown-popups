@@ -1,9 +1,4 @@
-# F.A.Q. {: .doctitle}
-Frequently asked questions.
-
----
-
-# Questions
+## Questions
 
 - **Why don't `#!html <pre>` tags work right?**
 

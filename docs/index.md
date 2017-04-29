@@ -1,9 +1,5 @@
-# Sublime Markdown Popups {: .doctitle}
-Popup tooltips for Sublime generated with Markdown.
-
----
-
 ## Overview
+
 Sublime Markdown Popups (mdpopups) is a library for Sublime Text plugins.  It utilizes the new plugin API found in ST3 Beta 3080+ for generating tooltip popups. It also provides API methods for generating and styling the new phantom elements introduced in ST3 Beta 3118+.  Mdpopups utilizes Python Markdown with a couple of special extensions to convert Markdown to HTML that can be used to create the popups and/or phantoms.  It also provides a number of other helpful API commands to aid in creating great tooltips and phantoms.
 
 Mdpopups will use your color scheme to create popups/phantoms that fit your editors look.
