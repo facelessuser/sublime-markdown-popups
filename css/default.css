@@ -54,7 +54,7 @@ div.mdpopups {
 /* Preformatted block */
 .mdpopups pre { display: block; }
 /* Blocks */
-.mdpopups blockquote, .mdpopups ol, .mdpopups ul, .mdpopups dl, .mdpopups p, .mdpopups div {
+.mdpopups blockquote, .mdpopups ol, .mdpopups ul, .mdpopups dl, .mdpopups p {
   padding: 0;
   margin-top: 0;
   margin-bottom: 0.5rem;
@@ -74,7 +74,7 @@ div.mdpopups {
 .mdpopups .admonition {
   display: block;
   padding: 0 0.5rem 0.5rem 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: 0.25rem;
   margin-bottom: 0.5rem;
   background-color: color(var(--background) blend(var(--foreground) 30%));
   color: var(--background);
@@ -84,8 +84,8 @@ div.mdpopups {
   font-size: 1.1rem;
   margin: 0 -0.5rem 0.5rem -0.5rem;
   padding: 0.1rem 0.5rem 0.1rem 0.5rem;
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
   color:  var(--foreground);
   background-color: color(var(--background) blend(var(--foreground) 50%));
 }
@@ -128,7 +128,7 @@ div.mdpopups {
 {%- endif %}
 .mdpopups .highlight {
   padding: 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: 0.25rem;
 }
 .mdpopups .inline-highlight{
   padding: 0.05rem 0.25rem;
