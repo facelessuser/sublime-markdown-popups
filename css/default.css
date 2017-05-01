@@ -1,6 +1,6 @@
 {%- if var.default_style %}
 html {
-  --mdpopups-font-mono: "sf mono", "Liberation Mono", Menlo, Courier, monospace;
+  --mdpopups-font-mono: "sf mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   --mdpopups-hr-fg: var(--foreground);
   --mdpopups-admon-fg: var(--background);
   --mdpopups-admon-title-fg:  var(--foreground);
