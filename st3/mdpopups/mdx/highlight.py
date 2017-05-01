@@ -425,7 +425,7 @@ class HighlightTreeprocessor(Treeprocessor):
         for block in blocks:
             if len(block) == 1 and block[0].tag == 'code':
                 code = Highlight(
-                    guess_lang=False,
+                    guess_lang=config['guess_lang'],
                     pygments_style=self.config['pygments_style'],
                     use_pygments=self.config['use_pygments'],
                     noclasses=self.config['noclasses'],
