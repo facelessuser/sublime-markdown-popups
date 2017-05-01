@@ -16,18 +16,18 @@ html {
   --mdpopups-admon-success-accent: color(var(--background) blend(var(--greenish) 50%));
   --mdpopups-kbd-fg: var(--background);
   --mdpopups-kbd-bg: var(--foreground);
-{%- if var.sublime_version >= 3127 %}
-  {%- if var.is_light %}
+{%- if var.is_light %}
   --mdpopups-kbd-border: color(var(--foreground) blend(white 80%));
   --mdpopups-hl-border: color(var(--background) blend(black 90%));
-  --mdpopups-hl-bg: color(var(--background) blend(black 98%));
-  {%- else %}
+{%- else %}
   --mdpopups-kbd-border: color(var(--foreground) blend(black 80%));
   --mdpopups-hl-border: color(var(--background) blend(white 90%));
-  --mdpopups-hl-bg: color(var(--background) blend(white 98%));
-  {%- endif %}
-{%- else %}
+{%- endif %}
+/* 3127 borders allow us more flexibility with code backgrounds. Older versions are going to stick to darkening. */
+{%- if var.is_light or var.sublime_version < 3127 %}
   --mdpopups-hl-bg: color(var(--background) blend(black 98%));
+{%- else %}
+  --mdpopups-hl-bg: color(var(--background) blend(white 98%));
 {%- endif %}
 }
 html, body { padding: 0; margin: 0; }
@@ -98,9 +98,7 @@ div.mdpopups {
   border-radius: 0.25rem;
   background-color: var(--mdpopups-kbd-bg);
   color: var(--mdpopups-kbd-fg);
-{%- if var.sublime_version >= 3127 %}
   border: 1px solid var(--mdpopups-kbd-border);
-{%- endif %}
 }
 /* Admontions/Panels */
 .mdpopups .admonition {
@@ -110,9 +108,7 @@ div.mdpopups {
   margin-bottom: 0.5rem;
   background-color: var(--mdpopups-admon-bg);
   color: var(--mdpopups-admon-fg);
-{%- if var.sublime_version >= 3127 %}
   border: 1px solid var(--mdpopups-admon-accent);
-{%- endif %}
 }
 .mdpopups .admonition-title {
   font-weight: 600;
@@ -130,36 +126,28 @@ div.mdpopups {
 }
 .mdpopups .admonition.panel-success {
   background-color: var(--mdpopups-admon-success-bg);
-{%- if var.sublime_version >= 3127 %}
   border-color: var(--mdpopups-admon-success-accent);
-{%- endif %}
 }
 .mdpopups .admonition.panel-warning .admonition-title {
   background-color: var(--mdpopups-admon-warning-accent);
 }
 .mdpopups .admonition.panel-warning {
   background-color: var(--mdpopups-admon-warning-bg);
-{%- if var.sublime_version >= 3127 %}
   border-color: var(--mdpopups-admon-warning-accent);
-{%- endif %}
 }
 .mdpopups .admonition.panel-error .admonition-title {
   background-color: var(--mdpopups-admon-error-accent);
 }
 .mdpopups .admonition.panel-error {
   background-color: var(--mdpopups-admon-error-bg);
-{%- if var.sublime_version >= 3127 %}
   border-color: var(--mdpopups-admon-error-accent);
-{%- endif %}
 }
 .mdpopups .admonition.panel-info .admonition-title {
   background-color: var(--mdpopups-admon-info-accent);
 }
 .mdpopups .admonition.panel-info {
   background-color: var(--mdpopups-admon-info-bg);
-{%- if var.sublime_version >= 3127 %}
   border-color: var(--mdpopups-admon-info-accent);
-{%- endif %}
 }
 /* Syntax Highlighting */
 {%- if var.use_pygments %}
@@ -174,11 +162,9 @@ div.mdpopups {
   border-radius: 0.25rem;
   font-size: 0.9rem;
 }
-  {%- if var.sublime_version >= 3127 %}
 .mdpopups div.highlight, .mdpopups code.inline-highlight {
   border: 1px solid var(--mdpopups-hl-border);
 }
-  {%- endif %}
 {%- endif %}
 .mdpopups .highlight {
   padding: 0.5rem;
