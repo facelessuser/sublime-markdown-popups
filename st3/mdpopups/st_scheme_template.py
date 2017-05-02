@@ -227,7 +227,7 @@ class Scheme2CSS(object):
         # Get general theme colors from color scheme file
         self.bground = self.process_color(color_settings.get("background", '#FFFFFF'), simple_strip=True)
         rgba = RGBA(self.bground)
-        self.lums = rgba.get_luminance()
+        self.lums = rgba.get_true_luminance()
         is_dark = self.lums <= LUM_MIDPOINT
         settings = sublime.load_settings("Preferences.sublime-settings")
         self.variables = {

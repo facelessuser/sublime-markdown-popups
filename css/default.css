@@ -16,15 +16,17 @@ html {
   --mdpopups-admon-success-accent: color(var(--background) blend(var(--greenish) 50%));
   --mdpopups-kbd-fg: var(--background);
   --mdpopups-kbd-bg: var(--foreground);
-{%- if var.is_light %}
+}
+html.light {
   --mdpopups-kbd-border: color(var(--foreground) blend(white 80%));
   --mdpopups-hl-border: color(var(--background) blend(black 90%));
-{%- else %}
+  --mdpopups-hl-bg: color(var(--background) blend(black 98%));
+}
+html.dark {
   --mdpopups-kbd-border: color(var(--foreground) blend(black 80%));
   --mdpopups-hl-border: color(var(--background) blend(white 90%));
-{%- endif %}
-/* 3127 borders allow us more flexibility with code backgrounds. Older versions are going to stick to darkening. */
-{%- if var.is_light or var.sublime_version < 3127 %}
+{%- if var.sublime_version < 3127 %}
+  /* 3127 borders allow us more flexibility with code backgrounds. Older versions are going to stick to darkening. */
   --mdpopups-hl-bg: color(var(--background) blend(black 98%));
 {%- else %}
   --mdpopups-hl-bg: color(var(--background) blend(white 98%));
