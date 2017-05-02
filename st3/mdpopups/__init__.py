@@ -601,25 +601,30 @@ def add_phantom(
 
     return view.add_phantom(key, region, html, layout, on_navigate)
 
+
 def erase_phantoms(view, key):
     """Erase phantoms."""
 
     view.erase_phantoms(key)
+
 
 def erase_phantom_by_id(view, pid):
     """Erase phantom by ID."""
 
     view.erase_phantom_by_id(pid)
 
+
 def query_phantom(view, pid):
     """Query phantom."""
 
     return view.query_phantom(pid)
 
+
 def query_phantoms(view, pids):
     """Query phantoms."""
 
     return view.query_phantoms(pids)
+
 
 class Phantom(sublime.Phantom):
     """A phantom object."""
@@ -653,6 +658,7 @@ class Phantom(sublime.Phantom):
             self.template_env_options == rhs.template_env_options and
             self.allow_code_wrap == rhs.allow_code_wrap
         )
+
 
 class PhantomSet(sublime.PhantomSet):
     """Object that allows easy updating of phantoms."""
