@@ -29,7 +29,6 @@ try:
 except Exception:
     bs4 = None
 
-PHANTOM_SUPPORT = int(sublime.version()) >= 3118
 DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
 DEFAULT_USER_CSS = 'Packages/User/mdpopups.css'
 IDK = '''
@@ -577,142 +576,141 @@ def is_popup_visible(view):
     return view.is_popup_visible()
 
 
-if PHANTOM_SUPPORT:
-    def add_phantom(
-        view, key, region, content, layout, md=True,
+def add_phantom(
+    view, key, region, content, layout, md=True,
+    css=None, on_navigate=None, wrapper_class=None,
+    template_vars=None, template_env_options=None, nl2br=True,
+    allow_code_wrap=False
+):
+    """Add a phantom and return phantom id."""
+
+    disabled = _get_setting('mdpopups.disable', False)
+    if disabled:
+        _debug('Phantoms disabled', WARNING)
+        return
+
+    try:
+        html = _create_html(
+            view, content, md, css, css_type=PHANTOM, wrapper_class=wrapper_class,
+            template_vars=template_vars, template_env_options=template_env_options,
+            nl2br=nl2br, allow_code_wrap=allow_code_wrap
+        )
+    except Exception:
+        _log(traceback.format_exc())
+        html = IDK
+
+    return view.add_phantom(key, region, html, layout, on_navigate)
+
+def erase_phantoms(view, key):
+    """Erase phantoms."""
+
+    view.erase_phantoms(key)
+
+def erase_phantom_by_id(view, pid):
+    """Erase phantom by ID."""
+
+    view.erase_phantom_by_id(pid)
+
+def query_phantom(view, pid):
+    """Query phantom."""
+
+    return view.query_phantom(pid)
+
+def query_phantoms(view, pids):
+    """Query phantoms."""
+
+    return view.query_phantoms(pids)
+
+class Phantom(sublime.Phantom):
+    """A phantom object."""
+
+    def __init__(
+        self, region, content, layout, md=True,
         css=None, on_navigate=None, wrapper_class=None,
         template_vars=None, template_env_options=None, nl2br=True,
         allow_code_wrap=False
     ):
-        """Add a phantom and return phantom id."""
+        """Initialize."""
 
-        disabled = _get_setting('mdpopups.disable', False)
-        if disabled:
-            _debug('Phantoms disabled', WARNING)
-            return
+        super().__init__(region, content, layout, on_navigate)
+        self.md = md
+        self.css = css
+        self.wrapper_class = wrapper_class
+        self.template_vars = template_vars
+        self.template_env_options = template_env_options
+        self.nl2br = nl2br
+        self.allow_code_wrap = allow_code_wrap
 
-        try:
-            html = _create_html(
-                view, content, md, css, css_type=PHANTOM, wrapper_class=wrapper_class,
-                template_vars=template_vars, template_env_options=template_env_options,
-                nl2br=nl2br, allow_code_wrap=allow_code_wrap
-            )
-        except Exception:
-            _log(traceback.format_exc())
-            html = IDK
+    def __eq__(self, rhs):
+        """Check if phantoms are equal."""
 
-        return view.add_phantom(key, region, html, layout, on_navigate)
+        # Note that self.id is not considered
+        return (
+            self.region == rhs.region and self.content == rhs.content and
+            self.layout == rhs.layout and self.on_navigate == rhs.on_navigate and
+            self.md == rhs.md and self.css == rhs.css and self.nl2br == rhs.nl2br and
+            self.wrapper_class == rhs.wrapper_class and self.template_vars == rhs.template_vars and
+            self.template_env_options == rhs.template_env_options and
+            self.allow_code_wrap == rhs.allow_code_wrap
+        )
 
-    def erase_phantoms(view, key):
-        """Erase phantoms."""
+class PhantomSet(sublime.PhantomSet):
+    """Object that allows easy updating of phantoms."""
 
-        view.erase_phantoms(key)
+    def __init__(self, view, key=""):
+        """Initialize."""
 
-    def erase_phantom_by_id(view, pid):
-        """Erase phantom by ID."""
+        super().__init__(view, key)
 
-        view.erase_phantom_by_id(pid)
+    def __del__(self):
+        """Delete phantoms."""
 
-    def query_phantom(view, pid):
-        """Query phantom."""
+        for p in self.phantoms:
+            erase_phantom_by_id(self.view, p.id)
 
-        return view.query_phantom(pid)
+    def update(self, new_phantoms):
+        """Update the list of phantoms that exist in the text buffer with their current location."""
 
-    def query_phantoms(view, pids):
-        """Query phantoms."""
+        regions = query_phantoms(self.view, [p.id for p in self.phantoms])
+        for i in range(len(regions)):
+            self.phantoms[i].region = regions[i]
 
-        return view.query_phantoms(pids)
+        count = 0
+        for p in new_phantoms:
+            if not isinstance(p, Phantom):
+                # Convert sublime.Phantom to mdpopups.Phantom
+                p = Phantom(
+                    p.region, p.content, p.layout,
+                    md=False, css=None, on_navigate=p.on_navigate, wrapper_class=None,
+                    template_vars=None, template_env_options=None, nl2br=False,
+                    allow_code_wrap=False
+                )
+                new_phantoms[count] = p
+            try:
+                # Phantom already exists, copy the id from the current one
+                idx = self.phantoms.index(p)
+                p.id = self.phantoms[idx].id
+            except ValueError:
+                p.id = add_phantom(
+                    self.view,
+                    self.key,
+                    p.region,
+                    p.content,
+                    p.layout,
+                    p.md,
+                    p.css,
+                    p.on_navigate,
+                    p.wrapper_class,
+                    p.template_vars,
+                    p.template_env_options,
+                    p.nl2br,
+                    p.allow_code_wrap
+                )
+            count += 1
 
-    class Phantom(sublime.Phantom):
-        """A phantom object."""
-
-        def __init__(
-            self, region, content, layout, md=True,
-            css=None, on_navigate=None, wrapper_class=None,
-            template_vars=None, template_env_options=None, nl2br=True,
-            allow_code_wrap=False
-        ):
-            """Initialize."""
-
-            super().__init__(region, content, layout, on_navigate)
-            self.md = md
-            self.css = css
-            self.wrapper_class = wrapper_class
-            self.template_vars = template_vars
-            self.template_env_options = template_env_options
-            self.nl2br = nl2br
-            self.allow_code_wrap = allow_code_wrap
-
-        def __eq__(self, rhs):
-            """Check if phantoms are equal."""
-
-            # Note that self.id is not considered
-            return (
-                self.region == rhs.region and self.content == rhs.content and
-                self.layout == rhs.layout and self.on_navigate == rhs.on_navigate and
-                self.md == rhs.md and self.css == rhs.css and self.nl2br == rhs.nl2br and
-                self.wrapper_class == rhs.wrapper_class and self.template_vars == rhs.template_vars and
-                self.template_env_options == rhs.template_env_options and
-                self.allow_code_wrap == rhs.allow_code_wrap
-            )
-
-    class PhantomSet(sublime.PhantomSet):
-        """Object that allows easy updating of phantoms."""
-
-        def __init__(self, view, key=""):
-            """Initialize."""
-
-            super().__init__(view, key)
-
-        def __del__(self):
-            """Delete phantoms."""
-
-            for p in self.phantoms:
+        for p in self.phantoms:
+            # if the region is -1, then it's already been deleted, no need to call erase
+            if p not in new_phantoms and p.region != sublime.Region(-1):
                 erase_phantom_by_id(self.view, p.id)
 
-        def update(self, new_phantoms):
-            """Update the list of phantoms that exist in the text buffer with their current location."""
-
-            regions = query_phantoms(self.view, [p.id for p in self.phantoms])
-            for i in range(len(regions)):
-                self.phantoms[i].region = regions[i]
-
-            count = 0
-            for p in new_phantoms:
-                if not isinstance(p, Phantom):
-                    # Convert sublime.Phantom to mdpopups.Phantom
-                    p = Phantom(
-                        p.region, p.content, p.layout,
-                        md=False, css=None, on_navigate=p.on_navigate, wrapper_class=None,
-                        template_vars=None, template_env_options=None, nl2br=False,
-                        allow_code_wrap=False
-                    )
-                    new_phantoms[count] = p
-                try:
-                    # Phantom already exists, copy the id from the current one
-                    idx = self.phantoms.index(p)
-                    p.id = self.phantoms[idx].id
-                except ValueError:
-                    p.id = add_phantom(
-                        self.view,
-                        self.key,
-                        p.region,
-                        p.content,
-                        p.layout,
-                        p.md,
-                        p.css,
-                        p.on_navigate,
-                        p.wrapper_class,
-                        p.template_vars,
-                        p.template_env_options,
-                        p.nl2br,
-                        p.allow_code_wrap
-                    )
-                count += 1
-
-            for p in self.phantoms:
-                # if the region is -1, then it's already been deleted, no need to call erase
-                if p not in new_phantoms and p.region != sublime.Region(-1):
-                    erase_phantom_by_id(self.view, p.id)
-
-            self.phantoms = new_phantoms
+        self.phantoms = new_phantoms

@@ -35,9 +35,7 @@ CODE = '<span style="color: %(color)s;%(style)s">%(content)s</span>'
 CODEBG = '<span style="background-color: %(highlight)s; color: %(color)s;%(style)s">%(content)s</span>'
 BODY_END = '</pre></div>\n'
 INLINE_BODY_END = '</code>'
-
-USE_ST_SYNTAX = int(sublime.version()) >= 3084
-ST_LANGUAGES = ('.sublime-syntax', '.tmLanguage') if USE_ST_SYNTAX else ('.tmLanguage',)
+ST_LANGUAGES = ('.sublime-syntax', '.tmLanguage')
 
 
 class SublimeHighlight(object):
