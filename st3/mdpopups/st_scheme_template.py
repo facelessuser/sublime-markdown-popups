@@ -236,7 +236,7 @@ class Scheme2CSS(object):
             "sublime_version": int(sublime.version()),
             "mdpopups_version": ver.version(),
             "color_scheme": self.scheme_file,
-            "use_pygments": not settings.get('mdpopups.use_sublime_highlighter', False),
+            "use_pygments": not settings.get('mdpopups.use_sublime_highlighter', True),
             "default_style": settings.get('mdpopups.default_style', True)
         }
         self.html_border = rgba.get_rgb()

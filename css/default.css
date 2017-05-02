@@ -149,21 +149,14 @@ div.mdpopups {
   background-color: var(--mdpopups-admon-info-bg);
   border-color: var(--mdpopups-admon-info-accent);
 }
-/* Syntax Highlighting */
-{%- if var.use_pygments %}
-  {%- if var.is_light %}
-{{'default'|pygments}}
-  {%- else %}
-{{'native'|pygments}}
-  {%- endif %}
-{%- else %}
 .mdpopups .highlight, .mdpopups .inline-highlight {
-  background-color: var(--mdpopups-hl-bg);
   border: 1px solid var(--mdpopups-hl-border);
   border-radius: 0.25rem;
   font-size: 0.9rem;
+  {%- if not var.use_pygments %}
+  background-color: var(--mdpopups-hl-bg);
+  {%- endif %}
 }
-{%- endif %}
 .mdpopups .highlight {
   padding: 0.5rem;
   margin-bottom: 0.5rem;
