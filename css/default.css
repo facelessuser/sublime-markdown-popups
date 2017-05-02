@@ -159,11 +159,9 @@ div.mdpopups {
 {%- else %}
 .mdpopups .highlight, .mdpopups .inline-highlight {
   background-color: var(--mdpopups-hl-bg);
+  border: 1px solid var(--mdpopups-hl-border);
   border-radius: 0.25rem;
   font-size: 0.9rem;
-}
-.mdpopups div.highlight, .mdpopups code.inline-highlight {
-  border: 1px solid var(--mdpopups-hl-border);
 }
 {%- endif %}
 .mdpopups .highlight {

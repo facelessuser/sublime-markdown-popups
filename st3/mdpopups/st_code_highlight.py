@@ -31,8 +31,8 @@ INLINE_BODY_START = '<code class="inline-highlight">'
 BODY_START = '<div class="highlight"><pre>'
 LINE = '%(code)s<br>'
 INLINE_LINE = '%(code)s'
-CODE = '<span %(class)sstyle="color: %(color)s;">%(content)s</span>'
-CODEBG = '<span %(class)sstyle="background-color: %(highlight)s; color: %(color)s;">%(content)s</span>'
+CODE = '<span style="color: %(color)s;%(style)s">%(content)s</span>'
+CODEBG = '<span style="background-color: %(highlight)s; color: %(color)s;%(style)s">%(content)s</span>'
 BODY_END = '</pre></div>\n'
 INLINE_BODY_END = '</code>'
 
@@ -114,18 +114,19 @@ class SublimeHighlight(object):
         if empty:
             text = '&nbsp;'
 
-        if self.inline:
-            style += " inline-highlight"
+        css_style = ''
+        if style and style == 'bold':
+            css_style += ' font-weight: bold;'
+        if style and style == 'italic':
+            css_style += ' font-style: italic;'
 
         if bgcolor is None:
             code = CODE % {
-                "color": color, "content": text,
-                "class": "class=\"%s\" " % style if style else ''
+                "color": color, "content": text, "style": css_style
             }
         else:
             code = CODEBG % {
-                "highlight": bgcolor, "color": color, "content": text,
-                "class": "class=\"%s\" " % style if style else ''
+                "highlight": bgcolor, "color": color, "content": text, "style": css_style
             }
 
         line.append(code)
