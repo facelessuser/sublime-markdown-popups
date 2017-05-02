@@ -437,7 +437,7 @@ class HighlightTreeprocessor(Treeprocessor):
                 placeholder = self.markdown.htmlStash.store(
                     code.highlight(
                         block[0].text,
-                        'text'
+                        ''
                     ),
                     safe=True
                 )
@@ -460,7 +460,7 @@ class HighlightExtension(Extension):
         super(HighlightExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
-        """Add support for :::language`code` code hiliting."""
+        """Add support for code highlighting."""
 
         ht = HighlightTreeprocessor(md)
         ht.config = self.getConfigs()
