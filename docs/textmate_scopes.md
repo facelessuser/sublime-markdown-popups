@@ -1,6 +1,6 @@
 ## Supported Scopes
 
-Markdown Popups supports the standard TextMate scopes found in the [manual](https://manual.macromates.com/en/language_grammars#naming_conventions) plus `foreground` and `background`.
+Markdown Popups supports the standard TextMate scopes found in the [manual](https://manual.macromates.com/en/language_grammars#naming_conventions) plus `foreground` and `background`. The CSS for these scopes can be obtained via the template filters.
 
 - comment
 - comment.line
