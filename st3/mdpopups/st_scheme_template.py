@@ -180,7 +180,6 @@ re_color = re.compile(r'(?<!-)(color\s*:\s*#[A-Fa-z\d]{6})')
 re_bgcolor = re.compile(r'(?<!-)(background(?:-color)?\s*:\s*#[A-Fa-z\d]{6})')
 re_pygments_selectors = re.compile(r'\.dummy (\.[a-zA-Z\d]+) ')
 CODE_BLOCKS = '.mdpopups .highlight, .mdpopups .inline-highlight { %s; %s; }'
-CODE_BLOCKS_LEGACY = '.highlight, .inline-highlight { %s; %s; }'
 
 
 def fmt_float(f, p=0):
@@ -566,7 +565,7 @@ def get_pygments(style):
 
     # Reassemble replacing .highlight {...} with .codehilite, .inlinehilite {...}
     # All other classes will be left bare with only their syntax class.
-    code_blocks = CODE_BLOCKS_LEGACY if int(sublime.version()) < 3119 else CODE_BLOCKS
+    code_blocks = CODE_BLOCKS
     if m:
         css = clean_css(
             (

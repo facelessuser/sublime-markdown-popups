@@ -174,8 +174,7 @@ def syntax_hl(src, lang=None, guess_lang=False, inline=False, code_wrap=False):
             lexer = get_lexer_by_name('text')
     if inline:
         formatter = SublimeInlineHtmlFormatter(
-            cssclass=css_class,
-            classprefix=css_class + ' '
+            cssclass=css_class
         )
     elif code_wrap:
         formatter = SublimeWrapBlockFormatter(
