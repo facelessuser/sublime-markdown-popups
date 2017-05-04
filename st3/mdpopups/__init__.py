@@ -255,14 +255,12 @@ def _get_theme(view, css=None, css_type=POPUP, template_vars=None):
     """Get the theme."""
 
     obj, user_css, default_css = _get_scheme(view)
-    font_size = view.settings().get('font_size', 12)
     try:
         return obj.apply_template(
             default_css + '\n' +
             ((clean_css(css) + '\n') if css else '') +
             user_css,
             css_type,
-            font_size,
             template_vars
         ) if obj is not None else ''
     except Exception:

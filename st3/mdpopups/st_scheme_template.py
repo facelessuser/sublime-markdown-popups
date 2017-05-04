@@ -315,7 +315,6 @@ class Scheme2CSS(object):
         self.env.filters['sepia'] = self.sepia
         self.env.filters['fade'] = self.fade
         self.env.filters['getcss'] = self.read_css
-        self.env.filters['relativesize'] = self.relativesize
         self.env.filters['property'] = self.get_property
 
     def read_css(self, css):
@@ -336,43 +335,6 @@ class Scheme2CSS(object):
             ).render(var=var, plugin=self.plugin_vars)
         except Exception:
             return ''
-
-    def relativesize(self, css, *args):
-        """Create a relative font from the current font."""
-
-        # Handle things the new way '+1.25em'
-        try:
-            if css.endswith(('em', 'px', 'pt')):
-                offset = css[:-2]
-                unit = css[-2:]
-                integer = bool(len(args) and args[0])
-            else:
-                offset = css
-                unit = args[0]
-                integer = False
-                assert isinstance(unit, str) and unit in ('em', 'px', 'pt'), 'Bad Arguments!'
-        except Exception:
-            return css
-
-        if unit == 'em':
-            size = self.font_size / 16.0
-        elif unit == 'px':
-            size = self.font_size
-        elif unit == 'pt':
-            size = (self.font_size / 16.0) * 12.0
-
-        precision = 0 if integer else 3
-
-        op = offset[0]
-        if op in ('+', '-', '*'):
-            value = size * float(offset[1:]) if op == '*' else size + float(offset)
-        else:
-            value = 0.0
-
-        if value < 0.0:
-            value = 0.0
-
-        return '%s%s' % (fmt_float(value, precision), unit)
 
     def fade(self, css, factor):
         """
@@ -523,38 +485,12 @@ class Scheme2CSS(object):
         else:
             return ''.join(['%s: %s;' % (k1, v1) for k1, v1 in sel.items()]) if key is None else sel.get(key, '')
 
-    def get_font_scale(self):
-        """Get font scale."""
-
-        scale = 1.0
-        try:
-            pref_scale = float(sublime.load_settings('Preferences.sublime-settings').get('mdpopups.font_scale', 0.0))
-        except Exception:
-            pref_scale = 0.0
-
-        if sublime.platform() == 'windows' and pref_scale <= 0.0:
-            try:
-                import ctypes
-
-                logpixelsy = 90
-                dc = ctypes.windll.user32.GetDC(0)
-                height = ctypes.windll.gdi32.GetDeviceCaps(dc, logpixelsy)
-                scale = float(height) / 96.0
-                ctypes.windll.user32.ReleaseDC(0, dc)
-            except Exception:
-                pass
-        elif pref_scale > 0.0:
-            scale = pref_scale
-
-        return scale
-
-    def apply_template(self, css, css_type, font_size, template_vars=None):
+    def apply_template(self, css, css_type, template_vars=None):
         """Apply template to css."""
 
         if css_type not in (POPUP, PHANTOM):
             return ''
 
-        self.font_size = float(font_size) * self.get_font_scale()
         self.css_type = css_type
 
         var = copy.copy(self.variables)
@@ -647,7 +583,4 @@ def get_pygments(style):
             )
         )
 
-    if int(sublime.version()) < 3119:
-        return css.replace('.dummy ', '')
-    else:
-        return re_pygments_selectors.sub(r'.mdpopups .highlight \1, .mdpopups .inline-highlight \1', css)
+    return re_pygments_selectors.sub(r'.mdpopups .highlight \1, .mdpopups .inline-highlight \1', css)
