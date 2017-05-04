@@ -9,7 +9,9 @@ theme_dir: doc_theme
 pages:
   - About Markdown Popups: index.md
   - Installation: installation.md
-  - User Guide: usage.md
+  - User Settings: settings.md
+  - Plugin API: api.md
+  - CSS Styling: styling.md
   - TextMate Scopes: textmate_scopes.md
   - F.A.Q: faq.md
   - Contributing &amp; Support: contributing.md
