@@ -68,3 +68,5 @@ Markdown Popups supports the standard TextMate scopes found in the [manual](http
 - variable.parameter
 - variable.language
 - variable.other
+
+--8<-- "refs.md"

@@ -76,3 +76,5 @@ This is a special setting allowing the mapping of personal syntax languages whic
 ```
 
 For a list of all currently supported syntax mappings, see the official [mapping file](https://github.com/facelessuser/sublime-markdown-popups/blob/master/st3/mdpopups/st_mapping.py).
+
+--8<-- "refs.md"

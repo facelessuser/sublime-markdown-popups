@@ -1,6 +1,6 @@
 ## Dependencies
 
-Your plugin must include the following Package Control dependencies:
+Your plugin must include the Package Control dependencies listed below. Please read about Package Control's [dependencies][pc-dependencies] to learn more.
 
 ```js
 {
@@ -18,22 +18,22 @@ Your plugin must include the following Package Control dependencies:
 
 ## Markdown Support
 
-MdPopups uses [Python Markdown](https://pythonhosted.org/Markdown/) to parse Markdown and transform it into a tooltip or phantom (HTML embedded in your file view).  The Markdown environment supports basic Markdown features, but also includes a number of specialty extensions to enhance the environment.  To keep the experience standardized for plugin use, tweaking the Markdown settings is not allowed except for `nl2br` as it is not critical and can actually get in the way of formatting the Markdown if not desired.
+MdPopups uses [Python Markdown][pymd] to parse Markdown and transform it into a popup or phantom (HTML embedded in your file view).  The Markdown environment supports basic Markdown features, but also includes a number of specialty extensions to enhance the environment.  To keep the experience standardized for plugin use, tweaking the Markdown settings is not allowed except for a few things like enabling/disabling `nl2br` etc.
 
-MdPopups includes the following Python Markdown extensions:
+MdPopups includes the following Python Markdown extensions, but some of the features may not be used due to the limitations of Sublime's `minihtml`.
 
 - [attr_list](https://pythonhosted.org/Markdown/extensions/attr_list.html) allows you to add HTML attributes to block and inline elements easily.
-- [nl2br](https://pythonhosted.org/Markdown/extensions/nl2br.html) turns new lines int `#!html <br>` tags.
+- [nl2br](https://pythonhosted.org/Markdown/extensions/nl2br.html) turns new lines into `#!html <br>` tags.
 - [def_list](https://pythonhosted.org/Markdown/extensions/definition_lists.html) adds support for definition lists.
 - [admonition](https://pythonhosted.org/Markdown/extensions/admonition.html) provides admonition blocks.
 
 MdPopups also includes a couple of 3rd party extensions (some of which have been modified to work better in the Sublime Text environment).
 
 - [superfences](http://facelessuser.github.io/pymdown-extensions/extensions/superfences/) provides support for nested fenced blocks.
-- [betterem](http://facelessuser.github.io/pymdown-extensions/extensions/betterem/) is an extension that aims to improve emphasis support in Python Markdown. MdPopups leaves it configured in its default state where underscores are handled intelligently: `_handled_intelligently_` --> _handled_intelligently_.  Asterisks can be used to do mid word emphasis: `em*pha*sis` --> em*pha*sis.
+- [betterem](http://facelessuser.github.io/pymdown-extensions/extensions/betterem/) is an extension that aims to improve emphasis support in Python Markdown. MdPopups leaves it configured in its default state where underscores are handled intelligently: `_handled_intelligently_` --> _handled_intelligently_ and asterisks can be used to do mid word emphasis: `em*pha*sis` --> em*pha*sis.
 - [magiclink](http://facelessuser.github.io/pymdown-extensions/extensions/magiclink/) auto links HTML links.
 - [inlinehilite](http://facelessuser.github.io/pymdown-extensions/extensions/inlinehilite/) allows for inline code highlighting: `` `#!python import module` `` --> `#!python import module`.
-- [extrarawhtml](http://facelessuser.github.io/pymdown-extensions/extensions/extrarawhtml/) allows you to add `markdown="1"` to block html elements to allow content under them to be parsed with Python markdown (inline tags should already have their content parsed).  All this module does is expose this specific functionality from the [Python Markdown's Extra extension](https://pythonhosted.org/Markdown/extensions/extra.html#nested-markdown-inside-html-blocks) as this functionality could not be enabled without including all of the `Extra` extensions other features.  You can read the Python Markdown's Extra extension documentation to learn more about this feature.
+- [extrarawhtml](http://facelessuser.github.io/pymdown-extensions/extensions/extrarawhtml/) allows you to add `markdown="1"` to block HTML elements to allow content under them to be parsed with Python markdown (inline tags should already have their content parsed).  All this module does is expose this specific functionality from the [Python Markdown's Extra extension](https://pythonhosted.org/Markdown/extensions/extra.html#nested-markdown-inside-html-blocks) as this functionality could not be enabled without including all of the `Extra` extensions other features.  You can read the Python Markdown's Extra extension documentation to learn more about this feature.
 - [highlight](http://facelessuser.github.io/pymdown-extensions/extensions/highlight/) controls and configures the highlighting of code blocks.
 
 ## Styling
@@ -385,3 +385,5 @@ MdPopups provides a number of accessible functions.
     Parameter | Type                | Required | Default | Description
     --------- | ------------------- | -------- | ------- | -----------
     `view`    | `#!py sublime.View` | Yes      |         | Sublime text View object.
+
+--8<-- "refs.md"

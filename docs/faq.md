@@ -10,7 +10,7 @@
     Because I like it that way.  If you are planning on having a snippet of text sent through the syntax highlighter and do not want your tabs to be converted to 4 spaces, you should convert it to the number of spaces you like **before** sending it through the syntax highlighter.
     {: style="font-style: italic"}
 
-- **Why does &lt;insert element&gt; not work, or cause the tooltip not to show?**
+- **Why does &lt;insert element&gt; not work, or cause the popup/phantom not to show?**
 
-    Because Sublime's HTML engine is extremely limited.  Though I do not have a complete list of all supported elements, you should keep things basic.  Things like `#!html <table>` will not work.
+    Because Sublime's HTML engine is extremely limited.  Though I do not have a complete list of all supported elements, you should keep things basic.  Things like `#!html <table>` will not *currently* work.
     {: style="font-style: italic"}

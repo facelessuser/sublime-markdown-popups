@@ -396,3 +396,5 @@ The template environment provides a couple of variables that can be used to cond
     a { {{'.support.function'|css('color')}} }
     {% endif %}
     ```
+
+--8<-- "refs.md"
