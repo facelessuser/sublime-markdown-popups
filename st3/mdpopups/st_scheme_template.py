@@ -211,7 +211,8 @@ class Scheme2CSS(object):
     def guess_style(self, scope, selected=False, explicit_background=False):
         """Guess color."""
 
-        return self.csm.guess_color(scope, selected, explicit_background)
+        # Remove leading '.' to account for old style CSS class scopes.
+        return self.csm.guess_color(scope.lstrip('.'), selected, explicit_background)
 
     def parse_global(self):
         """Parse global settings."""
