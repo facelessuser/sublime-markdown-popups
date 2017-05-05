@@ -1,6 +1,6 @@
-## Overview
+## Configuring MdPopups
 
-All settings for `MdPopups` are placed in Sublime's `Preferences.sublime-settings`.  They are applied globally and applied to all popups and phantoms.
+All settings for MdPopups are placed in Sublime's `Preferences.sublime-settings`.  They are applied globally and to all popups and phantoms.
 
 ## `mdpopups.debug`
 
@@ -36,7 +36,7 @@ Control how many CSS theme files will be kept in cache at any given time.  Value
 
 ## `mdpopups.use_sublime_highlighter`
 
-Controls whether the Pygments or the native Sublime syntax highlighter is used for code highlighting.  This affects code highlighting in Markdown conversion] via and when [md2html](#md2html) and when code is directly processed using [syntax_highlight](#syntax_highlight). To learn more about the syntax highlighter see [Syntax Highlighting](#syntax-highlighting).
+Controls whether the Pygments or the native Sublime syntax highlighter is used for code highlighting.  This affects code highlighting in Markdown conversion and when code is directly processed using [syntax_highlight](./api.md#syntax_highlight). To learn more about the syntax highlighter see [Syntax Highlighting](.styling.md#syntax-highlighting).
 
 ```js
     "mdpopups.use_sublime_highlighter": true
@@ -44,15 +44,11 @@ Controls whether the Pygments or the native Sublime syntax highlighter is used f
 
 ## `mdpopups.user_css`
 
-Overrides the default CSS theme.  Value should be a relative path pointing to the CSS theme file: `Packages/User/my_custom_theme.css`.  Slashes should be forward slashes. By default, it will point to `Packages/User/mdpopups.css`.  User CSS overrides all CSS: base, default, plugin, etc.
+Overrides the default CSS and/or CSS of a plugin.  Value should be a relative path pointing to the CSS file: `Packages/User/my_custom_theme.css`.  Slashes should be forward slashes. By default, it will point to `Packages/User/mdpopups.css`.  User CSS overrides **all** CSS as it is the last to be processed.
 
 ```js
     "mdpopups.use_sublime_highlighter": "Packages/User/mdpopups.css"
 ```
-
-## `mdpopups.default_formatting`
-
-Controls whether mdpopups default formatting (contained in [`base.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/base.css)) will be applied or not.
 
 ## `mdpopups.default_style`
 
@@ -76,5 +72,8 @@ This is a special setting allowing the mapping of personal syntax languages whic
 ```
 
 For a list of all currently supported syntax mappings, see the official [mapping file](https://github.com/facelessuser/sublime-markdown-popups/blob/master/st3/mdpopups/st_mapping.py).
+
+!!! tip "Tip"
+    When submitting new languages to the mapping table, it is encouraged to pick keynames that correspond to what is used in Pygments so a User can switch between Pygments' and Sublime's syntax highlighter and still get highlighting.
 
 --8<-- "refs.md"

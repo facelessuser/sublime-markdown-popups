@@ -114,7 +114,7 @@ The Markdown and HTML content only receives the variables **you** give it via `t
 
 With the template environment, colors and style from the current Sublime color scheme can be accessed and manipulated.  Access to the Sublime color scheme styles CSS is done via the `css` filter.
 
-css
+`css`
 : 
     Retrieves the style for a specific Sublime scope from a Sublime color scheme.  By specifying either `.foreground`, `.background`, or anyone of the standard TextMate scopes and then paring it with the `css` filter, all the related styles of the specified scope will be inserted into the CSS document.
 
@@ -157,7 +157,7 @@ css
 
 If desired you can convert a foreground color to a background color or vice versa.  To convert to a foreground color, you can use the `foreground` filter.  To convert to a background color, you can use the `background` filter.
 
-foreground
+`foreground`
 : 
     Convert a background to a foreground.
 
@@ -166,7 +166,7 @@ foreground
     body { {{'.background'|css('background-color')|foreground}} }
     ```
 
-background
+`background`
 : 
     Convert a foreground to a background.
 
@@ -191,7 +191,7 @@ Color filters take a single color attribute of the form `key: value;`.  So when 
 
 Filters can be chained if more intensity is needed (as some filters may clamp the value in one call), or if you want to apply multiple filters.  These are all the available filters:
 
-brightness
+`brightness`
 : 
     Shifts brightness either dark or lighter. Brightness is relative to 1 where 1 means no change.  Accepted values are floats that are greater than 0.  Ranges are clamped between 0 and 2.
 
@@ -205,7 +205,7 @@ brightness
     body { {{'.background'|css('background-color')|brightness(1.1)}} }
     ```
 
-saturation
+`saturation`
 : 
     Shifts the saturation either to right (saturate) or the left (desaturate).  Saturation is relative to 1 where 1 means no change.  Accepted values are floats that are greater than 0.  Ranges are clamped between 0 and 2.
 
@@ -219,7 +219,7 @@ saturation
     body { {{'.background'|css('background-color')|saturation(1.1)}} }
     ```
 
-grayscale
+`grayscale`
 : 
     Filters all colors to a grayish tone.
 
@@ -228,7 +228,7 @@ grayscale
     body { {{'.background'|css('background-color')|grayscale}} }
     ```
 
-sepia
+`sepia`
 : 
     Filters all colors to a sepia tone.
 
@@ -237,7 +237,7 @@ sepia
     body { {{'.background'|css('background-color')|sepia}} }
     ```
 
-invert
+`invert`
 : 
     Inverts a color.
 
@@ -246,7 +246,7 @@ invert
     body { {{'.background'|css('background-color')|invert}} }
     ```
 
-colorize
+`colorize`
 : 
     Filters all colors to a shade of the specified hue.  Think grayscale, but instead of gray, you define a non-gray hue.  The values are angular dimensions starting at the red primary at 0°, passing through the green primary at 120° and the blue primary at 240°, and then wrapping back to red at 360°.
 
@@ -255,7 +255,7 @@ colorize
     body { {{'.background'|css('background-color')|colorize(30)}} }
     ```
 
-hue
+`hue`
 : 
     Shifts the current hue either to the left or right.  The values are angular dimensions starting at the red primary at 0°, passing through the green primary at 120° and the blue primary at 240°, and then wrapping back to red at 360°.  Values can either be negative to shift left or positive to shift the hue to the right.
 
@@ -269,7 +269,7 @@ hue
     body { {{'.background'|css('background-color')|hue(30)}} }
     ```
 
-fade
+`fade`
 : 
     Fades a color. Essentially it is like apply transparency to the color allowing the color schemes base background color to show through.
 
@@ -282,7 +282,7 @@ fade
 
 The template environment allows for retrieving CSS resources from Sublime Packages or built-in Pygments CSS from the Pygments library.
 
-getcss
+`getcss`
 : 
     Retrieve a CSS file from Sublime's `Packages` folder.  CSS retrieved in this manner can include template variables and filters.
 
@@ -291,7 +291,7 @@ getcss
     {{'Packages/User/aprosopo-dark.css'|getcss}}
     ```
 
-pygments
+`pygments`
 : 
     Retrieve a built-in Pygments color scheme.
 
