@@ -10,6 +10,7 @@
 - **NEW**: Legacy `relativesize` template filter has been dropped. Users should use native CSS `rem` units for relative sizes.
 - **NEW**: Upgraded pymdownx extensions which includes fixes and enhancements. Also abandoned using `CodeHilite` in favor of `pymdownx.highlight`.
 - **NEW**: Add option to support wrapping in code blocks.
+- **NEW**: CSS filters are no longer limited to a set list of TextMate or Sublime scopes, and you no longer have to specify them as CSS classes, but you should specify them as scopes; complexity doesn't matter.  If you are still specifying them as classes, it shouldn't break things due to the way Sublime handles them. Read documentation for more info.
 - **NEW**: Pygments is no longer the default syntax highlighter.
 - **FIX**: Fix foreground output that was missing semicolon according to spec.
 - **FIX**: Numerous CSS fixes.
