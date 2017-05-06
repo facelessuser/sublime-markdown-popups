@@ -379,7 +379,7 @@ The template environment provides a couple of variables that can be used to cond
 
     **Example**
     ```css+jinja
-    {% if var.mdpopups_version >= (1.9.0) %}
+    {% if var.mdpopups_version >= (1, 9, 0) %}
     /* do something */
     {% else %}
     /* do something else */
