@@ -1,9 +1,12 @@
+API
 Changelog
+Control's
 CSS
 Desaturate
 desaturate
 EmojiOne
 grayscale
+inline
 Jinja
 MdPopups
 MERCHANTABILITY
@@ -13,6 +16,9 @@ namespace
 namespaced
 NONINFRINGEMENT
 pha
+plugin
+plugins
+Plugins
 PNG
 popup
 Popup
@@ -25,9 +31,11 @@ PyMdown
 requesters
 RGB
 RGBA
+Screenshot
 sublicense
 Sublime's
 TextMate
 traceback
+tuple
 versa
 whitespace
