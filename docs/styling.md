@@ -130,27 +130,35 @@ In general, it is encouraged to use Sublime CSS variables such as `--redish`, `-
 
 MdPopups also provides its own CSS variables that can be overridden by a user:
 
-Variable                          | Description
---------------------------------- | -----------
-`--mdpopups-font-mono`            | Monospace font stack for elements that require monospace (like code blocks).
-`--mdpopups-hr-fg`                | `#!html <hr>` tag foreground color.
-`--mdpopups-admon-fg`             | General admonition foreground/text color.
-`--mdpopups-admon-title-fg`       | General admonition title foreground/text color.
-`--mdpopups-admon-bg`             | General admonition background color.
-`--mdpopups-admon-accent`         | General admonition accent color (border/title bar background).
-`--mdpopups-admon-info-bg`        | Info admonition background color.
-`--mdpopups-admon-info-accent`    | Info admonition accent color (border/title bar background).
-`--mdpopups-admon-error-bg`       | Error admonition background color.
-`--mdpopups-admon-error-accent`   | Error admonition accent color (border/title bar background).
-`--mdpopups-admon-warning-bg`     | Warning admonition background color.
-`--mdpopups-admon-warning-accent` | Warning admonition accent color (border/title bar background).
-`--mdpopups-admon-success-bg`     | Success admonition background color.
-`--mdpopups-admon-success-accent` | Success admonition accent color (border/title bar background).
-`--mdpopups-kbd-fg`               | `#!html <kbd>` foreground/text color.
-`--mdpopups-kbd-bg`               | `#!html <kbd>` background color.
-`--mdpopups-kbd-border`           | `#!html <kbd>` border color.
-`--mdpopups-hl-border`            | Inline and block code border color.
-`--mdpopups-hl-bg`                | Inline and block code background color.
+Variable                            | Description
+----------------------------------- | -----------
+`--mdpopups-font-mono`              | Monospace font stack for elements that require monospace (like code blocks).
+`--mdpopups-hr-fg`                  | `#!html <hr>` tag foreground color.
+`--mdpopups-admon-fg`               | General admonition foreground/text color.
+`--mdpopups-admon-info-fg`          | Info admonition foreground/text color.
+`--mdpopups-admon-error-fg`         | Error admonition foreground/text color.
+`--mdpopups-admon-success-fg`       | Success admonition foreground/text color.
+`--mdpopups-admon-warning-fg`       | Warning admonition foreground/text color.
+`--mdpopups-admon-title-fg`         | General admonition title foreground/text color.
+`--mdpopups-admon-info-title-fg`    | Info admonition title foreground/text color.
+`--mdpopups-admon-error-title-fg`   | Error admonition title foreground/text color.
+`--mdpopups-admon-success-title-fg` | Success admonition title foreground/text color.
+`--mdpopups-admon-warning-title-fg` | Warning admonition title foreground/text color.
+`--mdpopups-admon-bg`               | General admonition background color.
+`--mdpopups-admon-info-bg`          | Info admonition background color.
+`--mdpopups-admon-error-bg`         | Error admonition background color.
+`--mdpopups-admon-warning-bg`       | Warning admonition background color.
+`--mdpopups-admon-success-bg`       | Success admonition background color.
+`--mdpopups-admon-accent`           | General admonition accent color (border/title bar background).
+`--mdpopups-admon-info-accent`      | Info admonition accent color (border/title bar background).
+`--mdpopups-admon-error-accent`     | Error admonition accent color (border/title bar background).
+`--mdpopups-admon-success-accent`   | Success admonition accent color (border/title bar background).
+`--mdpopups-admon-warning-accent`   | Warning admonition accent color (border/title bar background).
+`--mdpopups-kbd-fg`                 | `#!html <kbd>` foreground/text color.
+`--mdpopups-kbd-bg`                 | `#!html <kbd>` background color.
+`--mdpopups-kbd-border`             | `#!html <kbd>` border color.
+`--mdpopups-hl-border`              | Inline and block code border color.
+`--mdpopups-hl-bg`                  | Inline and block code background color.
 
 ## CSS Templates
 
