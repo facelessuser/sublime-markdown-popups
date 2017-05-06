@@ -1,7 +1,6 @@
 {%- if var.default_style %}
 html {
   --mdpopups-font-mono: "sf mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-  --mdpopups-hr-fg: var(--foreground);
   {%- if var.sublime_version < 3127 %}
   --mdpopups-admon-fg: var(--background);
   --mdpopups-admon-info-fg: var(--background);
@@ -39,11 +38,13 @@ html {
   --mdpopups-kbd-bg: var(--foreground);
 }
 html.light {
+  --mdpopups-hr-fg: color(var(--foreground) blend(white 80%));
   --mdpopups-kbd-border: color(var(--foreground) blend(white 80%));
   --mdpopups-hl-border: color(var(--background) blend(black 90%));
   --mdpopups-hl-bg: color(var(--background) blend(black 98%));
 }
 html.dark {
+  --mdpopups-hr-fg: color(var(--foreground) blend(black 80%));
   --mdpopups-kbd-border: color(var(--foreground) blend(black 80%));
   --mdpopups-hl-border: color(var(--background) blend(white 90%));
 {%- if var.sublime_version < 3127 %}
@@ -85,9 +86,16 @@ div.mdpopups {
 /* Horizontal rule support. */
 .mdpopups hr {
   display: block;
+  {%- if var.sublime_version < 3127 %}
   padding: 1px;
-  margin: 1rem;
   background-color: var(--mdpopups-hr-fg);
+  {%- else %}
+  border-color: var(--mdpopups-hr-fg);
+  border-style: solid;
+  border-width: 0 0 1px 0;
+  {%- endif %}
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 /* Description list support */
 .mdpopups dl { display: block; }
