@@ -36,7 +36,7 @@ Control how many CSS theme files will be kept in cache at any given time.  Value
 
 ## `mdpopups.use_sublime_highlighter`
 
-Controls whether the Pygments or the native Sublime syntax highlighter is used for code highlighting.  This affects code highlighting in Markdown conversion and when code is directly processed using [syntax_highlight](./api.md#syntax_highlight). To learn more about the syntax highlighter see [Syntax Highlighting](.styling.md#syntax-highlighting).
+Controls whether the Pygments or the native Sublime syntax highlighter is used for code highlighting.  This affects code highlighting in Markdown conversion and when code is directly processed using [syntax_highlight](./api.md#syntax-highlight). To learn more about the syntax highlighter see [Syntax Highlighting](./styling.md#syntax-highlighting).
 
 ```js
     "mdpopups.use_sublime_highlighter": true
@@ -52,7 +52,7 @@ Overrides the default CSS and/or CSS of a plugin.  Value should be a relative pa
 
 ## `mdpopups.default_style`
 
-Controls whether mdpopups default styling (contained in [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css)) will be applied or not.
+Controls whether MdPopups' default styling (contained in [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css)) will be applied or not.
 
 ## `mdpopups.sublime_user_lang_map`
 

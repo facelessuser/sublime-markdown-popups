@@ -10,18 +10,34 @@ Most users prefer using syntax highlighting that matches their current color sch
 
 ### Pygments
 
-In order to use Pygments, you have to disable `mdpopups.use_sublime_highlighter` and add your desired theme to the user css file. Pygments has a great variety of highlighters out of the box.  It also comes with a number of built-in color schemes that can be used. You can either specify an existing color scheme via the [CSS template filter](#css-templates), or paste your own custom Pygments CSS. If pasting in your own, you will have to format it to work properly.
+In order to use Pygments, you have to disable `mdpopups.use_sublime_highlighter`. Pygments has a great variety of highlighters out of the box.  It also comes with a number of built-in color schemes that can be used. When enabling Pygments, you must specify the color scheme to use in your user CSS using the [CSS template filter](#css-templates).
 
-Pygments defines special classes for each span that needs to be highlighted in a coding block, and a highl
-Traditionally Pygments CSS classes are given not only syntax classes applied to each span, but an overall class as assigned to a div wrapper as well.  For instance, a class for whitespace may look like this (where `#!css .highlight` is the div wrapper's class and `#!css .w` i the span's class):
+```css+jinja
+/* Syntax Highlighting */
+{%- if var.use_pygments %}
+  {%- if var.is_light %}
+{{'default'|pygments}}
+  {%- else %}
+{{'native'|pygments}}
+  {%- endif %}
+{%- endif %}
+```
 
-If doing your own Pygments CSS should define a rule to highlight general background and foregrounds for both block code and inline code.
+You can also paste your own custom Pygments CSS directly into your User CSS, but you will have to format it to work properly.
+
+Pygments defines special classes for each span that needs to be highlighted in a coding block. Pygments CSS classes are not only given syntax classes that are applied to each span, but usually an overall class is assigned to a `#!html <div>` wrapper as well.  For instance, a class for whitespace may look like this (where `#!css .highlight` is the div wrapper's class and `#!css .w` i the span's class):
+
+```css
+.highlight .w { color: #cccccc } /* Text.Whitespace */
+```
+
+If doing your own, the Pygments CSS should define a rule to highlight general background and foregrounds for both block code and inline code.
 
 ```css
 .mdpopups .highlight, .mdpopups .inline-highlight { background-color: #f8f8f8; color: #4d4d4c }
 ```
 
-And also apply `#!css .mdpopups .highlight` and `#!css .mdpopups .inline-highlight` to each span class.  See the full example below.
+And we also apply `#!css .mdpopups .highlight` and `#!css .mdpopups .inline-highlight` to each span class.  See the full example below.
 
 ```css
 .mdpopups .highlight, .mdpopups .inline-highlight { background-color: #f8f8f8; color: #4d4d4c }
@@ -93,37 +109,69 @@ And also apply `#!css .mdpopups .highlight` and `#!css .mdpopups .inline-highlig
 
 ## CSS Styling
 
-MdPopups was design to give a universal way of displaying and styling tooltips and phantoms via plugins, but also provide the user an easy way to control the look.
+One reason MdPopups was created was to give consistent popups across plugins. Originally MdPopups forced its style so that plugins couldn't override the it. Later it was realized that plugins may have reasons to override certain things, and in recent versions, this constraint was relaxed. Despite changes since its inception, one thing has stayed the same: the user has the last say in how popups work. This is achieved by controlling which CSS gets loaded when.
 
-MdPopups provides a simple base CSS that styles the common HTML tags and provides minimal colors. The default CSS is loaded after Sublimes default CSS and color scheme CSS.  Plugins are able to inject CSS in addition to the default. And even though a plugin can additionally insert new scopes on demand when calling the API, a user can override anything and everything by providing their own [CSS template](#mdpopupsuser_css).  The template is fairly powerful and flexible.
+```flow
+st=>operation: Sublime CSS/Color Scheme CSS
+md=>operation: MdPopups Default CSS
+pg=>operation: Plugin CSS
+us=>operation: User CSS
 
-All CSS is passed through the Jinja2 template engine where special filters can provide things like appropriate CSS that matches your color scheme for a specific scope, load additional CSS, have condition logic for specific Sublime and/or MdPopups versions, etc.
+st->md->pg->us
+```
 
-Templates are used so that a user can easily tap into all the colors, color filters, and other useful logic to control their tooltips and phantoms in one place without having to hard code a specific CSS for a specific color scheme.  
+Sublime first provides its CSS which includes some basic styling and CSS from color schemes. MdPopups provides its own default CSS that styles the common HTML tags and provides minimal colors. Plugins come next and extend the CSS with plugin specific CSS. The user's CSS is loaded last and can override anything.
+
+All CSS is passed through the Jinja2 template engine where special filters can provide things like appropriate CSS that matches your color scheme for a specific scope, load additional CSS from another source, have condition logic for specific Sublime and/or MdPopups versions, or even provide CSS for specific color schemes.
+
+Templates are used so that a user can easily tap into all the colors, color filters, and other useful logic to control their popups and phantoms in one place without having to hard code a specific CSS for a specific color scheme.
+
+In general, it is encouraged to use Sublime CSS variables such as `--redish`, `--bluish`, etc. to get appropriate colors for a given theme. Sublime calculates these colors from the color scheme directly. If it calculates a color that is not quite right, you can always request that the color scheme in question redefines that variable with an appropriate color.  Or you, as the user, can define one in your user CSS. You can read more about minihtml and it's features in the [minihtml documentation][minihtml].
+
+MdPopups also provides its own CSS variables that can be overridden by a user:
+
+Variable                          | Description
+--------------------------------- | -----------
+`--mdpopups-font-mono`            | Monospace font stack for elements that require monospace (like code blocks).
+`--mdpopups-hr-fg`                | `#!html <hr>` tag foreground color.
+`--mdpopups-admon-fg`             | General admonition foreground/text color.
+`--mdpopups-admon-title-fg`       | General admonition title foreground/text color.
+`--mdpopups-admon-bg`             | General admonition background color.
+`--mdpopups-admon-accent`         | General admonition accent color (border/title bar background).
+`--mdpopups-admon-info-bg`        | Info admonition background color.
+`--mdpopups-admon-info-accent`    | Info admonition accent color (border/title bar background).
+`--mdpopups-admon-error-bg`       | Error admonition background color.
+`--mdpopups-admon-error-accent`   | Error admonition accent color (border/title bar background).
+`--mdpopups-admon-warning-bg`     | Warning admonition background color.
+`--mdpopups-admon-warning-accent` | Warning admonition accent color (border/title bar background).
+`--mdpopups-admon-success-bg`     | Success admonition background color.
+`--mdpopups-admon-success-accent` | Success admonition accent color (border/title bar background).
+`--mdpopups-kbd-fg`               | `#!html <kbd>` foreground/text color.
+`--mdpopups-kbd-bg`               | `#!html <kbd>` background color.
+`--mdpopups-kbd-border`           | `#!html <kbd>` border color.
+`--mdpopups-hl-border`            | Inline and block code border color.
+`--mdpopups-hl-bg`                | Inline and block code background color.
 
 ## CSS Templates
 
 All variables and filters provided by default *only* apply to the CSS, not the markdown or HTML content. The default provided variables are namespaced under `var`.
 
-The Markdown and HTML content only receives the variables **you** give it via `template_vars` parameters and any options via the `template_env_options`; user defined variables will get passed to the CSS, but not the options. User defined variables will be namespaced under `plugin`.
+The Markdown and HTML content only receives the variables that are given via `template_vars` parameters and any options via the `template_env_options`; user defined variables will get passed to the CSS, but not the options. User defined variables will be namespaced under `plugin`.
 
 ### CSS Filter
-
-!!! note "Attention"
-    Sublime already provides CSS variables such as `--bluish`, `--greenish`, etc. These are a great way to get at specific colors. If for some reason Sublime isn't able to calculate a good color for one of these, request that your favorite color scheme define these.  See Sublime's [minihtml documentation](https://www.sublimetext.com/docs/3/minihtml.html) for more info.
 
 With the template environment, colors and style from the current Sublime color scheme can be accessed and manipulated.  Access to the Sublime color scheme styles CSS is done via the `css` filter.
 
 `css`
 : 
-    Retrieves the style for a specific Sublime scope from a Sublime color scheme.  By specifying either `.foreground`, `.background`, or anyone of the standard TextMate scopes and then paring it with the `css` filter, all the related styles of the specified scope will be inserted into the CSS document.
+    Retrieves the style for a specific Sublime scope from a Sublime color scheme.  By specifying either `foreground`, `background`, or any scope (complexity doesn't really matter) and feeding it into the `css` filter, all the related styling of the specified scope will be inserted as CSS into the CSS document.
 
     **Example**:
 
     This:
 
     ```css+jinja
-    h1, h2, h3, h4, h5, h6 { {{'.comment'|css}} }
+    h1, h2, h3, h4, h5, h6 { {{'comment'|css}} }
     ```
 
     Might become this:
@@ -132,7 +180,7 @@ With the template environment, colors and style from the current Sublime color s
     h1, h2, h3, h4, h5, h6 { color: #888888; font-style: italic; }
     ```
 
-    Notice that the format of insertion is `key: value; `.  You do not need a semicolon after.  If you add one, you may get multiple semicolons which may break the CSS.
+    Notice that the format of insertion is `key: value; `.  You do not need a semicolon after as the CSS lines are all formatted properly with semicolons.  If you add one, you may get multiple semicolons which *may* break the CSS.
 
     If you need to get at a specific CSS attribute, you can specify its name in the `css` filter (available attributes are `color`, `background-color`, `font-style`, and `font-weight`).
 
@@ -148,38 +196,18 @@ With the template environment, colors and style from the current Sublime color s
     h1, h2, h3, h4, h5, h6 { color: #888888; }
     ```
 
-    Some scopes might not have colors assigned to them, so multiple scopes can be defined, and the first one that matches will be used:
+    In general, a foreground color is always returned, but by default, a background color is only returned if one is explicitly defined. To always get a background (which most likely will default to the overall scheme background), you can set the additional `explicit_background` parameter to `#!py False`.
 
     ```css+jinja
     /* If `keyword.operator` is not explicitly used, fallback to `.keyword` */
-    h1, h2, h3, h4, h5, h6 { {{'.keyword.operator, .keyword'|css('color')}} }
-    ```
-
-If desired you can convert a foreground color to a background color or vice versa.  To convert to a foreground color, you can use the `foreground` filter.  To convert to a background color, you can use the `background` filter.
-
-`foreground`
-: 
-    Convert a background to a foreground.
-
-    **Example**:
-    ```css+jinja
-    body { {{'.background'|css('background-color')|foreground}} }
-    ```
-
-`background`
-: 
-    Convert a foreground to a background.
-
-    **Example**:
-    ```css+jinja
-    body { {{'.foreground'|css('color')|background}} }
+    h1, h2, h3, h4, h5, h6 { {{'keyword.operator'|css('color', False)}} }
     ```
 
 ### Color Filters
 
-MdPopups also provides a number of color filters within the template environment that can manipulate the CSS colors returned from the CSS filter. These filters will strip out the color and modify it, and return the appropriate CSS.  To manipulate a color value directly, you can use Sublime's built in color blending.  In most cases, it is advised to use Sublime's color blending functionality.  See Sublime's [minihtml documentation](https://www.sublimetext.com/docs/3/minihtml.html) for more info.
+MdPopups also provides a number of color filters within the template environment that can manipulate the CSS colors returned from the `css` filter (or equivalent formatted CSS). These filters will strip out the color and modify it, and return the appropriate CSS.  To manipulate a color value directly, you can use Sublime's built in color blending.  In most cases, it is advised to use Sublime's color blending functionality, but these are available to aid those who wish to access and manipulate CSS of scopes directly.  See Sublime's [minihtml documentation](https://www.sublimetext.com/docs/3/minihtml.html) for more info.
 
-Though Sublime generally provides contrast now to popups, lets pretend you had a popup that was the same color as the view window and it was difficult to see where the popup starts and ends.  You can take the color schemes background and apply a brightness filter to it allowing you now see the popup clearly.
+Even though Sublime generally provides contrast to popups, lets pretend you had a popup that was the same color as the view window and it was difficult to see where the popup starts and ends.  You can take the color schemes background and apply a brightness filter to it allowing you now see the popup clearly.
 
 Here we can make the background of the popup darker:
 
@@ -190,6 +218,26 @@ Here we can make the background of the popup darker:
 Color filters take a single color attribute of the form `key: value;`.  So when feeding the color template filters your CSS via the `css` filter, you should specify the color attribute (`background-color` or `color`) that you wish to apply the filter to; it may be difficult to tell how many attributes `css` could return without explicitly specifying attribute.  Color filters only take either `color` or `background-color` attributes.
 
 Filters can be chained if more intensity is needed (as some filters may clamp the value in one call), or if you want to apply multiple filters.  These are all the available filters:
+
+`foreground` and `background`
+: 
+
+    If desired, you can convert a foreground color to a background color or vice versa.  To convert to a foreground color, you can use the `foreground` filter.  To convert to a background color, you can use the `background` filter. Remember, this is augmenting the CSS returned by the `css` filter, you can't just give it a color. 
+
+
+    To convert a background to a foreground.
+
+    **Example**:
+    ```css+jinja
+    body { {{'.background'|css('background-color')|foreground}} }
+    ```
+
+    To convert a foreground to a background.
+
+    **Example**:
+    ```css+jinja
+    body { {{'.foreground'|css('color')|background}} }
+    ```
 
 `brightness`
 : 
@@ -330,13 +378,9 @@ The template environment provides a couple of variables that can be used to cond
     {% endif %}
     ```
 
-`var.default_formatting`
-: 
-    Flag specifying whether default formatting is being used.  See [mdpopups.default_formatting](#mdpopupsdefault_formatting) for how to control this flag.  And see [`base.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/base.css) for an example of how it is used.
-
 `var.default_style`
 : 
-    Flag specifying whether default styling is being used.  See [mdpopups.default_style](#mdpopupsdefault_style) for how to control this flag.  And see [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css) for an example of how it is used.
+    Flag specifying whether default styling is being used.  See [mdpopups.default_style](./settings.md#mdpopupsdefault_style) for how to control this flag.  And see [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css) for an example of how it is used.
 
 `var.is_dark` and `var.is_light`
 : 
@@ -397,4 +441,8 @@ The template environment provides a couple of variables that can be used to cond
     {% endif %}
     ```
 
---8<-- "refs.md"
+--8<--
+refs.md
+
+uml.md
+--8<-- 

@@ -1,4 +1,5 @@
 [mkdocs]: http://www.mkdocs.org
+[minihtml]: https://www.sublimetext.com/docs/3/minihtml.html
 [mkdocs-material]: https://github.com/squidfunk/mkdocs-material
 [package-control]: https://packagecontrol.io/
 [pc-dependencies]: https://packagecontrol.io/docs/dependencies
