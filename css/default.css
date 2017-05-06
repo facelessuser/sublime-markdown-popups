@@ -38,13 +38,13 @@ html {
   --mdpopups-kbd-bg: var(--foreground);
 }
 html.light {
-  --mdpopups-hr-fg: color(var(--foreground) blend(white 80%));
+  --mdpopups-hr: color(var(--foreground) blend(white 80%));
   --mdpopups-kbd-border: color(var(--foreground) blend(white 80%));
   --mdpopups-hl-border: color(var(--background) blend(black 90%));
   --mdpopups-hl-bg: color(var(--background) blend(black 98%));
 }
 html.dark {
-  --mdpopups-hr-fg: color(var(--foreground) blend(black 80%));
+  --mdpopups-hr: color(var(--foreground) blend(black 80%));
   --mdpopups-kbd-border: color(var(--foreground) blend(black 80%));
   --mdpopups-hl-border: color(var(--background) blend(white 90%));
 {%- if var.sublime_version < 3127 %}
@@ -88,14 +88,14 @@ div.mdpopups {
   display: block;
   {%- if var.sublime_version < 3127 %}
   padding: 1px;
-  background-color: var(--mdpopups-hr-fg);
+  background-color: var(--mdpopups-hr);
   {%- else %}
-  border-color: var(--mdpopups-hr-fg);
+  border-color: var(--mdpopups-hr);
   border-style: solid;
   border-width: 0 0 1px 0;
   {%- endif %}
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 /* Description list support */
 .mdpopups dl { display: block; }
