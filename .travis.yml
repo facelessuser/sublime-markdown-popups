@@ -6,5 +6,11 @@ install:
   - pip install flake8-docstrings
   - pip install flake8-putty
   - pip install pep8-naming
+addons:
+  apt:
+    packages:
+      - aspell
+      - aspell-en
 script:
   - flake8 .
+  - python tests/spellcheck.py

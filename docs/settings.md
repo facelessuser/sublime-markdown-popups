@@ -52,7 +52,7 @@ Overrides the default CSS and/or CSS of a plugin.  Value should be a relative pa
 
 ## `mdpopups.default_style`
 
-Controls whether MdPopups' default styling (contained in [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css)) will be applied or not.
+Controls whether MdPopups' default styling (contained in [`default.css`][default-css]) will be applied or not.
 
 ## `mdpopups.sublime_user_lang_map`
 
@@ -71,9 +71,9 @@ This is a special setting allowing the mapping of personal syntax languages whic
 }
 ```
 
-For a list of all currently supported syntax mappings, see the official [mapping file](https://github.com/facelessuser/sublime-markdown-popups/blob/master/st3/mdpopups/st_mapping.py).
+For a list of all currently supported syntax mappings, see the official [mapping file][language-map].
 
 !!! tip "Tip"
-    When submitting new languages to the mapping table, it is encouraged to pick keynames that correspond to what is used in Pygments so a User can switch between Pygments' and Sublime's syntax highlighter and still get highlighting.
+    When submitting new languages to the mapping table, it is encouraged to pick key names that correspond to what is used in Pygments so a User can switch between Pygments' and Sublime's syntax highlighter and still get highlighting.
 
 --8<-- "refs.md"

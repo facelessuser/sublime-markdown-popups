@@ -4,7 +4,7 @@ MdPopups has two syntax highlighting methods: the default native syntax highligh
 
 ### Sublime Syntax Highlighter
 
-By default, MdPopups uses the internal syntax highlighter to highlight your code.  The benefit here is that you get code highlighting in your popup that matches your current theme.  The highlighting ability is dependent upon what syntax packages you have installed in Sublime.  It also depends on whether they are enabled and mapped to a language keyword.  Pull requests are welcome to expand and keep the [language mapping](https://github.com/facelessuser/sublime-markdown-popups/blob/master/st3/mdpopups/st_mapping.py) updated.  You can also define in your `Preferences.sublime-settings` file additional mappings.  See [`mdpopups.sublime_user_lang_map`](#mdpopupssublime_user_lang_map) for more info.
+By default, MdPopups uses the internal syntax highlighter to highlight your code.  The benefit here is that you get code highlighting in your popup that matches your current theme.  The highlighting ability is dependent upon what syntax packages you have installed in Sublime.  It also depends on whether they are enabled and mapped to a language keyword.  Pull requests are welcome to expand and keep the [language mapping][language-map] updated.  You can also define in your `Preferences.sublime-settings` file additional mappings.  See [`mdpopups.sublime_user_lang_map`](./settings.md#mdpopupssublime_user_lang_map) for more info.
 
 Most users prefer using syntax highlighting that matches their current color scheme. If you are a developer, it is recommended to issue a pull request to add missing languages you need to the mapping. Optionally you can also describe how users can map what they need locally.
 
@@ -126,7 +126,7 @@ All CSS is passed through the Jinja2 template engine where special filters can p
 
 Templates are used so that a user can easily tap into all the colors, color filters, and other useful logic to control their popups and phantoms in one place without having to hard code a specific CSS for a specific color scheme.
 
-In general, it is encouraged to use Sublime CSS variables such as `--redish`, `--bluish`, etc. to get appropriate colors for a given theme. Sublime calculates these colors from the color scheme directly. If it calculates a color that is not quite right, you can always request that the color scheme in question redefines that variable with an appropriate color.  Or you, as the user, can define one in your user CSS. You can read more about minihtml and it's features in the [minihtml documentation][minihtml].
+In general, it is encouraged to use Sublime CSS variables such as `--redish`, `--bluish`, etc. to get appropriate colors for a given theme. Sublime calculates these colors from the color scheme directly. If it calculates a color that is not quite right, you can always request that the color scheme in question redefines that variable with an appropriate color.  Or you, as the user, can define one in your user CSS. You can read more about `minihtml` and it's features in the [`minihtml` documentation][minihtml].
 
 MdPopups also provides its own CSS variables that can be overridden by a user:
 
@@ -205,7 +205,7 @@ With the template environment, colors and style from the current Sublime color s
 
 ### Color Filters
 
-MdPopups also provides a number of color filters within the template environment that can manipulate the CSS colors returned from the `css` filter (or equivalent formatted CSS). These filters will strip out the color and modify it, and return the appropriate CSS.  To manipulate a color value directly, you can use Sublime's built in color blending.  In most cases, it is advised to use Sublime's color blending functionality, but these are available to aid those who wish to access and manipulate CSS of scopes directly.  See Sublime's [minihtml documentation](https://www.sublimetext.com/docs/3/minihtml.html) for more info.
+MdPopups also provides a number of color filters within the template environment that can manipulate the CSS colors returned from the `css` filter (or equivalent formatted CSS). These filters will strip out the color and modify it, and return the appropriate CSS.  To manipulate a color value directly, you can use Sublime's built in color blending.  In most cases, it is advised to use Sublime's color blending functionality, but these are available to aid those who wish to access and manipulate CSS of scopes directly.  See Sublime's [`minihtml` documentation][minihtml] for more info.
 
 Even though Sublime generally provides contrast to popups, lets pretend you had a popup that was the same color as the view window and it was difficult to see where the popup starts and ends.  You can take the color schemes background and apply a brightness filter to it allowing you now see the popup clearly.
 
@@ -354,7 +354,7 @@ The template environment provides a couple of variables that can be used to cond
 
 `var.sublime_version`
 : 
-    `sublime_version` contains the current SublimeText version.  This allows you conditionally handle CSS features that are specific to a SublimeText version.
+    `sublime_version` contains the current Sublime Text version.  This allows you conditionally handle CSS features that are specific to a Sublime Text version.
 
     **Example**
     ```css+jinja
@@ -367,7 +367,7 @@ The template environment provides a couple of variables that can be used to cond
 
 `var.mdpopups_version`
 : 
-    `mdpopups_version` contains the current mdpopup version which you can use in your CSS templates if needed.
+    `mdpopups_version` contains the current MdPopups version which you can use in your CSS templates if needed.
 
     **Example**
     ```css+jinja
@@ -380,7 +380,7 @@ The template environment provides a couple of variables that can be used to cond
 
 `var.default_style`
 : 
-    Flag specifying whether default styling is being used.  See [mdpopups.default_style](./settings.md#mdpopupsdefault_style) for how to control this flag.  And see [`default.css`](https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css) for an example of how it is used.
+    Flag specifying whether default styling is being used.  See [`mdpopups.default_style`](./settings.md#mdpopupsdefault_style) for how to control this flag.  And see [`default.css`][default-css] for an example of how it is used.
 
 `var.is_dark` and `var.is_light`
 : 

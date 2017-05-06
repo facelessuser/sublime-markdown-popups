@@ -22,19 +22,19 @@ MdPopups uses [Python Markdown][pymd] to parse Markdown and transform it into a 
 
 MdPopups includes the following Python Markdown extensions, but some of the features may not be used due to the limitations of Sublime's `minihtml`.
 
-- [attr_list](https://pythonhosted.org/Markdown/extensions/attr_list.html) allows you to add HTML attributes to block and inline elements easily.
-- [nl2br](https://pythonhosted.org/Markdown/extensions/nl2br.html) turns new lines into `#!html <br>` tags.
-- [def_list](https://pythonhosted.org/Markdown/extensions/definition_lists.html) adds support for definition lists.
-- [admonition](https://pythonhosted.org/Markdown/extensions/admonition.html) provides admonition blocks.
+- [`attr_list`][attr_list] allows you to add HTML attributes to block and inline elements easily.
+- [`nl2br`][nl2br] turns new lines into `#!html <br>` tags.
+- [`def_list`][def_list] adds support for definition lists.
+- [`admonition`][admonition] provides admonition blocks.
 
 MdPopups also includes a couple of 3rd party extensions (some of which have been modified to work better in the Sublime Text environment).
 
-- [superfences](http://facelessuser.github.io/pymdown-extensions/extensions/superfences/) provides support for nested fenced blocks.
-- [betterem](http://facelessuser.github.io/pymdown-extensions/extensions/betterem/) is an extension that aims to improve emphasis support in Python Markdown. MdPopups leaves it configured in its default state where underscores are handled intelligently: `_handled_intelligently_` --> _handled_intelligently_ and asterisks can be used to do mid word emphasis: `em*pha*sis` --> em*pha*sis.
-- [magiclink](http://facelessuser.github.io/pymdown-extensions/extensions/magiclink/) auto links HTML links.
-- [inlinehilite](http://facelessuser.github.io/pymdown-extensions/extensions/inlinehilite/) allows for inline code highlighting: `` `#!python import module` `` --> `#!python import module`.
-- [extrarawhtml](http://facelessuser.github.io/pymdown-extensions/extensions/extrarawhtml/) allows you to add `markdown="1"` to block HTML elements to allow content under them to be parsed with Python markdown (inline tags should already have their content parsed).  All this module does is expose this specific functionality from the [Python Markdown's Extra extension](https://pythonhosted.org/Markdown/extensions/extra.html#nested-markdown-inside-html-blocks) as this functionality could not be enabled without including all of the `Extra` extensions other features.  You can read the Python Markdown's Extra extension documentation to learn more about this feature.
-- [highlight](http://facelessuser.github.io/pymdown-extensions/extensions/highlight/) controls and configures the highlighting of code blocks.
+- [`superfences`][superfences] provides support for nested fenced blocks.
+- [`betterem`][betterem] is an extension that aims to improve emphasis support in Python Markdown. MdPopups leaves it configured in its default state where underscores are handled intelligently: `_handled_intelligently_` --> _handled_intelligently_ and asterisks can be used to do mid word emphasis: `em*pha*sis` --> em*pha*sis.
+- [`magiclink`][magiclink] auto links HTML links.
+- [`inlinehilite`][inlinehilite] allows for inline code highlighting: `` `#!python import module` `` --> `#!python import module`.
+- [`extrarawhtml`][extrarawhtml] allows you to add `markdown="1"` to block HTML elements to allow content under them to be parsed with Python markdown (inline tags should already have their content parsed).  All this module does is expose this specific functionality from the [Python Markdown's Extra extension](https://pythonhosted.org/Markdown/extensions/extra.html#nested-markdown-inside-html-blocks) as this functionality could not be enabled without including all of the `Extra` extensions other features.  You can read the Python Markdown's Extra extension documentation to learn more about this feature.
+- [`highlight`][highlight] controls and configures the highlighting of code blocks.
 
 ## Styling
 
@@ -42,7 +42,7 @@ Popups and phantoms are styled with CSS that is fed through the Jinja2 template 
 
 It is advised to use the `wrapper_class` option of the `show_popup`, `update_popup`, and `add_phantom` commands to wrap your plugin content in a div with a unique, plugin specific class.  This way plugins can inject CSS to style their specific elements via `#!css .mdpopups .myplugin-wrapper .myclass {}` or simply `#!css .myplugin-wrapper .myclass {}`.
 
-Also check out the included Python Markdown [attr_list extension syntax](https://pythonhosted.org/Markdown/extensions/attr_list.html). This is a good extension for applying classes directly to elements within Markdown format. Sometimes it can be difficult to target certain kinds of block elements, so if all else fails, you can insert raw HTML for specific elements into your Markdown and apply classes directly to them.
+Also check out the included Python Markdown [`attr_list` extension syntax](https://pythonhosted.org/Markdown/extensions/attr_list.html). This is a good extension for applying classes directly to elements within Markdown format. Sometimes it can be difficult to target certain kinds of block elements, so if all else fails, you can insert raw HTML for specific elements into your Markdown and apply classes directly to them.
 
 ## API Usage
 
@@ -187,7 +187,7 @@ MdPopups provides a number of accessible functions.
 
 `mdpopups.Phantoms`
 : 
-    A phantom object for use with [PhantomSet](#phantomset-class).
+    A phantom object for use with [`PhantomSet`](#phantomset-class).
 
     Parameter              | Type                  | Default      | Description
     ---------------------- | --------------------- | ------------ | -----------
@@ -238,7 +238,7 @@ MdPopups provides a number of accessible functions.
 
         Parameter      | Type                                        | Default | Description
         -------------- | ------------------------------------------- | ------- | -----------
-        `new_phantoms` | [`#!py [mdpopups.Phantom]`](#class-phantom) |         | A list of MdPopup phantoms. `sublime.Phantom` will be converted to `mdpopups.Phantom`.
+        `new_phantoms` | [`#!py [mdpopups.Phantom]`](#class-phantom) |         | A list of MdPopups phantoms. `sublime.Phantom` will be converted to `mdpopups.Phantom`.
 
 ### Clear Cache
 
@@ -256,16 +256,16 @@ MdPopups provides a number of accessible functions.
     ---------------------- | ------------------- | -------- | ------------ | -----------
     `view`                 | `#!py sublime.View` | Yes      |              | Sublime text View object.
     `markup`               | `#!py string`       | Yes      |              | The markup code to be converted.
-    `template_vars`        | `#!py dict`         | No       | `#!py None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content.
-    `template_env_options` | `#!py dict`         | No       | `#!py None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`.
-    `nl2br`                | `#!py bool`         | No       | `#!py True`  | Determines whether the newline to br Python Markdown extension is enabled or not.
+    `template_vars`        | `#!py dict`         | No       | `#!py None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content.A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
+    `template_env_options` | `#!py dict`         | No       | `#!py None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`.A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
+    `nl2br`                | `#!py bool`         | No       | `#!py True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not.
     `allow_code_wrap`      | `#!py bool`         | No       | `#!py False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur.
 
 ### Color Box
 
 `string mdpopups.color_box`
 : 
-    Generates a color preview box image encoded in base 64 and formated to be inserted right in your your Markdown or HTML code as an `img` tag.
+    Generates a color preview box image encoded in base 64 and formatted to be inserted right in your your Markdown or HTML code as an `img` tag.
 
     Parameter     | Type         | Default      | Description
     ------------- | ------------ | ------------ | -----------
