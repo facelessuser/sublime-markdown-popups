@@ -3,9 +3,6 @@ repo_url: https://github.com/facelessuser/sublime-markdown-popups
 site_description: Popup tooltips for Sublime generated with Markdown.
 copyright: Copyright &copy; 2015 - 2017 <a href="https://github.com/facelessuser">Isaac Muse</a>
 
-theme: material
-theme_dir: doc_theme
-
 pages:
   - About Markdown Popups: index.md
   - Installation: installation.md
@@ -17,6 +14,10 @@ pages:
   - Contributing &amp; Support: contributing.md
   - Changelog: changelog.md
   - License: license.md
+
+theme: material
+docs_dir: docs/src/markdown
+theme_dir: docs/theme
 
 markdown_extensions:
   - markdown.extensions.toc:
@@ -32,15 +33,14 @@ markdown_extensions:
   - markdown.extensions.abbr:
   - pymdownx.extrarawhtml:
   - pymdownx.superfences:
-      css_class: codehilite
   - pymdownx.highlight:
+      css_class: codehilite
       extend_pygments_lang:
         - name: php-inline
           lang: php
           options:
             startinline: true
   - pymdownx.inlinehilite:
-      css_class: codehilite
   - pymdownx.magiclink:
       repo_url_shortener: true
       base_repo_url: https://github.com/facelessuser/sublime-markdown-popups
@@ -48,24 +48,27 @@ markdown_extensions:
   - pymdownx.caret:
   - pymdownx.smartsymbols:
   - pymdownx.emoji:
-      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+      emoji_generator: !!python/name:pymdownx.emoji.to_png
   - pymdownx.escapeall:
       hardbreak: true
       nbsp: true
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.progressbar:
+  - pymdownx.arithmatex:
+  - pymdownx.mark:
   - pymdownx.plainhtml:
       strip_attributes: ''
   - pymdownx.snippets:
-      base_path: docs/snippets
+      base_path: docs/src/markdown/_snippets
   - pymdownx.keys:
       separator: ＋
+  - pymdownx.spoilers:
 
 extra:
   palette:
     primary: blue
-    accent: purple
+    accent: blue
   font:
     text: Roboto
     code: Roboto Mono
@@ -73,4 +76,6 @@ extra:
     - type: github
       link: https://github.com/facelessuser
 extra_css:
-  - extra.css
+  - extra-effadd97dd.css
+extra_javascript:
+  - extra-0d49409391.js
