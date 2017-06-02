@@ -1,6 +1,6 @@
 # 2.0
 
-> June X, 2017
+> June 1, 2017
 
 - **NEW**: Add `kbd` styling and `admontion` styling.
 - **NEW**: New rewritten `default.css`. Adds styling that uses new Sublime CSS features and drops legacy styling for old ST versions. No more `base.css`.
