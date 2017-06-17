@@ -22,7 +22,7 @@ theme_dir: docs/theme
 markdown_extensions:
   - markdown.extensions.toc:
       slugify: !!python/name:pymdownx.slugs.uslugify
-      permalink: 
+      permalink: "\ue157"
   - markdown.extensions.admonition:
   - markdown.extensions.smarty:
       smart_quotes: false
@@ -55,15 +55,13 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.progressbar:
-  - pymdownx.arithmatex:
-  - pymdownx.mark:
   - pymdownx.plainhtml:
       strip_attributes: ''
   - pymdownx.snippets:
       base_path: docs/src/markdown/_snippets
   - pymdownx.keys:
-      separator: ＋
-  - pymdownx.spoilers:
+      separator: "\uff0b"
+  - pymdownx.details:
 
 extra:
   palette:
@@ -76,6 +74,6 @@ extra:
     - type: github
       link: https://github.com/facelessuser
 extra_css:
-  - extra-e047883bb7.css
+  - extra-6068b97e47.css
 extra_javascript:
   - extra-2aceccb07f.js
