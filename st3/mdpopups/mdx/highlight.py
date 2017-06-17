@@ -63,6 +63,10 @@ DEFAULT_CONFIG = {
         False,
         "Automatic language detection - Default: True"
     ],
+    'css_class': [
+        'highlight',
+        "CSS class to apply to wrapper element."
+    ],
     'pygments_style': [
         'default',
         'Pygments HTML Formatter Style '
@@ -373,7 +377,7 @@ class Highlight(object):
         else:
             # Format block code for a JavaScript Syntax Highlighter by specifying language.
             classes = []
-            linenums = self.linenums_style if (self.linenums or linestart) and not inline > 0 else False
+            linenums = self.linenums_style if (self.linenums or linestart >= 0) and not inline > 0 else False
             if language:
                 classes.append('language-%s' % language)
             if linenums:
@@ -389,7 +393,7 @@ class Highlight(object):
             el.text = code
             return el
         else:
-            return code
+            return code.strip()
 
 
 def get_hl_settings(md):
@@ -437,7 +441,8 @@ class HighlightTreeprocessor(Treeprocessor):
                 placeholder = self.markdown.htmlStash.store(
                     code.highlight(
                         block[0].text,
-                        ''
+                        '',
+                        self.config['css_class']
                     ),
                     safe=True
                 )
