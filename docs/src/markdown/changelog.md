@@ -1,3 +1,9 @@
+# 2.0.1
+
+> June X, 2017
+
+- **FIX**: Upgrade internal custom `pymdownx` extensions to pick up bug fixes such as: unescaping obfuscated email addresses, etc.
+
 # 2.0
 
 > June 1, 2017
