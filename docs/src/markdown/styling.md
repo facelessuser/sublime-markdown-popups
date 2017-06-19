@@ -1,3 +1,5 @@
+# CSS Styling
+
 ## Syntax Highlighting
 
 MdPopups has two syntax highlighting methods: the native Sublime syntax highlighter (default) and Pygments.  When developing a plugin, it is wise to test out both. The native Sublime Syntax Highlighter has most default languages mapped along with a few others.

@@ -1,4 +1,6 @@
-# 2.1.0
+# Changelog
+
+## 2.1.0
 
 > June X, 2017
 
@@ -7,7 +9,7 @@
 - **NEW**: Upgrade internal extensions.
 - **NEW**: Import official `pymdownx` extension (where possible) if `pymdownx` is installed as a dependency.
 
-# 2.0
+## 2.0
 
 > June 1, 2017
 
@@ -25,7 +27,7 @@
 - **FIX**: Fix foreground output that was missing semicolon according to spec.
 - **FIX**: Numerous CSS fixes.
 
-# 1.0
+## 1.0
 
 > Nov 12, 2015
 

@@ -1,3 +1,5 @@
+# About Markdown Popups
+
 ## Overview
 
 Sublime Markdown Popups (MdPopups) is a library for Sublime Text plugins.  It utilizes the new plugin API found in ST3 Beta to create popups and phantoms from Markdown or HTML. It requires at least ST3 3124+. MdPopups utilizes Python Markdown with a couple of special extensions to convert Markdown to HTML that can be used to create popups and/or phantoms.  It also provides a number of other helpful API commands to aid in creating great popups and phantoms.

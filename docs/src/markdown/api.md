@@ -1,3 +1,5 @@
+# API
+
 ## Dependencies
 
 Your plugin should include the Package Control dependencies listed below. Currently, you can get away with not including `pyyaml` and `pymdownx`, but in the future, this will not be the case. Please read about Package Control's [dependencies][pc-dependencies] to learn more.
@@ -17,6 +19,8 @@ Your plugin should include the Package Control dependencies listed below. Curren
     }
 }
 ```
+
+Check out [`mdpopup_test`][mdpopup_test] as an example. Clone it into `Packages/mdpopup_test`, run `Package Control: Satisfy dependencies`, and then restart Sublime. You should be able to then run the command `Mdpopups: Test` to see an example popup or phantom.  Feel free to edit it to learn more.
 
 ## Markdown Support
 
@@ -97,7 +101,7 @@ allow_code_wrap: true
 
 Custom extension configurations are specified under the `markdown_extensions` key whose value is an array of extensions. Each extension is specified as a string.  If you have specific settings to configure for an extension, simply make that array entry a dictionary where the key name is the extension name, and value is a hash table with all the settings.  The default configuration is below.
 
-```yml
+```yaml
 ---
 markdown_extensions:
 - markdown.extensions.admonition
@@ -211,6 +215,13 @@ MdPopups provides a number of accessible functions.
     `nl2br`                | `#!py bool`         | `#!py True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
     `allow_code_wrap`      | `#!py bool`         | `#!py False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
 
+    !!! warning "Deprecation"
+        In 2.1.0 `nl2br` and `alow_code_wrap` are deprecated. The legacy parameters here will be dropped by 2018 for ST3 and these settings will not carry over to ST4.
+
+        To disable `nl2br`, you can customize which extensions get loaded; see [Configure Markdown Extensions](#configure-markdown-extensions).
+
+        To enable code wrapping, see [Enable Code Wrapping](#enable-code-wrapping).
+
 ### Update Popup
 
 `mdpopups.update_popup`
@@ -228,6 +239,13 @@ MdPopups provides a number of accessible functions.
     `template_env_options` | `#!py dict`         | `#!py None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
     `nl2br`                | `#!py bool`         | `#!py True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
     `allow_code_wrap`      | `#!py bool`         | `#!py False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
+
+    !!! warning "Deprecation"
+        In 2.1.0 `nl2br` and `alow_code_wrap` are deprecated. The legacy parameters here will be dropped by 2018 for ST3 and these settings will not carry over to ST4.
+
+        To disable `nl2br`, you can customize which extensions get loaded; see [Configure Markdown Extensions](#configure-markdown-extensions).
+
+        To enable code wrapping, see [Enable Code Wrapping](#enable-code-wrapping).
 
 ### Hide Popup
 
@@ -271,6 +289,13 @@ MdPopups provides a number of accessible functions.
     `template_env_options` | `#!py dict`           | `#!py None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`.A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
     `nl2br`                | `#!py bool`           | `#!py True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
     `allow_code_wrap`      | `#!py bool`           | `#!py False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
+
+    !!! warning "Deprecation"
+        In 2.1.0 `nl2br` and `alow_code_wrap` are deprecated. The legacy parameters here will be dropped by 2018 for ST3 and these settings will not carry over to ST4.
+
+        To disable `nl2br`, you can customize which extensions get loaded; see [Configure Markdown Extensions](#configure-markdown-extensions).
+
+        To enable code wrapping, see [Enable Code Wrapping](#enable-code-wrapping).
 
 ### Erase Phantoms
 
@@ -352,6 +377,13 @@ MdPopups provides a number of accessible functions.
     `nl2br`                | `#!py bool`           | `#!py True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
     `allow_code_wrap`      | `#!py bool`           | `#!py False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
 
+    !!! warning "Deprecation"
+        In 2.1.0 `nl2br` and `alow_code_wrap` are deprecated. The legacy parameters here will be dropped by 2018 for ST3 and these settings will not carry over to ST4.
+
+        To disable `nl2br`, you can customize which extensions get loaded; see [Configure Markdown Extensions](#configure-markdown-extensions).
+
+        To enable code wrapping, see [Enable Code Wrapping](#enable-code-wrapping).
+
 ### Phantom Set Class
 
 `mdpopups.PhantomSet`
@@ -393,6 +425,13 @@ MdPopups provides a number of accessible functions.
     `template_env_options` | `#!py dict`         | No           | `#!py None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`.A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
     `nl2br`                | `#!py bool`         | `#!py True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
     `allow_code_wrap`      | `#!py bool`         | `#!py False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
+
+    !!! warning "Deprecation"
+        In 2.1.0 `nl2br` and `alow_code_wrap` are deprecated. The legacy parameters here will be dropped by 2018 for ST3 and these settings will not carry over to ST4.
+
+        To disable `nl2br`, you can customize which extensions get loaded; see [Configure Markdown Extensions](#configure-markdown-extensions).
+
+        To enable code wrapping, see [Enable Code Wrapping](#enable-code-wrapping).
 
 ### Color Box
 

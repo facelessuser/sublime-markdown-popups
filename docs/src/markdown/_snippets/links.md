@@ -8,6 +8,7 @@
 [inlinehilite]: http://facelessuser.github.io/pymdown-extensions/extensions/inlinehilite/
 [language-map]: https://github.com/facelessuser/sublime-markdown-popups/blob/master/st3/mdpopups/st_mapping.py
 [magiclink]: http://facelessuser.github.io/pymdown-extensions/extensions/magiclink/
+[mdpopup_test]: https://github.com/facelessuser/mdpopup_test
 [mkdocs]: http://www.mkdocs.org
 [minihtml]: https://www.sublimetext.com/docs/3/minihtml.html
 [mkdocs-material]: https://github.com/squidfunk/mkdocs-material

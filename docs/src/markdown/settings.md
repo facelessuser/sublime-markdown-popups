@@ -1,3 +1,5 @@
+# User Settings
+
 ## Configuring MdPopups
 
 All settings for MdPopups are placed in Sublime's `Preferences.sublime-settings`.  They are applied globally and to all popups and phantoms.
