@@ -5,6 +5,9 @@ CSS
 Desaturate
 desaturate
 EmojiOne
+Frontmatter
+frontmatter
+frontmatter's
 grayscale
 inline
 Jinja
@@ -40,3 +43,4 @@ tuple
 unescaping
 versa
 whitespace
+YAML

@@ -45,14 +45,6 @@ except Exception:  # pragma: no cover
 CODE_WRAP = '<pre%s><code%s>%s</code></pre>'
 CLASS_ATTR = ' class="%s"'
 DEFAULT_CONFIG = {
-    'sublime_hl': [
-        (False, None),
-        "Sublime Highlighter object"
-    ],
-    'sublime_wrap': [
-        False,
-        "Allow code wrap in Sublime"
-    ],
     'use_pygments': [
         True,
         'Use Pygments to highlight code blocks. '
@@ -247,8 +239,7 @@ class Highlight(object):
 
     def __init__(
         self, guess_lang=True, pygments_style='default', use_pygments=True,
-        noclasses=False, extend_pygments_lang=None, linenums=False, sublime_hl=(False, None),
-        sublime_wrap=False
+        noclasses=False, extend_pygments_lang=None, linenums=False
     ):
         """Initialize."""
 
@@ -258,8 +249,8 @@ class Highlight(object):
         self.noclasses = noclasses
         self.linenums = linenums
         self.linenums_style = 'table'
-        self.sublime_hl = sublime_hl
-        self.sublime_wrap = sublime_wrap
+        self.sublime_hl = Highlight.sublime_hl
+        self.sublime_wrap = Highlight.sublime_wrap
 
         if extend_pygments_lang is None:
             extend_pygments_lang = []
@@ -272,6 +263,13 @@ class Highlight(object):
                         language.get('lang'),
                         language.get('options', {})
                     ]
+
+    @classmethod
+    def set_sublime_vars(cls, sublime_hl, sublime_wrap):
+        """Set Sublime_vars."""
+
+        cls.sublime_hl = sublime_hl
+        cls.sublime_wrap = sublime_wrap
 
     def get_extended_language(self, language):
         """Get extended language."""
@@ -434,9 +432,7 @@ class HighlightTreeprocessor(Treeprocessor):
                     use_pygments=self.config['use_pygments'],
                     noclasses=self.config['noclasses'],
                     linenums=self.config['linenums'],
-                    extend_pygments_lang=self.config['extend_pygments_lang'],
-                    sublime_hl=self.config['sublime_hl'],
-                    sublime_wrap=self.config['sublime_wrap']
+                    extend_pygments_lang=self.config['extend_pygments_lang']
                 )
                 placeholder = self.markdown.htmlStash.store(
                     code.highlight(
@@ -467,6 +463,7 @@ class HighlightExtension(Extension):
     def extendMarkdown(self, md, md_globals):
         """Add support for code highlighting."""
 
+        Highlight.set_sublime_vars(md.sublime_hl, md.sublime_wrap)
         ht = HighlightTreeprocessor(md)
         ht.config = self.getConfigs()
         md.treeprocessors.add("indent-highlight", ht, "<inline")

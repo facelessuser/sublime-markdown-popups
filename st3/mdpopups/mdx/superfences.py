@@ -295,8 +295,6 @@ class SuperFencesBlockPreprocessor(Preprocessor):
             self.use_pygments = config['use_pygments']
             self.noclasses = config['noclasses']
             self.linenums = config['linenums']
-            self.sublime_hl = config['sublime_hl']
-            self.sublime_wrap = config['sublime_wrap']
 
     def clear(self):
         """Reset the class variables."""
@@ -476,9 +474,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
                 use_pygments=self.use_pygments,
                 noclasses=self.noclasses,
                 linenums=self.linenums,
-                extend_pygments_lang=self.extend_pygments_lang,
-                sublime_hl=self.sublime_hl,
-                sublime_wrap=self.sublime_wrap
+                extend_pygments_lang=self.extend_pygments_lang
             ).highlight(
                 src,
                 language,

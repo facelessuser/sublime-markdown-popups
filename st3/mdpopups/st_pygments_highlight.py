@@ -158,7 +158,7 @@ class SublimeInlineHtmlFormatter(HtmlFormatter):
 def syntax_hl(src, lang=None, guess_lang=False, inline=False, code_wrap=False):
     """Highlight."""
 
-    css_class = 'inline-highlight' if inline else 'highlight'
+    css_class = 'highlight'
 
     src = src.strip('\n')
 

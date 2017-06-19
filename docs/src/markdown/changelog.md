@@ -1,8 +1,11 @@
-# 2.0.1
+# 2.1.0
 
 > June X, 2017
 
-- **FIX**: Upgrade internal custom `pymdownx` extensions to pick up bug fixes such as: unescaping obfuscated email addresses, etc.
+- **NEW**: Allow adding and configuring extensions via YAML frontmatter.
+- **NEW**: Allow setting whether block, code tags will allow word wrapping via YAML frontmatter.
+- **NEW**: Upgrade internal extensions.
+- **NEW**: Import official `pymdownx` extension (where possible) if `pymdownx` is installed as a dependency.
 
 # 2.0
 

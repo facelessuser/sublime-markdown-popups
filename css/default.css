@@ -62,7 +62,6 @@ div.mdpopups {
   font-size: 1rem;
   line-height: 1.1rem;
 }
-.mdpopups .inline-highlight,
 .mdpopups .highlight,
 .mdpopups code,
 .mdpopups var,
@@ -188,7 +187,7 @@ div.mdpopups {
   background-color: var(--mdpopups-admon-info-bg);
   border-color: var(--mdpopups-admon-info-accent);
 }
-.mdpopups .highlight, .mdpopups .inline-highlight {
+.mdpopups .highlight {
   border: 1px solid var(--mdpopups-hl-border);
   border-radius: 0.25rem;
   font-size: 0.9rem;
@@ -196,11 +195,12 @@ div.mdpopups {
   background-color: var(--mdpopups-hl-bg);
   {%- endif %}
 }
-.mdpopups .highlight {
+.mdpopups div.highlight,
+.mdpopups pre.highlight {
   padding: 0.5rem;
   margin-bottom: 0.5rem;
 }
-.mdpopups .inline-highlight{
+.mdpopups code.highlight{
   padding: 0.05rem 0.25rem;
 }
 {%- endif %}

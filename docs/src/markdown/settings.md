@@ -47,7 +47,7 @@ Controls whether the Pygments or the native Sublime syntax highlighter is used f
 Overrides the default CSS and/or CSS of a plugin.  Value should be a relative path pointing to the CSS file: `Packages/User/my_custom_theme.css`.  Slashes should be forward slashes. By default, it will point to `Packages/User/mdpopups.css`.  User CSS overrides **all** CSS as it is the last to be processed.
 
 ```js
-    "mdpopups.use_sublime_highlighter": "Packages/User/mdpopups.css"
+    "mdpopups.user_css": "Packages/User/mdpopups.css"
 ```
 
 ## `mdpopups.default_style`
@@ -56,11 +56,11 @@ Controls whether MdPopups' default styling (contained in [`default.css`][default
 
 ## `mdpopups.sublime_user_lang_map`
 
-This is a special setting allowing the mapping of personal syntax languages which are not yet included or will not be included in the official mapping table.  You can either define your own new entry, or use the name of an existing entry to extend language keywords or syntax languages.  When extending, user keywords and languages will be cycled through first.
+This setting is for the Sublime Syntax Highlighter and allows the mapping of personal Sublime syntax languages which are not yet included, or will not be included, in the official mapping table.  You can either define your own new entry, or use the same language name of an existing entry to extend the language `mapping_alias` or syntax languages.  When extending, the user mappings will be cycled through first.
 
 ```js
     'mdpopups.sublime_user_lang_map': {
-        "language": (('keywords',), ('MyPackage/MySyntaxLanguage'))
+        "language": (('mapping_alias',), ('MyPackage/MySyntaxLanguage'))
     }
 ```
 

@@ -28,6 +28,14 @@ try:
     import bs4
 except Exception:
     bs4 = None
+try:
+    from . import frontmatter
+except Exception as e:
+    frontmatter = None
+try:
+    import pymdownx
+except Exception:
+    pymdownx = None
 
 DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
 DEFAULT_USER_CSS = 'Packages/User/mdpopups.css'
@@ -215,6 +223,13 @@ class _MdWrapper(markdown.Markdown):
     def __init__(self, *args, **kwargs):
         """Call original init."""
 
+        if 'allow_code_wrap' in kwargs:
+            self.sublime_wrap = kwargs['allow_code_wrap']
+            del kwargs['allow_code_wrap']
+        if 'sublime_hl' in kwargs:
+            self.sublime_hl = kwargs['sublime_hl']
+            del kwargs['sublime_hl']
+
         super(_MdWrapper, self).__init__(*args, **kwargs)
 
     def registerExtensions(self, extensions, configs):  # noqa
@@ -358,40 +373,66 @@ def md2html(
     else:
         sublime_hl = (False, None)
 
+    if frontmatter:
+        fm, markup = frontmatter.get_frontmatter(markup)
+    else:
+        fm = {}
+
+    # We allways include these
     extensions = [
-        "markdown.extensions.attr_list",
         "mdpopups.mdx.highlight",
-        "mdpopups.mdx.superfences",
-        "mdpopups.mdx.betterem",
-        "mdpopups.mdx.magiclink",
         "mdpopups.mdx.inlinehilite",
-        "mdpopups.mdx.extrarawhtml",
-        "markdown.extensions.admonition",
-        "markdown.extensions.def_list"
+        "mdpopups.mdx.superfences"
     ]
 
-    if nl2br:
-        extensions.append('markdown.extensions.nl2br')
-
     configs = {
+        "mdpopups.mdx.highlight": {
+            "guess_lang": False
+        },
         "mdpopups.mdx.inlinehilite": {
-            "style_plain_text": True,
-            "css_class": "inline-highlight"
+            "style_plain_text": True
         },
         "mdpopups.mdx.superfences": {
-            "custom_fences": [],
-            "css_class": "highlight"
-        },
-        "mdpopups.mdx.highlight": {
-            "sublime_hl": sublime_hl,
-            "sublime_wrap": allow_code_wrap,
-            "guess_lang": False
+            "custom_fences": []
         }
     }
 
+    # Check if plugin is overriding extensions
+    md_exts = fm.get('markdown_extensions', None)
+    if md_exts is None:
+        # No extension override, use defaults
+        extensions.extend(
+            [
+                "markdown.extensions.admonition",
+                "markdown.extensions.attr_list",
+                "markdown.extensions.def_list",
+                "pymdownx.betterem" if pymdownx else "mdpopups.mdx.betterem",
+                "pymdownx.magiclink" if pymdownx else "mdpopups.mdx.magiclink",
+                "pymdownx.extrarawhtml" if pymdownx else "mdpopups.mdx.extrarawhtml"
+            ]
+        )
+
+        # Use legacy method to determine if nl2b should be used
+        if nl2br:
+            extensions.append('markdown.extensions.nl2br')
+    else:
+        for ext in md_exts:
+            if isinstance(ext, (dict, OrderedDict)):
+                k, v = next(iter(ext.items()))
+                # We don't allow plugins to overrides the internal color
+                if not k.startswith('mdpopups.'):
+                    extensions.append(k)
+                    if v is not None:
+                        configs[k] = v
+            elif isinstance(ext, str):
+                if not ext.startswith('mdpopups.'):
+                    extensions.append(ext)
+
     return _MdWrapper(
         extensions=extensions,
-        extension_configs=configs
+        extension_configs=configs,
+        sublime_hl=sublime_hl,
+        allow_code_wrap=fm.get('allow_code_wrap', allow_code_wrap)
     ).convert(_markup_template(markup, template_vars, template_env_options)).replace('&quot;', '"').replace('\n', '')
 
 
@@ -718,3 +759,9 @@ class PhantomSet(sublime.PhantomSet):
                 erase_phantom_by_id(self.view, p.id)
 
         self.phantoms = new_phantoms
+
+if frontmatter:
+    def format_frontmatter(values):
+        """Format values as frontmatter."""
+
+        return frontmatter.dump_frontmatter(values)

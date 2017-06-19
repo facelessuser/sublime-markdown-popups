@@ -564,4 +564,4 @@ def get_pygments(style):
             )
         )
 
-    return re_pygments_selectors.sub(r'.mdpopups .highlight \1, .mdpopups .inline-highlight \1', css)
+    return re_pygments_selectors.sub(r'.mdpopups .highlight \1', css)

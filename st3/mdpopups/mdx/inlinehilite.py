@@ -71,7 +71,6 @@ class InlineHilitePattern(Pattern):
             self.pygments_style = config['pygments_style']
             self.use_pygments = config['use_pygments']
             self.noclasses = config['noclasses']
-            self.sublime_hl = config['sublime_hl']
 
     def highlight_code(self, language, src):
         """Syntax highlite the inline code block."""
@@ -84,8 +83,7 @@ class InlineHilitePattern(Pattern):
                 pygments_style=self.pygments_style,
                 use_pygments=self.use_pygments,
                 noclasses=self.noclasses,
-                extend_pygments_lang=self.extend_pygments_lang,
-                sublime_hl=self.sublime_hl
+                extend_pygments_lang=self.extend_pygments_lang
             ).highlight(src, language, self.css_class, inline=True)
             el.text = self.markdown.htmlStash.store(el.text, safe=True)
         else:

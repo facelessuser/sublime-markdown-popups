@@ -1,10 +1,10 @@
 ## Syntax Highlighting
 
-MdPopups has two syntax highlighting methods: the default native syntax highlighter and Pygments.  When developing a plugin, it is wise to test out both. The native Sublime Syntax Highlighter as most default languages mapped.  Additional languages can be mapped in a user's settings file and pull requests to the default language mapping are appreciated as well.
+MdPopups has two syntax highlighting methods: the native Sublime syntax highlighter (default) and Pygments.  When developing a plugin, it is wise to test out both. The native Sublime Syntax Highlighter has most default languages mapped along with a few others.
 
 ### Sublime Syntax Highlighter
 
-By default, MdPopups uses the internal syntax highlighter to highlight your code.  The benefit here is that you get code highlighting in your popup that matches your current theme.  The highlighting ability is dependent upon what syntax packages you have installed in Sublime.  It also depends on whether they are enabled and mapped to a language keyword.  Pull requests are welcome to expand and keep the [language mapping][language-map] updated.  You can also define in your `Preferences.sublime-settings` file additional mappings.  See [`mdpopups.sublime_user_lang_map`](./settings.md#mdpopupssublime_user_lang_map) for more info.
+As previously mentioned, MdPopups uses the internal syntax highlighter to highlight your code.  The benefit here is that you get code highlighting in your popup that matches your current theme.  The highlighting ability is dependent upon what syntax packages you have installed in Sublime.  It also depends on whether that syntax is enabled and mapped to a language keyword.  Pull requests are welcome to expand and keep the [language mapping][language-map] updated.  You can also define in your `Preferences.sublime-settings` file additional mappings.  See [`mdpopups.sublime_user_lang_map`](./settings.md#mdpopupssublime_user_lang_map) for more info.
 
 Most users prefer using syntax highlighting that matches their current color scheme. If you are a developer, it is recommended to issue a pull request to add missing languages you need to the mapping. Optionally you can also describe how users can map what they need locally.
 
@@ -31,81 +31,81 @@ Pygments defines special classes for each span that needs to be highlighted in a
 .highlight .w { color: #cccccc } /* Text.Whitespace */
 ```
 
-If doing your own, the Pygments CSS should define a rule to highlight general background and foregrounds for both block code and inline code.
+If doing your own, the Pygments CSS should define a rule to highlight general background and foregrounds.
 
 ```css
-.mdpopups .highlight, .mdpopups .inline-highlight { background-color: #f8f8f8; color: #4d4d4c }
+.mdpopups .highlight { background-color: #f8f8f8; color: #4d4d4c }
 ```
 
-And we also apply `#!css .mdpopups .highlight` and `#!css .mdpopups .inline-highlight` to each span class.  See the full example below.
+??? settings "Full Pygments CSS Example"
 
-```css
-.mdpopups .highlight, .mdpopups .inline-highlight { background-color: #f8f8f8; color: #4d4d4c }
-.mdpopups .highlight .c, .mdpopups .inline-highlight .c { color: #8e908c; font-style: italic } /* Comment */
-.mdpopups .highlight .err, .mdpopups .inline-highlight .err { color: #c82829 } /* Error */
-.mdpopups .highlight .k, .mdpopups .inline-highlight .k { color: #8959a8; font-weight: bold } /* Keyword */
-.mdpopups .highlight .l, .mdpopups .inline-highlight .l { color: #f5871f } /* Literal */
-.mdpopups .highlight .n, .mdpopups .inline-highlight .n { color: #4d4d4c } /* Name */
-.mdpopups .highlight .o, .mdpopups .inline-highlight .o { color: #3e999f } /* Operator */
-.mdpopups .highlight .p, .mdpopups .inline-highlight .p { color: #4d4d4c } /* Punctuation */
-.mdpopups .highlight .cm, .mdpopups .inline-highlight .cm { color: #8e908c; font-style: italic } /* Comment.Multiline */
-.mdpopups .highlight .cp, .mdpopups .inline-highlight .cp { color: #8e908c; font-weight: bold } /* Comment.Preproc */
-.mdpopups .highlight .c1, .mdpopups .inline-highlight .c1 { color: #8e908c; font-style: italic } /* Comment.Single */
-.mdpopups .highlight .cs, .mdpopups .inline-highlight .cs { color: #8e908c; font-style: italic } /* Comment.Special */
-.mdpopups .highlight .gd, .mdpopups .inline-highlight .gd { color: #c82829 } /* Generic.Deleted */
-.mdpopups .highlight .ge, .mdpopups .inline-highlight .ge { font-style: italic } /* Generic.Emph */
-.mdpopups .highlight .gh, .mdpopups .inline-highlight .gh { color: #4d4d4c; font-weight: bold } /* Generic.Heading */
-.mdpopups .highlight .gi, .mdpopups .inline-highlight .gi { color: #718c00 } /* Generic.Inserted */
-.mdpopups .highlight .gp, .mdpopups .inline-highlight .gp { color: #8e908c; font-weight: bold } /* Generic.Prompt */
-.mdpopups .highlight .gs, .mdpopups .inline-highlight .gs { font-weight: bold } /* Generic.Strong */
-.mdpopups .highlight .gu, .mdpopups .inline-highlight .gu { color: #3e999f; font-weight: bold } /* Generic.Subheading */
-.mdpopups .highlight .kc, .mdpopups .inline-highlight .kc { color: #8959a8; font-weight: bold } /* Keyword.Constant */
-.mdpopups .highlight .kd, .mdpopups .inline-highlight .kd { color: #8959a8; font-weight: bold } /* Keyword.Declaration */
-.mdpopups .highlight .kn, .mdpopups .inline-highlight .kn { color: #8959a8; font-weight: bold } /* Keyword.Namespace */
-.mdpopups .highlight .kp, .mdpopups .inline-highlight .kp { color: #8959a8; font-weight: bold } /* Keyword.Pseudo */
-.mdpopups .highlight .kr, .mdpopups .inline-highlight .kr { color: #8959a8; font-weight: bold } /* Keyword.Reserved */
-.mdpopups .highlight .kt, .mdpopups .inline-highlight .kt { color: #eab700; font-weight: bold } /* Keyword.Type */
-.mdpopups .highlight .ld, .mdpopups .inline-highlight .ld { color: #718c00 } /* Literal.Date */
-.mdpopups .highlight .m, .mdpopups .inline-highlight .m { color: #f5871f } /* Literal.Number */
-.mdpopups .highlight .s, .mdpopups .inline-highlight .s { color: #718c00 } /* Literal.String */
-.mdpopups .highlight .na, .mdpopups .inline-highlight .na { color: #4271ae } /* Name.Attribute */
-.mdpopups .highlight .nb, .mdpopups .inline-highlight .nb { color: #4271ae } /* Name.Builtin */
-.mdpopups .highlight .nc, .mdpopups .inline-highlight .nc { color: #c82829; font-weight: bold } /* Name.Class */
-.mdpopups .highlight .no, .mdpopups .inline-highlight .no { color: #c82829 } /* Name.Constant */
-.mdpopups .highlight .nd, .mdpopups .inline-highlight .nd { color: #3e999f } /* Name.Decorator */
-.mdpopups .highlight .ni, .mdpopups .inline-highlight .ni { color: #4d4d4c } /* Name.Entity */
-.mdpopups .highlight .ne, .mdpopups .inline-highlight .ne { color: #c82829; font-weight: bold } /* Name.Exception */
-.mdpopups .highlight .nf, .mdpopups .inline-highlight .nf { color: #4271ae; font-weight: bold } /* Name.Function */
-.mdpopups .highlight .nl, .mdpopups .inline-highlight .nl { color: #4d4d4c } /* Name.Label */
-.mdpopups .highlight .nn, .mdpopups .inline-highlight .nn { color: #4d4d4c } /* Name.Namespace */
-.mdpopups .highlight .nx, .mdpopups .inline-highlight .nx { color: #4271ae } /* Name.Other */
-.mdpopups .highlight .py, .mdpopups .inline-highlight .py { color: #4d4d4c } /* Name.Property */
-.mdpopups .highlight .nt, .mdpopups .inline-highlight .nt { color: #c82829 } /* Name.Tag */
-.mdpopups .highlight .nv, .mdpopups .inline-highlight .nv { color: #c82829 } /* Name.Variable */
-.mdpopups .highlight .ow, .mdpopups .inline-highlight .ow { color: #3e999f } /* Operator.Word */
-.mdpopups .highlight .w, .mdpopups .inline-highlight .w { color: #4d4d4c } /* Text.Whitespace */
-.mdpopups .highlight .mb, .mdpopups .inline-highlight .mb { color: #f5871f } /* Literal.Number.Bin */
-.mdpopups .highlight .mf, .mdpopups .inline-highlight .mf { color: #f5871f } /* Literal.Number.Float */
-.mdpopups .highlight .mh, .mdpopups .inline-highlight .mh { color: #f5871f } /* Literal.Number.Hex */
-.mdpopups .highlight .mi, .mdpopups .inline-highlight .mi { color: #f5871f } /* Literal.Number.Integer */
-.mdpopups .highlight .mo, .mdpopups .inline-highlight .mo { color: #f5871f } /* Literal.Number.Oct */
-.mdpopups .highlight .sb, .mdpopups .inline-highlight .sb { color: #718c00 } /* Literal.String.Backtick */
-.mdpopups .highlight .sc, .mdpopups .inline-highlight .sc { color: #4d4d4c } /* Literal.String.Char */
-.mdpopups .highlight .sd, .mdpopups .inline-highlight .sd { color: #8e908c } /* Literal.String.Doc */
-.mdpopups .highlight .s2, .mdpopups .inline-highlight .s2 { color: #718c00 } /* Literal.String.Double */
-.mdpopups .highlight .se, .mdpopups .inline-highlight .se { color: #f5871f } /* Literal.String.Escape */
-.mdpopups .highlight .sh, .mdpopups .inline-highlight .sh { color: #718c00 } /* Literal.String.Heredoc */
-.mdpopups .highlight .si, .mdpopups .inline-highlight .si { color: #f5871f } /* Literal.String.Interpol */
-.mdpopups .highlight .sx, .mdpopups .inline-highlight .sx { color: #718c00 } /* Literal.String.Other */
-.mdpopups .highlight .sr, .mdpopups .inline-highlight .sr { color: #718c00 } /* Literal.String.Regex */
-.mdpopups .highlight .s1, .mdpopups .inline-highlight .s1 { color: #718c00 } /* Literal.String.Single */
-.mdpopups .highlight .ss, .mdpopups .inline-highlight .ss { color: #718c00 } /* Literal.String.Symbol */
-.mdpopups .highlight .bp, .mdpopups .inline-highlight .bp { color: #f5871f } /* Name.Builtin.Pseudo */
-.mdpopups .highlight .vc, .mdpopups .inline-highlight .vc { color: #c82829 } /* Name.Variable.Class */
-.mdpopups .highlight .vg, .mdpopups .inline-highlight .vg { color: #c82829 } /* Name.Variable.Global */
-.mdpopups .highlight .vi, .mdpopups .inline-highlight .vi { color: #c82829 } /* Name.Variable.Instance */
-.mdpopups .highlight .il, .mdpopups .inline-highlight .il { color: #f5871f } /* Literal.Number.Integer.Long */
-```
+    ```css
+    .mdpopups .highlight { background-color: #f8f8f8; color: #4d4d4c }
+    .mdpopups .highlight .c { color: #8e908c; font-style: italic } /* Comment */
+    .mdpopups .highlight .err { color: #c82829 } /* Error */
+    .mdpopups .highlight .k { color: #8959a8; font-weight: bold } /* Keyword */
+    .mdpopups .highlight .l { color: #f5871f } /* Literal */
+    .mdpopups .highlight .n { color: #4d4d4c } /* Name */
+    .mdpopups .highlight .o { color: #3e999f } /* Operator */
+    .mdpopups .highlight .p { color: #4d4d4c } /* Punctuation */
+    .mdpopups .highlight .cm { color: #8e908c; font-style: italic } /* Comment.Multiline */
+    .mdpopups .highlight .cp { color: #8e908c; font-weight: bold } /* Comment.Preproc */
+    .mdpopups .highlight .c1 { color: #8e908c; font-style: italic } /* Comment.Single */
+    .mdpopups .highlight .cs { color: #8e908c; font-style: italic } /* Comment.Special */
+    .mdpopups .highlight .gd { color: #c82829 } /* Generic.Deleted */
+    .mdpopups .highlight .ge { font-style: italic } /* Generic.Emph */
+    .mdpopups .highlight .gh { color: #4d4d4c; font-weight: bold } /* Generic.Heading */
+    .mdpopups .highlight .gi { color: #718c00 } /* Generic.Inserted */
+    .mdpopups .highlight .gp { color: #8e908c; font-weight: bold } /* Generic.Prompt */
+    .mdpopups .highlight .gs { font-weight: bold } /* Generic.Strong */
+    .mdpopups .highlight .gu { color: #3e999f; font-weight: bold } /* Generic.Subheading */
+    .mdpopups .highlight .kc { color: #8959a8; font-weight: bold } /* Keyword.Constant */
+    .mdpopups .highlight .kd { color: #8959a8; font-weight: bold } /* Keyword.Declaration */
+    .mdpopups .highlight .kn { color: #8959a8; font-weight: bold } /* Keyword.Namespace */
+    .mdpopups .highlight .kp { color: #8959a8; font-weight: bold } /* Keyword.Pseudo */
+    .mdpopups .highlight .kr { color: #8959a8; font-weight: bold } /* Keyword.Reserved */
+    .mdpopups .highlight .kt { color: #eab700; font-weight: bold } /* Keyword.Type */
+    .mdpopups .highlight .ld { color: #718c00 } /* Literal.Date */
+    .mdpopups .highlight .m { color: #f5871f } /* Literal.Number */
+    .mdpopups .highlight .s { color: #718c00 } /* Literal.String */
+    .mdpopups .highlight .na { color: #4271ae } /* Name.Attribute */
+    .mdpopups .highlight .nb { color: #4271ae } /* Name.Builtin */
+    .mdpopups .highlight .nc { color: #c82829; font-weight: bold } /* Name.Class */
+    .mdpopups .highlight .no { color: #c82829 } /* Name.Constant */
+    .mdpopups .highlight .nd { color: #3e999f } /* Name.Decorator */
+    .mdpopups .highlight .ni { color: #4d4d4c } /* Name.Entity */
+    .mdpopups .highlight .ne { color: #c82829; font-weight: bold } /* Name.Exception */
+    .mdpopups .highlight .nf { color: #4271ae; font-weight: bold } /* Name.Function */
+    .mdpopups .highlight .nl { color: #4d4d4c } /* Name.Label */
+    .mdpopups .highlight .nn { color: #4d4d4c } /* Name.Namespace */
+    .mdpopups .highlight .nx { color: #4271ae } /* Name.Other */
+    .mdpopups .highlight .py { color: #4d4d4c } /* Name.Property */
+    .mdpopups .highlight .nt { color: #c82829 } /* Name.Tag */
+    .mdpopups .highlight .nv { color: #c82829 } /* Name.Variable */
+    .mdpopups .highlight .ow { color: #3e999f } /* Operator.Word */
+    .mdpopups .highlight .w { color: #4d4d4c } /* Text.Whitespace */
+    .mdpopups .highlight .mb { color: #f5871f } /* Literal.Number.Bin */
+    .mdpopups .highlight .mf { color: #f5871f } /* Literal.Number.Float */
+    .mdpopups .highlight .mh { color: #f5871f } /* Literal.Number.Hex */
+    .mdpopups .highlight .mi { color: #f5871f } /* Literal.Number.Integer */
+    .mdpopups .highlight .mo { color: #f5871f } /* Literal.Number.Oct */
+    .mdpopups .highlight .sb { color: #718c00 } /* Literal.String.Backtick */
+    .mdpopups .highlight .sc { color: #4d4d4c } /* Literal.String.Char */
+    .mdpopups .highlight .sd { color: #8e908c } /* Literal.String.Doc */
+    .mdpopups .highlight .s2 { color: #718c00 } /* Literal.String.Double */
+    .mdpopups .highlight .se { color: #f5871f } /* Literal.String.Escape */
+    .mdpopups .highlight .sh { color: #718c00 } /* Literal.String.Heredoc */
+    .mdpopups .highlight .si { color: #f5871f } /* Literal.String.Interpol */
+    .mdpopups .highlight .sx { color: #718c00 } /* Literal.String.Other */
+    .mdpopups .highlight .sr { color: #718c00 } /* Literal.String.Regex */
+    .mdpopups .highlight .s1 { color: #718c00 } /* Literal.String.Single */
+    .mdpopups .highlight .ss { color: #718c00 } /* Literal.String.Symbol */
+    .mdpopups .highlight .bp { color: #f5871f } /* Name.Builtin.Pseudo */
+    .mdpopups .highlight .vc { color: #c82829 } /* Name.Variable.Class */
+    .mdpopups .highlight .vg { color: #c82829 } /* Name.Variable.Global */
+    .mdpopups .highlight .vi { color: #c82829 } /* Name.Variable.Instance */
+    .mdpopups .highlight .il { color: #f5871f } /* Literal.Number.Integer.Long */
+    ```
 
 ## CSS Styling
 
