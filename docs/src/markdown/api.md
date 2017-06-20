@@ -97,6 +97,21 @@ allow_code_wrap: true
 ...
 ```
 
+### Custom Fences
+
+The included `mdpopups.mdx.superfences` has an option that allows for custom fences. Since configuring `mdpopups.mdx.superfences` is not allowed directly, you can setup your own custom fences via a separate `custom_fences` option. See the original SuperFences' [Custom Fence](http://facelessuser.github.io/pymdown-extensions/extensions/superfences/#custom-fences) documentation to learn more.
+
+```yaml
+---
+custom_fences:
+- name: uml
+  class: uml
+  format: !!python/name:mdpopup_test.plantuml.uml_format
+...
+```
+
+Checkout [`mdpopup_test`][mdpopup_test] to see the UML example above in action.
+
 ### Configure Markdown Extensions
 
 Custom extension configurations are specified under the `markdown_extensions` key whose value is an array of extensions. Each extension is specified as a string.  If you have specific settings to configure for an extension, simply make that array entry a dictionary where the key name is the extension name, and value is a hash table with all the settings.  The default configuration is below.
