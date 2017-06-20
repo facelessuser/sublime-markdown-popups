@@ -393,7 +393,7 @@ def md2html(
             "style_plain_text": True
         },
         "mdpopups.mdx.superfences": {
-            "custom_fences": []
+            "custom_fences": fm.get('custom_fences', [])
         }
     }
 
