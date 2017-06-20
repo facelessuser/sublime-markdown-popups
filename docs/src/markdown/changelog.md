@@ -4,10 +4,12 @@
 
 > June X, 2017
 
-- **NEW**: Allow adding and configuring extensions via YAML frontmatter.
-- **NEW**: Allow setting whether block, code tags will allow word wrapping via YAML frontmatter.
+- **NEW**: Allow adding and configuring extensions via YAML frontmatter. This feature deprecates `nl2br` function parameter which will be removed some time in the future.
+- **NEW**: Allow setting whether block, code tags will allow word wrapping via YAML frontmatter. This feature deprecates the `allow_word_wrap` function parameter which will be removed some time in the future.
+- **NEW**: Expose SuperFences' `custom_fences` feature via YAML frontmatter.
 - **NEW**: Upgrade internal extensions.
-- **NEW**: Import official `pymdownx` extension (where possible) if `pymdownx` is installed as a dependency.
+- **NEW**: Import official `pymdownx` extension if `pymdownx` is installed as a dependency so we can drop internal vendored extension copies in the future. This is allowed to be optional for a time until people can update their dependencies.
+- **NEW**: Import `pyyaml` extension if `pyyaml` is installed for frontmatter. This is allowed to be optional for a time until people can update their dependencies.
 
 ## 2.0
 
