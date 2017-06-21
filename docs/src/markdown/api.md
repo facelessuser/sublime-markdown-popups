@@ -99,7 +99,7 @@ allow_code_wrap: true
 
 ### Custom Fences
 
-The included `mdpopups.mdx.superfences` has an option that allows for custom fences. Since configuring `mdpopups.mdx.superfences` is not allowed directly, you can setup your own custom fences via a separate `custom_fences` option. See the original SuperFences' [Custom Fence](http://facelessuser.github.io/pymdown-extensions/extensions/superfences/#custom-fences) documentation to learn more.
+The included `mdpopups.mdx.superfences` has an option that allows for custom fences. Custom fences are a convenient way to add support for special block content such as UML diagrams. Since configuring `mdpopups.mdx.superfences` is not allowed directly, you can setup your own custom fences via a separate `custom_fences` option. See the original SuperFences' [Custom Fences][custom-fences] documentation to learn more.
 
 ```yaml
 ---
