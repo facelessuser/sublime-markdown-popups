@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.1
+
+> June 21, 2017
+
+- **FIX**: Strip frontmatter when `md=False`. Throw it away as we only use the frontmatter for Markdown.
+
 ## 2.1.0
 
 > June 20, 2017

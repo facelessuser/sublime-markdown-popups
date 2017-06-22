@@ -322,6 +322,10 @@ def _create_html(
             allow_code_wrap=allow_code_wrap
         )
     else:
+        if frontmatter:
+            # Strip out frontmatter if found as we don't currently
+            # do anything with it when content is just HTML.
+            content = frontmatter.get_frontmatter(content)[1]
         content = _markup_template(content, template_vars, template_env_options)
 
     if debug:
