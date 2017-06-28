@@ -69,7 +69,7 @@ def get_frontmatter(string):
     frontmatter = OrderedDict()
 
     if string.startswith("---"):
-        m = re.search(r'^(-{3}\r?\n(.*?)(?<=\n)(?:-{3}|\.{3})\r?\n)', string, re.DOTALL)
+        m = re.search(r'^(-{3}\r?\n(?!\r?\n)(.*?)(?<=\n)(?:-{3}|\.{3})\r?\n)', string, re.DOTALL)
         if m:
             yaml_okay = True
             try:
