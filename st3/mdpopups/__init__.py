@@ -41,7 +41,12 @@ DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
 DEFAULT_USER_CSS = 'Packages/User/mdpopups.css'
 IDK = '''
 <style>html {background-color: #333; color: red}</style>
-<div><p>¯\_(ツ)_/¯'</p></div>
+<div><p>¯\_(ツ)_/¯</p></div>
+<div><p>
+MdPopups failed to create<br>
+the popup/phantom!<br><br>
+Check the console to see if<br>
+there are helpful errors.</p></div>
 '''
 HL_SETTING = 'mdpopups.use_sublime_highlighter'
 STYLE_SETTING = 'mdpopups.default_style'
