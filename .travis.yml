@@ -10,12 +10,14 @@ install:
   - pip install mkdocs-material
   - pip install pymdown-extensions
   - pip install pygments
+  - pip install pytest
 addons:
   apt:
     packages:
       - aspell
       - aspell-en
 script:
+  - py.test .
   - flake8 .
   - python tests/spellcheck.py
   - mkdocs build --clean --verbose --strict
