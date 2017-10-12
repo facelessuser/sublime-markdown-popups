@@ -2,6 +2,7 @@ API
 Changelog
 Control's
 CSS
+deprecations
 Desaturate
 desaturate
 EmojiOne
@@ -11,6 +12,7 @@ frontmatter's
 grayscale
 inline
 Jinja
+linting
 MdPopups
 MERCHANTABILITY
 MkDocs
@@ -18,6 +20,8 @@ monospace
 namespace
 namespaced
 NONINFRINGEMENT
+Oct
+PackageDev
 pha
 plugin
 plugins
@@ -39,6 +43,7 @@ sublicense
 Sublime's
 SuperFences
 TextMate
+tooltips
 traceback
 tuple
 UML

@@ -263,6 +263,20 @@ Filters can be chained if more intensity is needed (as some filters may clamp th
     body { {{'.background'|css('background-color')|brightness(1.1)}} }
     ```
 
+`contrast`
+: 
+    Increases/decreases the contrast.  Contrast is relative to 1 where 1 means no change.  Accepted values are floats that are greater than 0.  Ranges are clamped between 0 and 2.
+
+    **Example - Decrease contrast**:
+    ```css+jinja
+    body { {{'.background'|css('background-color')|contrast(0.9)}} }
+    ```
+
+    **Example - Increase contrast**:
+    ```css+jinja
+    body { {{'.background'|css('background-color')|contrast(1.1)}} }
+    ```
+
 `saturation`
 : 
     Shifts the saturation either to right (saturate) or the left (desaturate).  Saturation is relative to 1 where 1 means no change.  Accepted values are floats that are greater than 0.  Ranges are clamped between 0 and 2.

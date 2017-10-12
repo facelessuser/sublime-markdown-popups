@@ -1,5 +1,7 @@
 site_name: Sublime Markdown Popups Documentation
+site_url: https://facelessuser.github.io/sublime-markdown-popups
 repo_url: https://github.com/facelessuser/sublime-markdown-popups
+edit_uri: tree/master/docs/src/markdown
 site_description: Popup tooltips for Sublime generated with Markdown.
 copyright: Copyright &copy; 2015 - 2017 <a href="https://github.com/facelessuser">Isaac Muse</a>
 
@@ -73,6 +75,6 @@ extra:
     - type: github
       link: https://github.com/facelessuser
 extra_css:
-  - extra-6068b97e47.css
+  - extra-9b4c72abee.css
 extra_javascript:
-  - extra-2aceccb07f.js
+  - extra-449b50d2b3.js

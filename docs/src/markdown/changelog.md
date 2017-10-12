@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.2.0
+
+> Oct 11, 2017
+
+- **NEW**: Remove deprecations.
+- **NEW**: Update `rgba` library.
+- **NEW**: Expose contrast.
+- **NEW**: Add support for PackageDev settings completions/tooltips/linting.
+- **FIX**: Increase block code font size to `1rem`.
+- **FIX**: Better YAML stripping logic.
+- **FIX**: More descriptive failure message.
+
 ## 2.1.1
 
 > June 21, 2017
