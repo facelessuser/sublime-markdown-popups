@@ -184,7 +184,7 @@ class SublimeHighlight(object):
         """Setup view for conversion."""
 
         # Get the output panel
-        self.view = sublime.active_window().get_output_panel('mdpopups')
+        self.view = sublime.active_window().create_output_panel('mdpopups', unlisted=True)
         # Let all plugins no to leave this view alone
         self.view.settings().set('is_widget', True)
         # Don't translate anything.
