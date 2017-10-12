@@ -49,7 +49,7 @@ lang_map = {
     'tex': (('tex', 'latex'), ('LaTeX/LaTeX',)),
     'text': (('text',), ('Text/Plain text',)),
     'textile': (('textile',), ('Textile/Textile',)),
-    'typescript': (('typescript', 'ts'), ('TypeScript/TypeScript','TypeScriptSyntax/TypeScript')),
+    'typescript': (('typescript', 'ts'), ('TypeScript/TypeScript', 'TypeScriptSyntax/TypeScript')),
     'xml': (('xml',), ('XML/XML',)),
     'yaml': (('yaml',), ('YAML/YAML',))
 }
