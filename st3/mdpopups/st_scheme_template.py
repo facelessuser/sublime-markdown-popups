@@ -280,6 +280,7 @@ class Scheme2CSS(object):
         self.env.filters['hue'] = self.hue
         self.env.filters['invert'] = self.invert
         self.env.filters['saturation'] = self.saturation
+        self.env.filters['contrast'] = self.contrast
         self.env.filters['grayscale'] = self.grayscale
         self.env.filters['sepia'] = self.sepia
         self.env.filters['fade'] = self.fade
@@ -348,6 +349,17 @@ class Scheme2CSS(object):
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = RGBA(parts[1])
             rgba.invert()
+            parts[1] = "%s; " % rgba.get_rgb()
+            return '%s: %s ' % (parts[0], parts[1])
+        return css
+
+    def contrast(self, css, factor):
+        """Apply contrast filter."""
+
+        parts = [c.strip('; ') for c in css.split(':')]
+        if len(parts) == 2 and parts[0] in ('background-color', 'color'):
+            rgba = RGBA(parts[1])
+            rgba.contrast(factor)
             parts[1] = "%s; " % rgba.get_rgb()
             return '%s: %s ' % (parts[0], parts[1])
         return css
