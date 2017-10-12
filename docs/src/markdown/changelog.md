@@ -8,6 +8,7 @@
 - **NEW**: Update `rgba` library.
 - **NEW**: Expose contrast.
 - **NEW**: Add support for PackageDev settings completions/tooltips/linting.
+- **Fix**: Hide scratch output panel.
 - **FIX**: Increase block code font size to `1rem`.
 - **FIX**: Better YAML stripping logic.
 - **FIX**: More descriptive failure message.
