@@ -27,6 +27,7 @@ import copy
 import decimal
 
 NEW_SCHEMES = int(sublime.version()) >= 3150
+FONT_STYLE = "font_style" if int(sublime.version()) >= 3151 else "fontStyle"
 
 INVALID = -1
 POPUP = 0
@@ -505,11 +506,7 @@ class Scheme2CSS(object):
             fg = general.get('foreground', '#000000')
             bg = general.get('background', '#ffffff')
             scope = self.view.style_for_scope(selector)
-            style = []
-            if scope.get('bold', False):
-                style.append('bold')
-            if scope.get('italic', False):
-                style.append('italic')
+            style = scope.get(FONT_STYLE, "").split(' ')
             color = scope.get('foreground', fg)
             bgcolor = scope.get('background', (None if explicit_background else bg))
         else:
@@ -580,11 +577,7 @@ class Scheme2CSS(object):
                 key_scope = '.' + tscope
                 color = scope.get('foreground', view.style().get('foreground', '#000000'))
                 bgcolor = scope.get('background')
-                style = []
-                if scope.get('bold', False):
-                    style.append('bold')
-                if scope.get('italic', False):
-                    style.append('italic')
+                style = scope.get(FONT_STYLE, "").split(' ')
             else:
                 scope = self.guess_style(view, tscope, explicit_background=True)
                 key_scope = '.' + tscope
