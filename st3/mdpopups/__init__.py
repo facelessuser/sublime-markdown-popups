@@ -102,6 +102,7 @@ def _can_show(view, location=-1):
 
     return can_show
 
+
 ##############################
 # Theme/Scheme cache management
 ##############################
@@ -779,6 +780,7 @@ class PhantomSet(sublime.PhantomSet):
                 erase_phantom_by_id(self.view, p.id)
 
         self.phantoms = new_phantoms
+
 
 if frontmatter:
     def format_frontmatter(values):

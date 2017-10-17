@@ -220,7 +220,7 @@ class Scheme2CSS(object):
         if not NEW_SCHEMES:
             return self.csm.guess_color(scope.lstrip('.'), selected, explicit_background)
         else:
-            style =  view.style_for_scope(scope.lstrip('.'))
+            style = view.style_for_scope(scope.lstrip('.'))
             if explicit_background:
                 if 'background' not in style:
                     style['background'] = view.style().get('background', '#FFFFFF')

@@ -56,16 +56,16 @@ def checkered_color(color, background):
     return checkered.get_rgb()
 
 
-def get_border_size(dir, border_map):
+def get_border_size(direction, border_map):
     """Get size of border map."""
 
     size = 0
-    if dir == X:
+    if direction == X:
         if border_map & LEFT:
             size += 1
         if border_map & RIGHT:
             size += 1
-    elif dir == Y:
+    elif direction == Y:
         if border_map & TOP:
             size += 1
         if border_map & BOTTOM:
