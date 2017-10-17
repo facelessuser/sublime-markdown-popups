@@ -16,7 +16,7 @@ import time
 from . import version as ver
 from . import colorbox
 from collections import OrderedDict
-from .st_scheme_template import Scheme2CSS, POPUP, PHANTOM
+from .st_scheme_template import Scheme2CSS, POPUP, PHANTOM, NEW_SCHEMES
 from .st_clean_css import clean_css
 from .st_pygments_highlight import syntax_hl as pyg_syntax_hl
 from .st_code_highlight import SublimeHighlight
@@ -277,6 +277,7 @@ def _get_theme(view, css=None, css_type=POPUP, template_vars=None):
     obj, user_css, default_css = _get_scheme(view)
     try:
         return obj.apply_template(
+            view,
             default_css + '\n' +
             ((clean_css(css) + '\n') if css else '') +
             user_css,
@@ -541,10 +542,20 @@ def scope2style(view, scope, selected=False, explicit_background=False):
         'style': ''
     }
     obj = _get_scheme(view)[0]
-    style_obj = obj.guess_style(scope, selected, explicit_background)
-    style['color'] = style_obj.fg_simulated
-    style['background'] = style_obj.bg_simulated
-    style['style'] = style_obj.style
+    style_obj = obj.guess_style(view, scope, selected, explicit_background)
+    if NEW_SCHEMES:
+        style['color'] = style_obj['foreground']
+        style['background'] = style_obj['background']
+        font = []
+        if style.get('bold', False):
+            font.append('bold')
+        if style.get('italic', False):
+            font.append('italic')
+        style['style'] = ' '.join(font)
+    else:
+        style['color'] = style_obj.fg_simulated
+        style['background'] = style_obj.bg_simulated
+        style['style'] = style_obj.style
     return style
 
 

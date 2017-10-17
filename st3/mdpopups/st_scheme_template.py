@@ -26,6 +26,8 @@ from .st_clean_css import clean_css
 import copy
 import decimal
 
+NEW_SCHEMES = int(sublime.version()) >= 3150
+
 INVALID = -1
 POPUP = 0
 PHANTOM = 1
@@ -203,19 +205,33 @@ class Scheme2CSS(object):
     def __init__(self, scheme_file):
         """Initialize."""
 
-        self.csm = ColorSchemeMatcher(scheme_file)
+        if not NEW_SCHEMES:
+            self.csm = ColorSchemeMatcher(scheme_file)
         self.scheme_file = scheme_file
         self.css_type = INVALID
+        self.variable = {}
+        self.view = None
         self.setup()
 
-    def guess_style(self, scope, selected=False, explicit_background=False):
+    def guess_style(self, view, scope, selected=False, explicit_background=False):
         """Guess color."""
 
         # Remove leading '.' to account for old style CSS class scopes.
-        return self.csm.guess_color(scope.lstrip('.'), selected, explicit_background)
+        if not NEW_SCHEMES:
+            return self.csm.guess_color(scope.lstrip('.'), selected, explicit_background)
+        else:
+            style =  view.style_for_scope(scope.lstrip('.'))
+            if explicit_background:
+                if 'background' not in style:
+                    style['background'] = view.style().get('background', '#FFFFFF')
+            return style
 
     def parse_global(self):
-        """Parse global settings."""
+        """
+        Parse global settings.
+
+        LEGACY.
+        """
 
         color_settings = {}
         for item in self.csm.plist_file["settings"]:
@@ -229,7 +245,7 @@ class Scheme2CSS(object):
         self.lums = rgba.get_true_luminance()
         is_dark = self.lums <= LUM_MIDPOINT
         settings = sublime.load_settings("Preferences.sublime-settings")
-        self.variables = {
+        self._variables = {
             "is_dark": is_dark,
             "is_light": not is_dark,
             "sublime_version": int(sublime.version()),
@@ -241,6 +257,53 @@ class Scheme2CSS(object):
         self.html_border = rgba.get_rgb()
         self.fground = self.process_color(color_settings.get("foreground", '#000000'))
 
+    def get_variables(self):
+        """Get variables."""
+
+        if NEW_SCHEMES:
+            settings = sublime.load_settings("Preferences.sublime-settings")
+            return {
+                "is_dark": self.is_dark(),
+                "is_light": not self.is_dark(),
+                "sublime_version": int(sublime.version()),
+                "mdpopups_version": ver.version(),
+                "color_scheme": self.scheme_file,
+                "use_pygments": not settings.get('mdpopups.use_sublime_highlighter', True),
+                "default_style": settings.get('mdpopups.default_style', True)
+            }
+        else:
+            return self._variables
+
+    def get_html_border(self):
+        """Get html border."""
+
+        return self.get_bg() if NEW_SCHEMES else self.html_border
+
+    def is_dark(self):
+        """Check if scheme is dark."""
+
+        return self.get_lums() <= LUM_MIDPOINT
+
+    def get_lums(self):
+        """Get luminance."""
+
+        if NEW_SCHEMES:
+            bg = self.get_bg()
+            rgba = RGBA(bg)
+            return rgba.get_true_luminance()
+        else:
+            return self.lums
+
+    def get_fg(self):
+        """Get foreground."""
+
+        return self.view.style().get('foreground', '#000000') if NEW_SCHEMES else self.fground
+
+    def get_bg(self):
+        """Get backtround."""
+
+        return self.view.style().get('background', '#FFFFFF') if NEW_SCHEMES else self.bground
+
     def process_color(self, color, simple_strip=False):
         """
         Strip transparency from the color value.
@@ -248,6 +311,8 @@ class Scheme2CSS(object):
         Transparency can be stripped in one of two ways:
             - Simply mask off the alpha channel.
             - Apply the alpha channel to the color essential getting the color seen by the eye.
+
+        LEGACY.
         """
 
         if color is None or color.strip() == "":
@@ -267,7 +332,8 @@ class Scheme2CSS(object):
     def setup(self):
         """Setup the template environment."""
 
-        self.parse_global()
+        if not NEW_SCHEMES:
+            self.parse_global()
 
         # Create Jinja template
         self.env = jinja2.Environment()
@@ -314,7 +380,7 @@ class Scheme2CSS(object):
             parts = [c.strip('; ') for c in css.split(':')]
             if len(parts) == 2 and parts[0] in ('background-color', 'color'):
                 rgba = RGBA(parts[1] + "%02f" % int(255.0 * max(min(float(factor), 1.0), 0.0)))
-                rgba.apply_alpha(self.bground)
+                rgba.apply_alpha(self.get_bg())
                 return '%s: %s; ' % (parts[0], rgba.get_rgb())
         except Exception:
             pass
@@ -434,15 +500,30 @@ class Scheme2CSS(object):
     def retrieve_selector(self, selector, key=None, explicit_background=True):
         """Get the CSS key, value pairs for a rule."""
 
-        scope = self.guess_style(selector, explicit_background=explicit_background)
-        color = scope.fg_simulated
-        bgcolor = scope.bg_simulated
+        if NEW_SCHEMES:
+            general = self.view.style()
+            fg = general.get('foreground', '#000000')
+            bg = general.get('background', '#ffffff')
+            scope = self.view.style_for_scope(selector)
+            style = []
+            if scope.get('bold', False):
+                style.append('bold')
+            if scope.get('italic', False):
+                style.append('italic')
+            color = scope.get('foreground', fg)
+            bgcolor = scope.get('background', (None if explicit_background else bg))
+        else:
+            scope = self.guess_style(self.view, selector, explicit_background=explicit_background)
+            color = scope.fg_simulated
+            bgcolor = scope.bg_simulated
+            style = scope.style.split(' ')
+
         css = []
         if color and (key is None or key == 'color'):
             css.append('color: %s' % color)
         if bgcolor and (key is None or key == 'background-color'):
             css.append('background-color: %s' % bgcolor)
-        for s in scope.style.split(' '):
+        for s in style:
             if "bold" in s and (key is None or key == 'font-weight'):
                 css.append('font-weight: bold')
             if "italic" in s and (key is None or key == 'font-style'):
@@ -454,13 +535,16 @@ class Scheme2CSS(object):
             text += ';'
         return text
 
-    def apply_template(self, css, css_type, template_vars=None):
+    def apply_template(self, view, css, css_type, template_vars=None):
         """Apply template to css."""
+
+        self.view = view
 
         if css_type not in (POPUP, PHANTOM):
             return ''
 
         self.css_type = css_type
+        self.variables = self.get_variables()
 
         var = copy.copy(self.variables)
         if template_vars and isinstance(template_vars, (dict, OrderedDict)):
@@ -477,20 +561,37 @@ class Scheme2CSS(object):
 
         return self.env.from_string(css).render(var=var, plugin=self.plugin_vars)
 
-    def get_css(self):
+    def get_css(self, view):
         """Get css."""
 
         # Intialize colors with the global foreground, background, and fake html_border
         colors = OrderedDict()
-        colors['.foreground'] = OrderedDict([('color', self.fground)])
-        colors['.background'] = OrderedDict([('background-color', self.bground)])
+        if NEW_SCHEMES:
+            colors['.foreground'] = OrderedDict([('color', view.style().get('foreground', '#000000'))])
+            colors['.background'] = OrderedDict([('background-color', view.style().get('background', '#FFFFFF'))])
+        else:
+            colors['.foreground'] = OrderedDict([('color', self.get_fg())])
+            colors['.background'] = OrderedDict([('background-color', self.get_bg())])
 
         # Assemble the rest of the CSS
         for tscope in sorted(all_scopes):
-            scope = self.guess_style(tscope, explicit_background=True)
-            key_scope = '.' + tscope
-            color = scope.fg_simulated
-            bgcolor = scope.bg_simulated
+            if NEW_SCHEMES:
+                scope = view.style_for_scope(tscope)
+                key_scope = '.' + tscope
+                color = scope.get('foreground', view.style().get('foreground', '#000000'))
+                bgcolor = scope.get('background')
+                style = []
+                if scope.get('bold', False):
+                    style.append('bold')
+                if scope.get('italic', False):
+                    style.append('italic')
+            else:
+                scope = self.guess_style(view, tscope, explicit_background=True)
+                key_scope = '.' + tscope
+                color = scope.fg_simulated
+                bgcolor = scope.bg_simulated
+                style = scope.style.split(' ')
+
             if color or bgcolor:
                 colors[key_scope] = OrderedDict()
                 if color:
@@ -498,7 +599,7 @@ class Scheme2CSS(object):
                 if bgcolor:
                     colors[key_scope]['background-color'] = bgcolor
 
-                for s in scope.style.split(' '):
+                for s in style:
                     if "bold" in s:
                         colors[key_scope]['font-weight'] = 'bold'
                     if "italic" in s:

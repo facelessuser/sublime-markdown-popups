@@ -10,6 +10,33 @@ import decimal
 
 RGB_CHANNEL_SCALE = 1.0 / 255.0
 HUE_SCALE = 1.0 / 360.0
+PERCENT_TO_CHANNEL = 255.0 / 100.0
+CHANNEL_TO_PERCENT = 100.0 / 255.0
+SCALE_PERCENT = 1 / 100.0
+SCALE_HALF_PERCENT = 1 / 50.0
+
+
+def mix_channel(cf, af, cb, ab):
+    """
+    Mix the color channel.
+
+    cf: Channel foreground
+    af: Alpha foreground
+    cb: Channel background
+    ab: Alpha background
+
+    The foreground is overlayed on the secondary color it is to be mixed with.
+    The alpha channels are applied and the colors mix.
+    """
+
+    return clamp(
+        round_int(
+            abs(
+                cf * (af * RGB_CHANNEL_SCALE) + cb * (ab * RGB_CHANNEL_SCALE) * (1 - (af * RGB_CHANNEL_SCALE))
+            )
+        ),
+        0, 255
+    )
 
 
 def clamp(value, mn, mx):
@@ -21,7 +48,7 @@ def clamp(value, mn, mx):
 def round_int(dec):
     """Round float to nearest int using expected rounding."""
 
-    return int(decimal.Decimal(dec).quantize(decimal.Decimal('0'), decimal.ROUND_HALF_UP))
+    return int(decimal.Decimal(dec).quantize(decimal.Decimal('0'), decimal.ROUND_HALF_DOWN))
 
 
 class RGBA(object):
@@ -72,21 +99,12 @@ class RGBA(object):
         the transparent color against the given background.
         """
 
-        def tx_alpha(cf, af, cb, ab):
-            """Translate the color channel with the alpha channel and background channel color."""
-
-            return round_int(
-                abs(
-                    cf * (af * RGB_CHANNEL_SCALE) + cb * (ab * RGB_CHANNEL_SCALE) * (1 - (af * RGB_CHANNEL_SCALE))
-                )
-            ) & 0xFF
-
         if self.a < 0xFF:
             r, g, b, a = self._split_channels(background)
 
-            self.r = tx_alpha(self.r, self.a, r, a)
-            self.g = tx_alpha(self.g, self.a, g, a)
-            self.b = tx_alpha(self.b, self.a, b, a)
+            self.r = mix_channel(self.r, self.a, r, a)
+            self.g = mix_channel(self.g, self.a, g, a)
+            self.b = mix_channel(self.b, self.a, b, a)
 
         return self.get_rgb()
 
@@ -120,6 +138,18 @@ class RGBA(object):
         """Adjust blue."""
 
         self.b = round_int(clamp(self.b + (255.0 * factor) - 255.0, 0.0, 255.0))
+
+    def blend(self, color, percent, alpha=False):
+        """Blend color."""
+
+        factor = clamp(round_int(clamp(float(percent), 0.0, 100.0) * PERCENT_TO_CHANNEL), 0, 255)
+        r, g, b, a = self._split_channels(color)
+
+        self.r = mix_channel(self.r, factor, r, 255)
+        self.g = mix_channel(self.g, factor, g, 255)
+        self.b = mix_channel(self.b, factor, b, 255)
+        if alpha:
+            self.a = mix_channel(self.a, factor, a, 255)
 
     def luminance(self, factor):
         """Get true luminance."""

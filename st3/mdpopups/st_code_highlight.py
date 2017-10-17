@@ -27,6 +27,8 @@ import re
 from .st_color_scheme_matcher import ColorSchemeMatcher
 from .st_mapping import lang_map
 
+NEW_SCHEMES = int(sublime.version()) >= 3150
+
 INLINE_BODY_START = '<code class="inline-highlight">'
 BODY_START = '<div class="highlight"><pre>'
 LINE = '%(code)s<br>'
