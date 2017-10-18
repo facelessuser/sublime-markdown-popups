@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.0
+
+> Oct x, 2017
+
+- **NEW**: Support for `.sublime-color-schemes` (which are subject to change).
+- **NEW**: Update `rgba` library.
+
 ## 2.2.0
 
 > Oct 11, 2017
