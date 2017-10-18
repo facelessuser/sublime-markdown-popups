@@ -37,146 +37,6 @@ re_float_trim = re.compile(r'^(?P<keep>\d+)(?P<trash>\.0+|(?P<keep2>\.\d*[1-9])0
 re_valid_custom_scopes = re.compile(r'[a-zA-Z\d]+[a-zA-Z\d._\-]*')
 re_missing_semi_colon = re.compile(r'(?<!;) \}')
 
-# Just track the deepest level.  We'll unravel it.
-# https://manual.macromates.com/en/language_grammars#naming_conventions
-textmate_scopes = {
-    'comment.line.double-slash',
-    'comment.line.double-dash',
-    'comment.line.number-sign',
-    'comment.line.percentage',
-    'comment.line.character',
-    'comment.block.documentation',
-    'constant.numeric',
-    'constant.character',
-    'constant.language',
-    'constant.other',
-    'entity.name.function',
-    'entity.name.type',
-    'entity.name.tag',
-    'entity.name.section',
-    'entity.other.inherited-class',
-    'entity.other.attribute-name',
-    'invalid.illegal',
-    'invalid.deprecated',
-    'keyword.control',
-    'keyword.operator',
-    'keyword.other',
-    'markup.underline.link',
-    'markup.bold',
-    'markup.heading',
-    'markup.italic',
-    'markup.list.numbered',
-    'markup.list.unnumbered',
-    'markup.quote',
-    'markup.raw',
-    'markup.other',
-    'meta',
-    'storage.type',
-    'storage.modifier',
-    'string.quoted.single',
-    'string.quoted.double',
-    'string.quoted.triple',
-    'string.quoted.other',
-    'string.unquoted',
-    'string.interpolated',
-    'string.regexp',
-    'string.other',
-    'support.function',
-    'support.class',
-    'support.type',
-    'support.constant',
-    'support.variable',
-    'support.other',
-    'variable.parameter',
-    'variable.language',
-    'variable.other'
-}
-# http://www.sublimetext.com/docs/3/scope_naming.html
-sublime_scopes = {
-    "comment.block.documentation",
-    "punctuation.definition.comment",
-    "constant.numeric.integer",
-    "constant.numeric.float",
-    "constant.numeric.hex",
-    "constant.numeric.octal",
-    "constant.language",
-    "constant.character.escape",
-    "constant.other.placeholder",
-    "entity.name.struct",
-    "entity.name.enum",
-    "entity.name.union",
-    "entity.name.trait",
-    "entity.name.interface",
-    "entity.name.type",
-    "entity.name.class.forward-decl",
-    "entity.other.inherited-class",
-    "entity.name.function.constructor",
-    "entity.name.function.destructor",
-    "entity.name.namespace",
-    "entity.name.constant",
-    "entity.name.label",
-    "entity.name.section",
-    "entity.name.tag",
-    "entity.other.attribute-name",
-    "invalid.illegal",
-    "invalid.deprecated",
-    "keyword.control.conditional",
-    "keyword.control.import",
-    "punctuation.definition.keyword",
-    "keyword.operator.assignment",
-    "keyword.operator.arithmetic",
-    "keyword.operator.bitwise",
-    "keyword.operator.logical",
-    "keyword.operator.word",
-    "markup.heading",
-    "markup.list.unnumbered",
-    "markup.list.numbered",
-    "markup.bold",
-    "markup.italic",
-    "markup.underline",
-    "markup.inserted",
-    "markup.deleted",
-    "markup.underline.link",
-    "markup.quote",
-    "markup.raw.inline",
-    "markup.raw.block",
-    "markup.other",
-    "punctuation.terminator",
-    "punctuation.separator.continuation",
-    "punctuation.accessor",
-    "source",
-    "storage.type",
-    "storage.modifier",
-    "string.quoted.single",
-    "string.quoted.double",
-    "string.quoted.triple",
-    "string.quoted.other",
-    "punctuation.definition.string.begin",
-    "punctuation.definition.string.end",
-    "string.unquoted",
-    "string.regexp",
-    "support.constant",
-    "support.function",
-    "support.module",
-    "support.type",
-    "support.class",
-    "text.html",
-    "text.xml",
-    "variable.other.readwrite",
-    "variable.other.constant",
-    "variable.language",
-    "variable.parameter",
-    "variable.other.member",
-    "variable.function"
-}
-
-# Merge the sets together
-all_scopes = set()
-for ss in (sublime_scopes | textmate_scopes):
-    parts = ss.split('.')
-    for index in range(1, len(parts) + 1):
-        all_scopes.add('.'.join(parts[:index]))
-
 re_base_colors = re.compile(r'^\s*\.(?:dummy)\s*\{([^}]+)\}', re.MULTILINE)
 re_color = re.compile(r'(?<!-)(color\s*:\s*#[A-Fa-z\d]{6})')
 re_bgcolor = re.compile(r'(?<!-)(background(?:-color)?\s*:\s*#[A-Fa-z\d]{6})')
@@ -237,7 +97,7 @@ class Scheme2CSS(object):
                 style['background'] = scope_style.get('selection', '#0000FF')
             return style
 
-    def parse_global(self):
+    def legacy_parse_global(self):
         """
         Parse global settings.
 
@@ -251,36 +111,34 @@ class Scheme2CSS(object):
                 break
 
         # Get general theme colors from color scheme file
-        self.bground = self.process_color(color_settings.get("background", '#FFFFFF'), simple_strip=True)
+        self.bground = self.legacy_process_color(color_settings.get("background", '#FFFFFF'), simple_strip=True)
         rgba = RGBA(self.bground)
         self.lums = rgba.get_true_luminance()
         is_dark = self.lums <= LUM_MIDPOINT
-        settings = sublime.load_settings("Preferences.sublime-settings")
         self._variables = {
             "is_dark": is_dark,
             "is_light": not is_dark,
             "sublime_version": int(sublime.version()),
             "mdpopups_version": ver.version(),
             "color_scheme": self.scheme_file,
-            "use_pygments": not settings.get('mdpopups.use_sublime_highlighter', True),
-            "default_style": settings.get('mdpopups.default_style', True)
+            "use_pygments": self.use_pygments,
+            "default_style": self.default_style
         }
         self.html_border = rgba.get_rgb()
-        self.fground = self.process_color(color_settings.get("foreground", '#000000'))
+        self.fground = self.legacy_process_color(color_settings.get("foreground", '#000000'))
 
     def get_variables(self):
         """Get variables."""
 
         if NEW_SCHEMES:
-            settings = sublime.load_settings("Preferences.sublime-settings")
             return {
                 "is_dark": self.is_dark(),
                 "is_light": not self.is_dark(),
                 "sublime_version": int(sublime.version()),
                 "mdpopups_version": ver.version(),
                 "color_scheme": self.scheme_file,
-                "use_pygments": not settings.get('mdpopups.use_sublime_highlighter', True),
-                "default_style": settings.get('mdpopups.default_style', True)
+                "use_pygments": self.use_pygments,
+                "default_style": self.default_style
             }
         else:
             return self._variables
@@ -315,7 +173,7 @@ class Scheme2CSS(object):
 
         return self.view.style().get('background', '#FFFFFF') if NEW_SCHEMES else self.bground
 
-    def process_color(self, color, simple_strip=False):
+    def legacy_process_color(self, color, simple_strip=False):
         """
         Strip transparency from the color value.
 
@@ -343,8 +201,12 @@ class Scheme2CSS(object):
     def setup(self):
         """Setup the template environment."""
 
+        settings = sublime.load_settings("Preferences.sublime-settings")
+        self.use_pygments = not settings.get('mdpopups.use_sublime_highlighter', True),
+        self.default_style = settings.get('mdpopups.default_style', True)
+
         if not NEW_SCHEMES:
-            self.parse_global()
+            self.legacy_parse_global()
 
         # Create Jinja template
         self.env = jinja2.Environment()
@@ -574,6 +436,65 @@ class Scheme2CSS(object):
 
     def get_css(self, view):
         """Get css."""
+
+        print("Deprecated: Mdpopups 'get_css' is deprecated and will be removed in the future.")
+
+        # Just track the deepest level.  We'll unravel it.
+        # https://manual.macromates.com/en/language_grammars#naming_conventions
+        textmate_scopes = {
+            'comment.line.double-slash', 'comment.line.double-dash', 'comment.line.number-sign',
+            'comment.line.percentage', 'comment.line.character', 'comment.block.documentation',
+            'constant.numeric', 'constant.character', 'constant.language',
+            'constant.other', 'entity.name.function', 'entity.name.type',
+            'entity.name.tag', 'entity.name.section', 'entity.other.inherited-class',
+            'entity.other.attribute-name', 'invalid.illegal', 'invalid.deprecated',
+            'keyword.control', 'keyword.operator', 'keyword.other',
+            'markup.underline.link', 'markup.bold', 'markup.heading',
+            'markup.italic', 'markup.list.numbered', 'markup.list.unnumbered',
+            'markup.quote', 'markup.raw', 'markup.other',
+            'meta', 'storage.type', 'storage.modifier',
+            'string.quoted.single', 'string.quoted.double', 'string.quoted.triple',
+            'string.quoted.other', 'string.unquoted', 'string.interpolated',
+            'string.regexp', 'string.other', 'support.function',
+            'support.class', 'support.type', 'support.constant',
+            'support.variable', 'support.other', 'variable.parameter',
+            'variable.language', 'variable.other'
+        }
+        # http://www.sublimetext.com/docs/3/scope_naming.html
+        sublime_scopes = {
+            "comment.block.documentation", "punctuation.definition.comment", "constant.numeric.integer",
+            "constant.numeric.float", "constant.numeric.hex", "constant.numeric.octal",
+            "constant.language", "constant.character.escape", "constant.other.placeholder",
+            "entity.name.struct", "entity.name.enum", "entity.name.union",
+            "entity.name.trait", "entity.name.interface", "entity.name.type",
+            "entity.name.class.forward-decl", "entity.other.inherited-class", "entity.name.function.constructor",
+            "entity.name.function.destructor", "entity.name.namespace", "entity.name.constant",
+            "entity.name.label", "entity.name.section", "entity.name.tag",
+            "entity.other.attribute-name", "invalid.illegal", "invalid.deprecated",
+            "keyword.control.conditional", "keyword.control.import", "punctuation.definition.keyword",
+            "keyword.operator.assignment", "keyword.operator.arithmetic", "keyword.operator.bitwise",
+            "keyword.operator.logical", "keyword.operator.word", "markup.heading",
+            "markup.list.unnumbered", "markup.list.numbered", "markup.bold",
+            "markup.italic", "markup.underline", "markup.inserted",
+            "markup.deleted", "markup.underline.link", "markup.quote",
+            "markup.raw.inline", "markup.raw.block", "markup.other",
+            "punctuation.terminator", "punctuation.separator.continuation", "punctuation.accessor",
+            "source", "storage.type", "storage.modifier",
+            "string.quoted.single", "string.quoted.double", "string.quoted.triple",
+            "string.quoted.other", "punctuation.definition.string.begin", "punctuation.definition.string.end",
+            "string.unquoted", "string.regexp", "support.constant",
+            "support.function", "support.module", "support.type",
+            "support.class", "text.html", "text.xml",
+            "variable.other.readwrite", "variable.other.constant", "variable.language",
+            "variable.parameter", "variable.other.member", "variable.function"
+        }
+
+        # Merge the sets together
+        all_scopes = set()
+        for ss in (sublime_scopes | textmate_scopes):
+            parts = ss.split('.')
+            for index in range(1, len(parts) + 1):
+                all_scopes.add('.'.join(parts[:index]))
 
         # Intialize colors with the global foreground, background, and fake html_border
         colors = OrderedDict()

@@ -176,8 +176,8 @@ def _get_scheme(view):
             # Check if cache expired or user changed pygments setting.
             if (
                 _is_cache_expired(t) or
-                obj.variables.get('use_pygments', False) != (not settings.get(HL_SETTING, True)) or
-                obj.variables.get('default_style', True) != settings.get(STYLE_SETTING, True)
+                obj.use_pygments != (not settings.get(HL_SETTING, True)) or
+                obj.default_style != settings.get(STYLE_SETTING, True)
             ):
                 obj = None
                 user_css = ''
