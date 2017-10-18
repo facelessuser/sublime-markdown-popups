@@ -27,7 +27,6 @@ import copy
 import decimal
 
 NEW_SCHEMES = int(sublime.version()) >= 3150
-FONT_STYLE = "font_style" if int(sublime.version()) >= 3151 else "fontStyle"
 
 INVALID = -1
 POPUP = 0
@@ -221,10 +220,23 @@ class Scheme2CSS(object):
         if not NEW_SCHEMES:
             return self.csm.guess_color(scope.lstrip('.'), selected, explicit_background)
         else:
-            style = view.style_for_scope(scope.lstrip('.'))
-            if explicit_background:
-                if 'background' not in style:
-                    style['background'] = view.style().get('background', '#FFFFFF')
+            scope_style = view.style_for_scope(scope.lstrip('.'))
+            style = {}
+            style['foreground'] = scope_style['foreground']
+            style['background'] = scope_style.get('background')
+            style['bold'] = scope_style['bold']
+            style['italic'] = scope_style['italic']
+
+            defaults = view.style()
+            if explicit_background and 'background' not in style:
+                scope_style['background'] = defaults.get('background', '#FFFFFF')
+            if selected:
+                sfg = color_match.get('selection_forground', defaults.get('selection_forground'))
+                if sfg:
+                    style['foreground'] = sfg
+                    style['bold'] = False
+                    style['italic'] = False
+                bgcolor = color_match.get('selection', '#0000FF')
             return style
 
     def parse_global(self):
@@ -506,7 +518,11 @@ class Scheme2CSS(object):
             fg = general.get('foreground', '#000000')
             bg = general.get('background', '#ffffff')
             scope = self.view.style_for_scope(selector)
-            style = scope.get(FONT_STYLE, "").split(' ')
+            style = []
+            if scope['bold']:
+                style.append('bold')
+            if scope['italic']:
+                style.append('italic')
             color = scope.get('foreground', fg)
             bgcolor = scope.get('background', (None if explicit_background else bg))
         else:
@@ -577,7 +593,11 @@ class Scheme2CSS(object):
                 key_scope = '.' + tscope
                 color = scope.get('foreground', view.style().get('foreground', '#000000'))
                 bgcolor = scope.get('background')
-                style = scope.get(FONT_STYLE, "").split(' ')
+                style = []
+                if scope['bold']:
+                    style.append('bold')
+                if scope['italic']:
+                    style.append('italic')
             else:
                 scope = self.guess_style(view, tscope, explicit_background=True)
                 key_scope = '.' + tscope
