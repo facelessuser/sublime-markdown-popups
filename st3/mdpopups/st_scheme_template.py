@@ -231,12 +231,10 @@ class Scheme2CSS(object):
             if explicit_background and 'background' not in style:
                 scope_style['background'] = defaults.get('background', '#FFFFFF')
             if selected:
-                sfg = color_match.get('selection_forground', defaults.get('selection_forground'))
+                sfg = scope_style.get('selection_forground', defaults.get('selection_forground'))
                 if sfg:
                     style['foreground'] = sfg
-                    style['bold'] = False
-                    style['italic'] = False
-                bgcolor = color_match.get('selection', '#0000FF')
+                style['background'] = scope_style.get('selection', '#0000FF')
             return style
 
     def parse_global(self):

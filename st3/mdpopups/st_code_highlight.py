@@ -157,9 +157,7 @@ class SublimeHighlight(object):
                     sfg = color_match.get('selection_forground', self.defaults.get('selection_forground'))
                     if sfg:
                         color = sfg
-                        style = []
                     bgcolor = color_match.get('selection', '#0000FF')
-                    style = []
             else:
                 color_match = self.csm.guess_color(scope_name, selected=do_highlight, explicit_background=True)
                 color = color_match.fg_simulated

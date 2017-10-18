@@ -548,9 +548,9 @@ def scope2style(view, scope, selected=False, explicit_background=False):
         style['color'] = style_obj['foreground']
         style['background'] = style_obj['background']
         font = []
-        if style['bold']:
+        if style_obj['bold']:
             font.append('bold')
-        if style['italic']:
+        if style_obj['italic']:
             font.append('italic')
         style['style'] = ' '.join(font)
     else:
