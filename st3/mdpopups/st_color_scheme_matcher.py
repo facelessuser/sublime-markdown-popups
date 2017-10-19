@@ -31,7 +31,6 @@ from . import x11colors
 from os import path
 from collections import namedtuple
 from plistlib import readPlistFromBytes
-import json
 import decimal
 
 FONT_STYLE = "font_style" if int(sublime.version()) >= 3151 else "fontStyle"
