@@ -31,7 +31,6 @@ from . import x11colors
 from os import path
 from collections import namedtuple
 from plistlib import readPlistFromBytes
-from .file_strip.json import sanitize_json
 import json
 import decimal
 
@@ -322,11 +321,9 @@ class ColorSchemeMatcher(object):
                 )
             )
         else:
-            self.scheme_obj = json.loads(
-                sanitize_json(
-                    sublime.load_resource(sublime_format_path(self.color_scheme)),
-                    preserve_lines=True
-                )
+            sublime.decode_value(
+                sublime.load_resource(sublime_format_path(self.color_scheme)),
+                preserve_lines=True
             )
         self.scheme_file = scheme_file
         self.matched = {}
