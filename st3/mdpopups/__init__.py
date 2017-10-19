@@ -16,7 +16,7 @@ import time
 from . import version as ver
 from . import colorbox
 from collections import OrderedDict
-from .st_scheme_template import Scheme2CSS, POPUP, PHANTOM
+from .st_scheme_template import SchemeTemplate, POPUP, PHANTOM, NEW_SCHEMES
 from .st_clean_css import clean_css
 from .st_pygments_highlight import syntax_hl as pyg_syntax_hl
 from .st_code_highlight import SublimeHighlight
@@ -102,6 +102,7 @@ def _can_show(view, location=-1):
 
     return can_show
 
+
 ##############################
 # Theme/Scheme cache management
 ##############################
@@ -175,15 +176,15 @@ def _get_scheme(view):
             # Check if cache expired or user changed pygments setting.
             if (
                 _is_cache_expired(t) or
-                obj.variables.get('use_pygments', False) != (not settings.get(HL_SETTING, True)) or
-                obj.variables.get('default_style', True) != settings.get(STYLE_SETTING, True)
+                obj.use_pygments != (not settings.get(HL_SETTING, True)) or
+                obj.default_style != settings.get(STYLE_SETTING, True)
             ):
                 obj = None
                 user_css = ''
                 default_css = ''
         if obj is None:
             try:
-                obj = Scheme2CSS(scheme)
+                obj = SchemeTemplate(scheme)
                 _prune_cache()
                 user_css = _get_user_css()
                 default_css = _get_default_css()
@@ -277,6 +278,7 @@ def _get_theme(view, css=None, css_type=POPUP, template_vars=None):
     obj, user_css, default_css = _get_scheme(view)
     try:
         return obj.apply_template(
+            view,
             default_css + '\n' +
             ((clean_css(css) + '\n') if css else '') +
             user_css,
@@ -541,10 +543,20 @@ def scope2style(view, scope, selected=False, explicit_background=False):
         'style': ''
     }
     obj = _get_scheme(view)[0]
-    style_obj = obj.guess_style(scope, selected, explicit_background)
-    style['color'] = style_obj.fg_simulated
-    style['background'] = style_obj.bg_simulated
-    style['style'] = style_obj.style
+    style_obj = obj.guess_style(view, scope, selected, explicit_background)
+    if NEW_SCHEMES:
+        style['color'] = style_obj['foreground']
+        style['background'] = style_obj['background']
+        font = []
+        if style_obj['bold']:
+            font.append('bold')
+        if style_obj['italic']:
+            font.append('italic')
+        style['style'] = ' '.join(font)
+    else:
+        style['color'] = style_obj.fg_simulated
+        style['background'] = style_obj.bg_simulated
+        style['style'] = style_obj.style
     return style
 
 
@@ -768,6 +780,7 @@ class PhantomSet(sublime.PhantomSet):
                 erase_phantom_by_id(self.view, p.id)
 
         self.phantoms = new_phantoms
+
 
 if frontmatter:
     def format_frontmatter(values):

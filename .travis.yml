@@ -2,15 +2,16 @@ language: python
 python:
   - "3.3"
 install:
-  - pip install "flake8<3"
+  - pip install flake8
   - pip install flake8-docstrings
-  - pip install flake8-putty
+  - pip install flake8-mutable
+  - pip install flake8-builtins
   - pip install pep8-naming
+  - pip install pytest
   - pip install mkdocs
   - pip install mkdocs-material
   - pip install pymdown-extensions
   - pip install pygments
-  - pip install pytest
 addons:
   apt:
     packages:
