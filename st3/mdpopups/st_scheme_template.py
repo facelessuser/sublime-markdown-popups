@@ -59,14 +59,12 @@ def fmt_float(f, p=0):
     return string
 
 
-class Scheme2CSS(object):
+class SchemeTemplate(object):
     """Determine color scheme colors and style for text in a Sublime view buffer."""
 
     def __init__(self, scheme_file):
         """Initialize."""
 
-        if not NEW_SCHEMES:
-            self.csm = ColorSchemeMatcher(scheme_file)
         self.scheme_file = scheme_file
         self.css_type = INVALID
         self.variable = {}
@@ -103,6 +101,8 @@ class Scheme2CSS(object):
 
         LEGACY.
         """
+
+        self.csm = ColorSchemeMatcher(self.scheme_file)
 
         color_settings = {}
         for item in self.csm.plist_file["settings"]:
@@ -433,118 +433,6 @@ class Scheme2CSS(object):
         )
 
         return self.env.from_string(css).render(var=var, plugin=self.plugin_vars)
-
-    def get_css(self, view):
-        """Get css."""
-
-        print("Deprecated: Mdpopups 'get_css' is deprecated and will be removed in the future.")
-
-        # Just track the deepest level.  We'll unravel it.
-        # https://manual.macromates.com/en/language_grammars#naming_conventions
-        textmate_scopes = {
-            'comment.line.double-slash', 'comment.line.double-dash', 'comment.line.number-sign',
-            'comment.line.percentage', 'comment.line.character', 'comment.block.documentation',
-            'constant.numeric', 'constant.character', 'constant.language',
-            'constant.other', 'entity.name.function', 'entity.name.type',
-            'entity.name.tag', 'entity.name.section', 'entity.other.inherited-class',
-            'entity.other.attribute-name', 'invalid.illegal', 'invalid.deprecated',
-            'keyword.control', 'keyword.operator', 'keyword.other',
-            'markup.underline.link', 'markup.bold', 'markup.heading',
-            'markup.italic', 'markup.list.numbered', 'markup.list.unnumbered',
-            'markup.quote', 'markup.raw', 'markup.other',
-            'meta', 'storage.type', 'storage.modifier',
-            'string.quoted.single', 'string.quoted.double', 'string.quoted.triple',
-            'string.quoted.other', 'string.unquoted', 'string.interpolated',
-            'string.regexp', 'string.other', 'support.function',
-            'support.class', 'support.type', 'support.constant',
-            'support.variable', 'support.other', 'variable.parameter',
-            'variable.language', 'variable.other'
-        }
-        # http://www.sublimetext.com/docs/3/scope_naming.html
-        sublime_scopes = {
-            "comment.block.documentation", "punctuation.definition.comment", "constant.numeric.integer",
-            "constant.numeric.float", "constant.numeric.hex", "constant.numeric.octal",
-            "constant.language", "constant.character.escape", "constant.other.placeholder",
-            "entity.name.struct", "entity.name.enum", "entity.name.union",
-            "entity.name.trait", "entity.name.interface", "entity.name.type",
-            "entity.name.class.forward-decl", "entity.other.inherited-class", "entity.name.function.constructor",
-            "entity.name.function.destructor", "entity.name.namespace", "entity.name.constant",
-            "entity.name.label", "entity.name.section", "entity.name.tag",
-            "entity.other.attribute-name", "invalid.illegal", "invalid.deprecated",
-            "keyword.control.conditional", "keyword.control.import", "punctuation.definition.keyword",
-            "keyword.operator.assignment", "keyword.operator.arithmetic", "keyword.operator.bitwise",
-            "keyword.operator.logical", "keyword.operator.word", "markup.heading",
-            "markup.list.unnumbered", "markup.list.numbered", "markup.bold",
-            "markup.italic", "markup.underline", "markup.inserted",
-            "markup.deleted", "markup.underline.link", "markup.quote",
-            "markup.raw.inline", "markup.raw.block", "markup.other",
-            "punctuation.terminator", "punctuation.separator.continuation", "punctuation.accessor",
-            "source", "storage.type", "storage.modifier",
-            "string.quoted.single", "string.quoted.double", "string.quoted.triple",
-            "string.quoted.other", "punctuation.definition.string.begin", "punctuation.definition.string.end",
-            "string.unquoted", "string.regexp", "support.constant",
-            "support.function", "support.module", "support.type",
-            "support.class", "text.html", "text.xml",
-            "variable.other.readwrite", "variable.other.constant", "variable.language",
-            "variable.parameter", "variable.other.member", "variable.function"
-        }
-
-        # Merge the sets together
-        all_scopes = set()
-        for ss in (sublime_scopes | textmate_scopes):
-            parts = ss.split('.')
-            for index in range(1, len(parts) + 1):
-                all_scopes.add('.'.join(parts[:index]))
-
-        # Intialize colors with the global foreground, background, and fake html_border
-        colors = OrderedDict()
-        if NEW_SCHEMES:
-            colors['.foreground'] = OrderedDict([('color', view.style().get('foreground', '#000000'))])
-            colors['.background'] = OrderedDict([('background-color', view.style().get('background', '#FFFFFF'))])
-        else:
-            colors['.foreground'] = OrderedDict([('color', self.get_fg())])
-            colors['.background'] = OrderedDict([('background-color', self.get_bg())])
-
-        # Assemble the rest of the CSS
-        for tscope in sorted(all_scopes):
-            if NEW_SCHEMES:
-                scope = view.style_for_scope(tscope)
-                key_scope = '.' + tscope
-                color = scope.get('foreground', view.style().get('foreground', '#000000'))
-                bgcolor = scope.get('background')
-                style = []
-                if scope['bold']:
-                    style.append('bold')
-                if scope['italic']:
-                    style.append('italic')
-            else:
-                scope = self.guess_style(view, tscope, explicit_background=True)
-                key_scope = '.' + tscope
-                color = scope.fg_simulated
-                bgcolor = scope.bg_simulated
-                style = scope.style.split(' ')
-
-            if color or bgcolor:
-                colors[key_scope] = OrderedDict()
-                if color:
-                    colors[key_scope]['color'] = color
-                if bgcolor:
-                    colors[key_scope]['background-color'] = bgcolor
-
-                for s in style:
-                    if "bold" in s:
-                        colors[key_scope]['font-weight'] = 'bold'
-                    if "italic" in s:
-                        colors[key_scope]['font-style'] = 'italic'
-                    if "underline" in s and False:  # disabled
-                        colors[key_scope]['text-decoration'] = 'underline'
-
-        text = []
-        css_entry = '%s { %s}'
-        for k, v in colors.items():
-            text.append(css_entry % (k, ''.join(['%s: %s;' % (k1, v1) for k1, v1 in v.items()])))
-
-        return '\n'.join(text) + '\n'
 
 
 def get_pygments(style):
