@@ -17,7 +17,6 @@ import sublime
 import re
 from . import version as ver
 from .rgba import RGBA
-from . import x11colors
 from .st_color_scheme_matcher import ColorSchemeMatcher
 import jinja2
 from pygments.formatters import HtmlFormatter
@@ -104,14 +103,8 @@ class SchemeTemplate(object):
 
         self.csm = ColorSchemeMatcher(self.scheme_file)
 
-        color_settings = {}
-        for item in self.csm.plist_file["settings"]:
-            if item.get('scope', None) is None and item.get('name', None) is None:
-                color_settings = item["settings"]
-                break
-
         # Get general theme colors from color scheme file
-        self.bground = self.legacy_process_color(color_settings.get("background", '#FFFFFF'), simple_strip=True)
+        self.bground = self.csm.special_colors['background']['color_simulated']
         rgba = RGBA(self.bground)
         self.lums = rgba.get_true_luminance()
         is_dark = self.lums <= LUM_MIDPOINT
@@ -125,7 +118,7 @@ class SchemeTemplate(object):
             "default_style": self.default_style
         }
         self.html_border = rgba.get_rgb()
-        self.fground = self.legacy_process_color(color_settings.get("foreground", '#000000'))
+        self.fground = self.csm.special_colors['foreground']['color_simulated']
 
     def get_variables(self):
         """Get variables."""
@@ -172,31 +165,6 @@ class SchemeTemplate(object):
         """Get backtround."""
 
         return self.view.style().get('background', '#FFFFFF') if NEW_SCHEMES else self.bground
-
-    def legacy_process_color(self, color, simple_strip=False):
-        """
-        Strip transparency from the color value.
-
-        Transparency can be stripped in one of two ways:
-            - Simply mask off the alpha channel.
-            - Apply the alpha channel to the color essential getting the color seen by the eye.
-
-        LEGACY.
-        """
-
-        if color is None or color.strip() == "":
-            return None
-
-        if not color.startswith('#'):
-            color = x11colors.name2hex(color)
-            if color is None:
-                return None
-
-        rgba = RGBA(color.replace(" ", ""))
-        if not simple_strip:
-            rgba.apply_alpha(self.bground if self.bground != "" else "#FFFFFF")
-
-        return rgba.get_rgb()
 
     def setup(self):
         """Setup the template environment."""

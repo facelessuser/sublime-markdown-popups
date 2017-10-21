@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.1
+
+> Oct 20, 2017
+
+- **Fix**: Update color scheme matcher to latest and fix legacy support issues.
+
 ## 3.0.0
 
 > Oct 18, 2017
