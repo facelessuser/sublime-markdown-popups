@@ -4,13 +4,14 @@
 
 > Oct 21, 2017
 
-- **Fix**: Improved color scheme parsing logic.
+- **FIX**: Improved color scheme parsing logic.
+- **FIX**: Fix code background not being correct.
 
 ## 3.0.1
 
 > Oct 20, 2017
 
-- **Fix**: Update color scheme matcher to latest and fix legacy support issues.
+- **FIX**: Update color scheme matcher to latest and fix legacy support issues.
 
 ## 3.0.0
 
@@ -27,7 +28,7 @@
 - **NEW**: Update `rgba` library.
 - **NEW**: Expose contrast.
 - **NEW**: Add support for PackageDev settings completions/tooltips/linting.
-- **Fix**: Hide scratch output panel.
+- **FIX**: Hide scratch output panel.
 - **FIX**: Increase block code font size to `1rem`.
 - **FIX**: Better YAML stripping logic.
 - **FIX**: More descriptive failure message.

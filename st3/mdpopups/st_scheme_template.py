@@ -124,9 +124,10 @@ class SchemeTemplate(object):
         """Get variables."""
 
         if NEW_SCHEMES:
+            is_dark = self.is_dark()
             return {
-                "is_dark": self.is_dark(),
-                "is_light": not self.is_dark(),
+                "is_dark": is_dark,
+                "is_light": not is_dark,
                 "sublime_version": int(sublime.version()),
                 "mdpopups_version": ver.version(),
                 "color_scheme": self.scheme_file,
@@ -170,7 +171,7 @@ class SchemeTemplate(object):
         """Setup the template environment."""
 
         settings = sublime.load_settings("Preferences.sublime-settings")
-        self.use_pygments = not settings.get('mdpopups.use_sublime_highlighter', True),
+        self.use_pygments = not settings.get('mdpopups.use_sublime_highlighter', True)
         self.default_style = settings.get('mdpopups.default_style', True)
 
         if not NEW_SCHEMES:
