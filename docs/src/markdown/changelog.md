@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.2
+
+> Oct 21, 2017
+
+- **Fix**: Improved color scheme parsing logic.
+
 ## 3.0.1
 
 > Oct 20, 2017
