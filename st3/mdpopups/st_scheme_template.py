@@ -85,8 +85,8 @@ class SchemeTemplate(object):
             style['italic'] = scope_style['italic']
 
             defaults = view.style()
-            if explicit_background and 'background' not in style:
-                scope_style['background'] = defaults.get('background', '#FFFFFF')
+            if not explicit_background and not style.get('background'):
+                style['background'] = defaults.get('background', '#FFFFFF')
             if selected:
                 sfg = scope_style.get('selection_forground', defaults.get('selection_forground'))
                 if sfg:

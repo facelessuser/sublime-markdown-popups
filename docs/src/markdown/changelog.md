@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.3
+
+> Oct 23, 2017
+
+- **FIX**: `scope2style` wasn't returning background color by default.
+
 ## 3.0.2
 
 > Oct 21, 2017
