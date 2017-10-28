@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.4
+
+> Oct 27, 2017
+
+- **FIX**: Support for irregular `.sublime-color-scheme` values.
+
 ## 3.0.3
 
 > Oct 23, 2017
