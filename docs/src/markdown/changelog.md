@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.5
+
+> Oct 30, 2017
+
+- **FIX**: Parse color schemes with unexpected extensions correctly.
+
 ## 3.0.4
 
 > Oct 27, 2017
