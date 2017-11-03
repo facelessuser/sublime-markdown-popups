@@ -390,7 +390,14 @@ class ColorSchemeMatcher(object):
         """Merge override schemes."""
 
         current_file = sublime_format_path(self.color_scheme)
+        package_overrides = []
+        user_overrides = []
         for override in sublime.find_resources('%s.sublime-color-scheme' % path.splitext(self.scheme_file)[0]):
+            if override.startswith('Packages/User/'):
+                user_overrides.append(override)
+            else:
+                package_overrides.append(override)
+        for override in (package_overrides + user_overrides):
             if override != current_file:
                 ojson = sublime.decode_value(sublime.load_resource(override))
 
@@ -461,18 +468,29 @@ class ColorSchemeMatcher(object):
             scolor = None
             style = []
             if scope is not None:
+                # Foreground color
                 color = item.get('foreground', None)
                 if isinstance(color, list):
+                    # Hashed Syntax Highlighting
                     for index, c in enumerate(color):
                         color[index] = translate_color(COLOR_RE.match(c.strip()), self.variables, {})
-                elif color is not None:
+                elif isinstance(color, str):
                     color = translate_color(COLOR_RE.match(color.strip()), self.variables, {})
+                else:
+                    color = None
+                # Background color
                 bgcolor = item.get('background', None)
-                if bgcolor is not None:
+                if isinstance(bgcolor, str):
                     bgcolor = translate_color(COLOR_RE.match(bgcolor.strip()), self.variables, {})
+                else:
+                    bgcolor = None
+                # Selection foreground color
                 scolor = item.get('selection_foreground', None)
-                if scolor is not None:
+                if isinstance(scolor, str):
                     scolor = translate_color(COLOR_RE.match(scolor.strip()), self.variables, {})
+                else:
+                    scolor = None
+                # Font style
                 if FONT_STYLE in item:
                     for s in item.get(FONT_STYLE, '').split(' '):
                         if s == "bold" or s == "italic":  # or s == "underline":
