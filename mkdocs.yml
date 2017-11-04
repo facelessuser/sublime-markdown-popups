@@ -7,6 +7,19 @@ copyright: |
   Copyright &copy; 2015 - 2017 <a href="https://github.com/facelessuser">Isaac Muse</a>
   <br><span class="md-footer-custom-text">emoji provided free by </span><a href="http://www.emojione.com">EmojiOne</a>
 
+docs_dir: docs/src/markdown
+theme:
+  name: material
+  custom_dir: docs/theme
+  palette:
+    primary: blue
+    accent: blue
+  logo:
+    icon: description
+  font:
+    text: Roboto
+    code: Roboto Mono
+
 pages:
   - About Markdown Popups: index.md
   - Installation: installation.md
@@ -17,10 +30,6 @@ pages:
   - Contributing &amp; Support: contributing.md
   - Changelog: changelog.md
   - License: license.md
-
-theme: material
-docs_dir: docs/src/markdown
-theme_dir: docs/theme
 
 markdown_extensions:
   - markdown.extensions.toc:
@@ -67,12 +76,6 @@ markdown_extensions:
   - pymdownx.details:
 
 extra:
-  palette:
-    primary: blue
-    accent: blue
-  font:
-    text: Roboto
-    code: Roboto Mono
   social:
     - type: github
       link: https://github.com/facelessuser

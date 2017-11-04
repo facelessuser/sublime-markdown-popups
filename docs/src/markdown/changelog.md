@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.1.0
+
+> Nov 3, 2017
+
+- **NEW**: Handle parsing `.sublime-color-scheme` files with hashed syntax highlighting foreground colors.
+- **FIX**: Rework `*.sublime-color-scheme` merging and ensure `User` package is merged last.
+
 ## 3.0.5
 
 > Oct 30, 2017
