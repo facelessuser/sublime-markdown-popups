@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.1
+
+> Nov 4, 2017
+
+- **FIX**: Color matcher library should only return gradients when one is actually found.
+
 ## 3.1.0
 
 > Nov 3, 2017
