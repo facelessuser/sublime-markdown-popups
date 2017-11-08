@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.2
+
+> Nov 7, 2017
+
+- **FIX**: Parse legacy `foregroundSelection` properly.
+
 ## 3.1.1
 
 > Nov 4, 2017
