@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.3
+
+> Nov 8, 2017
+
+- **FIX**: Create fallback file read for resource race condition.
+
 ## 3.1.2
 
 > Nov 7, 2017
