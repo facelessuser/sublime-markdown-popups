@@ -1,71 +1,77 @@
 # Changelog
 
+## 3.2.0
+
+Nov 15, 2017
+
+- **NEW**: Add support for `.hidden-color-scheme` (#50).
+
 ## 3.1.3
 
-> Nov 8, 2017
+Nov 8, 2017
 
 - **FIX**: Create fallback file read for resource race condition.
 
 ## 3.1.2
 
-> Nov 7, 2017
+Nov 7, 2017
 
 - **FIX**: Parse legacy `foregroundSelection` properly.
 
 ## 3.1.1
 
-> Nov 4, 2017
+Nov 4, 2017
 
 - **FIX**: Color matcher library should only return gradients when one is actually found.
 
 ## 3.1.0
 
-> Nov 3, 2017
+Nov 3, 2017
 
 - **NEW**: Handle parsing `.sublime-color-scheme` files with hashed syntax highlighting foreground colors.
 - **FIX**: Rework `*.sublime-color-scheme` merging and ensure `User` package is merged last.
 
 ## 3.0.5
 
-> Oct 30, 2017
+Oct 30, 2017
 
 - **FIX**: Parse color schemes with unexpected extensions correctly.
 
 ## 3.0.4
 
-> Oct 27, 2017
+Oct 27, 2017
 
 - **FIX**: Support for irregular `.sublime-color-scheme` values.
 
 ## 3.0.3
 
-> Oct 23, 2017
+Oct 23, 2017
 
 - **FIX**: `scope2style` wasn't returning background color by default.
 
 ## 3.0.2
 
-> Oct 21, 2017
+Oct 21, 2017
 
 - **FIX**: Improved color scheme parsing logic.
 - **FIX**: Fix code background not being correct.
 
 ## 3.0.1
 
-> Oct 20, 2017
+Oct 20, 2017
 
 - **FIX**: Update color scheme matcher to latest and fix legacy support issues.
 
 ## 3.0.0
 
-> Oct 18, 2017
+Oct 18, 2017
 
 - **NEW**: Support for `.sublime-color-schemes` (which are subject to change).
 - **NEW**: Update `rgba` library.
 
 ## 2.2.0
 
-> Oct 11, 2017
+Oct 11, 2017
 
 - **NEW**: Remove deprecations.
 - **NEW**: Update `rgba` library.
@@ -78,13 +84,13 @@
 
 ## 2.1.1
 
-> June 21, 2017
+June 21, 2017
 
 - **FIX**: Strip frontmatter when `md=False`. Throw it away as we only use the frontmatter for Markdown.
 
 ## 2.1.0
 
-> June 20, 2017
+June 20, 2017
 
 - **NEW**: Allow adding and configuring extensions via YAML frontmatter. This feature deprecates `nl2br` function parameter which will be removed some time in the future.
 - **NEW**: Allow setting whether block, code tags will allow word wrapping via YAML frontmatter. This feature deprecates the `allow_word_wrap` function parameter which will be removed some time in the future.
@@ -96,7 +102,7 @@
 
 ## 2.0
 
-> June 1, 2017
+June 1, 2017
 
 - **NEW**: Add `kbd` styling and `admontion` styling.
 - **NEW**: New rewritten `default.css`. Adds styling that uses new Sublime CSS features and drops legacy styling for old ST versions. No more `base.css`.
@@ -114,7 +120,7 @@
 
 ## 1.0
 
-> Nov 12, 2015
+Nov 12, 2015
 
 - **NEW**: First release.
 
