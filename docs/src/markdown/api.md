@@ -20,11 +20,11 @@ Your plugin should include the Package Control dependencies listed below. Curren
 }
 ```
 
-Check out [`mdpopup_test`][mdpopup_test] as an example. Clone it into `Packages/mdpopup_test`, run `Package Control: Satisfy dependencies`, and then restart Sublime. You should be able to then run the command `Mdpopups: Test` to see an example popup or phantom.  Feel free to edit it to learn more.
+Check out @facelessuser/mdpopup_test as an example. Clone it into `Packages/mdpopup_test`, run `Package Control: Satisfy dependencies`, and then restart Sublime. You should be able to then run the command `Mdpopups: Test` to see an example popup or phantom.  Feel free to edit it to learn more.
 
 ## Markdown Support
 
-MdPopups uses [Python Markdown][pymd] to parse Markdown and transform it into a Sublime popup or phantom. The Markdown environment supports basic Markdown syntax, but also includes a number of specialty extensions to enhance and extend the Markdown environment.
+MdPopups uses @Python-Markdown/markdown to parse Markdown and transform it into a Sublime popup or phantom. The Markdown environment supports basic Markdown syntax, but also includes a number of specialty extensions to enhance and extend the Markdown environment.
 
 Due to the `minihtml` environment that Sublime uses, the type of tags and CSS that can be used are a bit limited. MdPopups provides a CSS that includes most of the common supported tags that can be used. Then few specific extensions (that work well within the `minihtml` environment) have been selected to provide support for a some additional useful features.
 
@@ -110,7 +110,7 @@ custom_fences:
 ...
 ```
 
-Checkout [`mdpopup_test`][mdpopup_test] to see the UML example above in action.
+Checkout @facelessuser/mdpopup_test to see the UML example above in action.
 
 ### Configure Markdown Extensions
 
