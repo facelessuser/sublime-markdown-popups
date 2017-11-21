@@ -1,15 +1,10 @@
 # Changelog
 
-## 3.3.0
-
-Nov X, 2017
-
-- **NEW**: `pymdownx` and `pyyaml` are now required for use of `mdpopups` (#51).
-
 ## 3.2.0
 
-Nov 15, 2017
+Nov 21, 2017
 
+- **NEW**: `pymdownx` and `pyyaml` are now required for use of `mdpopups` (#51).
 - **NEW**: Add support for `.hidden-color-scheme` (#50).
 
 ## 3.1.3
