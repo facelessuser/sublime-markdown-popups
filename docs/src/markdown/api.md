@@ -2,7 +2,7 @@
 
 ## Dependencies
 
-Your plugin should include the Package Control dependencies listed below. Currently, you can get away with not including `pyyaml` and `pymdownx`, but in the future, this will not be the case. Please read about Package Control's [dependencies][pc-dependencies] to learn more.
+Your plugin should include the Package Control dependencies listed below. Please read about Package Control's [dependencies][pc-dependencies] to learn more.
 
 ```js
 {
