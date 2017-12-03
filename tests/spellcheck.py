@@ -3,20 +3,28 @@ from __future__ import unicode_literals
 import subprocess
 import os
 import sys
-import yaml
 import codecs
+import bs4
+import re
+from collections import namedtuple
 
 PY3 = sys.version_info >= (3, 0)
 
 USER_DICT = '.dictionary'
+SPELLIGNORE = '.spellignore'
 BUILD_DIR = os.path.join('.', 'build', 'docs')
 MKDOCS_CFG = 'mkdocs.yml'
 COMPILED_DICT = os.path.join(BUILD_DIR, 'dictionary.bin')
 MKDOCS_SPELL = os.path.join(BUILD_DIR, MKDOCS_CFG)
 MKDOCS_BUILD = os.path.join(BUILD_DIR, 'site')
+RE_SELECTOR = re.compile(r'(\#|\.)?[-\w]+')
 
 
-def console(cmd, input_file=None):
+class IgnoreRule (namedtuple('IgnoreRule', ['tag', 'id', 'classes'])):
+    """Ignore rule."""
+
+
+def console(cmd, input_file=None, input_text=None):
     """Call with arguments."""
 
     returncode = None
@@ -45,6 +53,8 @@ def console(cmd, input_file=None):
     if input_file is not None:
         with open(input_file, 'rb') as f:
             process.stdin.write(f.read())
+    if input_text is not None:
+        process.stdin.write(input_text)
     output = process.communicate()
     returncode = process.returncode
 
@@ -55,74 +65,6 @@ def console(cmd, input_file=None):
     return output[0].decode('utf-8') if PY3 else output[0]
 
 
-def yaml_dump(data, stream=None, dumper=yaml.Dumper, **kwargs):
-    """Special dumper wrapper to modify the yaml dumper."""
-
-    class Dumper(dumper):
-        """Custom dumper."""
-
-    if not PY3:
-        # Unicode
-        Dumper.add_representer(
-            unicode,  # noqa
-            lambda dumper, value: dumper.represent_scalar(u'tag:yaml.org,2002:str', value)
-        )
-
-    return yaml.dump(data, stream, Dumper, **kwargs)
-
-
-def yaml_load(source, loader=yaml.Loader):
-    """
-    Wrap PyYaml's loader so we can extend it to suit our needs.
-
-    Load all strings as unicode: http://stackoverflow.com/a/2967461/3609487.
-    """
-
-    def construct_yaml_str(self, node):
-        """Override the default string handling function to always return Unicode objects."""
-        return self.construct_scalar(node)
-
-    class Loader(loader):
-        """Define a custom loader to leave the global loader unaltered."""
-
-    # Attach our unicode constructor to our custom loader ensuring all strings
-    # will be unicode on translation.
-    Loader.add_constructor('tag:yaml.org,2002:str', construct_yaml_str)
-
-    return yaml.load(source, Loader)
-
-
-def patch_doc_config(config_file):
-    """Patch the config file to wrap arithmatex with a tag aspell can ignore."""
-
-    nospell = {
-        'tex_inline_wrap': ['<nospell>\\(', '</nospell>\\)'],
-        'tex_block_wrap': ['<nospell>\\[', '</nospell>\\]']
-    }
-    with open(config_file, 'rb') as f:
-        config = yaml_load(f)
-
-    index = 0
-    for extension in config.get('markdown_extensions', []):
-        if isinstance(extension, str if PY3 else unicode) and extension == 'pymdownx.arithmatex':  # noqa
-            config['markdown_extensions'][index] = {'pymdownx.arithmatex': nospell}
-            break
-        elif isinstance(extension, dict) and 'pymdownx.arithmatex' in extension:
-            extension['pymdownx.arithmatex'] = nospell
-            break
-        index += 1
-
-    with codecs.open(MKDOCS_SPELL, "w", encoding="utf-8") as f:
-        yaml_dump(
-            config, f,
-            width=None,
-            indent=4,
-            allow_unicode=True,
-            default_flow_style=False
-        )
-    return MKDOCS_SPELL
-
-
 def build_docs():
     """Build docs with MkDocs."""
     print('Building Docs...')
@@ -131,8 +73,7 @@ def build_docs():
             [
                 sys.executable,
                 '-m', 'mkdocs', 'build', '--clean',
-                '-d', MKDOCS_BUILD,
-                '-f', patch_doc_config(MKDOCS_CFG)
+                '-d', MKDOCS_BUILD
             ]
         )
     )
@@ -153,9 +94,102 @@ def compile_dictionary():
                 'master',
                 COMPILED_DICT
             ],
-            USER_DICT
+            input_file=USER_DICT
         )
     )
+
+
+def ignore_rules(*args):
+    """
+    Process ignore rules.
+
+    Split ignore selector string into tag, id, and classes.
+    """
+
+    ignores = []
+
+    for arg in args:
+        selector = arg.lower()
+        tag = None
+        tag_id = None
+        classes = set()
+
+        for m in RE_SELECTOR.finditer(selector):
+            selector = m.group(0)
+            if selector.startswith('.'):
+                classes.add(selector[1:])
+            elif selector.startswith('#') and tag_id is None:
+                tag_id = selector[1:]
+            elif tag is None:
+                tag = selector
+            else:
+                raise ValueError('Bad selector!')
+
+        if tag or tag_id or classes:
+            ignores.append(IgnoreRule(tag, tag_id, tuple(classes)))
+
+    return ignores
+
+
+def skip_tag(el, ignore):
+    """Determine if tag should be skipped."""
+
+    skip = False
+    for rule in ignore:
+        if rule.tag and el.name.lower() != rule.tag:
+            continue
+        if rule.id and rule.id != el.attrs.get('id', '').lower():
+            continue
+        if rule.classes:
+            current_classes = [c.lower() for c in el.attrs.get('class', [])]
+            found = True
+            for c in rule.classes:
+                if c not in current_classes:
+                    found = False
+                    break
+            if not found:
+                continue
+        skip = True
+        break
+    return skip
+
+
+def html_to_text(tree, ignore, attributes, root=True):
+    """
+    Parse the HTML creating a buffer with each tags content.
+
+    Skip any selectors specified and include attributes if specified.
+    Ignored tags will not have their attributes scanned either.
+    """
+
+    text = []
+
+    if not skip_tag(tree, ignore):
+        for attr in attributes:
+            value = tree.attrs.get(attr)
+            if value:
+                text.append(value)
+
+        for child in tree:
+            if isinstance(child, bs4.element.Tag):
+                if child.contents:
+                    text.extend(html_to_text(child, ignore, attributes, False))
+            else:
+                text.append(str(child))
+
+    return ' '.join(text) if root else text
+
+
+def read_ignores(ignore_file):
+    """Read ignore file."""
+
+    ignores = []
+    with codecs.open(ignore_file, 'r', encoding='utf-8') as f:
+        for line in f.readlines():
+            entry = line.strip()
+            if entry:
+                ignores.append(entry)
+    return ignores
 
 
 def check_spelling():
@@ -164,26 +198,33 @@ def check_spelling():
 
     fail = False
 
+    entries = read_ignores(SPELLIGNORE)
+    ignores = ignore_rules(*entries)
+    attrs = {'title', 'alt'}
+
     for base, dirs, files in os.walk(MKDOCS_BUILD):
         # Remove child folders based on exclude rules
         for f in files:
             if f.endswith('.html'):
                 file_name = os.path.join(base, f)
+                with codecs.open(file_name, 'r', encoding='utf-8') as file_obj:
+                    html = bs4.BeautifulSoup(file_obj.read(), "html5lib")
+                    text = html_to_text(
+                        html.html,
+                        ignores,
+                        attrs
+                    )
+
                 wordlist = console(
                     [
                         'aspell',
                         'list',
                         '--lang=en',
-                        '--mode=html',
+                        '--mode=url',
                         '--encoding=utf-8',
-                        '--add-html-skip=code',
-                        '--add-html-skip=pre',
-                        '--add-html-skip=nospell',
-                        '--add-html-skip=nav',
-                        '--add-html-skip=footer',
                         '--extra-dicts=%s' % COMPILED_DICT
                     ],
-                    file_name
+                    input_text=text.encode('utf-8')
                 )
 
                 words = [w for w in sorted(set(wordlist.split('\n'))) if w]
