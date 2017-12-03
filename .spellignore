@@ -6,3 +6,5 @@ a.magiclink-compare
 a.magiclink-commit
 .MathJax_Preview
 .md-nav__link
+.md-footer-custom-text
+.md-source__repository
