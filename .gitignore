@@ -58,3 +58,4 @@ target/
 
 site/*
 *.patch
+dictionary.bin

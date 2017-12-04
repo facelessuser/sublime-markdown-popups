@@ -35,8 +35,8 @@ addons:
 script:
   - if [ $TESTENV = unittest ]; then py.test .; fi
   - if [ $TESTENV = unittest ]; then flake8 .; fi
-  - if [ $TESTENV = documents ]; then python tests/spellcheck.py; fi
   - if [ $TESTENV = documents ]; then mkdocs build --clean --verbose --strict; fi
+  - if [ $TESTENV = documents ]; then python tests/spellcheck.py; fi
 
 deploy:
   - provider: pages
