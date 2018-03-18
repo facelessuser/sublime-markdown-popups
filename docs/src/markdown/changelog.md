@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.2
+
+- **FIX**: Bring extensions up to the latest version.
+
 ## 3.3.1
 
 Jan 1, 2018
