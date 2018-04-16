@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.3
+
+- **FIX**: Fix tab logic inside `st_code_highlight`.
+
 ## 3.3.2
 
 - **FIX**: Bring extensions up to the latest version.
