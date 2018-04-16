@@ -86,6 +86,7 @@ class SublimeHighlight(object):
         """Begin conversion of the view to HTML."""
 
         for line in self.view.split_by_newlines(sublime.Region(self.pt, self.size)):
+            self.char_count = 0
             self.size = line.end()
             empty = not bool(line.size())
             line = self.convert_line_to_html(empty)
@@ -94,20 +95,30 @@ class SublimeHighlight(object):
 
     def html_encode(self, text):
         """Format text to HTML."""
-        encode_table = {
-            '&': '&amp;',
-            '>': '&gt;',
-            '<': '&lt;',
-            '\t': ' ' * self.tab_size,
-            '\n': ''
-        }
+
+        new_text = []
+        for c in text:
+            if c == '\t':
+                tab_size = self.tab_size - self.char_count % self.tab_size
+                new_text.append(' ' * tab_size)
+                self.char_count += tab_size
+            elif c == '&':
+                new_text.append('&amp;')
+                self.char_count += 1
+            elif c == '>':
+                new_text.append('&gt;')
+                self.char_count += 1
+            elif c == '<':
+                new_text.append('&lt;')
+                self.char_count += 1
+            elif c != '\n':
+                new_text.append(c)
+                self.char_count += 1
 
         return re.sub(
             (r'(?!\s($|\S))\s' if self.inline or self.code_wrap else r'\s'),
             '&nbsp;',
-            ''.join(
-                encode_table.get(c, c) for c in text
-            )
+            ''.join(new_text)
         )
 
     def format_text(self, line, text, color, bgcolor, style, empty, annotate=False):
