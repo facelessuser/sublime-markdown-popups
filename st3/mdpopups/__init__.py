@@ -529,18 +529,7 @@ def tabs2spaces(text, tab_size=4):
     Does not account for char width.
     """
 
-    new_text = []
-    for line in text.splitlines(True):
-        count = 0
-        for c in line:
-            if c == '\t':
-                spaces = tab_size - count % tab_size
-                new_text.append(' ' * spaces)
-                count += spaces
-            else:
-                new_text.append(c)
-                count += 1
-    return ''.join(new_text)
+    return text.expandtabs(tab_size)
 
 
 def scope2style(view, scope, selected=False, explicit_background=False):

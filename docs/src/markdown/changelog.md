@@ -3,6 +3,7 @@
 ## 3.3.3
 
 - **FIX**: Fix tab logic inside `st_code_highlight`.
+- **FIX**: Upgrade internal SuperFences to latest.
 
 ## 3.3.2
 
