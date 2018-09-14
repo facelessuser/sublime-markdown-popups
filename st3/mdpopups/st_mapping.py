@@ -45,11 +45,12 @@ lang_map = {
     'railsjs': (('js+erb', 'javascript+erb', 'js+ruby', 'javascript+ruby'), ('Rails/JavaScript (Rails)',)),
     'rst': (('rst', 'rest', 'restructuredtext'), ('RestructuredText/reStructuredText',)),
     'ruby': (('rb', 'ruby'), ('Ruby/Ruby',)),
+    'rust': (('rs', 'rust'), ('Rust/Rust',)),
     'scala': (('scala',), ('Scala/Scala',)),
     'tex': (('tex', 'latex'), ('LaTeX/LaTeX',)),
     'text': (('text',), ('Text/Plain text',)),
     'textile': (('textile',), ('Textile/Textile',)),
-    'typescript': (('typescript', 'ts'), ('TypeScript/TypeScript', 'TypeScriptSyntax/TypeScript')),
+    'typescript': (('typescript', 'ts'), ('TypeScript/TypeScript', 'TypeScript Syntax/TypeScript')),
     'xml': (('xml',), ('XML/XML',)),
     'yaml': (('yaml',), ('YAML/YAML',))
 }
