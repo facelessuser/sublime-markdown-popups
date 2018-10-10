@@ -8,6 +8,14 @@ MdPopups will use your color scheme to create popups/phantoms that fit your edit
 
 ![Screenshot](images/tooltips_test.png)
 
+## Plugins Using Markdown Popups
+
+- @facelessuser/ColorHelper
+- @flashios09/GitGutter
+- @SublimeText/LaTeXTools
+- @Kronuz/SublimeCodeIntel
+- @phil65/KodiDevKit
+
 ## Features
 
 - Can take Markdown or HTML and create nice looking popups and phantoms.
