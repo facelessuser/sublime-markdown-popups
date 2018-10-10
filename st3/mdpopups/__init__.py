@@ -251,7 +251,7 @@ class _MdWrapper(markdown.Markdown):
                 if isinstance(ext, util.string_type):
                     ext = self.build_extension(ext, configs.get(ext, {}))
                 if isinstance(ext, Extension):
-                    ext.extendMarkdown(self, globals())
+                    ext._extendMarkdown(self)
                 elif ext is not None:
                     raise TypeError(
                         'Extension "%s.%s" must be of type: "markdown.Extension"'
@@ -380,18 +380,18 @@ def md2html(
     # We allways include these
     extensions = [
         "mdpopups.mdx.highlight",
-        "mdpopups.mdx.inlinehilite",
-        "mdpopups.mdx.superfences"
+        "pymdownx.inlinehilite",
+        "pymdownx.superfences"
     ]
 
     configs = {
         "mdpopups.mdx.highlight": {
             "guess_lang": False
         },
-        "mdpopups.mdx.inlinehilite": {
+        "pymdownx.inlinehilite": {
             "style_plain_text": True
         },
-        "mdpopups.mdx.superfences": {
+        "pymdownx.superfences": {
             "custom_fences": fm.get('custom_fences', [])
         }
     }
