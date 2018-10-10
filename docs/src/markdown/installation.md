@@ -8,4 +8,4 @@ If ever you are on a older version than is currently released, and Package Contr
 
 Remember, MdPopups is for Sublime Text 3 builds 3124+.
 
---8<-- "refs.md"
+--8<-- "refs.txt"

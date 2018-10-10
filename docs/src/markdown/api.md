@@ -601,4 +601,4 @@ MdPopups provides a number of accessible functions.
     --------- | -------------------- | ------- | -----------
     `view`    | `#!py3 sublime.View` |         | Sublime text View object.
 
---8<-- "refs.md"
+--8<-- "refs.txt"
