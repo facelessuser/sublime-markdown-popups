@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.4.0
+
+- **NEW**: Upgrade to handle latest `pymdownx` and `markdown` module.
+
 ## 3.3.3
 
 - **FIX**: Fix tab logic inside `st_code_highlight`.
