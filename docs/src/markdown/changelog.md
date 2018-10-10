@@ -150,4 +150,4 @@ Nov 12, 2015
 
 - **NEW**: First release.
 
---8<-- "refs.md"
+--8<-- "refs.txt"

@@ -8,13 +8,18 @@ dictionary:
 - API
 - CSS
 - Changelog
+- ColorHelper
 - Control's
 - Desaturate
 - EmojiOne
 - Frontmatter
+- GitGutter
 - GitHub
 - GitLab
 - Jinja
+- KodiDevKit
+- Kronuz
+- LaTeXTools
 - MERCHANTABILITY
 - MdPopups
 - MkDocs
@@ -32,6 +37,8 @@ dictionary:
 - RGBA
 - Screenshot
 - Sublime's
+- SublimeCodeIntel
+- SublimeText
 - SuperFences
 - TextMate
 - UML
@@ -42,6 +49,7 @@ dictionary:
 - docstrings
 - ebeweber
 - facelessuser
+- flashios
 - frontmatter
 - frontmatter's
 - gforcada
@@ -55,6 +63,7 @@ dictionary:
 - namespace
 - namespaced
 - pha
+- phil
 - plugin
 - plugins
 - popup

@@ -466,7 +466,7 @@ The template environment provides a couple of variables that can be used to cond
     ```
 
 --8<--
-refs.md
+refs.txt
 
-uml.md
+uml.txt
 --8<-- 
