@@ -52,5 +52,7 @@ lang_map = {
     'textile': (('textile',), ('Textile/Textile',)),
     'typescript': (('typescript', 'ts'), ('TypeScript/TypeScript', 'TypeScript Syntax/TypeScript')),
     'xml': (('xml',), ('XML/XML',)),
-    'yaml': (('yaml',), ('YAML/YAML',))
+    'yaml': (('yaml',), ('YAML/YAML',)),
+    'vhdl': (('vhdl',), ('VHDL/Syntaxes/VHDL', 'HDLProject/sublime-vhdl/Syntaxes/VHDL')),
+    'verilog': (('verilog',), ('Verilog/Verilog', 'HDLProject/sublime-verilog/Verilog'))
 }
