@@ -23,7 +23,7 @@ CSS_PATTERN = re.compile(
 
 
 def clean_css(text, preserve_lines=False):
-    """Clean css."""
+    """Clean CSS."""
 
     def remove_comments(group, preserve_lines=False):
         """Remove comments."""

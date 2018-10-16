@@ -1,8 +1,8 @@
 """
 Sublime Text Scheme template.
 
-Converts scheme to css provides templating for
-additonal so that they can access the colors.
+Converts scheme to CSS provides templating for
+additional so that they can access the colors.
 
 Licensed under MIT
 Copyright (c) 2015 - 2016 Isaac Muse <isaacmuse@gmail.com>
@@ -138,7 +138,7 @@ class SchemeTemplate(object):
             return self._variables
 
     def get_html_border(self):
-        """Get html border."""
+        """Get HTML border."""
 
         return self.get_bg() if NEW_SCHEMES else self.html_border
 
@@ -163,7 +163,7 @@ class SchemeTemplate(object):
         return self.view.style().get('foreground', '#000000') if NEW_SCHEMES else self.fground
 
     def get_bg(self):
-        """Get backtround."""
+        """Get background."""
 
         return self.view.style().get('background', '#FFFFFF') if NEW_SCHEMES else self.bground
 
@@ -335,7 +335,7 @@ class SchemeTemplate(object):
         return css
 
     def pygments(self, style):
-        """Get pygments style."""
+        """Get Pygments style."""
 
         return get_pygments(style)
 
@@ -378,7 +378,7 @@ class SchemeTemplate(object):
         return text
 
     def apply_template(self, view, css, css_type, template_vars=None):
-        """Apply template to css."""
+        """Apply template to CSS."""
 
         self.view = view
 
@@ -406,9 +406,9 @@ class SchemeTemplate(object):
 
 def get_pygments(style):
     """
-    Get pygments style.
+    Get Pygments style.
 
-    Subllime CSS support is limited.  It cannot handle well
+    Sublime CSS support is limited.  It cannot handle well
     things like: `.class1 .class2`,  but it can handle things like:
     `.class1.class2`.  So we will not use things like `.highlight` in front.
 

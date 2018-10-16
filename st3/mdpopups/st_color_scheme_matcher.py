@@ -20,7 +20,7 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR TH
 
 ---------------------
 
-Original code has been heavily modifed by Isaac Muse <isaacmuse@gmail.com> for the ExportHtml project.
+Original code has been heavily modified by Isaac Muse <isaacmuse@gmail.com> for the `ExportHtml` project.
 Algorithm has been split out into a separate library and been enhanced with a number of features.
 """
 from __future__ import absolute_import
@@ -140,7 +140,7 @@ def fmt_float(f, p=0):
 
 
 def alpha_dec_normalize(dec):
-    """Normailze a deciaml alpha value."""
+    """Normalize a decimal alpha value."""
 
     temp = float(dec)
     if temp < 0.0 or temp > 1.0:
@@ -150,7 +150,7 @@ def alpha_dec_normalize(dec):
 
 
 def alpha_percent_normalize(perc):
-    """Normailze a percent alpha value."""
+    """Normalize a percent alpha value."""
 
     alpha_float = clamp(float(perc.strip('%')), 0.0, 100.0) / 100.0
     alpha = "%02x" % round_int(alpha_float * 255.0)
@@ -323,11 +323,11 @@ class SchemeColors(
         verbose=False
     )
 ):
-    """SchemeColors."""
+    """Scheme colors."""
 
 
 class SchemeSelectors(namedtuple('SchemeSelectors', ['name', 'scope'], verbose=False)):
-    """SchemeSelectors."""
+    """Scheme selectors."""
 
 
 class ColorSchemeMatcher(object):
@@ -367,7 +367,7 @@ class ColorSchemeMatcher(object):
         self.setup_matcher()
 
     def convert_format(self, obj):
-        """Convert tmTheme object to new format."""
+        """Convert `tmTheme` object to new format."""
 
         self.scheme_obj = {
             "variables": {},
@@ -654,7 +654,7 @@ class ColorSchemeMatcher(object):
         """
         Get the core colors (background, foreground) for the view and gutter.
 
-        Get the visible look of the color by simulated transparency if requrested.
+        Get the visible look of the color by simulated transparency if requested.
         """
 
         name = RE_CAMEL_CASE.sub(to_snake, name)
@@ -679,7 +679,7 @@ class ColorSchemeMatcher(object):
         specified by returning None.  This is done by enabling explicit_background.
         This will only show backgrounds that were explicitly specified.
 
-        This was orginially introduced for mdpopups so that it would
+        This was originally introduced for mdpopups so that it would
         know when a background was not needed.  This allowed mdpopups
         to generate syntax highlighted code that could be overlayed on
         block elements with different background colors and allow that

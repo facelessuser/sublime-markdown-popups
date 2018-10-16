@@ -95,7 +95,7 @@ multi_space = re.compile(r'(?<= ) {2,}')
 
 
 def replace_nbsp(m):
-    """Replace spaces with nbsp."""
+    """Replace spaces with `nbsp`."""
 
     return '&nbsp;' * len(m.group(0))
 
@@ -205,12 +205,12 @@ if pygments:
 
         def _wrap_code(self, source):
             """
-            Wrap the pygmented code.
+            Wrap the Pygments code.
 
             Sublime popups don't really support 'code', but since it doesn't
-            hurt anything, we leave it in for the possiblity of future support.
+            hurt anything, we leave it in for the possibility of future support.
             We get around the lack of proper 'code' support by converting any
-            spaces after the intial space to nbsp.  We go ahead and convert tabs
+            spaces after the initial space to `nbsp`.  We go ahead and convert tabs
             to 4 spaces as well.
             """
 
@@ -247,12 +247,12 @@ if pygments:
 
         def _wrap_code(self, source):
             """
-            Wrap the pygmented code.
+            Wrap the Pygments code.
 
             Sublime popups don't really support 'pre', but since it doesn't
-            hurt anything, we leave it in for the possiblity of future support.
-            We get around the lack of proper 'pre' suppurt by converting any
-            spaces after the intial space to nbsp.  We go ahead and convert tabs
+            hurt anything, we leave it in for the possibility of future support.
+            We get around the lack of proper 'pre' support by converting any
+            spaces after the initial space to `nbsp`.  We go ahead and convert tabs
             to 4 spaces as well.  We also manually inject line breaks.
             """
 
@@ -288,12 +288,12 @@ if pygments:
 
         def _wrap_code(self, source):
             """
-            Wrap the pygmented code.
+            Wrap the Pygments code.
 
             Sublime popups don't really support 'pre', but since it doesn't
-            hurt anything, we leave it in for the possiblity of future support.
-            We get around the lack of proper 'pre' suppurt by converting any
-            spaces after the intial space to nbsp.  We go ahead and convert tabs
+            hurt anything, we leave it in for the possibility of future support.
+            We get around the lack of proper 'pre' support by converting any
+            spaces after the initial space to `nbsp`.  We go ahead and convert tabs
             to 4 spaces as well.  We also manually inject line breaks.
             """
 
@@ -390,7 +390,7 @@ class Highlight(object):
         return lexer
 
     def escape(self, txt, code_wrap):
-        """Basic html escaping."""
+        """Basic HTML escaping."""
 
         txt = txt.replace('&', '&amp;')
         txt = txt.replace('<', '&lt;')
@@ -529,7 +529,7 @@ class HighlightTreeprocessor(Treeprocessor):
                 # Clear codeblock in etree instance
                 block.clear()
                 # Change to p element which will later
-                # be removed when inserting raw html
+                # be removed when inserting raw HTML
                 block.tag = 'p'
                 block.text = placeholder
 

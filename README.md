@@ -11,14 +11,14 @@ Mdpopups will use your color scheme to create popups/phantoms that fit your edit
 
 - Can take Markdown or HTML and create nice looking popup tooltips and phantoms.
 - Dynamically creates popup and phantom themes from your current Sublime color scheme.
-- Can create syntax highlighed code blocks easily using either Pygments or the built-in Sublime Text syntax highlighter automatically in the Markdown environment or outside via API calls.
+- Can create syntax highlighted code blocks easily using either Pygments or the built-in Sublime Text syntax highlighter automatically in the Markdown environment or outside via API calls.
 - Can create color preview boxes via API calls.
 - A CSS template environment that allows users to override and tweak the overall look of the tooltip and phantom themes to better fit their preferred look.  Using the template filters, users can generically access color scheme colors and manipulate them.
 - Plugins can extend the current CSS to inject plugin specific class styling.  Extended CSS will be run through the template environment.
 
 # Documentation
 
-http://facelessuser.github.io/sublime-markdown-popups/
+<http://facelessuser.github.io/sublime-markdown-popups/>
 
 # License
 Released under the MIT license.

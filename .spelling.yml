@@ -1,101 +1,105 @@
-# Document HTML files or folders of HTML files to search
-# Files are relative to the CWD, not the config file itself.
-docs:
-- site
+documents:
+- name: settings
+  sources:
+  - '**/*.sublime-settings'
+  aspell:
+    lang: en
+  dictionary:
+    lang: en
+    wordlists:
+    - docs/src/dictionary/en-custom.txt
+    output: build/dictionary/settings.dic
+  filters:
+  - tests.sublime_settings_filter:
+      group_comments: true
+  - pyspelling.filters.context:
+      context_visible_first: true
+      escapes: \\[\\`~]
+      delimiters:
+      - open: (?P<open>`+)
+        content: .*?
+        close: (?P=open)
+      - open: (?s)^(?P<open>\s*~{3,})
+        content: .*?
+        close: ^(?P=open)$
 
-# Dictionary of words to ignore
-dictionary:
-- API
-- CSS
-- Changelog
-- ColorHelper
-- Control's
-- Desaturate
-- EmojiOne
-- Frontmatter
-- GitGutter
-- GitHub
-- GitLab
-- Jinja
-- KodiDevKit
-- Kronuz
-- LaTeXTools
-- MERCHANTABILITY
-- MdPopups
-- MkDocs
-- NONINFRINGEMENT
-- Oct
-- PNG
-- PackageDev
-- Plugins
-- Popup
-- Popups
-- Popups
-- PyMdown
-- Pygments
-- RGB
-- RGBA
-- Screenshot
-- Sublime's
-- SublimeCodeIntel
-- SublimeText
-- SuperFences
-- TextMate
-- UML
-- YAML
-- builtins
-- deprecations
-- desaturate
-- docstrings
-- ebeweber
-- facelessuser
-- flashios
-- frontmatter
-- frontmatter's
-- gforcada
-- grayscale
-- inline
-- linting
-- matcher
-- mdpopup
-- mkdocs
-- monospace
-- namespace
-- namespaced
-- pha
-- phil
-- plugin
-- plugins
-- popup
-- popups
-- preformatted
-- pycqa
-- pymdown
-- requesters
-- squidfunk
-- sublicense
-- tooltips
-- traceback
-- tuple
-- unescaping
-- vendored
-- versa
-- whitespace
+- name: mkdocs
+  sources:
+  - site/**/*.html
+  hunspell:
+    d: docs/src/dictionary/hunspell/en_US
+  aspell:
+    lang: en
+  dictionary:
+    lang: en
+    wordlists:
+    - docs/src/dictionary/en-custom.txt
+    output: build/dictionary/mkdocs.dic
+  filters:
+  - pyspelling.filters.html:
+      comments: false
+      attributes:
+      - title
+      - alt
+      ignores:
+      - code
+      - pre
+      - a.magiclink-compare
+      - a.magiclink-commit
+      - span.keys
+      - .MathJax_Preview
+      - .md-nav__link
+      - .md-footer-custom-text
+      - .md-source__repository
+      - .headerlink
+      - .md-icon
 
-# Attributes of tags to also spell check along with tag content
-attributes:
-- title
-- alt
+- name: markdown
+  sources:
+  - README.md
+  hunspell:
+    d: docs/src/dictionary/hunspell/en_US
+  aspell:
+    lang: en
+  dictionary:
+    lang: en
+    wordlists:
+    - docs/src/dictionary/en-custom.txt
+    output: build/dictionary/mkdocs.dic
+  filters:
+  - pyspelling.filters.markdown:
+  - pyspelling.filters.html:
+      comments: false
+      attributes:
+      - title
+      - alt
+      ignores:
+      - code
+      - pre
 
-# Selectors describing tags to ignore (tag, class, and/or id only)
-ignores:
-- code
-- pre
-- script
-- style
-- a.magiclink-compare
-- a.magiclink-commit
-- .MathJax_Preview
-- .md-nav__link
-- .md-footer-custom-text
-- .md-source__repository
+- name: python
+  sources:
+  - "{st3,tests}/**/*.py|!**/png.py"
+  hunspell:
+    d: docs/src/dictionary/hunspell/en_US
+  aspell:
+    lang: en
+  dictionary:
+    lang: en
+    wordlists:
+    - docs/src/dictionary/en-custom.txt
+    output: build/dictionary/python.dic
+  filters:
+  - pyspelling.filters.python:
+      strings: false
+      comments: false
+  - pyspelling.filters.context:
+      context_visible_first: true
+      escapes: \\[\\`~]
+      delimiters:
+        - open: (?P<open>`+)
+          content: .*?
+          close: (?P=open)
+        - open: (?s)^(?P<open>\s*~{3,})
+          content: .*?
+          close: ^(?P=open)$
