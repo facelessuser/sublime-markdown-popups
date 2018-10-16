@@ -1,5 +1,5 @@
 """
-SublimeHighlight.
+Sublime highlight.
 
 Licensed under MIT.
 
@@ -20,7 +20,7 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR TH
 
 ---------------------
 
-Original code has been heavily modifed by Isaac Muse <isaacmuse@gmail.com> for the ExportHtml project.
+Original code has been heavily modified by Isaac Muse <isaacmuse@gmail.com> for the `ExportHtml` project.
 """
 import sublime
 import re
@@ -41,7 +41,7 @@ ST_LANGUAGES = ('.sublime-syntax', '.tmLanguage')
 
 
 class SublimeHighlight(object):
-    """SublimeHighlight."""
+    """Sublime highlight."""
 
     def __init__(self, scheme):
         """Initialization."""

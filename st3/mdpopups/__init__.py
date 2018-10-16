@@ -104,7 +104,7 @@ _highlighter_cache = OrderedDict()
 
 
 def _clear_cache():
-    """Clear the css cache."""
+    """Clear the CSS cache."""
 
     global _scheme_cache
     global _highlighter_cache
@@ -134,7 +134,7 @@ def _prune_cache():
 
 
 def _get_sublime_highlighter(view):
-    """Get the SublimeHighlighter."""
+    """Get the `SublimeHighlighter` object."""
 
     scheme = view.settings().get('color_scheme')
     obj = None
@@ -195,7 +195,7 @@ def _get_default_css():
 
 
 def _get_user_css():
-    """Get user css."""
+    """Get user CSS."""
 
     css = None
 
@@ -220,7 +220,7 @@ class _MdWrapper(markdown.Markdown):
     Meta = {}
 
     def __init__(self, *args, **kwargs):
-        """Call original init."""
+        """Call original initialization."""
 
         if 'allow_code_wrap' in kwargs:
             self.sublime_wrap = kwargs['allow_code_wrap']
@@ -237,9 +237,9 @@ class _MdWrapper(markdown.Markdown):
 
         Keyword arguments:
 
-        * extensions: A list of extensions, which can either
+        * `extensions`: A list of extensions, which can either
            be strings or objects.  See the docstring on Markdown.
-        * configs: A dictionary mapping module names to config options.
+        * `configs`: A dictionary mapping module names to configuration options.
 
         """
 
@@ -291,7 +291,7 @@ def _remove_entities(text):
     html = html.parser.HTMLParser()
 
     def repl(m):
-        """Replace entites except &, <, >, and nbsp."""
+        """Replace entities except &, <, >, and `nbsp`."""
         return html.unescape(m.group(1))
 
     return RE_BAD_ENTITIES.sub(repl, text)
@@ -302,7 +302,7 @@ def _create_html(
     wrapper_class=None, template_vars=None, template_env_options=None, nl2br=True,
     allow_code_wrap=False
 ):
-    """Create html from content."""
+    """Create HTML from content."""
 
     debug = _get_setting('mdpopups.debug', NODEBUG)
 

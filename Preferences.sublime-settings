@@ -7,7 +7,7 @@
     // "0" don't print any message
     // "1" print errors
     // "2" print errors, warnings
-    // "3" print errors, warnings, debug infos
+    // "3" print errors, warnings, debug, information
     "mdpopups.debug": 0,
 
     // Control how long a CSS theme file will be in the cache before being refreshed.
@@ -35,7 +35,7 @@
     // When extending, the user mappings will be cycled through first.
     "mdpopups.sublime_user_lang_map": {},
 
-    // Controls whether MdPopups' default styling (contained in default.css) will be applied or not.
+    // Controls whether MdPopups' default styling (contained in `default.css`) will be applied or not.
     "mdpopups.default_style": true,
 
     // Relative path of the user defined stylesheet.

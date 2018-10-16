@@ -6,12 +6,12 @@ from collections import OrderedDict
 
 def yaml_load(stream, loader=yaml.Loader, object_pairs_hook=OrderedDict):
     """
-    Custom yaml loader.
+    Custom YAML loader.
 
-    Make all YAML dictionaries load as ordered Dicts.
+    Make all YAML dictionaries load as ordered dictionary.
     http://stackoverflow.com/a/21912744/3609487
 
-    Load all strings as unicode.
+    Load all strings as Unicode.
     http://stackoverflow.com/a/2967461/3609487
     """
 
@@ -22,7 +22,7 @@ def yaml_load(stream, loader=yaml.Loader, object_pairs_hook=OrderedDict):
         return object_pairs_hook(loader.construct_pairs(node))
 
     def construct_yaml_str(self, node):
-        """Override the default string handling function to always return unicode objects."""
+        """Override the default string handling function to always return Unicode objects."""
 
         return self.construct_scalar(node)
 
@@ -43,7 +43,7 @@ def yaml_load(stream, loader=yaml.Loader, object_pairs_hook=OrderedDict):
 
 
 def yaml_dump(data, stream=None, dumper=yaml.Dumper):
-    """Special dumper wrapper to modify the yaml dumper."""
+    """Special dumper wrapper to modify the YAML dumper."""
 
     class Dumper(dumper):
         """Custom dumper."""

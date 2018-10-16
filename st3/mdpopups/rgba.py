@@ -20,10 +20,10 @@ def mix_channel(cf, af, cb, ab):
     """
     Mix the color channel.
 
-    cf: Channel foreground
-    af: Alpha foreground
-    cb: Channel background
-    ab: Alpha background
+    `cf`: Channel foreground
+    `af`: Alpha foreground
+    `cb`: Channel background
+    `ab`: Alpha background
 
     The foreground is overlayed on the secondary color it is to be mixed with.
     The alpha channels are applied and the colors mix.
@@ -82,12 +82,12 @@ class RGBA(object):
             return int(s[1] * 2, 16), int(s[2] * 2, 16), int(s[3] * 2, 16), 0xFF
 
     def get_rgba(self):
-        """Get the RGB color with the alpha channel."""
+        """Get the `RGB` color with the alpha channel."""
 
         return "#%02X%02X%02X%02X" % (self.r, self.g, self.b, self.a)
 
     def get_rgb(self):
-        """Get the RGB valuie."""
+        """Get the `RGB` value."""
 
         return "#%02X%02X%02X" % (self.r, self.g, self.b)
 
@@ -109,12 +109,12 @@ class RGBA(object):
         return self.get_rgb()
 
     def get_luminance(self):
-        """Get percieved luminance."""
+        """Get perceived luminance."""
 
         return clamp(round_int(0.299 * self.r + 0.587 * self.g + 0.114 * self.b), 0, 255)
 
     def get_true_luminance(self):
-        """Get true liminance."""
+        """Get true luminance."""
 
         l = self.tohls()[1]
         return clamp(round_int(l * 255.0), 0, 255)
@@ -159,12 +159,12 @@ class RGBA(object):
         self.fromhls(h, l, s)
 
     def tohsv(self):
-        """Convert to HSV color format."""
+        """Convert to `HSV` color format."""
 
         return rgb_to_hsv(self.r * RGB_CHANNEL_SCALE, self.g * RGB_CHANNEL_SCALE, self.b * RGB_CHANNEL_SCALE)
 
     def fromhsv(self, h, s, v):
-        """Convert to RGB from HSV."""
+        """Convert to `RGB` from `HSV`."""
 
         r, g, b = hsv_to_rgb(h, s, v)
         self.r = clamp(round_int(r * 255.0), 0, 255)
@@ -172,12 +172,12 @@ class RGBA(object):
         self.b = clamp(round_int(b * 255.0), 0, 255)
 
     def tohls(self):
-        """Convert to HLS color format."""
+        """Convert to `HLS` color format."""
 
         return rgb_to_hls(self.r * RGB_CHANNEL_SCALE, self.g * RGB_CHANNEL_SCALE, self.b * RGB_CHANNEL_SCALE)
 
     def fromhls(self, h, l, s):
-        """Convert to RGB from HSL."""
+        """Convert to `RGB` from `HSL`."""
 
         r, g, b = hls_to_rgb(h, l, s)
         self.r = clamp(round_int(r * 255.0), 0, 255)
@@ -185,7 +185,7 @@ class RGBA(object):
         self.b = clamp(round_int(b * 255.0), 0, 255)
 
     def tohwb(self):
-        """Convert to HWB from RGB."""
+        """Convert to `HWB` from `RGB`."""
 
         h, s, v = self.tohsv()
         w = (1.0 - s) * v
@@ -193,7 +193,7 @@ class RGBA(object):
         return h, w, b
 
     def fromhwb(self, h, w, b):
-        """Convert to RGB from HWB."""
+        """Convert to `RGB` from `HWB`."""
 
         # Normalize white and black
         # w + b <= 1.0
@@ -202,7 +202,7 @@ class RGBA(object):
             w *= norm_factor
             b *= norm_factor
 
-        # Convert to HSV and then to RGB
+        # Convert to `HSV` and then to `RGB`
         s = 1.0 - (w / (1.0 - b))
         v = 1.0 - b
         r, g, b = hsv_to_rgb(h, s, v)
@@ -310,7 +310,7 @@ class RGBA(object):
         """
         Adjust the brightness by the given factor.
 
-        Brightness is determined by percieved luminance.
+        Brightness is determined by perceived luminance.
         """
 
         channels = ["r", "g", "b"]
