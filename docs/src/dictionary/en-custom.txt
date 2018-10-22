@@ -50,6 +50,7 @@ docstrings
 ebeweber
 facelessuser
 flashios
+formatter
 frontmatter
 frontmatter's
 gforcada

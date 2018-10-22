@@ -230,14 +230,14 @@ def color_box_raw(
             row = list(border * width)
             p.append(row)
 
-    # Create bytes buffer for png
+    # Create bytes buffer for PNG
     with io.BytesIO() as f:
 
-        # Write out png
+        # Write out PNG
         img = Writer(width, height, alpha=alpha)
         img.write(f, p)
 
-        # Read out png bytes and base64 encode
+        # Read out PNG bytes and base64 encode
         f.seek(0)
 
         return f.read()
