@@ -1,7 +1,7 @@
 """Sublime Text language mapping."""
 
 lang_map = {
-    # 'name': (('mapping_alias',), ('tmLanguage_or_sublime-syntax file',))
+    # `'name': (('mapping_alias',), ('tmLanguage_or_sublime-syntax file',))`
     'actionscript': (('as', 'actionscript',), ('ActionScript/ActionScript',)),
     'applescript': (('applescript',), ('AppleScript/AppleScript',)),
     'asp': (('asp',), ('ASP/ASP',)),

@@ -149,7 +149,6 @@ if pygments:
             return (
                 m.group(1) +
                 m.group(2) +
-                # self._linehl_class +
                 '"' +
                 m.group(3) +
                 ' data-linenos="' + m.group(4) + '">' +
@@ -166,13 +165,8 @@ if pygments:
             inline and copy and paste without issue.
             """
 
-            # # Could be used to wrap gutter line number with a highlight class
-            # hls = self.hl_lines
-            # lineno = 0
             for t, line in inner:
                 if t:
-                    # lineno += 1
-                    # self._linehl_class = ' linehl' if lineno in hls else ''
                     line = self.RE_SPAN_NUMS.sub(self._format_custom_line, line)
                 yield t, line
 
@@ -526,7 +520,7 @@ class HighlightTreeprocessor(Treeprocessor):
                     )
                 )
 
-                # Clear codeblock in etree instance
+                # Clear code block in `etree` instance
                 block.clear()
                 # Change to p element which will later
                 # be removed when inserting raw HTML

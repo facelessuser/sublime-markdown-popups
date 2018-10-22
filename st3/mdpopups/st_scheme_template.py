@@ -419,7 +419,7 @@ def get_pygments(style):
     """
 
     try:
-        # Lets see if we can find the pygments theme
+        # Lets see if we can find the Pygments theme
         text = HtmlFormatter(style=style).get_style_defs('.dummy')
         text = re_missing_semi_colon.sub('; }', text)
     except Exception:
@@ -447,7 +447,7 @@ def get_pygments(style):
     if fg is None:
         fg = 'color: #000000'
 
-    # Reassemble replacing .highlight {...} with .codehilite, .inlinehilite {...}
+    # Reassemble replacing .highlight {...} with `.codehilite`, `.inlinehilite` {...}
     # All other classes will be left bare with only their syntax class.
     code_blocks = CODE_BLOCKS
     if m:

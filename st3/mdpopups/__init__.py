@@ -166,7 +166,7 @@ def _get_scheme(view):
     if scheme is not None:
         if scheme in _scheme_cache:
             obj, user_css, default_css, t = _scheme_cache[scheme]
-            # Check if cache expired or user changed pygments setting.
+            # Check if cache expired or user changed Pygments setting.
             if (
                 _is_cache_expired(t) or
                 obj.use_pygments != (not settings.get(HL_SETTING, True)) or
@@ -377,7 +377,7 @@ def md2html(
 
     fm, markup = frontmatter.get_frontmatter(markup)
 
-    # We allways include these
+    # We always include these
     extensions = [
         "mdpopups.mdx.highlight",
         "pymdownx.inlinehilite",
@@ -411,7 +411,7 @@ def md2html(
             ]
         )
 
-        # Use legacy method to determine if nl2b should be used
+        # Use legacy method to determine if `nl2b` should be used
         if nl2br:
             extensions.append('markdown.extensions.nl2br')
     else:

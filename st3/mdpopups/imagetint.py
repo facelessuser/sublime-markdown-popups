@@ -13,7 +13,7 @@ import io
 def tint_raw(byte_string, color, opacity=255):
     """Tint the image and return a byte string."""
 
-    # Read the bytestring as a rgba image.
+    # Read the byte string as a RGBA image.
     width, height, pixels, meta = Reader(bytes=byte_string).asRGBA()
 
     # Clamp opacity
@@ -37,14 +37,14 @@ def tint_raw(byte_string, color, opacity=255):
             start += 4
         y += 1
 
-    # Create bytes buffer for png
+    # Create bytes buffer for PNG
     with io.BytesIO() as f:
 
-        # Write out png
+        # Write out PNG
         img = Writer(width, height, alpha=True)
         img.write(f, p)
 
-        # Read out png bytes and base64 encode
+        # Read out PNG bytes and base64 encode
         f.seek(0)
 
         return f.read()
