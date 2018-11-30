@@ -1,8 +1,8 @@
 # Changelog
 
-## 3.4.0
+## 3.3.4
 
-- **NEW**: Upgrade to handle latest `pymdownx` and `markdown` module.
+- **FIX**: Update code highlight languages.
 
 ## 3.3.3
 
