@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.4.0
+
+- **NEW**: Add support for parsing `hwb()` and `alpha()`/`a()` in color schemes.
+
 ## 3.3.4
 
 - **FIX**: Update code highlight languages.
