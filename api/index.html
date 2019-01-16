@@ -1,0 +1,2369 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+        <meta name="description" content="Popup tooltips for Sublime generated with Markdown.">
+      
+      
+        <link rel="canonical" href="https://facelessuser.github.io/sublime-markdown-popups/api/">
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-3.2.0">
+    
+    
+      
+        <title>API - Sublime Markdown Popups Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application.572ca0f0.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/application-palette.22915126.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#2196f3">
+      
+    
+    
+      <script src="../assets/javascripts/modernizr.8c900955.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="../extra-06017885a7.css">
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448"
+    viewBox="0 0 416 448" id="__github">
+  <path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19-18.125
+        8.5-18.125-8.5-10.75-19-3.125-20.5 3.125-20.5 10.75-19 18.125-8.5
+        18.125 8.5 10.75 19 3.125 20.5zM320 304q0 10-3.125 20.5t-10.75
+        19-18.125 8.5-18.125-8.5-10.75-19-3.125-20.5 3.125-20.5 10.75-19
+        18.125-8.5 18.125 8.5 10.75 19 3.125 20.5zM360
+        304q0-30-17.25-51t-46.75-21q-10.25 0-48.75 5.25-17.75 2.75-39.25
+        2.75t-39.25-2.75q-38-5.25-48.75-5.25-29.5 0-46.75 21t-17.25 51q0 22 8
+        38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0
+        37.25-1.75t35-7.375 30.5-15 20.25-25.75 8-38.375zM416 260q0 51.75-15.25
+        82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5-41.75
+        1.125q-19.5 0-35.5-0.75t-36.875-3.125-38.125-7.5-34.25-12.875-30.25-20.25-21.5-28.75q-15.5-30.75-15.5-82.75
+        0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25
+        30.875q36.75-8.75 77.25-8.75 37 0 70 8 26.25-20.5
+        46.75-30.25t47.25-9.75q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34
+        99.5z" />
+</svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#api" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="https://facelessuser.github.io/sublime-markdown-popups" title="Sublime Markdown Popups Documentation" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon">description</i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            
+              <span class="md-header-nav__topic">
+                Sublime Markdown Popups Documentation
+              </span>
+              <span class="md-header-nav__topic">
+                API
+              </span>
+            
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          
+            <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+            
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+          
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+
+  <a href="https://github.com/facelessuser/sublime-markdown-popups/" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#__github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      GitHub
+    </div>
+  </a>
+
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="https://facelessuser.github.io/sublime-markdown-popups" title="Sublime Markdown Popups Documentation" class="md-nav__button md-logo">
+      
+        <i class="md-icon">description</i>
+      
+    </a>
+    Sublime Markdown Popups Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+
+  <a href="https://github.com/facelessuser/sublime-markdown-popups/" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#__github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      GitHub
+    </div>
+  </a>
+
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="About Markdown Popups" class="md-nav__link">
+      About Markdown Popups
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../installation/" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../settings/" title="User Settings" class="md-nav__link">
+      User Settings
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        API
+      </label>
+    
+    <a href="./" title="API" class="md-nav__link md-nav__link--active">
+      API
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dependencies" title="Dependencies" class="md-nav__link">
+    Dependencies
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#markdown-support" title="Markdown Support" class="md-nav__link">
+    Markdown Support
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#extensions" title="Extensions" class="md-nav__link">
+    Extensions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frontmatter" title="Frontmatter" class="md-nav__link">
+    Frontmatter
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enable-code-wrapping" title="Enable Code Wrapping" class="md-nav__link">
+    Enable Code Wrapping
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-fences" title="Custom Fences" class="md-nav__link">
+    Custom Fences
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-markdown-extensions" title="Configure Markdown Extensions" class="md-nav__link">
+    Configure Markdown Extensions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-frontmatter-from-python-objects" title="Configure Frontmatter From Python Objects" class="md-nav__link">
+    Configure Frontmatter From Python Objects
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#styling" title="Styling" class="md-nav__link">
+    Styling
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-usage" title="API Usage" class="md-nav__link">
+    API Usage
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#version" title="Version" class="md-nav__link">
+    Version
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-popup" title="Show Popup" class="md-nav__link">
+    Show Popup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-popup" title="Update Popup" class="md-nav__link">
+    Update Popup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hide-popup" title="Hide Popup" class="md-nav__link">
+    Hide Popup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-popup-visible" title="Is Popup Visible" class="md-nav__link">
+    Is Popup Visible
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-phantom" title="Add Phantom" class="md-nav__link">
+    Add Phantom
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erase-phantoms" title="Erase Phantoms" class="md-nav__link">
+    Erase Phantoms
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erase-phantom-by-id" title="Erase Phantom by ID" class="md-nav__link">
+    Erase Phantom by ID
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#query-phantom" title="Query Phantom" class="md-nav__link">
+    Query Phantom
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#query-phantoms" title="Query Phantoms" class="md-nav__link">
+    Query Phantoms
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phantom-class" title="Phantom Class" class="md-nav__link">
+    Phantom Class
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phantom-set-class" title="Phantom Set Class" class="md-nav__link">
+    Phantom Set Class
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clear-cache" title="Clear Cache" class="md-nav__link">
+    Clear Cache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#markdown-to-html" title="Markdown to HTML" class="md-nav__link">
+    Markdown to HTML
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#color-box" title="Color Box" class="md-nav__link">
+    Color Box
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#color-box-raw" title="Color Box Raw" class="md-nav__link">
+    Color Box Raw
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tint" title="Tint" class="md-nav__link">
+    Tint
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tint-raw" title="Tint Raw" class="md-nav__link">
+    Tint Raw
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scope-to-style" title="Scope to Style" class="md-nav__link">
+    Scope to Style
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#syntax-highlight" title="Syntax Highlight" class="md-nav__link">
+    Syntax Highlight
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tabs-to-spaces" title="Tabs to Spaces" class="md-nav__link">
+    Tabs to Spaces
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-language-from-view" title="Get Language From View" class="md-nav__link">
+    Get Language From View
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../styling/" title="CSS Styling" class="md-nav__link">
+      CSS Styling
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../faq/" title="F.A.Q" class="md-nav__link">
+      F.A.Q
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../contributing/" title="Contributing &amp; Support" class="md-nav__link">
+      Contributing &amp; Support
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../changelog/" title="Changelog" class="md-nav__link">
+      Changelog
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../license/" title="License" class="md-nav__link">
+      License
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dependencies" title="Dependencies" class="md-nav__link">
+    Dependencies
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#markdown-support" title="Markdown Support" class="md-nav__link">
+    Markdown Support
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#extensions" title="Extensions" class="md-nav__link">
+    Extensions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frontmatter" title="Frontmatter" class="md-nav__link">
+    Frontmatter
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enable-code-wrapping" title="Enable Code Wrapping" class="md-nav__link">
+    Enable Code Wrapping
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-fences" title="Custom Fences" class="md-nav__link">
+    Custom Fences
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-markdown-extensions" title="Configure Markdown Extensions" class="md-nav__link">
+    Configure Markdown Extensions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-frontmatter-from-python-objects" title="Configure Frontmatter From Python Objects" class="md-nav__link">
+    Configure Frontmatter From Python Objects
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#styling" title="Styling" class="md-nav__link">
+    Styling
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-usage" title="API Usage" class="md-nav__link">
+    API Usage
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#version" title="Version" class="md-nav__link">
+    Version
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-popup" title="Show Popup" class="md-nav__link">
+    Show Popup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-popup" title="Update Popup" class="md-nav__link">
+    Update Popup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hide-popup" title="Hide Popup" class="md-nav__link">
+    Hide Popup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is-popup-visible" title="Is Popup Visible" class="md-nav__link">
+    Is Popup Visible
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-phantom" title="Add Phantom" class="md-nav__link">
+    Add Phantom
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erase-phantoms" title="Erase Phantoms" class="md-nav__link">
+    Erase Phantoms
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erase-phantom-by-id" title="Erase Phantom by ID" class="md-nav__link">
+    Erase Phantom by ID
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#query-phantom" title="Query Phantom" class="md-nav__link">
+    Query Phantom
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#query-phantoms" title="Query Phantoms" class="md-nav__link">
+    Query Phantoms
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phantom-class" title="Phantom Class" class="md-nav__link">
+    Phantom Class
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phantom-set-class" title="Phantom Set Class" class="md-nav__link">
+    Phantom Set Class
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clear-cache" title="Clear Cache" class="md-nav__link">
+    Clear Cache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#markdown-to-html" title="Markdown to HTML" class="md-nav__link">
+    Markdown to HTML
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#color-box" title="Color Box" class="md-nav__link">
+    Color Box
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#color-box-raw" title="Color Box Raw" class="md-nav__link">
+    Color Box Raw
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tint" title="Tint" class="md-nav__link">
+    Tint
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tint-raw" title="Tint Raw" class="md-nav__link">
+    Tint Raw
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scope-to-style" title="Scope to Style" class="md-nav__link">
+    Scope to Style
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#syntax-highlight" title="Syntax Highlight" class="md-nav__link">
+    Syntax Highlight
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tabs-to-spaces" title="Tabs to Spaces" class="md-nav__link">
+    Tabs to Spaces
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-language-from-view" title="Get Language From View" class="md-nav__link">
+    Get Language From View
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/facelessuser/sublime-markdown-popups/tree/master/docs/src/markdown/api.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                <h1 id="api">API<a class="headerlink" href="#api" title="Permanent link"></a></h1>
+<h2 id="dependencies">Dependencies<a class="headerlink" href="#dependencies" title="Permanent link"></a></h2>
+<p>Your plugin should include the Package Control dependencies listed below. Please read about Package Control's <a href="https://packagecontrol.io/docs/dependencies">dependencies</a> to learn more.</p>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;*&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;&gt;=3124&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;pygments&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;python-markdown&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mdpopups&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;python-jinja2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;markupsafe&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pymdownx&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pyyaml&quot;</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Check out <a class="magiclink magiclink-github magiclink-repository" href="https://github.com/facelessuser/mdpopup_test" title="GitHub Repository: facelessuser/mdpopup_test">facelessuser/mdpopup_test</a> as an example. Clone it into <code>Packages/mdpopup_test</code>, run <code>Package Control: Satisfy dependencies</code>, and then restart Sublime. You should be able to then run the command <code>Mdpopups: Test</code> to see an example popup or phantom.  Feel free to edit it to learn more.</p>
+<h2 id="markdown-support">Markdown Support<a class="headerlink" href="#markdown-support" title="Permanent link"></a></h2>
+<p>MdPopups uses <a class="magiclink magiclink-github magiclink-repository" href="https://github.com/Python-Markdown/markdown" title="GitHub Repository: Python-Markdown/markdown">Python-Markdown/markdown</a> to parse Markdown and transform it into a Sublime popup or phantom. The Markdown environment supports basic Markdown syntax, but also includes a number of specialty extensions to enhance and extend the Markdown environment.</p>
+<p>Due to the <code>minihtml</code> environment that Sublime uses, the type of tags and CSS that can be used are a bit limited. MdPopups provides a CSS that includes most of the common supported tags that can be used. Then few specific extensions (that work well within the <code>minihtml</code> environment) have been selected to provide support for a some additional useful features.</p>
+<p>Prior to version 2.0.0, the default extensions and extension configurations were locked down, but starting with 2.1.0, this restriction has been mostly removed. Not all Python Markdown extensions and extension options are compatible with Sublime's <code>minihtml</code> environment, and extensions like <code>markdown.extensions.extra</code> can include some extensions that are not compatible, but there are a number of additional extension and extension options that can be used beyond what is provided by default. In general, it is recommended to include each plugin individual on a case by case basis and disable features that aren't compatible.</p>
+<p>Below we will touch on the specific extensions used by default which are known to work in the Sublime <code>minihtml</code> environment. If you are on version 2.1.0+, read on in <a href="#frontmatter">Frontmatter</a> to learn how to customize extensions.</p>
+<h3 id="extensions">Extensions<a class="headerlink" href="#extensions" title="Permanent link"></a></h3>
+<p>These three extensions are setup and configured automatically and should not be configured manually. Also, do not try to use <code>markdown.extensions.codehilite</code> or <code>markdown.extensions.fenced_code</code> as the following extensions have been specifically altered to output Sublime syntax highlighting properly and will clash with <code>markdown.extensions.codehilite</code> and <code>markdown.extensions.fenced_code</code>.</p>
+<ul>
+<li>
+<p><code>mdpopups.mdx.highlight</code> ( a modified version <a href="http://facelessuser.github.io/pymdown-extensions/extensions/highlight/"><code>pymdownx.highlight</code></a> for Sublime Text highlighting) controls and configures the highlighting of code blocks.</p>
+</li>
+<li>
+<p><code>mdpopups.mdx.superfences</code> (a modified version <a href="http://facelessuser.github.io/pymdown-extensions/extensions/superfences/"><code>pymdownx.superfences</code></a> for Sublime Text highlighting) that provides support for nested fenced blocks.</p>
+</li>
+<li>
+<p><code>mdpopups.mdx.inlinehilite</code> (a modified version of [<code>pymdownx.inlinehilite</code>] for Sublime Text highlighting) allows for inline code highlighting: <code>`#!py3thon import module`</code> &rarr; <code class="codehilite">import module</code>. Please don't use this version.</p>
+</li>
+</ul>
+<p>These extensions are provided by Python Markdown:</p>
+<ul>
+<li>
+<p><a href="https://pythonhosted.org/Markdown/extensions/attr_list.html"><code>markdown.extensions.attr_list</code></a> allows you to add HTML attributes to block and inline elements easily.</p>
+</li>
+<li>
+<p><a href="https://pythonhosted.org/Markdown/extensions/nl2br.html"><code>markdown.extensions.nl2br</code></a> turns new lines into <code class="codehilite"><span class="p">&lt;</span><span class="nt">br</span><span class="p">&gt;</span></code> tags.</p>
+</li>
+<li>
+<p><a href="https://pythonhosted.org/Markdown/extensions/definition_lists.html"><code>markdown.extensions.def_list</code></a> adds support for definition lists.</p>
+</li>
+<li>
+<p><a href="https://pythonhosted.org/Markdown/extensions/admonition.html"><code>markdown.extensions.admonition</code></a> provides admonition blocks.</p>
+</li>
+</ul>
+<p>These are 3<sup>rd</sup> party extensions provided by PyMdown Extensions:</p>
+<ul>
+<li>
+<p><a href="http://facelessuser.github.io/pymdown-extensions/extensions/betterem/"><code>pymdownx.betterem</code></a> is an extension that aims to improve upon emphasis support in Python Markdown. MdPopups leaves it configured in its default state where underscores are handled intelligently: <code>_handled_intelligently_</code> &rarr; <em>handled_intelligently</em> and asterisks can be used to do mid word emphasis: <code>em*pha*sis</code> &rarr; em<em>pha</em>sis.</p>
+</li>
+<li>
+<p><a href="http://facelessuser.github.io/pymdown-extensions/extensions/magiclink/"><code>pymdownx.magiclink</code></a> auto links HTML and email links.  In <code>2.1.0</code>+, it also allows the shortening of common repository pull request, issue, and commit links (if configured).</p>
+</li>
+<li>
+<p><a href="http://facelessuser.github.io/pymdown-extensions/extensions/extrarawhtml/"><code>pymdownx.extrarawhtml</code></a> allows you to add <code>markdown="1"</code> to raw, block HTML elements to allow content under them to be parsed with Python markdown (inline tags should already have their content parsed).  This module is exposing <em>just</em> this functionality from the <a href="https://pythonhosted.org/Markdown/extensions/extra.html#nested-markdown-inside-html-blocks">Python Markdown's Extra extension</a> as the feature could not be enabled without including all of the <code>Extra</code> extensions other features.  You can read the Python Markdown's Extra extension documentation to learn more about this feature.</p>
+</li>
+</ul>
+<h2 id="frontmatter">Frontmatter<a class="headerlink" href="#frontmatter" title="Permanent link"></a></h2>
+<p>Frontmatter can be used to configure content in 2.1.0+. The frontmatter must be specified, starting on the first line of the content, before the Markdown.  The frontmatter content should be in YAML syntax and should come between the YAML markers: <code>---</code>.</p>
+<div class="codehilite"><pre><span></span><span class="nn">---</span>
+<span class="c1"># yaml content</span>
+<span class="nn">---</span>
+</pre></div>
+
+<p>Optionally the content can use the ending <code>...</code> as shown below:</p>
+<div class="codehilite"><pre><span></span><span class="nn">---</span>
+<span class="c1"># yaml content</span>
+<span class="nn">...</span>
+</pre></div>
+
+<p>At the base level, the YAML content is a hash table containing key value pairs.</p>
+<div class="codehilite"><pre><span></span><span class="nn">---</span>
+<span class="nt">key1</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">value1</span>
+<span class="nt">key2</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">value2</span>
+<span class="nn">...</span>
+</pre></div>
+
+<h3 id="enable-code-wrapping">Enable Code Wrapping<a class="headerlink" href="#enable-code-wrapping" title="Permanent link"></a></h3>
+<p>The <code>allow_code_wrap</code> setting allows block code tags to have their content wrapped. If disabled (the default), code content will not wrap lines.</p>
+<div class="codehilite"><pre><span></span><span class="nn">---</span>
+<span class="nt">allow_code_wrap</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nn">...</span>
+</pre></div>
+
+<h3 id="custom-fences">Custom Fences<a class="headerlink" href="#custom-fences" title="Permanent link"></a></h3>
+<p>The included <code>mdpopups.mdx.superfences</code> has an option that allows for custom fences. Custom fences are a convenient way to add support for special block content such as UML diagrams. Since configuring <code>mdpopups.mdx.superfences</code> is not allowed directly, you can setup your own custom fences via a separate <code>custom_fences</code> option. See the original SuperFences' <a href="http://facelessuser.github.io/pymdown-extensions/extensions/superfences/#custom-fences">Custom Fences</a> documentation to learn more.</p>
+<div class="codehilite"><pre><span></span><span class="nn">---</span>
+<span class="nt">custom_fences</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">uml</span>
+  <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">uml</span>
+  <span class="nt">format</span><span class="p">:</span> <span class="kt">!!python/name:mdpopup_test.plantuml.uml_format</span>
+<span class="nn">...</span>
+</pre></div>
+
+<p>Checkout <a class="magiclink magiclink-github magiclink-repository" href="https://github.com/facelessuser/mdpopup_test" title="GitHub Repository: facelessuser/mdpopup_test">facelessuser/mdpopup_test</a> to see the UML example above in action.</p>
+<h3 id="configure-markdown-extensions">Configure Markdown Extensions<a class="headerlink" href="#configure-markdown-extensions" title="Permanent link"></a></h3>
+<p>Custom extension configurations are specified under the <code>markdown_extensions</code> key whose value is an array of extensions. Each extension is specified as a string.  If you have specific settings to configure for an extension, simply make that array entry a dictionary where the key name is the extension name, and value is a hash table with all the settings.  The default configuration is below.</p>
+<div class="codehilite"><pre><span></span><span class="nn">---</span>
+<span class="nt">markdown_extensions</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.admonition</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.attr_list</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.def_list</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.nl2br</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pymdownx.betterem</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pymdownx.magiclink</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pymdownx.extrarawhtml</span>
+<span class="nn">...</span>
+</pre></div>
+
+<p>Notice that <code>mdpopups.mdx.highlight</code>, <code>mdpopups.mdx.superfences</code>, and <code>mdpopups.mdx.inlinehilite</code> are not shown here as they cannot be set directly and are handled by automatically by MdPopups.</p>
+<p>Let's say we wanted to keep the default extensions, but we wanted to enable <code>pymdown.magiclink</code>'s repository URL shortening and add and configure <code>pymdownx.keys</code>, <code>pymdownx.escapeall</code>, <code>pymdownx.smartsymbols</code>, and <code>markdown.extensions.smarty</code>. We must specify the full configuration we would like. We will use the base default settings outlined above, adding our new options and extensions.</p>
+<div class="codehilite"><pre><span></span><span class="nn">---</span>
+<span class="nt">markdown_extensions</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.admonition</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.attr_list</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.def_list</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.nl2br</span>
+<span class="p p-Indicator">-</span> <span class="nt">markdown.extensions.smarty</span><span class="p">:</span>
+    <span class="nt">smart_quotes</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pymdownx.betterem</span>
+<span class="p p-Indicator">-</span> <span class="nt">pymdownx.magiclink</span><span class="p">:</span>
+    <span class="nt">base_repo_url</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">https://github.com/facelessuser/sublime-markdown-popups</span>
+    <span class="nt">repo_url_shortener</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pymdownx.extrarawhtml</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pymdownx.keys</span>
+<span class="p p-Indicator">-</span> <span class="nt">pymdownx.escapeall</span><span class="p">:</span>
+    <span class="nt">hardbreak</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+    <span class="nt">nbsp</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="p p-Indicator">-</span> <span class="nt">pymdownx.smartsymbols</span><span class="p">:</span>
+    <span class="nt">ordinal_numbers</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nn">...</span>
+</pre></div>
+
+<h3 id="configure-frontmatter-from-python-objects">Configure Frontmatter From Python Objects<a class="headerlink" href="#configure-frontmatter-from-python-objects" title="Permanent link"></a></h3>
+<p>A lot of times in plugins, it may be easier to build up a Python dictionary and convert it to YAML.  MdPopups provides a function to exactly this:</p>
+<div class="codehilite"><pre><span></span><span class="n">frontmatter</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;allow_code_wrap&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+    <span class="s2">&quot;markdown_extensions&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;markdown.extensions.admonition&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;markdown.extensions.attr_list&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;markdown.extensions.def_list&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;markdown.extensions.nl2br&quot;</span><span class="p">,</span>
+        <span class="c1"># Smart quotes always have corner cases that annoy me, so don&#39;t bother with them.</span>
+        <span class="p">{</span><span class="s2">&quot;markdown.extensions.smarty&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;smart_quotes&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}},</span>
+        <span class="s2">&quot;pymdownx.betterem&quot;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;pymdownx.magiclink&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;repo_url_shortener&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">&quot;base_repo_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://github.com/facelessuser/sublime-markdown-popups&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;pymdownx.extrarawhtml&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pymdownx.keys&quot;</span><span class="p">,</span>
+        <span class="p">{</span><span class="s2">&quot;pymdownx.escapeall&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;hardbreak&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;nbsp&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+        <span class="c1"># Sublime doesn&#39;t support superscript, so no ordinal numbers</span>
+        <span class="p">{</span><span class="s2">&quot;pymdownx.smartsymbols&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;ordinal_numbers&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">content</span> <span class="o">=</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">format_frontmatter</span><span class="p">(</span><span class="n">frontmatter</span><span class="p">)</span> <span class="o">+</span> <span class="n">markdown_content</span>
+</pre></div>
+
+<h2 id="styling">Styling<a class="headerlink" href="#styling" title="Permanent link"></a></h2>
+<p>Popups and phantoms are styled with CSS that is fed through the Jinja2 template engine. A default CSS is provided that styles commonly used elements. Plugins can provide CSS to add additional styling for plugin specific purposes. See <a href="../styling/">CSS Styling</a> to learn more about the template engine and general styling info.</p>
+<p>It is advised to use the <code>wrapper_class</code> option of the <code>show_popup</code>, <code>update_popup</code>, and <code>add_phantom</code> commands to wrap your plugin content in a div with a unique, plugin specific class.  This way plugins can inject CSS to style their specific elements via <code class="codehilite"><span class="p">.</span><span class="nc">mdpopups</span> <span class="p">.</span><span class="nc">myplugin-wrapper</span> <span class="p">.</span><span class="nc">myclass</span> <span class="p">{}</span></code> or simply <code class="codehilite"><span class="p">.</span><span class="nc">myplugin-wrapper</span> <span class="p">.</span><span class="nc">myclass</span> <span class="p">{}</span></code>.</p>
+<p>Also check out the included Python Markdown <a href="https://pythonhosted.org/Markdown/extensions/attr_list.html"><code>attr_list</code> extension syntax</a>. This is a good extension for applying classes directly to elements within Markdown format. Sometimes it can be difficult to target certain kinds of block elements, so if all else fails, you can insert raw HTML for specific elements into your Markdown and apply classes directly to them.</p>
+<h2 id="api-usage">API Usage<a class="headerlink" href="#api-usage" title="Permanent link"></a></h2>
+<p>MdPopups provides a number of accessible functions.</p>
+<h3 id="version">Version<a class="headerlink" href="#version" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="p">(</span><span class="nb">int</span><span class="p">,)</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">version</span></code></dt>
+<dd>Returns the version of the MdPopups library.  Returns a tuple of integers which represents the major, minor, and patch version.</dd>
+</dl>
+<h3 id="show-popup">Show Popup<a class="headerlink" href="#show-popup" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="n">mdpopups</span><span class="o">.</span><span class="n">show_popup</span></code></dt>
+<dd>
+<p>Accepts Markdown and creates a Sublime popup.  By default, the built-in Sublime syntax highlighter will be used for code highlighting.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>view</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">View</span></code></td>
+<td></td>
+<td>A Sublime Text view object.</td>
+</tr>
+<tr>
+<td><code>content</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>Markdown/HTML content for the popup.</td>
+</tr>
+<tr>
+<td><code>md</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">True</span></code></td>
+<td>Defines whether the content is Markdown and needs to be converted.</td>
+</tr>
+<tr>
+<td><code>css</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>Additional CSS that will be injected.</td>
+</tr>
+<tr>
+<td><code>flags</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">0</span></code></td>
+<td>Flags to pass down to the Sublime Text <code>view.show_popup</code> call.</td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="o">-</span><span class="mi">1</span></code></td>
+<td>Location to show popup in view.  -1 means to show right under the first cursor.</td>
+</tr>
+<tr>
+<td><code>max_width</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">320</span></code></td>
+<td>Maximum width of the popup.</td>
+</tr>
+<tr>
+<td><code>max_height</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">240</span></code></td>
+<td>Maximum height of the popup.</td>
+</tr>
+<tr>
+<td><code>on_navigate</code></td>
+<td><code class="codehilite"><span class="k">def</span> <span class="nf">fn</span><span class="p">()</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>Callback that receives one variable <code>href</code>.</td>
+</tr>
+<tr>
+<td><code>on_hide</code></td>
+<td><code class="codehilite"><span class="k">def</span> <span class="nf">fn</span><span class="p">()</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>Callback for when the popup is hidden.</td>
+</tr>
+<tr>
+<td><code>wrapper_class</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A string containing the class name you wish wrap your content in.  A <code>div</code> will be created with the given class.</td>
+</tr>
+<tr>
+<td><code>template_vars</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object <code>plugin</code>.</td>
+</tr>
+<tr>
+<td><code>template_env_options</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A dictionary containing options for the Jinja2 template environment. This <strong>only</strong> applies to the <strong>HTML/Markdown</strong> content.</td>
+</tr>
+<tr>
+<td><code>nl2br</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">True</span></code></td>
+<td>Determines whether the newline to <code class="codehilite"><span class="p">&lt;</span><span class="nt">br</span><span class="p">&gt;</span></code> Python Markdown extension is enabled or not. Will be ignored if <code>markdown_extensions</code> is configured in YAML frontmatter.</td>
+</tr>
+<tr>
+<td><code>allow_code_wrap</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">False</span></code></td>
+<td>Do not convert all the spaces in code blocks to <code>&amp;nbsp;</code> so that wrapping can occur. YAML frontmatter's <code>allow_code_wrap</code> will always be used instead of this if specified.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Deprecation</p>
+<p>In 2.1.0 <code>nl2br</code> and <code>alow_code_wrap</code> are deprecated. The legacy parameters here will be dropped by 2018 for <abbr title="Sublime Text 3">ST3</abbr> and these settings will not carry over to <abbr title="Sublime Text 4">ST4</abbr>.</p>
+<p>To disable <code>nl2br</code>, you can customize which extensions get loaded; see <a href="#configure-markdown-extensions">Configure Markdown Extensions</a>.</p>
+<p>To enable code wrapping, see <a href="#enable-code-wrapping">Enable Code Wrapping</a>.</p>
+</div>
+</dd>
+</dl>
+<h3 id="update-popup">Update Popup<a class="headerlink" href="#update-popup" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="n">mdpopups</span><span class="o">.</span><span class="n">update_popup</span></code></dt>
+<dd>
+<p>Updates the current existing popup.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>view</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">View</span></code></td>
+<td></td>
+<td>A Sublime Text view object.</td>
+</tr>
+<tr>
+<td><code>content</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>Markdown/HTML content for the popup.</td>
+</tr>
+<tr>
+<td><code>md</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">True</span></code></td>
+<td>Defines whether the content is Markdown and needs to be converted.</td>
+</tr>
+<tr>
+<td><code>css</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>Additional CSS that will be injected.</td>
+</tr>
+<tr>
+<td><code>wrapper_class</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A string containing the class name you wish wrap your content in.  A <code>div</code> will be created with the given class.</td>
+</tr>
+<tr>
+<td><code>template_vars</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object <code>plugin</code>.</td>
+</tr>
+<tr>
+<td><code>template_env_options</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A dictionary containing options for the Jinja2 template environment. This <strong>only</strong> applies to the <strong>HTML/Markdown</strong> content.</td>
+</tr>
+<tr>
+<td><code>nl2br</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">True</span></code></td>
+<td>Determines whether the newline to <code class="codehilite"><span class="p">&lt;</span><span class="nt">br</span><span class="p">&gt;</span></code> Python Markdown extension is enabled or not. Will be ignored if <code>markdown_extensions</code> is configured in YAML frontmatter.</td>
+</tr>
+<tr>
+<td><code>allow_code_wrap</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">False</span></code></td>
+<td>Do not convert all the spaces in code blocks to <code>&amp;nbsp;</code> so that wrapping can occur. YAML frontmatter's <code>allow_code_wrap</code> will always be used instead of this if specified.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Deprecation</p>
+<p>In 2.1.0 <code>nl2br</code> and <code>alow_code_wrap</code> are deprecated. The legacy parameters here will be dropped by 2018 for <abbr title="Sublime Text 3">ST3</abbr> and these settings will not carry over to <abbr title="Sublime Text 4">ST4</abbr>.</p>
+<p>To disable <code>nl2br</code>, you can customize which extensions get loaded; see <a href="#configure-markdown-extensions">Configure Markdown Extensions</a>.</p>
+<p>To enable code wrapping, see <a href="#enable-code-wrapping">Enable Code Wrapping</a>.</p>
+</div>
+</dd>
+</dl>
+<h3 id="hide-popup">Hide Popup<a class="headerlink" href="#hide-popup" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="n">mdpopups</span><span class="o">.</span><span class="n">hide_popup</span></code></dt>
+<dd>
+<p>Hides the current popup.  Included for convenience and consistency.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>view</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">View</span></code></td>
+<td></td>
+<td>A Sublime Text view object.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<h3 id="is-popup-visible">Is Popup Visible<a class="headerlink" href="#is-popup-visible" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="nb">bool</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">is_popup_visible</span></code></dt>
+<dd>
+<p>Checks if popup is visible in the view. Included for convenience and consistency.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>view</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">View</span></code></td>
+<td></td>
+<td>A Sublime Text view object.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<h3 id="add-phantom">Add Phantom<a class="headerlink" href="#add-phantom" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="nb">int</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">add_phantom</span></code></dt>
+<dd>
+<p>Adds a phantom to the view and returns the phantom id as an integer. By default, the built-in Sublime syntax highlighter will be used for code highlighting. </p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>view</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">View</span></code></td>
+<td></td>
+<td>A Sublime Text view object.</td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>A key that is associated with the given phantom.  Multiple phantoms can share the same key, but each phantom will have its own id.</td>
+</tr>
+<tr>
+<td><code>region</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">Region</span></code></td>
+<td></td>
+<td>Region in the view where the phantom should be inserted.</td>
+</tr>
+<tr>
+<td><code>content</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>Markdown/HTML content for the phantom.</td>
+</tr>
+<tr>
+<td><code>layout</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td></td>
+<td>How the HTML content should be inserted.  Acceptable values are: <code>sublime.LAYOUT_INLINE</code>, <code>sublime.LAYOUT_BLOCK</code>, and <code>sublime.LAYOUT_BELOW</code>.</td>
+</tr>
+<tr>
+<td><code>md</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">True</span></code></td>
+<td>Defines whether the content is Markdown and needs to be converted.</td>
+</tr>
+<tr>
+<td><code>css</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>Additional CSS that will be injected.</td>
+</tr>
+<tr>
+<td><code>on_navigate</code></td>
+<td><code class="codehilite"><span class="k">def</span> <span class="nf">fn</span><span class="p">()</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>Callback that receives one variable <code>href</code>.</td>
+</tr>
+<tr>
+<td><code>wrapper_class</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A string containing the class name you wish wrap your content in.  A <code>div</code> will be created with the given class.</td>
+</tr>
+<tr>
+<td><code>template_vars</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content.A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object <code>plugin</code>.</td>
+</tr>
+<tr>
+<td><code>template_env_options</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A dictionary containing options for the Jinja2 template environment. This <strong>only</strong> applies to the <strong>HTML/Markdown</strong> content. Content plugin vars are found under the object: <code>plugin</code>.A dictionary containing options for the Jinja2 template environment. This <strong>only</strong> applies to the <strong>HTML/Markdown</strong> content.</td>
+</tr>
+<tr>
+<td><code>nl2br</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">True</span></code></td>
+<td>Determines whether the newline to <code class="codehilite"><span class="p">&lt;</span><span class="nt">br</span><span class="p">&gt;</span></code> Python Markdown extension is enabled or not. Will be ignored if <code>markdown_extensions</code> is configured in YAML frontmatter.</td>
+</tr>
+<tr>
+<td><code>allow_code_wrap</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">False</span></code></td>
+<td>Do not convert all the spaces in code blocks to <code>&amp;nbsp;</code> so that wrapping can occur. YAML frontmatter's <code>allow_code_wrap</code> will always be used instead of this if specified.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Deprecation</p>
+<p>In 2.1.0 <code>nl2br</code> and <code>alow_code_wrap</code> are deprecated. The legacy parameters here will be dropped by 2018 for <abbr title="Sublime Text 3">ST3</abbr> and these settings will not carry over to <abbr title="Sublime Text 4">ST4</abbr>.</p>
+<p>To disable <code>nl2br</code>, you can customize which extensions get loaded; see <a href="#configure-markdown-extensions">Configure Markdown Extensions</a>.</p>
+<p>To enable code wrapping, see <a href="#enable-code-wrapping">Enable Code Wrapping</a>.</p>
+</div>
+</dd>
+</dl>
+<h3 id="erase-phantoms">Erase Phantoms<a class="headerlink" href="#erase-phantoms" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="n">mdpopups</span><span class="o">.</span><span class="n">erase_phantoms</span></code></dt>
+<dd>
+<p>Erase all phantoms associated with the given key. Included for convenience and consistency.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>view</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">View</span></code></td>
+<td></td>
+<td>A Sublime Text view object.</td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>A key that is associated with phantoms.  Multiple phantoms can share the same key, but each phantom will have its own id.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<h3 id="erase-phantom-by-id">Erase Phantom by ID<a class="headerlink" href="#erase-phantom-by-id" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="n">mdpopups</span><span class="o">.</span><span class="n">erase_phantom_by_id</span></code></dt>
+<dd>
+<p>Erase a single phantom by its id.  Included for convenience and consistency.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>view</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">View</span></code></td>
+<td></td>
+<td>A Sublime Text view object.</td>
+</tr>
+<tr>
+<td><code>pid</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>The id associated with a single phantom.  Multiple phantoms can share the same key, but each phantom will have its own id.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<h3 id="query-phantom">Query Phantom<a class="headerlink" href="#query-phantom" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="p">[</span><span class="n">sublime</span><span class="o">.</span><span class="n">Region</span><span class="p">]</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">query_phantom</span></code></dt>
+<dd>
+<p>Query the location of a phantom by specifying its id.  A list of <code>sublime.Region</code>s will be returned.  If the phantom with the given id is not found, the region will be returned with positions of <code>(-1, -1)</code>.  Included for convenience and consistency.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>view</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">View</span></code></td>
+<td></td>
+<td>A Sublime Text view object.</td>
+</tr>
+<tr>
+<td><code>pid</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td></td>
+<td>The id associated with a single phantom.  Multiple phantoms can share the same key, but each phantom will have its own id.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<h3 id="query-phantoms">Query Phantoms<a class="headerlink" href="#query-phantoms" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="p">[</span><span class="n">sublime</span><span class="o">.</span><span class="n">Region</span><span class="p">]</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">query_phantoms</span></code></dt>
+<dd>
+<p>Query the location of multiple phantoms by specifying their ids.  A list of <code>sublime.Region</code>s will be returned where each index corresponds to the index of ids that was passed in.  If a given phantom id is not found, that region will be returned with positions of <code>(-1, -1)</code>.  Included for convenience and consistency.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>view</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">View</span></code></td>
+<td></td>
+<td>A Sublime Text view object.</td>
+</tr>
+<tr>
+<td><code>pids</code></td>
+<td><code class="codehilite"><span class="p">[</span><span class="nb">int</span><span class="p">]</span></code></td>
+<td></td>
+<td>A list of ids associated with phantoms.  Multiple phantoms can share the same key, but each phantom will have its own id.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<h3 id="phantom-class">Phantom Class<a class="headerlink" href="#phantom-class" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="n">mdpopups</span><span class="o">.</span><span class="n">Phantoms</span></code></dt>
+<dd>
+<p>A phantom object for use with <a href="#phantomset-class"><code>PhantomSet</code></a>.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>region</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">Region</span></code></td>
+<td></td>
+<td>Region in the view where the phantom should be inserted.</td>
+</tr>
+<tr>
+<td><code>content</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>Markdown/HTML content for the phantom.</td>
+</tr>
+<tr>
+<td><code>layout</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td></td>
+<td>How the HTML content should be inserted.  Acceptable values are: <code>sublime.LAYOUT_INLINE</code>, <code>sublime.LAYOUT_BLOCK</code>, and <code>sublime.LAYOUT_BELOW</code>.</td>
+</tr>
+<tr>
+<td><code>md</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">True</span></code></td>
+<td>Defines whether the content is Markdown and needs to be converted.</td>
+</tr>
+<tr>
+<td><code>css</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>Additional CSS that will be injected.</td>
+</tr>
+<tr>
+<td><code>on_navigate</code></td>
+<td><code class="codehilite"><span class="k">def</span> <span class="nf">fn</span><span class="p">()</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>Callback that receives one variable <code>href</code>.</td>
+</tr>
+<tr>
+<td><code>wrapper_class</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A string containing the class name you wish wrap your content in.  A <code>div</code> will be created with the given class.</td>
+</tr>
+<tr>
+<td><code>template_vars</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content.A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object <code>plugin</code>.</td>
+</tr>
+<tr>
+<td><code>template_env_options</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A dictionary containing options for the Jinja2 template environment. This <strong>only</strong> applies to the <strong>HTML/Markdown</strong> content. Content plugin vars are found under the object: <code>plugin</code>.A dictionary containing options for the Jinja2 template environment. This <strong>only</strong> applies to the <strong>HTML/Markdown</strong> content.</td>
+</tr>
+<tr>
+<td><code>nl2br</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">True</span></code></td>
+<td>Determines whether the newline to <code class="codehilite"><span class="p">&lt;</span><span class="nt">br</span><span class="p">&gt;</span></code> Python Markdown extension is enabled or not. Will be ignored if <code>markdown_extensions</code> is configured in YAML frontmatter.</td>
+</tr>
+<tr>
+<td><code>allow_code_wrap</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">False</span></code></td>
+<td>Do not convert all the spaces in code blocks to <code>&amp;nbsp;</code> so that wrapping can occur. YAML frontmatter's <code>allow_code_wrap</code> will always be used instead of this if specified.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Attributes</strong></p>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>region</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">Region</span></code></td>
+<td>Region in the view where the phantom should be inserted.</td>
+</tr>
+<tr>
+<td><code>content</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td>Markdown/HTML content for the phantom.</td>
+</tr>
+<tr>
+<td><code>layout</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td>How the HTML content should be inserted.  Acceptable values are: <code>sublime.LAYOUT_INLINE</code>, <code>sublime.LAYOUT_BLOCK</code>, and <code>sublime.LAYOUT_BELOW</code>.</td>
+</tr>
+<tr>
+<td><code>md</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td>Defines whether the content is Markdown and needs to be converted.</td>
+</tr>
+<tr>
+<td><code>css</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td>Additional CSS that will be injected.</td>
+</tr>
+<tr>
+<td><code>on_navigate</code></td>
+<td><code class="codehilite"><span class="k">def</span> <span class="nf">fn</span><span class="p">()</span></code></td>
+<td>Callback that receives one variable <code>href</code>.</td>
+</tr>
+<tr>
+<td><code>wrapper_class</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td>A string containing the class name you wish wrap your content in.  A <code>div</code> will be created with the given class.</td>
+</tr>
+<tr>
+<td><code>template_vars</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td>A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content.A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object <code>plugin</code>.</td>
+</tr>
+<tr>
+<td><code>template_env_options</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td>A dictionary containing options for the Jinja2 template environment. This <strong>only</strong> applies to the <strong>HTML/Markdown</strong> content. Content plugin vars are found under the object: <code>plugin</code>.A dictionary containing options for the Jinja2 template environment. This <strong>only</strong> applies to the <strong>HTML/Markdown</strong> content.</td>
+</tr>
+<tr>
+<td><code>nl2br</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">True</span></code></td>
+</tr>
+<tr>
+<td><code>allow_code_wrap</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">False</span></code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Deprecation</p>
+<p>In 2.1.0 <code>nl2br</code> and <code>alow_code_wrap</code> are deprecated. The legacy parameters here will be dropped by 2018 for <abbr title="Sublime Text 3">ST3</abbr> and these settings will not carry over to <abbr title="Sublime Text 4">ST4</abbr>.</p>
+<p>To disable <code>nl2br</code>, you can customize which extensions get loaded; see <a href="#configure-markdown-extensions">Configure Markdown Extensions</a>.</p>
+<p>To enable code wrapping, see <a href="#enable-code-wrapping">Enable Code Wrapping</a>.</p>
+</div>
+</dd>
+</dl>
+<h3 id="phantom-set-class">Phantom Set Class<a class="headerlink" href="#phantom-set-class" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="n">mdpopups</span><span class="o">.</span><span class="n">PhantomSet</span></code></dt>
+<dd>
+<p>A class that allows you to update phantoms under the specified key.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>view</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">View</span></code></td>
+<td></td>
+<td>A Sublime Text view object.</td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>The key that should be associated with all related phantoms in the set.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Methods</strong></p>
+<dl>
+<dt><code>mdpopups.PhantomSet.update</code></dt>
+<dd>
+<p>Update all the phantoms in the set with the given phantom list.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>new_phantoms</code></td>
+<td><a href="#class-phantom"><code class="codehilite"><span class="p">[</span><span class="n">mdpopups</span><span class="o">.</span><span class="n">Phantom</span><span class="p">]</span></code></a></td>
+<td></td>
+<td>A list of MdPopups phantoms. <code>sublime.Phantom</code> will be converted to <code>mdpopups.Phantom</code>.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd>
+</dl>
+<h3 id="clear-cache">Clear Cache<a class="headerlink" href="#clear-cache" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="n">mdpopups</span><span class="o">.</span><span class="n">clear_cache</span></code></dt>
+<dd>Clears the CSS theme related caches.</dd>
+</dl>
+<h3 id="markdown-to-html">Markdown to HTML<a class="headerlink" href="#markdown-to-html" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="nb">str</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">md2html</span></code></dt>
+<dd>
+<p>Exposes the Markdown to HTML converter in case it is desired to parse only a section of markdown.  This works well for someone who wants to work directly in HTML, but might want to still have fragments of markdown that they would like to occasionally convert. By default, the built-in Sublime syntax highlighter will be used for code highlighting.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>view</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">View</span></code></td>
+<td>Yes</td>
+<td></td>
+<td>Sublime text View object.</td>
+</tr>
+<tr>
+<td><code>markup</code></td>
+<td><code class="codehilite"><span class="n">string</span></code></td>
+<td>Yes</td>
+<td></td>
+<td>The markup code to be converted.</td>
+</tr>
+<tr>
+<td><code>template_vars</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td>No</td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content.A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object <code>plugin</code>.</td>
+</tr>
+<tr>
+<td><code>template_env_options</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td>No</td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A dictionary containing options for the Jinja2 template environment. This <strong>only</strong> applies to the <strong>HTML/Markdown</strong> content. Content plugin vars are found under the object: <code>plugin</code>.A dictionary containing options for the Jinja2 template environment. This <strong>only</strong> applies to the <strong>HTML/Markdown</strong> content.</td>
+</tr>
+<tr>
+<td><code>nl2br</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">True</span></code></td>
+<td>Determines whether the newline to <code class="codehilite"><span class="p">&lt;</span><span class="nt">br</span><span class="p">&gt;</span></code> Python Markdown extension is enabled or not. Will be ignored if <code>markdown_extensions</code> is configured in YAML frontmatter.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>allow_code_wrap</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">False</span></code></td>
+<td>Do not convert all the spaces in code blocks to <code>&amp;nbsp;</code> so that wrapping can occur. YAML frontmatter's <code>allow_code_wrap</code> will always be used instead of this if specified.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Deprecation</p>
+<p>In 2.1.0 <code>nl2br</code> and <code>alow_code_wrap</code> are deprecated. The legacy parameters here will be dropped by 2018 for <abbr title="Sublime Text 3">ST3</abbr> and these settings will not carry over to <abbr title="Sublime Text 4">ST4</abbr>.</p>
+<p>To disable <code>nl2br</code>, you can customize which extensions get loaded; see <a href="#configure-markdown-extensions">Configure Markdown Extensions</a>.</p>
+<p>To enable code wrapping, see <a href="#enable-code-wrapping">Enable Code Wrapping</a>.</p>
+</div>
+</dd>
+</dl>
+<h3 id="color-box">Color Box<a class="headerlink" href="#color-box" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="nb">str</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">color_box</span></code></dt>
+<dd>
+<p>Generates a color preview box image encoded in base 64 and formatted to be inserted right in your your Markdown or HTML code as an <code>img</code> tag.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>colors</code></td>
+<td><code class="codehilite"><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code></td>
+<td></td>
+<td>A list of color strings formatted as <code>#RRGGBBAA</code> where <code>R</code> is the red channel, <code>G</code> is the green channel, <code>B</code> is the blue channel, and <code>A</code> is the alpha channel.</td>
+</tr>
+<tr>
+<td><code>border</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>The color for the color box border.  Input is a RGB color formatted as <code>#RRGGBB</code>.</td>
+</tr>
+<tr>
+<td><code>border2</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>The optional secondary border color.  This is great if you are going to have it on a light and dark backgrounds.  You can use a double border so the color stands out regardless of the background.  Input is a RGB color formatted as <code>#RRGGBB</code>.</td>
+</tr>
+<tr>
+<td><code>height</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">32</span></code></td>
+<td>Height of color box.</td>
+</tr>
+<tr>
+<td><code>width</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">32</span></code></td>
+<td>Width of color box.</td>
+</tr>
+<tr>
+<td><code>border_size</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">1</span></code></td>
+<td>Width of the color box border.  If using <code>border2</code>, the value should be set to at least 2 to see both colors.</td>
+</tr>
+<tr>
+<td><code>check_size</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">4</span></code></td>
+<td>Size of checkered box squares used for the background of transparent colors.</td>
+</tr>
+<tr>
+<td><code>max_colors</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">5</span></code></td>
+<td>Max number of colors that will be evaluated in the <code>colors</code> parameter.  Multiple colors are used to to create palette boxes showing multiple colors lined up horizontally.</td>
+</tr>
+<tr>
+<td><code>alpha</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">False</span></code></td>
+<td>Will create color box images with a real alpha channel instead of simulating one with a checkered background.</td>
+</tr>
+<tr>
+<td><code>border_map</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mh">0xF</span></code></td>
+<td>A mapping of which borders to show.  Where <code>0x1</code> is <code>TOP</code>, <code>0x2</code> is <code>LEFT</code>, <code>0x4</code> is <code>BOTTOM</code>, <code>0x8</code> is <code>RIGHT</code>.  Map flags can be accessed via <code>mdpopups.colorbox.TOP</code> etc.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<h3 id="color-box-raw">Color Box Raw<a class="headerlink" href="#color-box-raw" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="nb">bytes</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">color_box</span></code></dt>
+<dd>
+<p>Generates a color preview box image and returns the raw byte string of the image.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>colors</code></td>
+<td><code class="codehilite"><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code></td>
+<td></td>
+<td>A list of color strings formatted as <code>#RRGGBBAA</code> where <code>R</code> is the red channel, <code>G</code> is the green channel, <code>B</code> is the blue channel, and <code>A</code> is the alpha channel.</td>
+</tr>
+<tr>
+<td><code>border</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>The color for the color box border.  Input is a RGB color formatted as <code>#RRGGBB</code>.</td>
+</tr>
+<tr>
+<td><code>border2</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>The optional secondary border color.  This is great if you are going to have it on a light and dark backgrounds.  You can use a double border so the color stands out regardless of the background.  Input is a RGB color formatted as <code>#RRGGBB</code>.</td>
+</tr>
+<tr>
+<td><code>height</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">32</span></code></td>
+<td>Height of color box.</td>
+</tr>
+<tr>
+<td><code>width</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">32</span></code></td>
+<td>Width of color box.</td>
+</tr>
+<tr>
+<td><code>border_size</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">1</span></code></td>
+<td>Width of the color box border.  If using <code>border2</code>, the value should be set to at least 2 to see both colors.</td>
+</tr>
+<tr>
+<td><code>check_size</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">4</span></code></td>
+<td>Size of checkered box squares used for the background of transparent colors.</td>
+</tr>
+<tr>
+<td><code>max_colors</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">5</span></code></td>
+<td>Max number of colors that will be evaluated in the <code>colors</code> parameter.  Multiple colors are used to to create palette boxes showing multiple colors lined up horizontally.</td>
+</tr>
+<tr>
+<td><code>alpha</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">False</span></code></td>
+<td>Will create color box images with a real alpha channel instead of simulating one with a checkered background.</td>
+</tr>
+<tr>
+<td><code>border_map</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mh">0xF</span></code></td>
+<td>A mapping of which borders to show.  Where <code>0x1</code> is <code>TOP</code>, <code>0x2</code> is <code>LEFT</code>, <code>0x4</code> is <code>BOTTOM</code>, <code>0x8</code> is <code>RIGHT</code>.  Map flags can be accessed via <code>mdpopups.colorbox.TOP</code> etc.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<h3 id="tint">Tint<a class="headerlink" href="#tint" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="nb">str</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">tint</span></code></dt>
+<dd>
+<p>Takes a either a path to an PNG or a byte string of a PNG and tints it with a specific color and returns a string containing the base 64 encoded PNG in a HTML element.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>img</code></td>
+<td><code class="codehilite"><span class="nb">str</span><span class="o">/</span><span class="nb">bytes</span></code></td>
+<td></td>
+<td>Either a string in the form <code>Packages/Package/resource.png</code> or a byte string of a PNG image.</td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>A string in the form of <code>#RRGGBB</code> or <code>#RRGGBBAA</code> (alpha layer will be stripped and ignored and is only allowed to make it easy to pass in colors from a color scheme).</td>
+</tr>
+<tr>
+<td><code>opacity</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">255</span></code></td>
+<td>An integer value between 0 - 255 that specifies the opacity of the tint.</td>
+</tr>
+<tr>
+<td><code>height</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>Height that should be specified in the return HTML element.</td>
+</tr>
+<tr>
+<td><code>width</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>Width that should be specified in the return HTML element.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<h3 id="tint-raw">Tint Raw<a class="headerlink" href="#tint-raw" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="nb">bytes</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">tint_raw</span></code></dt>
+<dd>
+<p>Takes a either a path to an PNG or a byte string of a PNG and tints it with a specific color and returns a byte string of the modified PNG.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>img</code></td>
+<td><code class="codehilite"><span class="nb">str</span><span class="o">/</span><span class="nb">bytes</span></code></td>
+<td></td>
+<td>Either a string in the form <code>Packages/Package/resource.png</code> or a byte string of a PNG image.</td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>A string in the form of <code>#RRGGBB</code> or <code>#RRGGBBAA</code> (alpha layer will be stripped and ignored and is only allowed to make it easy to pass in colors from a color scheme).</td>
+</tr>
+<tr>
+<td><code>opacity</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">255</span></code></td>
+<td>An integer value between 0 - 255 that specifies the opacity of the tint.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<h3 id="scope-to-style">Scope to Style<a class="headerlink" href="#scope-to-style" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="nb">dict</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">scope2style</span></code></dt>
+<dd>
+<p>Takes a sublime scope (complexity doesn't matter), and guesses the style that would be applied.  While there may be untested corner cases with complex scopes where it fails, in general, it is usually accurate.  The returned dictionary is in the form:</p>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+    <span class="c1"># Colors will be None if not found,</span>
+    <span class="c1"># though usually, even if the scope has no color</span>
+    <span class="c1"># it will return the overall theme foreground.</span>
+    <span class="c1">#</span>
+    <span class="c1"># Background might be None if using `explicit_background`</span>
+    <span class="c1"># as it only returns a background if that style specifically</span>
+    <span class="c1"># defines a background.</span>
+    <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#RRGGBB&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;background&quot;</span><span class="p">:</span> <span class="s2">&quot;#RRGGBB&quot;</span><span class="p">,</span>
+    <span class="c1"># Style will usually be either &#39;bold&#39;, &#39;italic&#39;.</span>
+    <span class="c1"># Multiple styles may be returned &#39;bold italic&#39; or an empty string &#39;&#39;.</span>
+    <span class="s2">&quot;style&quot;</span><span class="p">:</span> <span class="s1">&#39;bold italic&#39;</span>
+<span class="p">}</span>
+</pre></div>
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>view</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">View</span></code></td>
+<td></td>
+<td>Sublime text View object so that the correct color scheme will be searched.</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td><code class="codehilite"><span class="n">string</span></code></td>
+<td></td>
+<td>The scope to search for.</td>
+</tr>
+<tr>
+<td><code>selected</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">False</span></code></td>
+<td>Whether this scope is in a selected state (selected text).</td>
+</tr>
+<tr>
+<td><code>explicit_background</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">False</span></code></td>
+<td>Only return a background if one is explicitly defined in the color scheme.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<h3 id="syntax-highlight">Syntax Highlight<a class="headerlink" href="#syntax-highlight" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="nb">str</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">syntax_highlight</span></code></dt>
+<dd>
+<p>Allows for syntax highlighting outside the Markdown environment.  You can just feed it code directly and give it the language of your choice, and you will be returned a block of HTML that has been syntax highlighted. By default, the built-in Sublime syntax highlighter will be used for code highlighting.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>view</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">View</span></code></td>
+<td></td>
+<td>Sublime text View object.</td>
+</tr>
+<tr>
+<td><code>src</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>The source code to be converted.  No fence tokes are needed (<code>```</code>).</td>
+</tr>
+<tr>
+<td><code>language</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>Specifies the language to highlight as.</td>
+</tr>
+<tr>
+<td><code>inline</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">False</span></code></td>
+<td>Will return the code formatted for inline display.</td>
+</tr>
+<tr>
+<td><code>allow_code_wrap</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">False</span></code></td>
+<td>Do not convert all the spaces in code blocks to <code>&amp;nbsp;</code> so that wrapping can occur.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<h3 id="tabs-to-spaces">Tabs to Spaces<a class="headerlink" href="#tabs-to-spaces" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="nb">str</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">tabs2spaces</span></code></dt>
+<dd>
+<p>The Markdown parser used converts all tabs to spaces with the simple logic of 1 tab equals 4 spaces. This logic is generally applied in other places like <a href="#syntax-highlight"><code>syntax_highlight</code></a>. When formatting code for <code>syntax_highlight</code>, you may want to translate the tabs to spaces based on tab stops <em>before</em> passing it through opposed to apply the simple logic of converting all tabs to 4 spaces regardless of tab stops. <code>tabs2spaces</code> does exactly this, allowing you format the whitespace in a more intelligent manner.</p>
+<p><code>tabs2spaces</code> cannot do anything about characters, and there are some even in monospace fonts, that are wider than normal characters. It doesn't detect zero width characters either. It also cannot predict cases where two or more Unicode character are shown as one. But in some cases, this more intelligent output is much better than the "all tabs are arbitrarily one size" logic.</p>
+<p>Example (Notice that <code>♭</code> is a bit larger than normal characters):</p>
+<div class="codehilite"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">mdpopups</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="go">============================================================</span>
+<span class="go">T\tTp\tSp\tD\tDp\tS\tD7\tT</span>
+<span class="go">------------------------------------------------------------</span>
+<span class="go">A\tF#m\tBm\tE\tC#m\tD\tE7\tA</span>
+<span class="go">A#\tGm\tCm\tF\tDm\tD#\tF7\tA#</span>
+<span class="go">B♭\tGm\tCm\tF\tDm\tE♭m\tF7\tB♭</span>
+<span class="go">&#39;&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">mdpopups</span><span class="o">.</span><span class="n">tabs2spaces</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">tab_size</span><span class="o">=</span><span class="mi">8</span><span class="p">))</span>
+
+<span class="go">============================================================</span>
+<span class="go">T       Tp      Sp      D       Dp      S       D7      T</span>
+<span class="go">------------------------------------------------------------</span>
+<span class="go">A       F#m     Bm      E       C#m     D       E7      A</span>
+<span class="go">A#      Gm      Cm      F       Dm      D#      F7      A#</span>
+<span class="go">B♭      Gm      Cm      F       Dm      E♭m     F7      B</span>
+</pre></div>
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>Text to convert.</td>
+</tr>
+<tr>
+<td><code>tab_size</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">4</span></code></td>
+<td>Tab size.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<h3 id="get-language-from-view">Get Language From View<a class="headerlink" href="#get-language-from-view" title="Permanent link"></a></h3>
+<dl>
+<dt><code class="codehilite"><span class="nb">str</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">get_language_from_view</span></code></dt>
+<dd>
+<p>Allows a user to extract the equivalent language specifier for <code>mdpopups.syntax_highlight</code> from a view.  If the language cannot be determined, <code>None</code> will be returned.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>view</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">View</span></code></td>
+<td></td>
+<td>Sublime text View object.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../settings/" title="User Settings" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                User Settings
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../styling/" title="CSS Styling" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                CSS Styling
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2015 - 2018 <a href="https://github.com/facelessuser">Isaac Muse</a>
+<br><span class="md-footer-custom-text">emoji provided free by </span><a href="http://www.emojione.com">EmojiOne</a>
+
+          </div>
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+        
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../assets/fonts/font-awesome.css">
+    
+      <a href="https://github.com/facelessuser" class="md-footer-social__link fa fa-github"></a>
+    
+  </div>
+
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/application.b41f3d20.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      
+        <script src="../extra-0b9b22dd13.js"></script>
+      
+    
+    
+      
+    
+  </body>
+</html>
