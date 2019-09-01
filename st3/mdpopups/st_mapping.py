@@ -16,6 +16,7 @@ lang_map = {
     'd': (('d',), ('D/D',)),
     'diff': (('diff',), ('Diff/Diff',)),
     'erlang': (('erlang',), ('Erlang/Erlang',)),
+    'elm': (('elm',), ('Elm Syntax Highlighting/src/elm',)),
     'go': (('go',), ('Go/Go',)),
     'groovy': (('groovy',), ('Groovy/Groovy',)),
     'haskell': (('haskell', 'hs'), ('Haskell/Haskell',)),
