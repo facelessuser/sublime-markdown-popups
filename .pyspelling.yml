@@ -23,12 +23,11 @@ matrix:
       - open: (?s)^(?P<open>\s*~{3,})
         content: .*?
         close: ^(?P=open)$
+  - pyspelling.filters.url:
 
 - name: mkdocs
   sources:
   - site/**/*.html
-  hunspell:
-    d: docs/src/dictionary/hunspell/en_US
   aspell:
     lang: en
   dictionary:
@@ -53,12 +52,11 @@ matrix:
       - .md-source__repository
       - .headerlink
       - .md-icon
+  - pyspelling.filters.url:
 
 - name: markdown
   sources:
   - README.md
-  hunspell:
-    d: docs/src/dictionary/hunspell/en_US
   aspell:
     lang: en
   dictionary:
@@ -75,12 +73,11 @@ matrix:
       ignores:
       - code
       - pre
+  - pyspelling.filters.url:
 
 - name: python
   sources:
   - "{st3,tests}/**/*.py|!**/png.py"
-  hunspell:
-    d: docs/src/dictionary/hunspell/en_US
   aspell:
     lang: en
   dictionary:
@@ -110,3 +107,4 @@ matrix:
           close: (?P=open)
         - open: (?s)^(?P<open>\s*~{3,})
           close: ^(?P=open)$
+  - pyspelling.filters.url:

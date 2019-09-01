@@ -15,6 +15,7 @@ Jinja
 KodiDevKit
 Kronuz
 LaTeXTools
+Limberg
 MERCHANTABILITY
 MdPopups
 Mdpopups
