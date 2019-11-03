@@ -4,7 +4,7 @@ repo_url: https://github.com/facelessuser/sublime-markdown-popups
 edit_uri: tree/master/docs/src/markdown
 site_description: Popup tooltips for Sublime generated with Markdown.
 copyright: |
-  Copyright &copy; 2015 - 2018 <a href="https://github.com/facelessuser">Isaac Muse</a>
+  Copyright &copy; 2015 - 2019 <a href="https://github.com/facelessuser">Isaac Muse</a>
   <br><span class="md-footer-custom-text">emoji provided free by </span><a href="http://www.emojione.com">EmojiOne</a>
 
 docs_dir: docs/src/markdown
