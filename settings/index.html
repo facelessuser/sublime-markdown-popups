@@ -67,7 +67,7 @@
     <link rel="stylesheet" href="../assets/fonts/material-icons.css">
     
     
-      <link rel="stylesheet" href="../extra-06017885a7.css">
+      <link rel="stylesheet" href="../extra-174a536342.css">
     
     
       
@@ -563,14 +563,14 @@
 <p>Controls whether MdPopups' default styling (contained in <a href="https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css"><code>default.css</code></a>) will be applied or not.</p>
 <h2 id="mdpopupssublime_user_lang_map"><code>mdpopups.sublime_user_lang_map</code><a class="headerlink" href="#mdpopupssublime_user_lang_map" title="Permanent link"></a></h2>
 <p>This setting is for the Sublime Syntax Highlighter and allows the mapping of personal Sublime syntax languages which are not yet included, or will not be included, in the official mapping table.  You can either define your own new entry, or use the same language name of an existing entry to extend the language <code>mapping_alias</code> or syntax languages.  When extending, the user mappings will be cycled through first.</p>
-<div class="codehilite"><pre><span></span>    <span class="s1">&#39;mdpopups.sublime_user_lang_map&#39;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;language&quot;</span><span class="o">:</span> <span class="p">((</span><span class="s1">&#39;mapping_alias&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;MyPackage/MySyntaxLanguage&#39;</span><span class="p">))</span>
+<div class="codehilite"><pre><span></span>    <span class="s2">&quot;mdpopups.sublime_user_lang_map&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;language&quot;</span><span class="o">:</span> <span class="p">[[</span><span class="s2">&quot;mapping_alias&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;MyPackage/MySyntaxLanguage&quot;</span><span class="p">]]</span>
     <span class="p">}</span>
 </pre></div>
 
 <p><strong>Example</strong>:
-<div class="codehilite"><pre><span></span><span class="s1">&#39;mdpopups.sublime_user_lang_map&#39;</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s1">&#39;javascript&#39;</span><span class="o">:</span> <span class="p">((</span><span class="s1">&#39;javascript&#39;</span><span class="p">,</span> <span class="s1">&#39;js&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;JavaScript/JavaScript&#39;</span><span class="p">,</span> <span class="s1">&#39;JavaScriptNext - ES6 Syntax/JavaScriptNext&#39;</span><span class="p">))</span>
+<div class="codehilite"><pre><span></span><span class="s2">&quot;mdpopups.sublime_user_lang_map&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;javascript&quot;</span><span class="o">:</span> <span class="p">[[</span><span class="s2">&quot;javascript&quot;</span><span class="p">,</span> <span class="s2">&quot;js&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;JavaScript/JavaScript&quot;</span><span class="p">,</span> <span class="s2">&quot;JavaScriptNext - ES6 Syntax/JavaScriptNext&quot;</span><span class="p">]]</span>
 <span class="p">}</span>
 </pre></div></p>
 <p>For a list of all currently supported syntax mappings, see the official <a href="https://github.com/facelessuser/sublime-markdown-popups/blob/master/st3/mdpopups/st_mapping.py">mapping file</a>.</p>
@@ -636,7 +636,8 @@
         
           <div class="md-footer-copyright__highlight">
             Copyright &copy; 2015 - 2019 <a href="https://github.com/facelessuser">Isaac Muse</a>
-<br><span class="md-footer-custom-text">emoji provided free by </span><a href="http://www.emojione.com">EmojiOne</a>
+<br><span class="md-footer-custom-text">emoji provided free by </span>
+<a href="https://github.com/twitter/twemoji">Twemoji</a>
 
           </div>
         
@@ -664,7 +665,7 @@
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       
-        <script src="../extra-0b9b22dd13.js"></script>
+        <script src="../extra-0d9305e748.js"></script>
       
     
   </body>
