@@ -18,7 +18,7 @@ Mdpopups will use your color scheme to create popups/phantoms that fit your edit
 
 # Documentation
 
-<http://facelessuser.github.io/sublime-markdown-popups/>
+https://facelessuser.github.io/sublime-markdown-popups
 
 # License
 Released under the MIT license.
