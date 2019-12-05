@@ -61,15 +61,15 @@ Controls whether MdPopups' default styling (contained in [`default.css`][default
 This setting is for the Sublime Syntax Highlighter and allows the mapping of personal Sublime syntax languages which are not yet included, or will not be included, in the official mapping table.  You can either define your own new entry, or use the same language name of an existing entry to extend the language `mapping_alias` or syntax languages.  When extending, the user mappings will be cycled through first.
 
 ```js
-    'mdpopups.sublime_user_lang_map': {
-        "language": (('mapping_alias',), ('MyPackage/MySyntaxLanguage'))
+    "mdpopups.sublime_user_lang_map": {
+        "language": [["mapping_alias"], ["MyPackage/MySyntaxLanguage"]]
     }
 ```
 
 **Example**:
 ```js
-'mdpopups.sublime_user_lang_map': {
-    'javascript': (('javascript', 'js'), ('JavaScript/JavaScript', 'JavaScriptNext - ES6 Syntax/JavaScriptNext'))
+"mdpopups.sublime_user_lang_map": {
+    "javascript": [["javascript", "js"], ["JavaScript/JavaScript", "JavaScriptNext - ES6 Syntax/JavaScriptNext"]]
 }
 ```
 
