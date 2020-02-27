@@ -30,7 +30,7 @@ try:
 except Exception:
     bs4 = None
 
-DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
+DEFAULT_CSS = 'Packages/mdpopups/mdpopups_css/default.css'
 DEFAULT_USER_CSS = 'Packages/User/mdpopups.css'
 IDK = '''
 <style>html {background-color: #333; color: red}</style>
