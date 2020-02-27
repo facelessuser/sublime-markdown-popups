@@ -41,6 +41,8 @@ re_color = re.compile(r'(?<!-)(color\s*:\s*#[A-Fa-z\d]{6})')
 re_bgcolor = re.compile(r'(?<!-)(background(?:-color)?\s*:\s*#[A-Fa-z\d]{6})')
 re_pygments_selectors = re.compile(r'\.dummy (\.[a-zA-Z\d]+) ')
 CODE_BLOCKS = '.mdpopups .highlight, .mdpopups .inline-highlight { %s; %s; }'
+OLD_DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
+DEFAULT_CSS = 'Packages/mdpopups/mdpopups_css/default.css'
 
 
 def fmt_float(f, p=0):
@@ -205,6 +207,9 @@ class SchemeTemplate(object):
                     'is_popup': self.css_type == POPUP
                 }
             )
+
+            if css == OLD_DEFAULT_CSS:
+                css = DEFAULT_CSS
 
             return self.env.from_string(
                 clean_css(sublime.load_resource(css))

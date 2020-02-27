@@ -31,6 +31,7 @@ except Exception:
     bs4 = None
 
 DEFAULT_CSS = 'Packages/mdpopups/mdpopups_css/default.css'
+OLD_DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
 DEFAULT_USER_CSS = 'Packages/User/mdpopups.css'
 IDK = '''
 <style>html {background-color: #333; color: red}</style>
@@ -200,6 +201,8 @@ def _get_user_css():
     css = None
 
     user_css = _get_setting('mdpopups.user_css', DEFAULT_USER_CSS)
+    if user_css == OLD_DEFAULT_CSS:
+        user_css = DEFAULT_CSS
     try:
         css = clean_css(sublime.load_resource(user_css))
     except Exception:
