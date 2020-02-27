@@ -39,6 +39,7 @@ SublimeCodeIntel
 SublimeText
 SuperFences
 TextMate
+Twemoji
 UML
 Unescape
 Waylan
