@@ -28,7 +28,7 @@ import sublime
 import codecs
 import re
 from .file_strip.json import sanitize_json
-from .rgba import RGBA, clamp, round_int
+from .rgba import RGBA, clamp, round_int, CS_RGB, CS_HSL, CS_HWB
 from . import x11colors
 from os import path
 from collections import namedtuple
@@ -107,12 +107,15 @@ COLOR_MOD_RE = re.compile(
     color\(\s*
         (?P<base>\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})
         \s+(?:
-            (?P<blend>blenda?)\((?P<blend_color>\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})\s+(?P<blend_percent>%(percent)s)\) |
+            (?P<blend>blenda?)\(
+                (?P<blend_color>\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})\s+
+                (?P<blend_percent>%(percent)s)
+                (?:\s+(?P<blend_mode>hsl|rgb|hwb))?\) |
             (?P<alpha>a(?:lpha)?)\((?P<alpha_value>(?:%(percent)s|%(float)s))\)
         )
         (?P<other>(?:
             \s+(?:
-                blenda?\((?:\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})\s+%(percent)s\) |
+                blenda?\((?:\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})\s+%(percent)s(?:\s+(?:hsl|rgb|hwb))?\) |
                 a(?:lpha)?\((?:%(percent)s|%(float)s)\)
             )
         )+)?
@@ -176,12 +179,22 @@ def blend(m):
         blend_type = m.group('blend')
         color = m.group('blend_color')
         percent = m.group('blend_percent')
+        mode = m.group('blend_mode')
+        if not mode:
+            color_space = CS_RGB
+        elif mode == 'rgb':
+            color_space = CS_RGB
+        elif mode == 'hsl':
+            color_space = CS_HSL
+        else:
+            color_space = CS_HWB
+
         if percent.endswith('%'):
             percent = float(percent.strip('%'))
         else:
             percent = int(alpha_dec_normalize(percent), 16) * (100.0 / 255.0)
         rgba = RGBA(base)
-        rgba.blend(color, percent, alpha=(blend_type == 'blenda'))
+        rgba.blend(color, percent, alpha=(blend_type == 'blenda'), color_space=color_space)
         color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
     else:
         percent = m.group('alpha_value')
@@ -707,7 +720,7 @@ class ColorSchemeMatcher(object):
 
         return self.scheme_file
 
-    def guess_color(self, scope_key, selected=False, explicit_background=False):
+    def guess_color(self, scope_key, selected=False, explicit_background=False, no_bold=False, no_italic=False):
         """
         Guess the colors and style of the text for the given Sublime scope.
 
@@ -783,7 +796,8 @@ class ColorSchemeMatcher(object):
                 if self.colors[key]["style"] is not None and match > best_match_style:
                     best_match_style = match
                     for s in self.colors[key]["style"]:
-                        style.add(s)
+                        if not (s == "bold" and no_bold) and not (s == "italic" and no_italic):
+                            style.add(s)
                         if s == "bold":
                             style_selectors["bold"] = SchemeSelectors(
                                 self.colors[key]["name"], self.colors[key]["scope"]
