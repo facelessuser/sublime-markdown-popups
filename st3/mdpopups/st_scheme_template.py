@@ -5,7 +5,7 @@ Converts scheme to CSS provides templating for
 additional so that they can access the colors.
 
 Licensed under MIT
-Copyright (c) 2015 - 2016 Isaac Muse <isaacmuse@gmail.com>
+Copyright (c) 2015 - 2020 Isaac Muse <isaacmuse@gmail.com>
 
 ----------------------
 

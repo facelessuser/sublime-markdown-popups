@@ -2,7 +2,7 @@
 Sublime code highlighting for tooltips.
 
 Licensed under MIT
-Copyright (c) 2015 - 2016 Isaac Muse <isaacmuse@gmail.com>
+Copyright (c) 2015 - 2020 Isaac Muse <isaacmuse@gmail.com>
 """
 import re
 from pygments import highlight
