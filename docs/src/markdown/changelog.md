@@ -1,5 +1,12 @@
 # Changelog
 
+### 3.6.0
+
+- **NEW**: Add support for parsing `alpha(+value)`, `alpha(-value)`, and `alpha(*value)` in color schemes.
+- **NEW**: Add support for parsing `lightness()` and `saturation()` in color schemes.
+- **NEW**: Add support for `foreground_adjust` properties when parsing color schemes.
+- **NEW**: Add support for parsing blended colors in the HSL and HWB namespace. Blended colors do not always match Sublime Text's colors, this is due to a Sublime Text bug: https://github.com/sublimehq/sublime_text/issues/3176.
+
 ## 3.5.0
 
 - **NEW**: Upgrade to handle latest `pymdownx` and `markdown` module.

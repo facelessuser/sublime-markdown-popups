@@ -420,6 +420,59 @@ MdPopups provides a number of accessible functions.
         -------------- | -------------------------------------------- | ------- | -----------
         `new_phantoms` | [`#!py3 [mdpopups.Phantom]`](#class-phantom) |         | A list of MdPopups phantoms. `sublime.Phantom` will be converted to `mdpopups.Phantom`.
 
+### New HTML Sheet
+
+!!! warning "Experimental Feature"
+    This feature is new in Sublime Text 4. Sublime's API may change in future versions for this feature and may break this.
+
+`#!py3 mdpopups.new_html_sheet`
+: 
+    Accepts Markdown and creates a Sublime HTML sheet.  By default, the built-in Sublime syntax highlighter will be used for code highlighting.
+
+    Parameter              | Type                                      | Default       | Description
+    ---------------------- | ----------------------------------------- | ------------- | -----------
+    `window`               | `#!py3 sublime.Window`                    |               | A Sublime Text view object.
+    `name`                 | `#!py3 str`                               |               | Name for the HTML sheet.
+    `contents`             | `#!py3 str`                               |               | Markdown/HTML content for the popup.
+    `md`                   | `#!py3 bool`                              | `#!py3 True`  | Defines whether the content is Markdown and needs to be converted.
+    `css`                  | `#!py3 str`                               | `#!py3 None`  | Additional CSS that will be injected.
+    `cmd`                  | `#!py3 sublime_plugin.ApplicationCommand` | `#!py3 None`  | `ApplicationCommand` to handle URL navigation.
+    `args`                 | `#!py3 dict`                              | `#!py3 None`  | Arguments to pass to `cmd`.
+    `flags`                | `#!py3 int`                               | `#!py3 0`     | Flags to pass down to the Sublime Text `new_html_sheet` call.
+    `group`                | `#1py3 int`                               | `#!py3 -1`    | Specify window group.
+    `wrapper_class`        | `#!py3 str`                               | `#!py3 None`  | A string containing the class name you wish wrap your content in.  A `div` will be created with the given class.
+    `template_vars`        | `#!py3 dict`                              | `#!py3 None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
+    `template_env_options` | `#!py3 dict`                              | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
+    `nl2br`                | `#!py3 bool`                              | `#!py3 True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
+    `allow_code_wrap`      | `#!py3 bool`                              | `#!py3 False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
+
+!!! new "New 3.6.0"
+    `new_html_sheet` is new in 3.6.0.
+
+### Update HTML Content
+
+!!! warning "Experimental Feature"
+    This feature is new in Sublime Text 4. Sublime's API may change in future versions for this feature and may break this.
+
+`#!py3 mdpopups.update_html_sheet`
+: 
+    Accepts Markdown and updates the content of a Sublime HTML sheet.  By default, the built-in Sublime syntax highlighter will be used for code highlighting.
+
+    Parameter              | Type                                      | Default       | Description
+    ---------------------- | ----------------------------------------- | ------------- | -----------
+    `sheet`                | `#!py3 sublime.HtmlSheet`                 |               | A Sublime Text HTML sheet object.
+    `contents`             | `#!py3 str`                               |               | Markdown/HTML content for the popup.
+    `md`                   | `#!py3 bool`                              | `#!py3 True`  | Defines whether the content is Markdown and needs to be converted.
+    `css`                  | `#!py3 str`                               | `#!py3 None`  | Additional CSS that will be injected.
+    `wrapper_class`        | `#!py3 str`                               | `#!py3 None`  | A string containing the class name you wish wrap your content in.  A `div` will be created with the given class.
+    `template_vars`        | `#!py3 dict`                              | `#!py3 None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
+    `template_env_options` | `#!py3 dict`                              | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
+    `nl2br`                | `#!py3 bool`                              | `#!py3 True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
+    `allow_code_wrap`      | `#!py3 bool`                              | `#!py3 False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
+
+!!! new "New 3.6.0"
+    `new_html_sheet` is new in 3.6.0.
+
 ### Clear Cache
 
 `#!py3 mdpopups.clear_cache`

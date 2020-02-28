@@ -30,6 +30,7 @@ NEW_SCHEMES = int(sublime.version()) >= 3150
 INVALID = -1
 POPUP = 0
 PHANTOM = 1
+SHEET = 2
 LUM_MIDPOINT = 127
 
 re_float_trim = re.compile(r'^(?P<keep>\d+)(?P<trash>\.0+|(?P<keep2>\.\d*[1-9])0+)$')
@@ -204,7 +205,8 @@ class SchemeTemplate(object):
             var.update(
                 {
                     'is_phantom': self.css_type == PHANTOM,
-                    'is_popup': self.css_type == POPUP
+                    'is_popup': self.css_type == POPUP,
+                    'is_sheet': self.css_type == SHEET
                 }
             )
 
@@ -387,7 +389,7 @@ class SchemeTemplate(object):
 
         self.view = view
 
-        if css_type not in (POPUP, PHANTOM):
+        if css_type not in (POPUP, PHANTOM, SHEET):
             return ''
 
         self.css_type = css_type
@@ -402,7 +404,8 @@ class SchemeTemplate(object):
         var.update(
             {
                 'is_phantom': self.css_type == PHANTOM,
-                'is_popup': self.css_type == POPUP
+                'is_popup': self.css_type == POPUP,
+                'is_sheet': self.css_type == SHEET
             }
         )
 
