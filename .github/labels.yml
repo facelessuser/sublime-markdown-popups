@@ -6,64 +6,71 @@ brace_expansion: true
 extended_glob: true
 
 rules:
-  - labels: [infrastructure]
+  - labels: ['C: infrastructure']
     patterns: ['*|-@(*.md|*.py|*.sublime-@(keymap|menu|settings|commands))', '.github/**']
 
-  - labels: [source]
+  - labels: ['C: source']
     patterns: ['st[0-9]/mdpopups/**|**/*.sublime-@(keymap|menu|settings|commands)|-tests']
 
-  - labels: [docs]
+  - labels: ['C: docs']
     patterns: ['**/*.md|docs/**']
 
-  - labels: [tests]
+  - labels: ['C: tests']
     patterns: ['tests/**']
 
-  - labels: [code-highlight]
+  - labels: ['C: code-highlight']
     patterns: ['st[0-9]/mdpopups/mdx/**|st[0-9]/mdpopups/@(st_@(code|pygments)_highlight.py|)']
 
-  - labels: [API]
+  - labels: ['C: API']
     patterns: ['st[0-9]/mdpopups/__init__.py']
 
-  - labels: [code-highlight, languages]
+  - labels: ['C: code-highlight', 'C: languages']
     patterns: ['st[0-9]/mdpopups/st_mapping.py']
 
-  - labels: [scheme-support]
+  - labels: ['C: scheme-support']
     patterns: ['st[0-9]/mdpopups/st_@(color_scheme_matching|scheme_template).py|css/**']
 
-  - labels: [images]
+  - labels: ['C: images']
     patterns: ['st[0-9]/mdpopups/@(png|imagetint|colorbox).py']
 
-  - labels: [colors]
+  - labels: ['C: colors']
     patterns: ['st[0-9]/mdpopups/@(rgba|x11colors).py']
 
-  - labels: [settings]
+  - labels: ['C: settings']
     patterns: ['**/*.sublime-@(keymap|menu|settings|commands)']
 
 labels:
-- name: code-highlight
+- name: 'C: code-highlight'
+  renamed: code-highlight
   color: subcategory
   description: Related to code highlighting.
 
-- name: API
+- name: 'C: API'
+  renamed: API
   color: subcategory
   description: Related to the API.
 
-- name: languages
+- name: 'C: languages'
+  renamed: languages
   color: subcategory
   description: Related to supported code lanugage mapping for highlighter.
 
-- name: scheme-support
+- name: 'C: scheme-support'
+  renamed: scheme-support
   color: subcategory
   description: Related to handling color schemes.
 
-- name: images
+- name: 'C: images'
+  renamed: images
   color: subcategory
   description: Related to image processing/creation.
 
-- name: colors
+- name: 'C: colors'
+  renamed: colors
   color: subcategory
   description: Related to color handling.
 
-- name: settings
+- name: 'C: settings'
+  renamed: settings
   color: subcategory
   description: Related to Sublime settings files.
