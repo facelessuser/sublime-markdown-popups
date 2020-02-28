@@ -45,6 +45,7 @@ matrix:
       - pre
       - a.magiclink-compare
       - a.magiclink-commit
+      - a.magiclink-issue
       - span.keys
       - .MathJax_Preview
       - .md-nav__link

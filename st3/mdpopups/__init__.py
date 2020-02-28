@@ -16,7 +16,7 @@ import time
 from . import version as ver
 from . import colorbox
 from collections import OrderedDict
-from .st_scheme_template import SchemeTemplate, POPUP, PHANTOM, NEW_SCHEMES
+from .st_scheme_template import SchemeTemplate, POPUP, PHANTOM, SHEET, NEW_SCHEMES
 from .st_clean_css import clean_css
 from .st_pygments_highlight import syntax_hl as pyg_syntax_hl
 from .st_code_highlight import SublimeHighlight
@@ -29,6 +29,8 @@ try:
     import bs4
 except Exception:
     bs4 = None
+
+HTML_SHEET_SUPPORT = int(sublime.version()) >= 4065
 
 DEFAULT_CSS = 'Packages/mdpopups/mdpopups_css/default.css'
 OLD_DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
@@ -156,10 +158,9 @@ def _get_sublime_highlighter(view):
     return obj
 
 
-def _get_scheme(view):
+def _get_scheme(scheme):
     """Get the scheme object and user CSS."""
 
-    scheme = view.settings().get('color_scheme')
     settings = sublime.load_settings("Preferences.sublime-settings")
     obj = None
     user_css = ''
@@ -271,7 +272,7 @@ class _MdWrapper(markdown.Markdown):
 def _get_theme(view, css=None, css_type=POPUP, template_vars=None):
     """Get the theme."""
 
-    obj, user_css, default_css = _get_scheme(view)
+    obj, user_css, default_css = _get_scheme(view.settings().get('color_scheme'))
     try:
         return obj.apply_template(
             view,
@@ -543,7 +544,7 @@ def scope2style(view, scope, selected=False, explicit_background=False):
         'background': None,
         'style': ''
     }
-    obj = _get_scheme(view)[0]
+    obj = _get_scheme(view.settings().get('color_scheme'))[0]
     style_obj = obj.guess_style(view, scope, selected, explicit_background)
     if NEW_SCHEMES:
         style['color'] = style_obj['foreground']
@@ -685,6 +686,49 @@ def query_phantoms(view, pids):
     """Query phantoms."""
 
     return view.query_phantoms(pids)
+
+
+if HTML_SHEET_SUPPORT:
+    def new_html_sheet(
+        window, name, contents, md=True, css=None, cmd="", args=None, flags=0, group=-1,
+        wrapper_class=None, template_vars=None, template_env_options=None, nl2br=False,
+        allow_code_wrap=False
+    ):
+        """Create new HTML sheet."""
+
+        view = window.create_output_panel('mdpopups-dummy', unlisted=True)
+        try:
+            html = _create_html(
+                view, contents, md, css, css_type=SHEET, wrapper_class=wrapper_class,
+                template_vars=template_vars, template_env_options=template_env_options, nl2br=nl2br,
+                allow_code_wrap=allow_code_wrap
+            )
+        except Exception:
+            _log(traceback.format_exc())
+            html = IDK
+
+        return window.new_html_sheet(name, html, cmd, args, flags, group)
+
+    def update_html_sheet(
+        sheet, contents, md=True, css=None, wrapper_class=None,
+        template_vars=None, template_env_options=None, nl2br=False, allow_code_wrap=False
+    ):
+        """Update an HTML sheet."""
+
+        window = sheet.window()
+        view = window.create_output_panel('mdpopups-dummy', unlisted=True)
+
+        try:
+            html = _create_html(
+                view, contents, md, css, css_type=SHEET, wrapper_class=wrapper_class,
+                template_vars=template_vars, template_env_options=template_env_options, nl2br=nl2br,
+                allow_code_wrap=allow_code_wrap
+            )
+        except Exception:
+            _log(traceback.format_exc())
+            html = IDK
+
+        sheet.set_contents(html)
 
 
 class Phantom(sublime.Phantom):

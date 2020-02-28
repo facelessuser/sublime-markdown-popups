@@ -419,9 +419,9 @@ The template environment provides a couple of variables that can be used to cond
     {% endif %}
     ```
 
-`var.is_popup` and `var.is_phantom`
+`var.is_popup`, `var.is_phantom`, and `var.is_sheet`
 : 
-    `is_phantom` checks if the current CSS is for a phantom instead of a popup.  Alternatively, `is_popup` checks if the current use of the CSS is for a popup.
+    `is_phantom` checks if the current CSS is for a phantom instead of a popup.  Alternatively, `is_popup` and `is_sheet` checks if the current use of the CSS is for a popup or HTML sheet respectively.
 
     **Example**:
     ```css+jinja
