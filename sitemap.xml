@@ -1,37 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
      <loc>https://facelessuser.github.io/sublime-markdown-popups/</loc>
      <lastmod>2020-02-29</lastmod>
      <changefreq>daily</changefreq>
-    </url><url>
+    </url>
+    <url>
      <loc>https://facelessuser.github.io/sublime-markdown-popups/installation/</loc>
      <lastmod>2020-02-29</lastmod>
      <changefreq>daily</changefreq>
-    </url><url>
+    </url>
+    <url>
      <loc>https://facelessuser.github.io/sublime-markdown-popups/settings/</loc>
      <lastmod>2020-02-29</lastmod>
      <changefreq>daily</changefreq>
-    </url><url>
+    </url>
+    <url>
      <loc>https://facelessuser.github.io/sublime-markdown-popups/api/</loc>
      <lastmod>2020-02-29</lastmod>
      <changefreq>daily</changefreq>
-    </url><url>
+    </url>
+    <url>
      <loc>https://facelessuser.github.io/sublime-markdown-popups/styling/</loc>
      <lastmod>2020-02-29</lastmod>
      <changefreq>daily</changefreq>
-    </url><url>
+    </url>
+    <url>
      <loc>https://facelessuser.github.io/sublime-markdown-popups/faq/</loc>
      <lastmod>2020-02-29</lastmod>
      <changefreq>daily</changefreq>
-    </url><url>
+    </url>
+    <url>
      <loc>https://facelessuser.github.io/sublime-markdown-popups/contributing/</loc>
      <lastmod>2020-02-29</lastmod>
      <changefreq>daily</changefreq>
-    </url><url>
+    </url>
+    <url>
      <loc>https://facelessuser.github.io/sublime-markdown-popups/changelog/</loc>
      <lastmod>2020-02-29</lastmod>
      <changefreq>daily</changefreq>
-    </url><url>
+    </url>
+    <url>
      <loc>https://facelessuser.github.io/sublime-markdown-popups/license/</loc>
      <lastmod>2020-02-29</lastmod>
      <changefreq>daily</changefreq>
