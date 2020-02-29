@@ -1,6 +1,6 @@
 # Changelog
 
-### 3.6.0
+## 3.6.0
 
 - **NEW**: Add support for parsing `alpha(+value)`, `alpha(-value)`, and `alpha(*value)` in color schemes.
 - **NEW**: Add support for parsing `lightness()` and `saturation()` in color schemes.
