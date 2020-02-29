@@ -36,7 +36,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.4.3">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
     
     
       
@@ -44,7 +44,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.30686662.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.adb8469c.css">
       
         <link rel="stylesheet" href="../assets/stylesheets/application-palette.a8b3c06d.css">
       
@@ -55,12 +55,12 @@
       
     
     
-      <script src="../assets/javascripts/modernizr.74668098.js"></script>
+      <script src="../assets/javascripts/modernizr.86422ebf.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -91,7 +91,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#user-settings" tabindex="1" class="md-skip">
+      <a href="#user-settings" tabindex="0" class="md-skip">
         Skip to content
       </a>
     
@@ -100,7 +100,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="https://facelessuser.github.io/sublime-markdown-popups" title="Sublime Markdown Popups Documentation" class="md-header-nav__button md-logo">
+        <a href="https://facelessuser.github.io/sublime-markdown-popups" title="Sublime Markdown Popups Documentation" aria-label="Sublime Markdown Popups Documentation" class="md-header-nav__button md-logo">
           
             <i class="md-icon">description</i>
           
@@ -131,7 +131,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
       <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
         &#xE5CD;
@@ -531,48 +531,48 @@
 <p>All settings for MdPopups are placed in Sublime's <code>Preferences.sublime-settings</code>.  They are applied globally and to all popups and phantoms.</p>
 <h2 id="mdpopupsdebug"><code>mdpopups.debug</code><a class="headerlink" href="#mdpopupsdebug" title="Permanent link"></a></h2>
 <p>Turns on debug mode.  This will dump out all sorts of info to the console.  Content before parsing to HTML, final HTML output, traceback from failures, etc..  This is more useful for plugin developers.  It works by specifying an error level.  <code>0</code> or <code>false</code> would disable it.  1 would trigger on errors. 2 would trigger on warnings and any level below.  3 would be general info (like HTML output) and any level below.</p>
-<div class="codehilite"><pre><span></span>    <span class="s2">&quot;mdpopups.debug&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code>    <span class="s2">&quot;mdpopups.debug&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+</code></pre></div>
 
 <h2 id="mdpopupsdisable"><code>mdpopups.disable</code><a class="headerlink" href="#mdpopupsdisable" title="Permanent link"></a></h2>
 <p>Global kill switch to prevent popups (created by MdPopups) from appearing.</p>
-<div class="codehilite"><pre><span></span>    <span class="s2">&quot;mdpopups.disable&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code>    <span class="s2">&quot;mdpopups.disable&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</code></pre></div>
 
 <h2 id="mdpopupscache_refresh_time"><code>mdpopups.cache_refresh_time</code><a class="headerlink" href="#mdpopupscache_refresh_time" title="Permanent link"></a></h2>
 <p>Control how long a CSS theme file will be in the cache before being refreshed.  Value should be a positive integer greater than 0.  Units are in minutes.  Default is 30.</p>
-<div class="codehilite"><pre><span></span>    <span class="s2">&quot;mdpopups.cache_refresh_time&quot;</span><span class="o">:</span> <span class="mi">30</span><span class="p">,</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code>    <span class="s2">&quot;mdpopups.cache_refresh_time&quot;</span><span class="o">:</span> <span class="mi">30</span><span class="p">,</span>
+</code></pre></div>
 
 <h2 id="mdpopupscache_limit"><code>mdpopups.cache_limit</code><a class="headerlink" href="#mdpopupscache_limit" title="Permanent link"></a></h2>
 <p>Control how many CSS theme files will be kept in cache at any given time.  Value should be a positive integer greater than or equal to 0.</p>
-<div class="codehilite"><pre><span></span>    <span class="s2">&quot;mdpopups.cache_limit&quot;</span><span class="o">:</span> <span class="mi">10</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code>    <span class="s2">&quot;mdpopups.cache_limit&quot;</span><span class="o">:</span> <span class="mi">10</span>
+</code></pre></div>
 
 <h2 id="mdpopupsuse_sublime_highlighter"><code>mdpopups.use_sublime_highlighter</code><a class="headerlink" href="#mdpopupsuse_sublime_highlighter" title="Permanent link"></a></h2>
 <p>Controls whether the Pygments or the native Sublime syntax highlighter is used for code highlighting.  This affects code highlighting in Markdown conversion and when code is directly processed using <a href="../api/#syntax-highlight">syntax_highlight</a>. To learn more about the syntax highlighter see <a href="../styling/#syntax-highlighting">Syntax Highlighting</a>.</p>
-<div class="codehilite"><pre><span></span>    <span class="s2">&quot;mdpopups.use_sublime_highlighter&quot;</span><span class="o">:</span> <span class="kc">true</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code>    <span class="s2">&quot;mdpopups.use_sublime_highlighter&quot;</span><span class="o">:</span> <span class="kc">true</span>
+</code></pre></div>
 
 <h2 id="mdpopupsuser_css"><code>mdpopups.user_css</code><a class="headerlink" href="#mdpopupsuser_css" title="Permanent link"></a></h2>
 <p>Overrides the default CSS and/or CSS of a plugin.  Value should be a relative path pointing to the CSS file: <code>Packages/User/my_custom_theme.css</code>.  Slashes should be forward slashes. By default, it will point to <code>Packages/User/mdpopups.css</code>.  User CSS overrides <strong>all</strong> CSS as it is the last to be processed.</p>
-<div class="codehilite"><pre><span></span>    <span class="s2">&quot;mdpopups.user_css&quot;</span><span class="o">:</span> <span class="s2">&quot;Packages/User/mdpopups.css&quot;</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code>    <span class="s2">&quot;mdpopups.user_css&quot;</span><span class="o">:</span> <span class="s2">&quot;Packages/User/mdpopups.css&quot;</span>
+</code></pre></div>
 
 <h2 id="mdpopupsdefault_style"><code>mdpopups.default_style</code><a class="headerlink" href="#mdpopupsdefault_style" title="Permanent link"></a></h2>
 <p>Controls whether MdPopups' default styling (contained in <a href="https://github.com/facelessuser/sublime-markdown-popups/blob/master/css/default.css"><code>default.css</code></a>) will be applied or not.</p>
 <h2 id="mdpopupssublime_user_lang_map"><code>mdpopups.sublime_user_lang_map</code><a class="headerlink" href="#mdpopupssublime_user_lang_map" title="Permanent link"></a></h2>
 <p>This setting is for the Sublime Syntax Highlighter and allows the mapping of personal Sublime syntax languages which are not yet included, or will not be included, in the official mapping table.  You can either define your own new entry, or use the same language name of an existing entry to extend the language <code>mapping_alias</code> or syntax languages.  When extending, the user mappings will be cycled through first.</p>
-<div class="codehilite"><pre><span></span>    <span class="s2">&quot;mdpopups.sublime_user_lang_map&quot;</span><span class="o">:</span> <span class="p">{</span>
+<div class="codehilite"><pre><span></span><code>    <span class="s2">&quot;mdpopups.sublime_user_lang_map&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;language&quot;</span><span class="o">:</span> <span class="p">[[</span><span class="s2">&quot;mapping_alias&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;MyPackage/MySyntaxLanguage&quot;</span><span class="p">]]</span>
     <span class="p">}</span>
-</pre></div>
+</code></pre></div>
 
 <p><strong>Example</strong>:
-<div class="codehilite"><pre><span></span><span class="s2">&quot;mdpopups.sublime_user_lang_map&quot;</span><span class="o">:</span> <span class="p">{</span>
+<div class="codehilite"><pre><span></span><code><span class="s2">&quot;mdpopups.sublime_user_lang_map&quot;</span><span class="o">:</span> <span class="p">{</span>
     <span class="s2">&quot;javascript&quot;</span><span class="o">:</span> <span class="p">[[</span><span class="s2">&quot;javascript&quot;</span><span class="p">,</span> <span class="s2">&quot;js&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;JavaScript/JavaScript&quot;</span><span class="p">,</span> <span class="s2">&quot;JavaScriptNext - ES6 Syntax/JavaScriptNext&quot;</span><span class="p">]]</span>
 <span class="p">}</span>
-</pre></div></p>
+</code></pre></div></p>
 <p>For a list of all currently supported syntax mappings, see the official <a href="https://github.com/facelessuser/sublime-markdown-popups/blob/master/st3/mdpopups/st_mapping.py">mapping file</a>.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -580,6 +580,7 @@
 </div>
                 
                   
+                
                 
               
               
@@ -635,23 +636,23 @@
       <div class="md-footer-copyright">
         
           <div class="md-footer-copyright__highlight">
-            Copyright &copy; 2015 - 2019 <a href="https://github.com/facelessuser">Isaac Muse</a>
+            Copyright &copy; 2015 - 2020 <a href="https://github.com/facelessuser">Isaac Muse</a>
 <br><span class="md-footer-custom-text">emoji provided free by </span>
 <a href="https://github.com/twitter/twemoji">Twemoji</a>
 
           </div>
         
         powered by
-        <a href="https://www.mkdocs.org">MkDocs</a>
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
         and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
           Material for MkDocs</a>
       </div>
       
   <div class="md-footer-social">
     <link rel="stylesheet" href="../assets/fonts/font-awesome.css">
     
-      <a href="https://github.com/facelessuser" class="md-footer-social__link fa fa-github"></a>
+      <a href="https://github.com/facelessuser" target="_blank" rel="noopener" title="github" class="md-footer-social__link fa fa-github"></a>
     
   </div>
 
@@ -661,9 +662,9 @@
       
     </div>
     
-      <script src="../assets/javascripts/application.ac79c3b0.js"></script>
+      <script src="../assets/javascripts/application.c33a9706.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      <script>app.initialize({version:"1.1",url:{base:".."}})</script>
       
         <script src="../extra-0d9305e748.js"></script>
       

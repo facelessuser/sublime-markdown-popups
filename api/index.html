@@ -36,7 +36,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.4.3">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
     
     
       
@@ -44,7 +44,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.30686662.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.adb8469c.css">
       
         <link rel="stylesheet" href="../assets/stylesheets/application-palette.a8b3c06d.css">
       
@@ -55,12 +55,12 @@
       
     
     
-      <script src="../assets/javascripts/modernizr.74668098.js"></script>
+      <script src="../assets/javascripts/modernizr.86422ebf.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -91,7 +91,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#api" tabindex="1" class="md-skip">
+      <a href="#api" tabindex="0" class="md-skip">
         Skip to content
       </a>
     
@@ -100,7 +100,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="https://facelessuser.github.io/sublime-markdown-popups" title="Sublime Markdown Popups Documentation" class="md-header-nav__button md-logo">
+        <a href="https://facelessuser.github.io/sublime-markdown-popups" title="Sublime Markdown Popups Documentation" aria-label="Sublime Markdown Popups Documentation" class="md-header-nav__button md-logo">
           
             <i class="md-icon">description</i>
           
@@ -131,7 +131,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
       <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
         &#xE5CD;
@@ -453,6 +453,20 @@
           <li class="md-nav__item">
   <a href="#phantom-set-class" class="md-nav__link">
     Phantom Set Class
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-html-sheet" class="md-nav__link">
+    New HTML Sheet
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-html-content" class="md-nav__link">
+    Update HTML Content
   </a>
   
 </li>
@@ -791,6 +805,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#new-html-sheet" class="md-nav__link">
+    New HTML Sheet
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-html-content" class="md-nav__link">
+    Update HTML Content
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#clear-cache" class="md-nav__link">
     Clear Cache
   </a>
@@ -887,7 +915,7 @@
                 <h1 id="api">API<a class="headerlink" href="#api" title="Permanent link"></a></h1>
 <h2 id="dependencies">Dependencies<a class="headerlink" href="#dependencies" title="Permanent link"></a></h2>
 <p>Your plugin should include the Package Control dependencies listed below. Please read about Package Control's <a href="https://packagecontrol.io/docs/dependencies">dependencies</a> to learn more.</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
     <span class="s2">&quot;*&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;&gt;=3124&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;pygments&quot;</span><span class="p">,</span>
@@ -900,7 +928,7 @@
         <span class="p">]</span>
     <span class="p">}</span>
 <span class="p">}</span>
-</pre></div>
+</code></pre></div>
 
 <p>Check out <a class="magiclink magiclink-github magiclink-repository" href="https://github.com/facelessuser/mdpopup_test" title="GitHub Repository: facelessuser/mdpopup_test">facelessuser/mdpopup_test</a> as an example. Clone it into <code>Packages/mdpopup_test</code>, run <code>Package Control: Satisfy dependencies</code>, and then restart Sublime. You should be able to then run the command <code>Mdpopups: Test</code> to see an example popup or phantom.  Feel free to edit it to learn more.</p>
 <h2 id="markdown-support">Markdown Support<a class="headerlink" href="#markdown-support" title="Permanent link"></a></h2>
@@ -950,45 +978,45 @@
 </ul>
 <h2 id="frontmatter">Frontmatter<a class="headerlink" href="#frontmatter" title="Permanent link"></a></h2>
 <p>Frontmatter can be used to configure content in 2.1.0+. The frontmatter must be specified, starting on the first line of the content, before the Markdown.  The frontmatter content should be in YAML syntax and should come between the YAML markers: <code>---</code>.</p>
-<div class="codehilite"><pre><span></span><span class="nn">---</span>
+<div class="codehilite"><pre><span></span><code><span class="nn">---</span>
 <span class="c1"># yaml content</span>
 <span class="nn">---</span>
-</pre></div>
+</code></pre></div>
 
 <p>Optionally the content can use the ending <code>...</code> as shown below:</p>
-<div class="codehilite"><pre><span></span><span class="nn">---</span>
+<div class="codehilite"><pre><span></span><code><span class="nn">---</span>
 <span class="c1"># yaml content</span>
 <span class="nn">...</span>
-</pre></div>
+</code></pre></div>
 
 <p>At the base level, the YAML content is a hash table containing key value pairs.</p>
-<div class="codehilite"><pre><span></span><span class="nn">---</span>
+<div class="codehilite"><pre><span></span><code><span class="nn">---</span>
 <span class="nt">key1</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">value1</span>
 <span class="nt">key2</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">value2</span>
 <span class="nn">...</span>
-</pre></div>
+</code></pre></div>
 
 <h3 id="enable-code-wrapping">Enable Code Wrapping<a class="headerlink" href="#enable-code-wrapping" title="Permanent link"></a></h3>
 <p>The <code>allow_code_wrap</code> setting allows block code tags to have their content wrapped. If disabled (the default), code content will not wrap lines.</p>
-<div class="codehilite"><pre><span></span><span class="nn">---</span>
+<div class="codehilite"><pre><span></span><code><span class="nn">---</span>
 <span class="nt">allow_code_wrap</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="nn">...</span>
-</pre></div>
+</code></pre></div>
 
 <h3 id="custom-fences">Custom Fences<a class="headerlink" href="#custom-fences" title="Permanent link"></a></h3>
 <p>The included <code>mdpopups.mdx.superfences</code> has an option that allows for custom fences. Custom fences are a convenient way to add support for special block content such as UML diagrams. Since configuring <code>mdpopups.mdx.superfences</code> is not allowed directly, you can setup your own custom fences via a separate <code>custom_fences</code> option. See the original SuperFences' <a href="http://facelessuser.github.io/pymdown-extensions/extensions/superfences/#custom-fences">Custom Fences</a> documentation to learn more.</p>
-<div class="codehilite"><pre><span></span><span class="nn">---</span>
+<div class="codehilite"><pre><span></span><code><span class="nn">---</span>
 <span class="nt">custom_fences</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">uml</span>
   <span class="nt">class</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">uml</span>
   <span class="nt">format</span><span class="p">:</span> <span class="kt">!!python/name:mdpopup_test.plantuml.uml_format</span>
 <span class="nn">...</span>
-</pre></div>
+</code></pre></div>
 
 <p>Checkout <a class="magiclink magiclink-github magiclink-repository" href="https://github.com/facelessuser/mdpopup_test" title="GitHub Repository: facelessuser/mdpopup_test">facelessuser/mdpopup_test</a> to see the UML example above in action.</p>
 <h3 id="configure-markdown-extensions">Configure Markdown Extensions<a class="headerlink" href="#configure-markdown-extensions" title="Permanent link"></a></h3>
 <p>Custom extension configurations are specified under the <code>markdown_extensions</code> key whose value is an array of extensions. Each extension is specified as a string.  If you have specific settings to configure for an extension, simply make that array entry a dictionary where the key name is the extension name, and value is a hash table with all the settings.  The default configuration is below.</p>
-<div class="codehilite"><pre><span></span><span class="nn">---</span>
+<div class="codehilite"><pre><span></span><code><span class="nn">---</span>
 <span class="nt">markdown_extensions</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.admonition</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.attr_list</span>
@@ -998,11 +1026,11 @@
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pymdownx.magiclink</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pymdownx.extrarawhtml</span>
 <span class="nn">...</span>
-</pre></div>
+</code></pre></div>
 
 <p>Notice that <code>mdpopups.mdx.highlight</code>, <code>mdpopups.mdx.superfences</code>, and <code>mdpopups.mdx.inlinehilite</code> are not shown here as they cannot be set directly and are handled by automatically by MdPopups.</p>
 <p>Let's say we wanted to keep the default extensions, but we wanted to enable <code>pymdown.magiclink</code>'s repository URL shortening and add and configure <code>pymdownx.keys</code>, <code>pymdownx.escapeall</code>, <code>pymdownx.smartsymbols</code>, and <code>markdown.extensions.smarty</code>. We must specify the full configuration we would like. We will use the base default settings outlined above, adding our new options and extensions.</p>
-<div class="codehilite"><pre><span></span><span class="nn">---</span>
+<div class="codehilite"><pre><span></span><code><span class="nn">---</span>
 <span class="nt">markdown_extensions</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.admonition</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.attr_list</span>
@@ -1022,11 +1050,11 @@
 <span class="p p-Indicator">-</span> <span class="nt">pymdownx.smartsymbols</span><span class="p">:</span>
     <span class="nt">ordinal_numbers</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nn">...</span>
-</pre></div>
+</code></pre></div>
 
 <h3 id="configure-frontmatter-from-python-objects">Configure Frontmatter From Python Objects<a class="headerlink" href="#configure-frontmatter-from-python-objects" title="Permanent link"></a></h3>
 <p>A lot of times in plugins, it may be easier to build up a Python dictionary and convert it to YAML.  MdPopups provides a function to exactly this:</p>
-<div class="codehilite"><pre><span></span><span class="n">frontmatter</span> <span class="o">=</span> <span class="p">{</span>
+<div class="codehilite"><pre><span></span><code><span class="n">frontmatter</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;allow_code_wrap&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
     <span class="s2">&quot;markdown_extensions&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;markdown.extensions.admonition&quot;</span><span class="p">,</span>
@@ -1051,7 +1079,7 @@
 <span class="p">}</span>
 
 <span class="n">content</span> <span class="o">=</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">format_frontmatter</span><span class="p">(</span><span class="n">frontmatter</span><span class="p">)</span> <span class="o">+</span> <span class="n">markdown_content</span>
-</pre></div>
+</code></pre></div>
 
 <h2 id="styling">Styling<a class="headerlink" href="#styling" title="Permanent link"></a></h2>
 <p>Popups and phantoms are styled with CSS that is fed through the Jinja2 template engine. A default CSS is provided that styles commonly used elements. Plugins can provide CSS to add additional styling for plugin specific purposes. See <a href="../styling/">CSS Styling</a> to learn more about the template engine and general styling info.</p>
@@ -1749,6 +1777,198 @@
 </dl>
 </dd>
 </dl>
+<h3 id="new-html-sheet">New HTML Sheet<a class="headerlink" href="#new-html-sheet" title="Permanent link"></a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Experimental Feature</p>
+<p>This feature is new in Sublime Text 4. Sublime's API may change in future versions for this feature and may break this.</p>
+</div>
+<dl>
+<dt><code class="codehilite"><span class="n">mdpopups</span><span class="o">.</span><span class="n">new_html_sheet</span></code></dt>
+<dd>
+<p>Accepts Markdown and creates a Sublime HTML sheet.  By default, the built-in Sublime syntax highlighter will be used for code highlighting.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>window</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">Window</span></code></td>
+<td></td>
+<td>A Sublime Text view object.</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>Name for the HTML sheet.</td>
+</tr>
+<tr>
+<td><code>contents</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>Markdown/HTML content for the popup.</td>
+</tr>
+<tr>
+<td><code>md</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">True</span></code></td>
+<td>Defines whether the content is Markdown and needs to be converted.</td>
+</tr>
+<tr>
+<td><code>css</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>Additional CSS that will be injected.</td>
+</tr>
+<tr>
+<td><code>cmd</code></td>
+<td><code class="codehilite"><span class="n">sublime_plugin</span><span class="o">.</span><span class="n">ApplicationCommand</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td><code>ApplicationCommand</code> to handle URL navigation.</td>
+</tr>
+<tr>
+<td><code>args</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>Arguments to pass to <code>cmd</code>.</td>
+</tr>
+<tr>
+<td><code>flags</code></td>
+<td><code class="codehilite"><span class="nb">int</span></code></td>
+<td><code class="codehilite"><span class="mi">0</span></code></td>
+<td>Flags to pass down to the Sublime Text <code>new_html_sheet</code> call.</td>
+</tr>
+<tr>
+<td><code>group</code></td>
+<td><code>#1py3 int</code></td>
+<td><code class="codehilite"><span class="o">-</span><span class="mi">1</span></code></td>
+<td>Specify window group.</td>
+</tr>
+<tr>
+<td><code>wrapper_class</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A string containing the class name you wish wrap your content in.  A <code>div</code> will be created with the given class.</td>
+</tr>
+<tr>
+<td><code>template_vars</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object <code>plugin</code>.</td>
+</tr>
+<tr>
+<td><code>template_env_options</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A dictionary containing options for the Jinja2 template environment. This <strong>only</strong> applies to the <strong>HTML/Markdown</strong> content.</td>
+</tr>
+<tr>
+<td><code>nl2br</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">True</span></code></td>
+<td>Determines whether the newline to <code class="codehilite"><span class="p">&lt;</span><span class="nt">br</span><span class="p">&gt;</span></code> Python Markdown extension is enabled or not. Will be ignored if <code>markdown_extensions</code> is configured in YAML frontmatter.</td>
+</tr>
+<tr>
+<td><code>allow_code_wrap</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">False</span></code></td>
+<td>Do not convert all the spaces in code blocks to <code>&amp;nbsp;</code> so that wrapping can occur. YAML frontmatter's <code>allow_code_wrap</code> will always be used instead of this if specified.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<div class="admonition new">
+<p class="admonition-title">New 3.6.0</p>
+<p><code>new_html_sheet</code> is new in 3.6.0.</p>
+</div>
+<h3 id="update-html-content">Update HTML Content<a class="headerlink" href="#update-html-content" title="Permanent link"></a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Experimental Feature</p>
+<p>This feature is new in Sublime Text 4. Sublime's API may change in future versions for this feature and may break this.</p>
+</div>
+<dl>
+<dt><code class="codehilite"><span class="n">mdpopups</span><span class="o">.</span><span class="n">update_html_sheet</span></code></dt>
+<dd>
+<p>Accepts Markdown and updates the content of a Sublime HTML sheet.  By default, the built-in Sublime syntax highlighter will be used for code highlighting.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sheet</code></td>
+<td><code class="codehilite"><span class="n">sublime</span><span class="o">.</span><span class="n">HtmlSheet</span></code></td>
+<td></td>
+<td>A Sublime Text HTML sheet object.</td>
+</tr>
+<tr>
+<td><code>contents</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td></td>
+<td>Markdown/HTML content for the popup.</td>
+</tr>
+<tr>
+<td><code>md</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">True</span></code></td>
+<td>Defines whether the content is Markdown and needs to be converted.</td>
+</tr>
+<tr>
+<td><code>css</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>Additional CSS that will be injected.</td>
+</tr>
+<tr>
+<td><code>wrapper_class</code></td>
+<td><code class="codehilite"><span class="nb">str</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A string containing the class name you wish wrap your content in.  A <code>div</code> will be created with the given class.</td>
+</tr>
+<tr>
+<td><code>template_vars</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object <code>plugin</code>.</td>
+</tr>
+<tr>
+<td><code>template_env_options</code></td>
+<td><code class="codehilite"><span class="nb">dict</span></code></td>
+<td><code class="codehilite"><span class="kc">None</span></code></td>
+<td>A dictionary containing options for the Jinja2 template environment. This <strong>only</strong> applies to the <strong>HTML/Markdown</strong> content.</td>
+</tr>
+<tr>
+<td><code>nl2br</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">True</span></code></td>
+<td>Determines whether the newline to <code class="codehilite"><span class="p">&lt;</span><span class="nt">br</span><span class="p">&gt;</span></code> Python Markdown extension is enabled or not. Will be ignored if <code>markdown_extensions</code> is configured in YAML frontmatter.</td>
+</tr>
+<tr>
+<td><code>allow_code_wrap</code></td>
+<td><code class="codehilite"><span class="nb">bool</span></code></td>
+<td><code class="codehilite"><span class="kc">False</span></code></td>
+<td>Do not convert all the spaces in code blocks to <code>&amp;nbsp;</code> so that wrapping can occur. YAML frontmatter's <code>allow_code_wrap</code> will always be used instead of this if specified.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<div class="admonition new">
+<p class="admonition-title">New 3.6.0</p>
+<p><code>new_html_sheet</code> is new in 3.6.0.</p>
+</div>
 <h3 id="clear-cache">Clear Cache<a class="headerlink" href="#clear-cache" title="Permanent link"></a></h3>
 <dl>
 <dt><code class="codehilite"><span class="n">mdpopups</span><span class="o">.</span><span class="n">clear_cache</span></code></dt>
@@ -2071,7 +2291,7 @@
 <dt><code class="codehilite"><span class="nb">dict</span> <span class="n">mdpopups</span><span class="o">.</span><span class="n">scope2style</span></code></dt>
 <dd>
 <p>Takes a sublime scope (complexity doesn't matter), and guesses the style that would be applied.  While there may be untested corner cases with complex scopes where it fails, in general, it is usually accurate.  The returned dictionary is in the form:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
     <span class="c1"># Colors will be None if not found,</span>
     <span class="c1"># though usually, even if the scope has no color</span>
     <span class="c1"># it will return the overall theme foreground.</span>
@@ -2085,7 +2305,7 @@
     <span class="c1"># Multiple styles may be returned &#39;bold italic&#39; or an empty string &#39;&#39;.</span>
     <span class="s2">&quot;style&quot;</span><span class="p">:</span> <span class="s1">&#39;bold italic&#39;</span>
 <span class="p">}</span>
-</pre></div>
+</code></pre></div>
 
 <table>
 <thead>
@@ -2181,7 +2401,7 @@
 <p>The Markdown parser used converts all tabs to spaces with the simple logic of 1 tab equals 4 spaces. This logic is generally applied in other places like <a href="#syntax-highlight"><code>syntax_highlight</code></a>. When formatting code for <code>syntax_highlight</code>, you may want to translate the tabs to spaces based on tab stops <em>before</em> passing it through opposed to apply the simple logic of converting all tabs to 4 spaces regardless of tab stops. <code>tabs2spaces</code> does exactly this, allowing you format the whitespace in a more intelligent manner.</p>
 <p><code>tabs2spaces</code> cannot do anything about characters, and there are some even in monospace fonts, that are wider than normal characters. It doesn't detect zero width characters either. It also cannot predict cases where two or more Unicode character are shown as one. But in some cases, this more intelligent output is much better than the "all tabs are arbitrarily one size" logic.</p>
 <p>Example (Notice that <code>♭</code> is a bit larger than normal characters):</p>
-<div class="codehilite"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">mdpopups</span>
+<div class="codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">mdpopups</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="go">============================================================</span>
 <span class="go">T\tTp\tSp\tD\tDp\tS\tD7\tT</span>
@@ -2198,7 +2418,7 @@
 <span class="go">A       F#m     Bm      E       C#m     D       E7      A</span>
 <span class="go">A#      Gm      Cm      F       Dm      D#      F7      A#</span>
 <span class="go">B♭      Gm      Cm      F       Dm      E♭m     F7      B</span>
-</pre></div>
+</code></pre></div>
 
 <table>
 <thead>
@@ -2254,6 +2474,7 @@
                 
                   
                 
+                
               
               
                 
@@ -2308,23 +2529,23 @@
       <div class="md-footer-copyright">
         
           <div class="md-footer-copyright__highlight">
-            Copyright &copy; 2015 - 2019 <a href="https://github.com/facelessuser">Isaac Muse</a>
+            Copyright &copy; 2015 - 2020 <a href="https://github.com/facelessuser">Isaac Muse</a>
 <br><span class="md-footer-custom-text">emoji provided free by </span>
 <a href="https://github.com/twitter/twemoji">Twemoji</a>
 
           </div>
         
         powered by
-        <a href="https://www.mkdocs.org">MkDocs</a>
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
         and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
           Material for MkDocs</a>
       </div>
       
   <div class="md-footer-social">
     <link rel="stylesheet" href="../assets/fonts/font-awesome.css">
     
-      <a href="https://github.com/facelessuser" class="md-footer-social__link fa fa-github"></a>
+      <a href="https://github.com/facelessuser" target="_blank" rel="noopener" title="github" class="md-footer-social__link fa fa-github"></a>
     
   </div>
 
@@ -2334,9 +2555,9 @@
       
     </div>
     
-      <script src="../assets/javascripts/application.ac79c3b0.js"></script>
+      <script src="../assets/javascripts/application.c33a9706.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      <script>app.initialize({version:"1.1",url:{base:".."}})</script>
       
         <script src="../extra-0d9305e748.js"></script>
       
