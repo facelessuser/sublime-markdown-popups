@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.6.1
+
+- **FIX**: Color adjusters with `+` and `-` operator must have a space after the operator.
+- **FIX**: `lightness()` and `saturation()` should not accept numbers, only percentages.
+
 ## 3.6.0
 
 - **NEW**: Add support for parsing `alpha(+value)`, `alpha(-value)`, and `alpha(*value)` in color schemes.
