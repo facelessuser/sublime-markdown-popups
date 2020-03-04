@@ -111,16 +111,16 @@ COLOR_MOD_RE = re.compile(
                 (?P<blend_color>\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})\s+
                 (?P<blend_percent>%(percent)s)
                 (?:\s+(?P<blend_mode>hsl|rgb|hwb))?\) |
-            (?P<alpha>a(?:lpha)?)\(\s*(?P<alpha_op>[\+\-\*]\s*)?(?P<alpha_value>(?:%(percent)s|%(float)s))\s*\) |
-            (?P<sat>s(?:aturation)?)\(\s*(?P<sat_op>[\+\-\*]\s*)?(?P<sat_value>(?:%(percent)s|%(float)s))\s*\) |
-            (?P<lit>l(?:ightness)?)\(\s*(?P<lit_op>[\+\-\*]\s*)?(?P<lit_value>(?:%(percent)s|%(float)s))\s*\)
+            (?P<alpha>a(?:lpha)?)\(\s*(?P<alpha_op>[\+\-]\s+|\*\s*)?(?P<alpha_value>(?:%(percent)s|%(float)s))\s*\) |
+            (?P<sat>s(?:aturation)?)\(\s*(?P<sat_op>[\+\-]\s+|\*\s*)?(?P<sat_value>(?:%(percent)s))\s*\) |
+            (?P<lit>l(?:ightness)?)\(\s*(?P<lit_op>[\+\-]\s+|\*\s*)?(?P<lit_value>(?:%(percent)s))\s*\)
         )
         (?P<other>(?:
             \s+(?:
                 blenda?\((?:\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})\s+%(percent)s(?:\s+(?:hsl|rgb|hwb))?\) |
-                a(?:lpha)?\(\s*(?:[\+\-\*]\s*)?(?:%(percent)s|%(float)s)\s*\) |
-                s(?:aturation)?\(\s*(?:[\+\-\*]\s*)?(?:%(percent)s|%(float)s)\s*\) |
-                l(?:ightness)?\(\s*(?:[\+\-\*]\s*)?(?:%(percent)s|%(float)s)\s*\)
+                a(?:lpha)?\(\s*(?:[\+\-]\s+|\*\s*)?(?:%(percent)s|%(float)s)\s*\) |
+                s(?:aturation)?\(\s*(?:[\+\-]\s+|\*\s*)?(?:%(percent)s)\s*\) |
+                l(?:ightness)?\(\s*(?:[\+\-]\s+|\*\s*)?(?:%(percent)s)\s*\)
             )
         )+)?
     \s*\)
@@ -226,20 +226,14 @@ def blend(m, limit=False):
     elif m.group('sat_value'):
         percent = m.group('sat_value')
         op = OP_MAP[m.group('sat_op').strip() if m.group('sat_op') else '']
-        if percent.endswith('%'):
-            percent = float(percent.rstrip('%')) / 100.0
-        else:
-            percent = float(percent)
+        percent = float(percent.rstrip('%')) / 100.0
         rgba = RGBA(base)
         rgba.saturation(percent, op)
         color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
     elif m.group('lit_value'):
         percent = m.group('lit_value')
         op = OP_MAP[m.group('lit_op').strip() if m.group('lit_op') else '']
-        if percent.endswith('%'):
-            percent = float(percent.rstrip('%')) / 100.0
-        else:
-            percent = float(percent)
+        percent = float(percent.rstrip('%')) / 100.0
         rgba = RGBA(base)
         rgba.luminance(percent, op)
         color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
