@@ -4,6 +4,10 @@
 
 - **FIX**: Color adjusters with `+` and `-` operator must have a space after the operator.
 - **FIX**: `lightness()` and `saturation()` should not accept numbers, only percentages.
+- **FIX**: Adjustments to match Sublime 4069 which now handles HSL color blending correctly.
+- **FIX**: Handle HSL/HWB if a user uses the 'deg' unit type.
+- **FIX**: Sublime doesn't support them, but support 'rad', 'grad', and 'turn' unit types in case Sublime ever supports
+  them in HSL an HWB.
 
 ## 3.6.0
 

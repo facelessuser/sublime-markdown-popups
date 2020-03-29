@@ -34,10 +34,14 @@ from os import path
 from collections import namedtuple
 from plistlib import readPlistFromBytes
 import decimal
+import math
 
 NEW_SCHEMES = int(sublime.version()) >= 3150
 FONT_STYLE = "font_style" if int(sublime.version()) >= 3151 else "fontStyle"
 GLOBAL_OPTIONS = "globals" if int(sublime.version()) >= 3152 else "defaults"
+
+CONVERT_TURN = 360
+CONVERT_GRAD = 90 / 100
 
 # XML
 XML_COMMENT_RE = re.compile(br"^[\r\n\s]*<!--[\s\S]*?-->[\s\r\n]*|<!--[\s\S]*?-->")
@@ -47,7 +51,8 @@ FLOAT_TRIM_RE = re.compile(r'^(?P<keep>\d+)(?P<trash>\.0+|(?P<keep2>\.\d*[1-9])0
 
 COLOR_PARTS = {
     "percent": r"[+\-]?(?:(?:\d*\.\d+)|\d+)%",
-    "float": r"[+\-]?(?:(?:\d*\.\d+)|\d+)"
+    "float": r"[+\-]?(?:(?:\d*\.\d+)|\d+)",
+    "angle": r"[+\-]?(?:(?:\d*\.\d+)|\d+)(deg|rad|turn|grad)?"
 }
 
 RGB_COLORS = r"""(?x)
@@ -63,11 +68,11 @@ RGB_COLORS = r"""(?x)
 
 HSL_COLORS = r"""(?x)
     \b(?P<hsl>hsl\(\s*(?P<hsl_content>%(float)s\s*,\s*%(percent)s\s*,\s*%(percent)s)\s*\)) |
-    \b(?P<hsla>hsla\(\s*(?P<hsla_content>%(float)s\s*,\s*(?:%(percent)s\s*,\s*){2}(?:%(percent)s|%(float)s))\s*\))
+    \b(?P<hsla>hsla\(\s*(?P<hsla_content>%(angle)s\s*,\s*(?:%(percent)s\s*,\s*){2}(?:%(percent)s|%(float)s))\s*\))
 """ % COLOR_PARTS
 
 HWB_COLORS = r"""(?x)
-    \b(?P<hwb>hwb\(\s*(?P<hwb_content>%(float)s\s*,\s*%(percent)s\s*,\s*%(percent)s
+    \b(?P<hwb>hwb\(\s*(?P<hwb_content>%(angle)s\s*,\s*%(percent)s\s*,\s*%(percent)s
     (?:\s*,\s*(?:%(percent)s|%(float)s))?)\s*\))
 """ % COLOR_PARTS
 
@@ -135,6 +140,22 @@ OP_MAP = {
     '+': OP_ADD,
     '-': OP_SUB
 }
+
+
+def norm_angle(angle):
+    """Normalize angle units."""
+
+    if angle.endswith('turn'):
+        value = float(angle[:-4]) * CONVERT_TURN
+    elif angle.endswith('rad'):
+        value = math.degrees(float(angle[:-3]))
+    elif angle.endswith('grad'):
+        value = float(angle[:-3]) * CONVERT_GRAD
+    elif angle.endswith('deg'):
+        value = float(angle[:-3])
+    else:
+        value = float(angle)
+    return value
 
 
 def packages_path(pth):
@@ -317,9 +338,9 @@ def translate_color(m, var, var_src):
             else:
                 alpha = alpha_dec_normalize(content[3])
         elif groups.get('hsl'):
-            content = [x.strip() for x in m.group('hsl_content').split(',')]
+            content = [x.strip().lower() for x in m.group('hsl_content').split(',')]
             rgba = RGBA()
-            hue = float(content[0])
+            hue = norm_angle(content[0])
             if hue < 0.0 or hue > 360.0:
                 hue = hue % 360.0
             h = hue / 360.0
