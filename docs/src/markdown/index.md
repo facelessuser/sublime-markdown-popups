@@ -15,6 +15,7 @@ MdPopups will use your color scheme to create popups/phantoms that fit your edit
 - @SublimeText/LaTeXTools
 - @Kronuz/SublimeCodeIntel
 - @phil65/KodiDevKit
+- @sublimelsp/LSP
 
 ## Features
 

@@ -18,6 +18,7 @@ KodiDevKit
 Kronuz
 LaTeXTools
 Limberg
+LSP
 MERCHANTABILITY
 MdPopups
 Mdpopups
@@ -85,6 +86,7 @@ requesters
 squidfunk
 stylesheet
 sublicense
+sublimelsp
 templating
 tooltip
 tooltips
