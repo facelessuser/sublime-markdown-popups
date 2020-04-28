@@ -690,7 +690,7 @@ def query_phantoms(view, pids):
 
 if HTML_SHEET_SUPPORT:
     def new_html_sheet(
-        window, name, contents, md=True, css=None, cmd="", args=None, flags=0, group=-1,
+        window, name, contents, md=True, css=None, flags=0, group=-1,
         wrapper_class=None, template_vars=None, template_env_options=None, nl2br=False,
         allow_code_wrap=False
     ):
@@ -707,7 +707,7 @@ if HTML_SHEET_SUPPORT:
             _log(traceback.format_exc())
             html = IDK
 
-        return window.new_html_sheet(name, html, cmd, args, flags, group)
+        return window.new_html_sheet(name, html, flags, group)
 
     def update_html_sheet(
         sheet, contents, md=True, css=None, wrapper_class=None,
