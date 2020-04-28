@@ -30,7 +30,7 @@ try:
 except Exception:
     bs4 = None
 
-HTML_SHEET_SUPPORT = int(sublime.version()) >= 4065
+HTML_SHEET_SUPPORT = int(sublime.version()) >= 4074
 
 DEFAULT_CSS = 'Packages/mdpopups/mdpopups_css/default.css'
 OLD_DEFAULT_CSS = 'Packages/mdpopups/css/default.css'

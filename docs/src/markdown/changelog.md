@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.6.2
+
+- **FIX**: Sublime Text 4 no longer supports `cmd` and `args` in HTML sheets. Additionally, version 4074 will be
+  required to get it working.
+
 ## 3.6.1
 
 - **FIX**: Color adjusters with `+` and `-` operator must have a space after the operator.
