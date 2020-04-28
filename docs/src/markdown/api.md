@@ -436,8 +436,6 @@ MdPopups provides a number of accessible functions.
     `contents`             | `#!py3 str`                               |               | Markdown/HTML content for the popup.
     `md`                   | `#!py3 bool`                              | `#!py3 True`  | Defines whether the content is Markdown and needs to be converted.
     `css`                  | `#!py3 str`                               | `#!py3 None`  | Additional CSS that will be injected.
-    `cmd`                  | `#!py3 sublime_plugin.ApplicationCommand` | `#!py3 None`  | `ApplicationCommand` to handle URL navigation.
-    `args`                 | `#!py3 dict`                              | `#!py3 None`  | Arguments to pass to `cmd`.
     `flags`                | `#!py3 int`                               | `#!py3 0`     | Flags to pass down to the Sublime Text `new_html_sheet` call.
     `group`                | `#1py3 int`                               | `#!py3 -1`    | Specify window group.
     `wrapper_class`        | `#!py3 str`                               | `#!py3 None`  | A string containing the class name you wish wrap your content in.  A `div` will be created with the given class.
