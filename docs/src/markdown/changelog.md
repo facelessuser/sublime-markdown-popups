@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.7.0
+
+- **NEW**: Add support for `underline` and `glow` in highlighted code blocks.
+
+  Currently Sublime's API has a bug
+  (https://github.com/sublimehq/sublime_text/issues/3316) that prevents underline from being detected, you can enable
+  the `mdpopups.legacy_color_matcher` to work around this issue until it is fixed. But keep in mind, leg this is not
+  required as MdPopups will continue working just fine, just without showing underlines in highlighted code.
+
+  While `glow` support has been added, it will not actually display proper in `minihtml` as `minihtml` cannot yet
+  support the CSS `text-shadow` feature that is used to create the glow effect. If/when this support is added to
+  Sublime, the glow effect *should* work.
+
+- **NEW**: Add option `mdpopups.legacy_color_matcher` to enable the legacy color matcher.
+
 ## 3.6.2
 
 - **FIX**: Sublime Text 4 no longer supports `cmd` and `args` in HTML sheets. Additionally, version 4074 will be

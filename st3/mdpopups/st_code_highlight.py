@@ -47,8 +47,11 @@ class SublimeHighlight(object):
         """Initialization."""
 
         self.view = None
+        self.legacy_color_matcher = not NEW_SCHEMES or sublime.load_settings(
+            'Preferences.sublime-settings'
+        ).get('mdpopups.legacy_color_matcher', False)
 
-        if not NEW_SCHEMES:
+        if self.legacy_color_matcher:
             self.csm = ColorSchemeMatcher(scheme)
 
             self.fground = self.csm.get_special_color('foreground', simulate_transparency=True)
@@ -130,10 +133,16 @@ class SublimeHighlight(object):
             text = '&nbsp;'
 
         css_style = ''
-        if style and 'bold' in style:
-            css_style += ' font-weight: bold;'
-        if style and 'italic' in style:
-            css_style += ' font-style: italic;'
+        if style:
+            if 'bold' in style:
+                css_style += ' font-weight: bold;'
+            if 'italic' in style:
+                css_style += ' font-style: italic;'
+            if 'underline' in style:
+                css_style += ' text-decoration: underline;'
+            if 'glow' in style:
+                # This won't work in `minihtml`, but here it is.
+                css_style += ' text-shadow: 0 0 3px currentColor;'
 
         if bgcolor is None:
             code = CODE % {
@@ -157,15 +166,20 @@ class SublimeHighlight(object):
             scope_name = self.view.scope_name(self.pt)
             while self.view.scope_name(self.end) == scope_name and self.end < self.size:
                 self.end += 1
-            if NEW_SCHEMES:
+            if not self.legacy_color_matcher:
                 color_match = self.view.style_for_scope(scope_name)
                 color = color_match.get('foreground', self.fground)
                 bgcolor = color_match.get('background')
                 style = []
-                if color_match['bold']:
+                if color_match.get('bold', False):
                     style.append('bold')
-                if color_match['italic']:
+                if color_match.get('italic', False):
                     style.append('italic')
+                if color_match.get('underline', False):
+                    style.append('underline')
+                if color_match.get('glow', False):
+                    style.append('glow')
+
                 if do_highlight:
                     sfg = color_match.get('selection_forground', self.defaults.get('selection_forground'))
                     if sfg:
@@ -190,7 +204,7 @@ class SublimeHighlight(object):
         # # Get the color for the space at the end of a line
         # if self.end < self.view.size():
         #     end_key = self.view.scope_name(self.pt)
-        #     if NEW_SCHEMES:
+        #     if not self.legacy_color_matcher:
         #         color_match = self.view.style_for_scope(end_key)
         #         self.ebground = color_match.get('background')
         #     else:
@@ -269,7 +283,7 @@ class SublimeHighlight(object):
         """Syntax Highlight."""
 
         self.set_view(src, 'text' if not lang else lang)
-        if NEW_SCHEMES:
+        if not self.legacy_color_matcher:
             self.defaults = self.view.style()
             self.fground = self.defaults.get('foreground', '#000000')
             self.bground = self.defaults.get('background', '#FFFFFF')
