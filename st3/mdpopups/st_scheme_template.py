@@ -145,7 +145,7 @@ class SchemeTemplate(object):
     def get_html_border(self):
         """Get HTML border."""
 
-        return self.get_bg() if not legacy_color_matcher else self.html_border
+        return self.get_bg() if not self.legacy_color_matcher else self.html_border
 
     def is_dark(self):
         """Check if scheme is dark."""
