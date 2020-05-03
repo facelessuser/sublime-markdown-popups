@@ -42,10 +42,10 @@ markdown_extensions:
   - markdown.extensions.tables:
   - markdown.extensions.abbr:
   - markdown.extensions.footnotes:
-  - pymdownx.extrarawhtml:
+  - markdown.extensions.md_in_html:
   - pymdownx.superfences:
       preserve_tabs: true
-      custom_fences: 
+      custom_fences:
         - name: flow
           class: uml-flowchart
           format: !!python/name:pymdownx.superfences.fence_code_format
