@@ -46,6 +46,7 @@ there are helpful errors.</p></div>
 '''
 HL_SETTING = 'mdpopups.use_sublime_highlighter'
 STYLE_SETTING = 'mdpopups.default_style'
+LEGACY_MATCHER_SETTING = 'mdpopups.legacy_color_matcher'
 RE_BAD_ENTITIES = re.compile(r'(&(?!amp;|lt;|gt;|nbsp;)(?:\w+;|#\d+;))')
 
 NODEBUG = 0
@@ -172,7 +173,8 @@ def _get_scheme(scheme):
             if (
                 _is_cache_expired(t) or
                 obj.use_pygments != (not settings.get(HL_SETTING, True)) or
-                obj.default_style != settings.get(STYLE_SETTING, True)
+                obj.default_style != settings.get(STYLE_SETTING, True) or
+                obj.legacy_color_matcher != settings.get(LEGACY_MATCHER_SETTING, False)
             ):
                 obj = None
                 user_css = ''
