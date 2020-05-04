@@ -548,7 +548,7 @@ def scope2style(view, scope, selected=False, explicit_background=False):
     }
     obj = _get_scheme(view.settings().get('color_scheme'))[0]
     style_obj = obj.guess_style(view, scope, selected, explicit_background)
-    if NEW_SCHEMES:
+    if not obj.legacy_color_matcher:
         style['color'] = style_obj['foreground']
         style['background'] = style_obj['background']
         font = []
@@ -556,6 +556,10 @@ def scope2style(view, scope, selected=False, explicit_background=False):
             font.append('bold')
         if style_obj['italic']:
             font.append('italic')
+        if style_obj['underline']:
+            font.append('underline')
+        if style_obj['glow']:
+            font.append('glow')
         style['style'] = ' '.join(font)
     else:
         style['color'] = style_obj.fg_simulated
