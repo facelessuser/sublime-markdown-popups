@@ -16,7 +16,7 @@ import time
 from . import version as ver
 from . import colorbox
 from collections import OrderedDict
-from .st_scheme_template import SchemeTemplate, POPUP, PHANTOM, SHEET, NEW_SCHEMES
+from .st_scheme_template import SchemeTemplate, POPUP, PHANTOM, SHEET
 from .st_clean_css import clean_css
 from .st_pygments_highlight import syntax_hl as pyg_syntax_hl
 from .st_code_highlight import SublimeHighlight
