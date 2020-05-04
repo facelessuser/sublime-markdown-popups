@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.7.1
+
+- **FIX**: Fix logic error when using legacy color matcher.
+
 ## 3.7.0
 
 - **NEW**: Add support for `underline` and `glow` in highlighted code blocks.
