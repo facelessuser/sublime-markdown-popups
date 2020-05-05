@@ -437,7 +437,7 @@ MdPopups provides a number of accessible functions.
     `md`                   | `#!py3 bool`                              | `#!py3 True`  | Defines whether the content is Markdown and needs to be converted.
     `css`                  | `#!py3 str`                               | `#!py3 None`  | Additional CSS that will be injected.
     `flags`                | `#!py3 int`                               | `#!py3 0`     | Flags to pass down to the Sublime Text `new_html_sheet` call.
-    `group`                | `#1py3 int`                               | `#!py3 -1`    | Specify window group.
+    `group`                | `#!py3 int`                               | `#!py3 -1`    | Specify window group.
     `wrapper_class`        | `#!py3 str`                               | `#!py3 None`  | A string containing the class name you wish wrap your content in.  A `div` will be created with the given class.
     `template_vars`        | `#!py3 dict`                              | `#!py3 None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
     `template_env_options` | `#!py3 dict`                              | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
