@@ -25,6 +25,7 @@ lang_map = {
     'javascript': (('javascript', 'js'), ('JavaScript/JavaScript', 'JavaScriptNext - ES6 Syntax/JavaScriptNext')),
     'json': (('json',), ('JavaScript/JSON', 'JavaScriptNext - ES6 Syntax/JSON (JavaScriptNext)')),
     'jsp': (('jsp',), ('Java/Java Server Pages (JSP)',)),
+    'julia': (('julia',), ('Julia/Julia',)),
     'less': (('less',), ('LESS/LESS', 'LessImproved/LESS')),
     'lisp': (('common-lisp', 'cl', 'lisp', 'emacs', 'elisp'), ('Lisp/Lisp',)),
     'lua': (('lua',), ('Lua/Lua',)),
