@@ -14,7 +14,7 @@ jobs:
   tests:
 
     env:
-      TOXENV: py37
+      TOXENV: py38
 
     runs-on: ubuntu-latest
 
