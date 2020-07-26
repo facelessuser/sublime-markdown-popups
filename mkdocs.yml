@@ -1,7 +1,7 @@
 site_name: Sublime Markdown Popups Documentation
 site_url: https://facelessuser.github.io/sublime-markdown-popups
 repo_url: https://github.com/facelessuser/sublime-markdown-popups
-edit_uri: tree/master/docs/src/markdown
+edit_uri: ""
 site_description: Popup tooltips for Sublime generated with Markdown.
 copyright: |
   Copyright &copy; 2015 - 2020 <a href="https://github.com/facelessuser"  target="_blank" rel="noopener">Isaac Muse</a>
@@ -80,8 +80,8 @@ markdown_extensions:
   - pymdownx.caret:
   - pymdownx.smartsymbols:
   - pymdownx.emoji:
-      emoji_index: !!python/name:pymdownx.emoji.twemoji
-      emoji_generator: !!python/name:pymdownx.emoji.to_png
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
   - pymdownx.escapeall:
       hardbreak: true
       nbsp: true
@@ -101,7 +101,7 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/facelessuser
     - icon: fontawesome/brands/discord
-      link: https://discord.gg/rZ2n3Dy
+      link: https://discord.gg/TWs8Tgr
 
 plugins:
   - search
