@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.7.2
+
+- **FIX**: Add Julia language to highlight list.
+- **FIX**: Add built-in Typescript language to highlight list.
+
 ## 3.7.1
 
 - **FIX**: Fix logic error when using legacy color matcher.
