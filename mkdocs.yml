@@ -9,6 +9,7 @@ copyright: |
 docs_dir: docs/src/markdown
 theme:
   name: material
+  custom_dir: docs/theme
   palette:
     primary: drac-purple
     accent: drac-purple
@@ -17,6 +18,8 @@ theme:
   font:
     text: Roboto
     code: Roboto Mono
+  features:
+    - tabs
 
 nav:
   - About Markdown Popups: index.md
@@ -25,9 +28,10 @@ nav:
   - API: api.md
   - CSS Styling: styling.md
   - F.A.Q: faq.md
-  - Contributing &amp; Support: contributing.md
-  - Changelog: changelog.md
-  - License: license.md
+  - About:
+    - Contributing &amp; Support: about/contributing.md
+    - Changelog: about/changelog.md
+    - License: about/license.md
 
 markdown_extensions:
   - markdown.extensions.toc:
@@ -95,6 +99,7 @@ markdown_extensions:
       separator: "\uff0b"
   - pymdownx.details:
   - pymdownx.tabbed:
+  - pymdownx.saneheaders:
 
 extra:
   social:
