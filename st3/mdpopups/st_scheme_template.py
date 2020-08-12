@@ -358,10 +358,14 @@ class SchemeTemplate(object):
             bg = general.get('background', '#ffffff')
             scope = self.view.style_for_scope(selector)
             style = []
-            if scope['bold']:
+            if scope.get('bold', False):
                 style.append('bold')
-            if scope['italic']:
+            if scope.get('italic', False):
                 style.append('italic')
+            if scope.get('underline', False):
+                style.append('underline')
+            if scope.get('glow', False):
+                style.append('glow')
             color = scope.get('foreground', fg)
             bgcolor = scope.get('background', (None if explicit_background else bg))
         else:
