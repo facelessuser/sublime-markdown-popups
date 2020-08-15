@@ -272,7 +272,7 @@ class SublimeHighlight(object):
             # Default to plain text
             for ext in ST_LANGUAGES:
                 # Just in case text one day switches to 'sublime-syntax'
-                sytnax_file = 'Packages/Plain text%s' % ext
+                sytnax_file = 'Packages/Text/Plain text%s' % ext
                 try:
                     sublime.load_binary_resource(sytnax_file)
                 except Exception:
