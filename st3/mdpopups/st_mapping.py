@@ -23,7 +23,7 @@ lang_map = {
     'html': (('html',), ('HTML/HTML',)),
     'java': (('java',), ('Java/Java',)),
     'javascript': (('javascript', 'js'), ('JavaScript/JavaScript', 'JavaScriptNext - ES6 Syntax/JavaScriptNext')),
-    'json': (('json',), ('JavaScript/JSON', 'JavaScriptNext - ES6 Syntax/JSON (JavaScriptNext)')),
+    'json': (('json',), ('JavaScript/JSON', 'JSON/JSON.sublime-syntax', 'JavaScriptNext - ES6 Syntax/JSON (JavaScriptNext)')),
     'jsp': (('jsp',), ('Java/Java Server Pages (JSP)',)),
     'julia': (('julia',), ('Julia/Julia',)),
     'less': (('less',), ('LESS/LESS', 'LessImproved/LESS')),
