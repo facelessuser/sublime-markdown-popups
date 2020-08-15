@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.7.4
+
+- **FIX**: Fix plain text syntax highlighting not always being applied correctly as the fallback.
+- **FIX**: Add `JSON/JSON` to highlight mapping.
+
 ## 3.7.3
 
 - **FIX**: Fix issue acquiring font styles like `bold` etc. on latter Sublime builds.
