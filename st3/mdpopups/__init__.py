@@ -417,7 +417,7 @@ def md2html(
             ]
         )
 
-        # Use legacy method to determine if `nl2b` should be used
+        # Use legacy method to determine if `nl2br` should be used
         if nl2br:
             extensions.append('markdown.extensions.nl2br')
     else:
@@ -438,7 +438,7 @@ def md2html(
         extension_configs=configs,
         sublime_hl=sublime_hl,
         allow_code_wrap=fm.get('allow_code_wrap', allow_code_wrap)
-    ).convert(_markup_template(markup, template_vars, template_env_options)).replace('&quot;', '"').replace('\n', '')
+    ).convert(_markup_template(markup, template_vars, template_env_options)).replace('&quot;', '"')
 
 
 def color_box(
