@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.7.5
+
+- **FIX**: Don't strip newlines from content that has `nl2br` disabled.
+
 ## 3.7.4
 
 - **FIX**: Fix plain text syntax highlighting not always being applied correctly as the fallback.
