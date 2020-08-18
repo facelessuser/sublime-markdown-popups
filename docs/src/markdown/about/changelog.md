@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.0.0
+
+- **NEW**: `nl2br` can only be set through `markdown_extensions` via frontmatter. If passed as a parameter for any API
+  function, it will be ignored.
+- **NEW**: `allow_code_wrap` can only be set through the frontmatter option `allow_code_wrap`. If passed as a parameter
+  for any API function (except `syntax_highlight`), it will be ignored.
+
 ## 3.7.5
 
 - **FIX**: Don't strip newlines from content that has `nl2br` disabled.
