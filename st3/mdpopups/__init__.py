@@ -305,8 +305,7 @@ def _remove_entities(text):
 
 def _create_html(
     view, content, md=True, css=None, debug=False, css_type=POPUP,
-    wrapper_class=None, template_vars=None, template_env_options=None, nl2br=True,
-    allow_code_wrap=False
+    wrapper_class=None, template_vars=None, template_env_options=None
 ):
     """Create HTML from content."""
 
@@ -324,8 +323,7 @@ def _create_html(
     if md:
         content = md2html(
             view, content, template_vars=template_vars,
-            template_env_options=template_env_options, nl2br=nl2br,
-            allow_code_wrap=allow_code_wrap
+            template_env_options=template_env_options
         )
     else:
         # Strip out frontmatter if found as we don't currently
@@ -371,8 +369,7 @@ def version():
 
 
 def md2html(
-    view, markup, template_vars=None, template_env_options=None,
-    nl2br=True, allow_code_wrap=False
+    view, markup, template_vars=None, template_env_options=None, **kwargs
 ):
     """Convert Markdown to HTML."""
 
@@ -413,13 +410,10 @@ def md2html(
                 "markdown.extensions.def_list",
                 "pymdownx.betterem",
                 "pymdownx.magiclink",
-                "pymdownx.extrarawhtml"
+                "pymdownx.extrarawhtml",
+                "markdown.extensions.nl2br"
             ]
         )
-
-        # Use legacy method to determine if `nl2br` should be used
-        if nl2br:
-            extensions.append('markdown.extensions.nl2br')
     else:
         for ext in md_exts:
             if isinstance(ext, (dict, OrderedDict)):
@@ -437,7 +431,7 @@ def md2html(
         extensions=extensions,
         extension_configs=configs,
         sublime_hl=sublime_hl,
-        allow_code_wrap=fm.get('allow_code_wrap', allow_code_wrap)
+        allow_code_wrap=fm.get('allow_code_wrap', False)
     ).convert(_markup_template(markup, template_vars, template_env_options)).replace('&quot;', '"')
 
 
@@ -582,8 +576,7 @@ def hide_popup(view):
 
 def update_popup(
     view, content, md=True, css=None, wrapper_class=None,
-    template_vars=None, template_env_options=None, nl2br=True,
-    allow_code_wrap=False
+    template_vars=None, template_env_options=None, **kwargs
 ):
     """Update the popup."""
 
@@ -595,8 +588,7 @@ def update_popup(
     try:
         html = _create_html(
             view, content, md, css, css_type=POPUP, wrapper_class=wrapper_class,
-            template_vars=template_vars, template_env_options=template_env_options, nl2br=nl2br,
-            allow_code_wrap=allow_code_wrap
+            template_vars=template_vars, template_env_options=template_env_options
         )
     except Exception:
         _log(traceback.format_exc())
@@ -609,8 +601,7 @@ def show_popup(
     view, content, md=True, css=None,
     flags=0, location=-1, max_width=320, max_height=240,
     on_navigate=None, on_hide=None, wrapper_class=None,
-    template_vars=None, template_env_options=None, nl2br=True,
-    allow_code_wrap=False
+    template_vars=None, template_env_options=None, **kwargs
 ):
     """Parse the color scheme if needed and show the styled pop-up."""
 
@@ -625,8 +616,7 @@ def show_popup(
     try:
         html = _create_html(
             view, content, md, css, css_type=POPUP, wrapper_class=wrapper_class,
-            template_vars=template_vars, template_env_options=template_env_options,
-            nl2br=nl2br, allow_code_wrap=allow_code_wrap
+            template_vars=template_vars, template_env_options=template_env_options
         )
     except Exception:
         _log(traceback.format_exc())
@@ -647,8 +637,7 @@ def is_popup_visible(view):
 def add_phantom(
     view, key, region, content, layout, md=True,
     css=None, on_navigate=None, wrapper_class=None,
-    template_vars=None, template_env_options=None, nl2br=True,
-    allow_code_wrap=False
+    template_vars=None, template_env_options=None, **kwargs
 ):
     """Add a phantom and return phantom id."""
 
@@ -660,8 +649,7 @@ def add_phantom(
     try:
         html = _create_html(
             view, content, md, css, css_type=PHANTOM, wrapper_class=wrapper_class,
-            template_vars=template_vars, template_env_options=template_env_options,
-            nl2br=nl2br, allow_code_wrap=allow_code_wrap
+            template_vars=template_vars, template_env_options=template_env_options
         )
     except Exception:
         _log(traceback.format_exc())
@@ -697,8 +685,7 @@ def query_phantoms(view, pids):
 if HTML_SHEET_SUPPORT:
     def new_html_sheet(
         window, name, contents, md=True, css=None, flags=0, group=-1,
-        wrapper_class=None, template_vars=None, template_env_options=None, nl2br=False,
-        allow_code_wrap=False
+        wrapper_class=None, template_vars=None, template_env_options=None, **kwargs
     ):
         """Create new HTML sheet."""
 
@@ -706,8 +693,7 @@ if HTML_SHEET_SUPPORT:
         try:
             html = _create_html(
                 view, contents, md, css, css_type=SHEET, wrapper_class=wrapper_class,
-                template_vars=template_vars, template_env_options=template_env_options, nl2br=nl2br,
-                allow_code_wrap=allow_code_wrap
+                template_vars=template_vars, template_env_options=template_env_options
             )
         except Exception:
             _log(traceback.format_exc())
@@ -717,7 +703,7 @@ if HTML_SHEET_SUPPORT:
 
     def update_html_sheet(
         sheet, contents, md=True, css=None, wrapper_class=None,
-        template_vars=None, template_env_options=None, nl2br=False, allow_code_wrap=False
+        template_vars=None, template_env_options=None, **kwargs
     ):
         """Update an HTML sheet."""
 
@@ -727,8 +713,7 @@ if HTML_SHEET_SUPPORT:
         try:
             html = _create_html(
                 view, contents, md, css, css_type=SHEET, wrapper_class=wrapper_class,
-                template_vars=template_vars, template_env_options=template_env_options, nl2br=nl2br,
-                allow_code_wrap=allow_code_wrap
+                template_vars=template_vars, template_env_options=template_env_options
             )
         except Exception:
             _log(traceback.format_exc())
@@ -743,8 +728,7 @@ class Phantom(sublime.Phantom):
     def __init__(
         self, region, content, layout, md=True,
         css=None, on_navigate=None, wrapper_class=None,
-        template_vars=None, template_env_options=None, nl2br=True,
-        allow_code_wrap=False
+        template_vars=None, template_env_options=None, **kwargs
     ):
         """Initialize."""
 
@@ -754,8 +738,6 @@ class Phantom(sublime.Phantom):
         self.wrapper_class = wrapper_class
         self.template_vars = template_vars
         self.template_env_options = template_env_options
-        self.nl2br = nl2br
-        self.allow_code_wrap = allow_code_wrap
 
     def __eq__(self, rhs):
         """Check if phantoms are equal."""
@@ -764,10 +746,9 @@ class Phantom(sublime.Phantom):
         return (
             self.region == rhs.region and self.content == rhs.content and
             self.layout == rhs.layout and self.on_navigate == rhs.on_navigate and
-            self.md == rhs.md and self.css == rhs.css and self.nl2br == rhs.nl2br and
+            self.md == rhs.md and self.css == rhs.css and
             self.wrapper_class == rhs.wrapper_class and self.template_vars == rhs.template_vars and
-            self.template_env_options == rhs.template_env_options and
-            self.allow_code_wrap == rhs.allow_code_wrap
+            self.template_env_options == rhs.template_env_options
         )
 
 
@@ -799,8 +780,7 @@ class PhantomSet(sublime.PhantomSet):
                 p = Phantom(
                     p.region, p.content, p.layout,
                     md=False, css=None, on_navigate=p.on_navigate, wrapper_class=None,
-                    template_vars=None, template_env_options=None, nl2br=False,
-                    allow_code_wrap=False
+                    template_vars=None, template_env_options=None
                 )
                 new_phantoms[count] = p
             try:
@@ -819,9 +799,7 @@ class PhantomSet(sublime.PhantomSet):
                     p.on_navigate,
                     p.wrapper_class,
                     p.template_vars,
-                    p.template_env_options,
-                    p.nl2br,
-                    p.allow_code_wrap
+                    p.template_env_options
                 )
             count += 1
 

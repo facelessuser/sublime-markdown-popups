@@ -2,7 +2,8 @@
 
 ## Dependencies
 
-Your plugin should include the Package Control dependencies listed below. Please read about Package Control's [dependencies][pc-dependencies] to learn more.
+Your plugin should include the Package Control dependencies listed below. Please read about Package Control's
+[dependencies][pc-dependencies] to learn more.
 
 ```js
 {
@@ -20,27 +21,47 @@ Your plugin should include the Package Control dependencies listed below. Please
 }
 ```
 
-Check out @facelessuser/mdpopup_test as an example. Clone it into `Packages/mdpopup_test`, run `Package Control: Satisfy dependencies`, and then restart Sublime. You should be able to then run the command `Mdpopups: Test` to see an example popup or phantom.  Feel free to edit it to learn more.
+Check out @facelessuser/mdpopups_test if to create quick and easy popup tests. Clone it into `Packages/mdpopups_test`,
+run `Package Control: Satisfy dependencies`, and then restart Sublime. You should be able to then run the command
+`Mdpopups: Test` to see an example popup, phantom, or (if on Sublime Text 4) HTML sheet. You can even create output of
+the source HTML for debugging. Feel free to try it out.
 
 ## Markdown Support
 
-MdPopups uses @Python-Markdown/markdown to parse Markdown and transform it into a Sublime popup or phantom. The Markdown environment supports basic Markdown syntax, but also includes a number of specialty extensions to enhance and extend the Markdown environment.
+MdPopups uses @Python-Markdown/markdown to parse Markdown and transform it into a Sublime popup or phantom. The Markdown
+environment supports basic Markdown syntax, but also includes a number of specialty extensions to enhance and extend the
+Markdown environment.
 
-Due to the `minihtml` environment that Sublime uses, the type of tags and CSS that can be used are a bit limited. MdPopups provides a CSS that includes most of the common supported tags that can be used. Then few specific extensions (that work well within the `minihtml` environment) have been selected to provide support for a some additional useful features.
+Due to the `minihtml` environment that Sublime uses, the type of tags and CSS that can be used are a bit limited.
+MdPopups provides a CSS that includes most of the common supported tags that can be used. Then few specific extensions
+(that work well within the `minihtml` environment) have been selected to provide support for a some additional useful
+features.
 
-Prior to version 2.0.0, the default extensions and extension configurations were locked down, but starting with 2.1.0, this restriction has been mostly removed. Not all Python Markdown extensions and extension options are compatible with Sublime's `minihtml` environment, and extensions like `markdown.extensions.extra` can include some extensions that are not compatible, but there are a number of additional extension and extension options that can be used beyond what is provided by default. In general, it is recommended to include each plugin individual on a case by case basis and disable features that aren't compatible.
+Prior to version 2.0.0, the default extensions and extension configurations were locked down, but starting with 2.1.0,
+this restriction has been mostly removed. Not all Python Markdown extensions and extension options are compatible with
+Sublime's `minihtml` environment, and extensions like `markdown.extensions.extra` can include some extensions that are
+not compatible, but there are a number of additional extension and extension options that can be used beyond what is
+provided by default. In general, it is recommended to include each plugin individual on a case by case basis and disable
+features that aren't compatible.
 
-Below we will touch on the specific extensions used by default which are known to work in the Sublime `minihtml` environment. If you are on version 2.1.0+, read on in [Frontmatter](#frontmatter) to learn how to customize extensions.
+Below we will touch on the specific extensions used by default which are known to work in the Sublime `minihtml`
+environment. If you are on version 2.1.0+, read on in [Frontmatter](#frontmatter) to learn how to customize extensions.
 
 ### Extensions
 
-These three extensions are setup and configured automatically and should not be configured manually. Also, do not try to use `markdown.extensions.codehilite` or `markdown.extensions.fenced_code` as the following extensions have been specifically altered to output Sublime syntax highlighting properly and will clash with `markdown.extensions.codehilite` and `markdown.extensions.fenced_code`.
+These three extensions are setup and configured automatically and should not be configured manually. Also, do not try to
+use `markdown.extensions.codehilite` or `markdown.extensions.fenced_code` as the following extensions have been
+specifically altered to output Sublime syntax highlighting properly and will clash with `markdown.extensions.codehilite`
+and `markdown.extensions.fenced_code`.
 
-- `mdpopups.mdx.highlight` ( a modified version [`pymdownx.highlight`][highlight] for Sublime Text highlighting) controls and configures the highlighting of code blocks.
+- `mdpopups.mdx.highlight` ( a modified version [`pymdownx.highlight`][highlight] for Sublime Text highlighting)
+  controls and configures the highlighting of code blocks.
 
-- `mdpopups.mdx.superfences` (a modified version [`pymdownx.superfences`][superfences] for Sublime Text highlighting) that provides support for nested fenced blocks.
+- `mdpopups.mdx.superfences` (a modified version [`pymdownx.superfences`][superfences] for Sublime Text highlighting)
+  that provides support for nested fenced blocks.
 
-- `mdpopups.mdx.inlinehilite` (a modified version of [`pymdownx.inlinehilite`] for Sublime Text highlighting) allows for inline code highlighting: `` `#!py3thon import module` `` --> `#!py3thon import module`. Please don't use this version.
+- `mdpopups.mdx.inlinehilite` (a modified version of [`pymdownx.inlinehilite`] for Sublime Text highlighting) allows for
+  inline code highlighting: `` `#!py3thon import module` `` --> `#!py3thon import module`. Please don't use this version.
 
 These extensions are provided by Python Markdown:
 
@@ -54,15 +75,25 @@ These extensions are provided by Python Markdown:
 
 These are 3rd party extensions provided by PyMdown Extensions:
 
-- [`pymdownx.betterem`][betterem] is an extension that aims to improve upon emphasis support in Python Markdown. MdPopups leaves it configured in its default state where underscores are handled intelligently: `_handled_intelligently_` --> _handled_intelligently_ and asterisks can be used to do mid word emphasis: `em*pha*sis` --> em*pha*sis.
+- [`pymdownx.betterem`][betterem] is an extension that aims to improve upon emphasis support in Python Markdown.
+  MdPopups leaves it configured in its default state where underscores are handled intelligently:
+  `_handled_intelligently_` --> _handled_intelligently_ and asterisks can be used to do mid word emphasis: `em*pha*sis`
+  --> em*pha*sis.
 
-- [`pymdownx.magiclink`][magiclink] auto links HTML and email links.  In `2.1.0`+, it also allows the shortening of common repository pull request, issue, and commit links (if configured).
+- [`pymdownx.magiclink`][magiclink] auto links HTML and email links.  In `2.1.0`+, it also allows the shortening of
+  common repository pull request, issue, and commit links (if configured).
 
-- [`pymdownx.extrarawhtml`][extrarawhtml] allows you to add `markdown="1"` to raw, block HTML elements to allow content under them to be parsed with Python markdown (inline tags should already have their content parsed).  This module is exposing *just* this functionality from the [Python Markdown's Extra extension](https://pythonhosted.org/Markdown/extensions/extra.html#nested-markdown-inside-html-blocks) as the feature could not be enabled without including all of the `Extra` extensions other features.  You can read the Python Markdown's Extra extension documentation to learn more about this feature.
+- [`pymdownx.extrarawhtml`][extrarawhtml] allows you to add `markdown="1"` to raw, block HTML elements to allow content
+  under them to be parsed with Python markdown (inline tags should already have their content parsed).  This module is
+  exposing *just* this functionality from the [Python Markdown's Extra extension][md_in_html] as the feature could not
+  be enabled without including all of the `Extra` extensions other features.  You can read the Python Markdown's Extra
+  extension documentation to learn more about this feature.
 
 ## Frontmatter
 
-Frontmatter can be used to configure content in 2.1.0+. The frontmatter must be specified, starting on the first line of the content, before the Markdown.  The frontmatter content should be in YAML syntax and should come between the YAML markers: `---`.
+Frontmatter can be used to configure content in 2.1.0+. The frontmatter must be specified, starting on the first line of
+the content, before the Markdown.  The frontmatter content should be in YAML syntax and should come between the YAML
+markers: `---`.
 
 ```yaml
 ---
@@ -89,7 +120,8 @@ key2: value2
 
 ### Enable Code Wrapping
 
-The `allow_code_wrap` setting allows block code tags to have their content wrapped. If disabled (the default), code content will not wrap lines.
+The `allow_code_wrap` setting allows block code tags to have their content wrapped. If disabled (the default), code
+content will not wrap lines.
 
 ```yaml
 ---
@@ -99,22 +131,26 @@ allow_code_wrap: true
 
 ### Custom Fences
 
-The included `mdpopups.mdx.superfences` has an option that allows for custom fences. Custom fences are a convenient way to add support for special block content such as UML diagrams. Since configuring `mdpopups.mdx.superfences` is not allowed directly, you can setup your own custom fences via a separate `custom_fences` option. See the original SuperFences' [Custom Fences][custom-fences] documentation to learn more.
+The included `mdpopups.mdx.superfences` has an option that allows for custom fences. Custom fences are a convenient way
+to add support for special block content such as UML diagrams. Since configuring `mdpopups.mdx.superfences` is not
+allowed directly, you can setup your own custom fences via a separate `custom_fences` option. See the original
+SuperFences' [Custom Fences][custom-fences] documentation to learn more.
 
 ```yaml
 ---
 custom_fences:
 - name: uml
   class: uml
-  format: !!python/name:mdpopup_test.plantuml.uml_format
+  format: !!python/name:my_package.my_module.my_custom_format
 ...
 ```
 
-Checkout @facelessuser/mdpopup_test to see the UML example above in action.
-
 ### Configure Markdown Extensions
 
-Custom extension configurations are specified under the `markdown_extensions` key whose value is an array of extensions. Each extension is specified as a string.  If you have specific settings to configure for an extension, simply make that array entry a dictionary where the key name is the extension name, and value is a hash table with all the settings.  The default configuration is below.
+Custom extension configurations are specified under the `markdown_extensions` key whose value is an array of extensions.
+Each extension is specified as a string.  If you have specific settings to configure for an extension, simply make that
+array entry a dictionary where the key name is the extension name, and value is a hash table with all the settings.
+The default configuration is below.
 
 ```yaml
 ---
@@ -129,9 +165,13 @@ markdown_extensions:
 ...
 ```
 
-Notice that `mdpopups.mdx.highlight`, `mdpopups.mdx.superfences`, and `mdpopups.mdx.inlinehilite` are not shown here as they cannot be set directly and are handled by automatically by MdPopups.
+Notice that `mdpopups.mdx.highlight`, `mdpopups.mdx.superfences`, and `mdpopups.mdx.inlinehilite` are not shown here as
+they cannot be set directly and are handled by automatically by MdPopups.
 
-Let's say we wanted to keep the default extensions, but we wanted to enable `pymdown.magiclink`'s repository URL shortening and add and configure `pymdownx.keys`, `pymdownx.escapeall`, `pymdownx.smartsymbols`, and `markdown.extensions.smarty`. We must specify the full configuration we would like. We will use the base default settings outlined above, adding our new options and extensions.
+Let's say we wanted to keep the default extensions, but we wanted to enable `pymdown.magiclink`'s repository URL
+shortening and add and configure `pymdownx.keys`, `pymdownx.escapeall`, `pymdownx.smartsymbols`, and
+`markdown.extensions.smarty`. We must specify the full configuration we would like. We will use the base default
+settings outlined above, adding our new options and extensions.
 
 ```yaml
 ---
@@ -158,7 +198,8 @@ markdown_extensions:
 
 ### Configure Frontmatter From Python Objects
 
-A lot of times in plugins, it may be easier to build up a Python dictionary and convert it to YAML.  MdPopups provides a function to exactly this:
+A lot of times in plugins, it may be easier to build up a Python dictionary and convert it to YAML.  MdPopups provides a
+function to exactly this:
 
 ```py3
 frontmatter = {
@@ -190,11 +231,18 @@ content = mdpopups.format_frontmatter(frontmatter) + markdown_content
 
 ## Styling
 
-Popups and phantoms are styled with CSS that is fed through the Jinja2 template engine. A default CSS is provided that styles commonly used elements. Plugins can provide CSS to add additional styling for plugin specific purposes. See [CSS Styling](./styling.md) to learn more about the template engine and general styling info.
+Popups and phantoms are styled with CSS that is fed through the Jinja2 template engine. A default CSS is provided that
+styles commonly used elements. Plugins can provide CSS to add additional styling for plugin specific purposes. See
+[CSS Styling](./styling.md) to learn more about the template engine and general styling info.
 
-It is advised to use the `wrapper_class` option of the `show_popup`, `update_popup`, and `add_phantom` commands to wrap your plugin content in a div with a unique, plugin specific class.  This way plugins can inject CSS to style their specific elements via `#!css .mdpopups .myplugin-wrapper .myclass {}` or simply `#!css .myplugin-wrapper .myclass {}`.
+It is advised to use the `wrapper_class` option of the `show_popup`, `update_popup`, and `add_phantom` commands to wrap
+your plugin content in a div with a unique, plugin specific class.  This way plugins can inject CSS to style their
+specific elements via `#!css .mdpopups .myplugin-wrapper .myclass {}` or simply `#!css .myplugin-wrapper .myclass {}`.
 
-Also check out the included Python Markdown [`attr_list` extension syntax](https://pythonhosted.org/Markdown/extensions/attr_list.html). This is a good extension for applying classes directly to elements within Markdown format. Sometimes it can be difficult to target certain kinds of block elements, so if all else fails, you can insert raw HTML for specific elements into your Markdown and apply classes directly to them.
+Also check out the included Python Markdown [`attr_list` extension syntax][attr_list]. This is a good extension for
+applying classes directly to elements within Markdown format. Sometimes it can be difficult to target certain kinds of
+block elements, so if all else fails, you can insert raw HTML for specific elements into your Markdown and apply classes
+directly to them.
 
 ## API Usage
 
@@ -204,13 +252,15 @@ MdPopups provides a number of accessible functions.
 
 `#!py3 (int,) mdpopups.version`
 : 
-    Returns the version of the MdPopups library.  Returns a tuple of integers which represents the major, minor, and patch version.
+    Returns the version of the MdPopups library.  Returns a tuple of integers which represents the major, minor, and
+    patch version.
 
 ### Show Popup
 
 `#!py3 mdpopups.show_popup`
 : 
-    Accepts Markdown and creates a Sublime popup.  By default, the built-in Sublime syntax highlighter will be used for code highlighting.
+    Accepts Markdown and creates a Sublime popup.  By default, the built-in Sublime syntax highlighter will be used for
+    code highlighting.
 
     Parameter              | Type                 | Default       | Description
     ---------------------- | -------------------- | ------------- | -----------
@@ -227,13 +277,12 @@ MdPopups provides a number of accessible functions.
     `wrapper_class`        | `#!py3 str`          | `#!py3 None`  | A string containing the class name you wish wrap your content in.  A `div` will be created with the given class.
     `template_vars`        | `#!py3 dict`         | `#!py3 None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
     `template_env_options` | `#!py3 dict`         | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
-    `nl2br`                | `#!py3 bool`         | `#!py3 True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
-    `allow_code_wrap`      | `#!py3 bool`         | `#!py3 False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
 
-    !!! warning "Deprecation"
-        In 2.1.0 `nl2br` and `alow_code_wrap` are deprecated. The legacy parameters here will be dropped by 2018 for ST3 and these settings will not carry over to ST4.
+    !!! alert "Removed in 4.0"
+        4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
 
-        To disable `nl2br`, you can customize which extensions get loaded; see [Configure Markdown Extensions](#configure-markdown-extensions).
+        To disable `nl2br`, you can customize which extensions get loaded; see
+        [Configure Markdown Extensions](#configure-markdown-extensions).
 
         To enable code wrapping, see [Enable Code Wrapping](#enable-code-wrapping).
 
@@ -252,13 +301,12 @@ MdPopups provides a number of accessible functions.
     `wrapper_class`        | `#!py3 str`          | `#!py3 None`  | A string containing the class name you wish wrap your content in.  A `div` will be created with the given class.
     `template_vars`        | `#!py3 dict`         | `#!py3 None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
     `template_env_options` | `#!py3 dict`         | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
-    `nl2br`                | `#!py3 bool`         | `#!py3 True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
-    `allow_code_wrap`      | `#!py3 bool`         | `#!py3 False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
 
-    !!! warning "Deprecation"
-        In 2.1.0 `nl2br` and `alow_code_wrap` are deprecated. The legacy parameters here will be dropped by 2018 for ST3 and these settings will not carry over to ST4.
+    !!! alert "Removed in 4.0"
+        4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
 
-        To disable `nl2br`, you can customize which extensions get loaded; see [Configure Markdown Extensions](#configure-markdown-extensions).
+        To disable `nl2br`, you can customize which extensions get loaded; see
+        [Configure Markdown Extensions](#configure-markdown-extensions).
 
         To enable code wrapping, see [Enable Code Wrapping](#enable-code-wrapping).
 
@@ -287,7 +335,8 @@ MdPopups provides a number of accessible functions.
 
 `#!py3 int mdpopups.add_phantom`
 : 
-    Adds a phantom to the view and returns the phantom id as an integer. By default, the built-in Sublime syntax highlighter will be used for code highlighting. 
+    Adds a phantom to the view and returns the phantom id as an integer. By default, the built-in Sublime syntax
+    highlighter will be used for code highlighting.
 
     Parameter              | Type                   | Default       | Description
     ---------------------- | ---------------------- | ------------- | -----------
@@ -302,13 +351,12 @@ MdPopups provides a number of accessible functions.
     `wrapper_class`        | `#!py3 str`            | `#!py3 None`  | A string containing the class name you wish wrap your content in.  A `div` will be created with the given class.
     `template_vars`        | `#!py3 dict`           | `#!py3 None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content.A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
     `template_env_options` | `#!py3 dict`           | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`.A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
-    `nl2br`                | `#!py3 bool`           | `#!py3 True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
-    `allow_code_wrap`      | `#!py3 bool`           | `#!py3 False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
 
-    !!! warning "Deprecation"
-        In 2.1.0 `nl2br` and `alow_code_wrap` are deprecated. The legacy parameters here will be dropped by 2018 for ST3 and these settings will not carry over to ST4.
+    !!! alert "Removed in 4.0"
+        4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
 
-        To disable `nl2br`, you can customize which extensions get loaded; see [Configure Markdown Extensions](#configure-markdown-extensions).
+        To disable `nl2br`, you can customize which extensions get loaded; see
+        [Configure Markdown Extensions](#configure-markdown-extensions).
 
         To enable code wrapping, see [Enable Code Wrapping](#enable-code-wrapping).
 
@@ -338,7 +386,9 @@ MdPopups provides a number of accessible functions.
 
 `#!py3 [sublime.Region] mdpopups.query_phantom`
 : 
-    Query the location of a phantom by specifying its id.  A list of `sublime.Region`s will be returned.  If the phantom with the given id is not found, the region will be returned with positions of `(-1, -1)`.  Included for convenience and consistency.
+    Query the location of a phantom by specifying its id.  A list of `sublime.Region`s will be returned.  If the phantom
+    with the given id is not found, the region will be returned with positions of `(-1, -1)`.  Included for convenience
+    and consistency.
 
     Parameter | Type                 | Default | Description
     --------- | -------------------- | ------- | -----------
@@ -349,7 +399,9 @@ MdPopups provides a number of accessible functions.
 
 `#!py3 [sublime.Region] mdpopups.query_phantoms`
 : 
-    Query the location of multiple phantoms by specifying their ids.  A list of `sublime.Region`s will be returned where each index corresponds to the index of ids that was passed in.  If a given phantom id is not found, that region will be returned with positions of `(-1, -1)`.  Included for convenience and consistency.
+    Query the location of multiple phantoms by specifying their ids.  A list of `sublime.Region`s will be returned where
+    each index corresponds to the index of ids that was passed in.  If a given phantom id is not found, that region will
+    be returned with positions of `(-1, -1)`.  Included for convenience and consistency.
 
     Parameter | Type                 | Default | Description
     --------- | -------------------- | ------- | -----------
@@ -373,8 +425,6 @@ MdPopups provides a number of accessible functions.
     `wrapper_class`        | `#!py3 str`            | `#!py3 None`  | A string containing the class name you wish wrap your content in.  A `div` will be created with the given class.
     `template_vars`        | `#!py3 dict`           | `#!py3 None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content.A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
     `template_env_options` | `#!py3 dict`           | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`.A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
-    `nl2br`                | `#!py3 bool`           | `#!py3 True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
-    `allow_code_wrap`      | `#!py3 bool`           | `#!py3 False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
 
     **Attributes**
 
@@ -389,13 +439,12 @@ MdPopups provides a number of accessible functions.
     `wrapper_class`        | `#!py3 str`            | A string containing the class name you wish wrap your content in.  A `div` will be created with the given class.
     `template_vars`        | `#!py3 dict`           | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content.A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
     `template_env_options` | `#!py3 dict`           | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`.A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
-    `nl2br`                | `#!py3 bool`           | `#!py3 True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
-    `allow_code_wrap`      | `#!py3 bool`           | `#!py3 False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
 
-    !!! warning "Deprecation"
-        In 2.1.0 `nl2br` and `alow_code_wrap` are deprecated. The legacy parameters here will be dropped by 2018 for ST3 and these settings will not carry over to ST4.
+    !!! alert "Removed in 4.0"
+        4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
 
-        To disable `nl2br`, you can customize which extensions get loaded; see [Configure Markdown Extensions](#configure-markdown-extensions).
+        To disable `nl2br`, you can customize which extensions get loaded; see
+        [Configure Markdown Extensions](#configure-markdown-extensions).
 
         To enable code wrapping, see [Enable Code Wrapping](#enable-code-wrapping).
 
@@ -423,11 +472,13 @@ MdPopups provides a number of accessible functions.
 ### New HTML Sheet
 
 !!! warning "Experimental Feature"
-    This feature is new in Sublime Text 4. Sublime's API may change in future versions for this feature and may break this.
+    This feature is new in Sublime Text 4. Sublime's API may change in future versions for this feature and may break
+    this.
 
 `#!py3 mdpopups.new_html_sheet`
 : 
-    Accepts Markdown and creates a Sublime HTML sheet.  By default, the built-in Sublime syntax highlighter will be used for code highlighting.
+    Accepts Markdown and creates a Sublime HTML sheet.  By default, the built-in Sublime syntax highlighter will be used
+    for code highlighting.
 
     Parameter              | Type                                      | Default       | Description
     ---------------------- | ----------------------------------------- | ------------- | -----------
@@ -441,11 +492,17 @@ MdPopups provides a number of accessible functions.
     `wrapper_class`        | `#!py3 str`                               | `#!py3 None`  | A string containing the class name you wish wrap your content in.  A `div` will be created with the given class.
     `template_vars`        | `#!py3 dict`                              | `#!py3 None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
     `template_env_options` | `#!py3 dict`                              | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
-    `nl2br`                | `#!py3 bool`                              | `#!py3 True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
-    `allow_code_wrap`      | `#!py3 bool`                              | `#!py3 False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
 
 !!! new "New 3.6.0"
     `new_html_sheet` is new in 3.6.0.
+
+!!! alert "Removed in 4.0"
+    4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
+
+    To disable `nl2br`, you can customize which extensions get loaded; see
+    [Configure Markdown Extensions](#configure-markdown-extensions).
+
+    To enable code wrapping, see [Enable Code Wrapping](#enable-code-wrapping).
 
 ### Update HTML Content
 
@@ -454,7 +511,8 @@ MdPopups provides a number of accessible functions.
 
 `#!py3 mdpopups.update_html_sheet`
 : 
-    Accepts Markdown and updates the content of a Sublime HTML sheet.  By default, the built-in Sublime syntax highlighter will be used for code highlighting.
+    Accepts Markdown and updates the content of a Sublime HTML sheet.  By default, the built-in Sublime syntax
+    highlighter will be used for code highlighting.
 
     Parameter              | Type                                      | Default       | Description
     ---------------------- | ----------------------------------------- | ------------- | -----------
@@ -465,11 +523,17 @@ MdPopups provides a number of accessible functions.
     `wrapper_class`        | `#!py3 str`                               | `#!py3 None`  | A string containing the class name you wish wrap your content in.  A `div` will be created with the given class.
     `template_vars`        | `#!py3 dict`                              | `#!py3 None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
     `template_env_options` | `#!py3 dict`                              | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
-    `nl2br`                | `#!py3 bool`                              | `#!py3 True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
-    `allow_code_wrap`      | `#!py3 bool`                              | `#!py3 False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
 
 !!! new "New 3.6.0"
     `new_html_sheet` is new in 3.6.0.
+
+!!! alert "Removed in 4.0"
+    4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
+
+    To disable `nl2br`, you can customize which extensions get loaded; see
+    [Configure Markdown Extensions](#configure-markdown-extensions).
+
+    To enable code wrapping, see [Enable Code Wrapping](#enable-code-wrapping).
 
 ### Clear Cache
 
@@ -481,7 +545,10 @@ MdPopups provides a number of accessible functions.
 
 `#!py3 str mdpopups.md2html`
 : 
-    Exposes the Markdown to HTML converter in case it is desired to parse only a section of markdown.  This works well for someone who wants to work directly in HTML, but might want to still have fragments of markdown that they would like to occasionally convert. By default, the built-in Sublime syntax highlighter will be used for code highlighting.
+    Exposes the Markdown to HTML converter in case it is desired to parse only a section of markdown.  This works well
+    for someone who wants to work directly in HTML, but might want to still have fragments of markdown that they would
+    like to occasionally convert. By default, the built-in Sublime syntax highlighter will be used for code
+    highlighting.
 
     Parameter              | Type                 | Required     | Default       | Description
     ---------------------- | -------------------- | ------------ | ------------- | -----------
@@ -489,13 +556,12 @@ MdPopups provides a number of accessible functions.
     `markup`               | `#!py3 string`       | Yes          |               | The markup code to be converted.
     `template_vars`        | `#!py3 dict`         | No           | `#!py3 None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content.A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
     `template_env_options` | `#!py3 dict`         | No           | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`.A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
-    `nl2br`                | `#!py3 bool`         | `#!py3 True`  | Determines whether the newline to `#!html <br>` Python Markdown extension is enabled or not. Will be ignored if `markdown_extensions` is configured in YAML frontmatter.
-    `allow_code_wrap`      | `#!py3 bool`         | `#!py3 False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur. YAML frontmatter's `allow_code_wrap` will always be used instead of this if specified.
 
-    !!! warning "Deprecation"
-        In 2.1.0 `nl2br` and `alow_code_wrap` are deprecated. The legacy parameters here will be dropped by 2018 for ST3 and these settings will not carry over to ST4.
+    !!! alert "Removed in 4.0"
+        4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
 
-        To disable `nl2br`, you can customize which extensions get loaded; see [Configure Markdown Extensions](#configure-markdown-extensions).
+        To disable `nl2br`, you can customize which extensions get loaded; see
+        [Configure Markdown Extensions](#configure-markdown-extensions).
 
         To enable code wrapping, see [Enable Code Wrapping](#enable-code-wrapping).
 
@@ -503,7 +569,8 @@ MdPopups provides a number of accessible functions.
 
 `#!py3 str mdpopups.color_box`
 : 
-    Generates a color preview box image encoded in base 64 and formatted to be inserted right in your your Markdown or HTML code as an `img` tag.
+    Generates a color preview box image encoded in base 64 and formatted to be inserted right in your your Markdown or
+    HTML code as an `img` tag.
 
     Parameter     | Type          | Default       | Description
     ------------- | ------------- | ------------- | -----------
@@ -541,7 +608,8 @@ MdPopups provides a number of accessible functions.
 
 `#!py3 str mdpopups.tint`
 : 
-    Takes a either a path to an PNG or a byte string of a PNG and tints it with a specific color and returns a string containing the base 64 encoded PNG in a HTML element.
+    Takes a either a path to an PNG or a byte string of a PNG and tints it with a specific color and returns a string
+    containing the base 64 encoded PNG in a HTML element.
 
     Parameter | Type              | Default      | Description
     --------- | ----------------- | ------------ | -----------
@@ -555,7 +623,8 @@ MdPopups provides a number of accessible functions.
 
 `#!py3 bytes mdpopups.tint_raw`
 : 
-    Takes a either a path to an PNG or a byte string of a PNG and tints it with a specific color and returns a byte string of the modified PNG.
+    Takes a either a path to an PNG or a byte string of a PNG and tints it with a specific color and returns a byte
+    string of the modified PNG.
 
     Parameter | Type              | Default     | Description
     --------- | ----------------- | ----------- | -----------
@@ -567,7 +636,9 @@ MdPopups provides a number of accessible functions.
 
 `#!py3 dict mdpopups.scope2style`
 : 
-    Takes a sublime scope (complexity doesn't matter), and guesses the style that would be applied.  While there may be untested corner cases with complex scopes where it fails, in general, it is usually accurate.  The returned dictionary is in the form:
+    Takes a sublime scope (complexity doesn't matter), and guesses the style that would be applied.  While there may be
+    untested corner cases with complex scopes where it fails, in general, it is usually accurate.  The returned
+    dictionary is in the form:
 
     ```py3
     {
@@ -597,7 +668,9 @@ MdPopups provides a number of accessible functions.
 
 `#!py3 str mdpopups.syntax_highlight`
 : 
-    Allows for syntax highlighting outside the Markdown environment.  You can just feed it code directly and give it the language of your choice, and you will be returned a block of HTML that has been syntax highlighted. By default, the built-in Sublime syntax highlighter will be used for code highlighting.
+    Allows for syntax highlighting outside the Markdown environment.  You can just feed it code directly and give it the
+    language of your choice, and you will be returned a block of HTML that has been syntax highlighted. By default, the
+    built-in Sublime syntax highlighter will be used for code highlighting.
 
     Parameter         | Type                 | Default       | Description
     ----------------- | -------------------- | ------------- | -----------
@@ -611,9 +684,16 @@ MdPopups provides a number of accessible functions.
 
 `#!py3 str mdpopups.tabs2spaces`
 : 
-    The Markdown parser used converts all tabs to spaces with the simple logic of 1 tab equals 4 spaces. This logic is generally applied in other places like [`syntax_highlight`](#syntax-highlight). When formatting code for `syntax_highlight`, you may want to translate the tabs to spaces based on tab stops *before* passing it through opposed to apply the simple logic of converting all tabs to 4 spaces regardless of tab stops. `tabs2spaces` does exactly this, allowing you format the whitespace in a more intelligent manner.
+    The Markdown parser used converts all tabs to spaces with the simple logic of 1 tab equals 4 spaces. This logic is
+    generally applied in other places like [`syntax_highlight`](#syntax-highlight). When formatting code for
+    `syntax_highlight`, you may want to translate the tabs to spaces based on tab stops *before* passing it through
+    opposed to apply the simple logic of converting all tabs to 4 spaces regardless of tab stops. `tabs2spaces` does
+    exactly this, allowing you format the whitespace in a more intelligent manner.
 
-    `tabs2spaces` cannot do anything about characters, and there are some even in monospace fonts, that are wider than normal characters. It doesn't detect zero width characters either. It also cannot predict cases where two or more Unicode character are shown as one. But in some cases, this more intelligent output is much better than the "all tabs are arbitrarily one size" logic.
+    `tabs2spaces` cannot do anything about characters, and there are some even in monospace fonts, that are wider than
+    normal characters. It doesn't detect zero width characters either. It also cannot predict cases where two or more
+    Unicode character are shown as one. But in some cases, this more intelligent output is much better than the "all
+    tabs are arbitrarily one size" logic.
 
     Example (Notice that `♭` is a bit larger than normal characters):
 
@@ -646,7 +726,8 @@ MdPopups provides a number of accessible functions.
 
 `#!py3 str mdpopups.get_language_from_view`
 : 
-    Allows a user to extract the equivalent language specifier for `mdpopups.syntax_highlight` from a view.  If the language cannot be determined, `None` will be returned.
+    Allows a user to extract the equivalent language specifier for `mdpopups.syntax_highlight` from a view.  If the
+    language cannot be determined, `None` will be returned.
 
     Parameter | Type                 | Default | Description
     --------- | -------------------- | ------- | -----------
