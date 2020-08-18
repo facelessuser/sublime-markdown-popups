@@ -2,17 +2,28 @@
 
 ## Syntax Highlighting
 
-MdPopups has two syntax highlighting methods: the native Sublime syntax highlighter (default) and Pygments.  When developing a plugin, it is wise to test out both. The native Sublime Syntax Highlighter has most default languages mapped along with a few others.
+MdPopups has two syntax highlighting methods: the native Sublime syntax highlighter (default) and Pygments.  When
+developing a plugin, it is wise to test out both. The native Sublime Syntax Highlighter has most default languages
+mapped along with a few others.
 
 ### Sublime Syntax Highlighter
 
-As previously mentioned, MdPopups uses the internal syntax highlighter to highlight your code.  The benefit here is that you get code highlighting in your popup that matches your current theme.  The highlighting ability is dependent upon what syntax packages you have installed in Sublime.  It also depends on whether that syntax is enabled and mapped to a language keyword.  Pull requests are welcome to expand and keep the [language mapping][language-map] updated.  You can also define in your `Preferences.sublime-settings` file additional mappings.  See [`mdpopups.sublime_user_lang_map`](./settings.md#mdpopupssublime_user_lang_map) for more info.
+As previously mentioned, MdPopups uses the internal syntax highlighter to highlight your code.  The benefit here is that
+you get code highlighting in your popup that matches your current theme.  The highlighting ability is dependent upon
+what syntax packages you have installed in Sublime.  It also depends on whether that syntax is enabled and mapped to a
+language keyword.  Pull requests are welcome to expand and keep the [language mapping][language-map] updated.  You can
+also define in your `Preferences.sublime-settings` file additional mappings.  See
+[`mdpopups.sublime_user_lang_map`](./settings.md#mdpopupssublime_user_lang_map) for more info.
 
-Most users prefer using syntax highlighting that matches their current color scheme. If you are a developer, it is recommended to issue a pull request to add missing languages you need to the mapping. Optionally you can also describe how users can map what they need locally.
+Most users prefer using syntax highlighting that matches their current color scheme. If you are a developer, it is
+recommended to issue a pull request to add missing languages you need to the mapping. Optionally you can also describe
+how users can map what they need locally.
 
 ### Pygments
 
-In order to use Pygments, you have to disable `mdpopups.use_sublime_highlighter`. Pygments has a great variety of highlighters out of the box.  It also comes with a number of built-in color schemes that can be used. When enabling Pygments, you must specify the color scheme to use in your user CSS using the [CSS template filter](#css-templates).
+In order to use Pygments, you have to disable `mdpopups.use_sublime_highlighter`. Pygments has a great variety of
+highlighters out of the box.  It also comes with a number of built-in color schemes that can be used. When enabling
+Pygments, you must specify the color scheme to use in your user CSS using the [CSS template filter](#css-templates).
 
 ```css+jinja
 /* Syntax Highlighting */
@@ -25,9 +36,13 @@ In order to use Pygments, you have to disable `mdpopups.use_sublime_highlighter`
 {%- endif %}
 ```
 
-You can also paste your own custom Pygments CSS directly into your User CSS, but you will have to format it to work properly.
+You can also paste your own custom Pygments CSS directly into your User CSS, but you will have to format it to work
+properly.
 
-Pygments defines special classes for each span that needs to be highlighted in a coding block. Pygments CSS classes are not only given syntax classes that are applied to each span, but usually an overall class is assigned to a `#!html <div>` wrapper as well.  For instance, a class for whitespace may look like this (where `#!css .highlight` is the div wrapper's class and `#!css .w` i the span's class):
+Pygments defines special classes for each span that needs to be highlighted in a coding block. Pygments CSS classes are
+not only given syntax classes that are applied to each span, but usually an overall class is assigned to a
+`#!html <div>` wrapper as well.  For instance, a class for whitespace may look like this (where `#!css .highlight` is
+the div wrapper's class and `#!css .w` i the span's class):
 
 ```css
 .highlight .w { color: #cccccc } /* Text.Whitespace */
@@ -111,7 +126,10 @@ If doing your own, the Pygments CSS should define a rule to highlight general ba
 
 ## CSS Styling
 
-One reason MdPopups was created was to give consistent popups across plugins. Originally MdPopups forced its style so that plugins couldn't override the it. Later it was realized that plugins may have reasons to override certain things, and in recent versions, this constraint was relaxed. Despite changes since its inception, one thing has stayed the same: the user has the last say in how popups work. This is achieved by controlling which CSS gets loaded when.
+One reason MdPopups was created was to give consistent popups across plugins. Originally MdPopups forced its style so
+that plugins couldn't override the it. Later it was realized that plugins may have reasons to override certain things,
+and in recent versions, this constraint was relaxed. Despite changes since its inception, one thing has stayed the same:
+the user has the last say in how popups work. This is achieved by controlling which CSS gets loaded when.
 
 ```flow
 st=>operation: Sublime CSS/Color Scheme CSS
@@ -122,13 +140,22 @@ us=>operation: User CSS
 st->md->pg->us
 ```
 
-Sublime first provides its CSS which includes some basic styling and CSS from color schemes. MdPopups provides its own default CSS that styles the common HTML tags and provides minimal colors. Plugins come next and extend the CSS with plugin specific CSS. The user's CSS is loaded last and can override anything.
+Sublime first provides its CSS which includes some basic styling and CSS from color schemes. MdPopups provides its own
+default CSS that styles the common HTML tags and provides minimal colors. Plugins come next and extend the CSS with
+plugin specific CSS. The user's CSS is loaded last and can override anything.
 
-All CSS is passed through the Jinja2 template engine where special filters can provide things like appropriate CSS that matches your color scheme for a specific scope, load additional CSS from another source, have condition logic for specific Sublime and/or MdPopups versions, or even provide CSS for specific color schemes.
+All CSS is passed through the Jinja2 template engine where special filters can provide things like appropriate CSS that
+matches your color scheme for a specific scope, load additional CSS from another source, have condition logic for
+specific Sublime and/or MdPopups versions, or even provide CSS for specific color schemes.
 
-Templates are used so that a user can easily tap into all the colors, color filters, and other useful logic to control their popups and phantoms in one place without having to hard code a specific CSS for a specific color scheme.
+Templates are used so that a user can easily tap into all the colors, color filters, and other useful logic to control
+their popups and phantoms in one place without having to hard code a specific CSS for a specific color scheme.
 
-In general, it is encouraged to use Sublime CSS variables such as `--redish`, `--bluish`, etc. to get appropriate colors for a given theme. Sublime calculates these colors from the color scheme directly. If it calculates a color that is not quite right, you can always request that the color scheme in question redefines that variable with an appropriate color.  Or you, as the user, can define one in your user CSS. You can read more about `minihtml` and it's features in the [`minihtml` documentation][minihtml].
+In general, it is encouraged to use Sublime CSS variables such as `--redish`, `--bluish`, etc. to get appropriate colors
+for a given theme. Sublime calculates these colors from the color scheme directly. If it calculates a color that is not
+quite right, you can always request that the color scheme in question redefines that variable with an appropriate color.
+Or you, as the user, can define one in your user CSS. You can read more about `minihtml` and it's features in the
+[`minihtml` documentation][minihtml].
 
 MdPopups also provides its own CSS variables that can be overridden by a user:
 
@@ -164,17 +191,23 @@ Variable                            | Description
 
 ## CSS Templates
 
-All variables and filters provided by default *only* apply to the CSS, not the markdown or HTML content. The default provided variables are namespaced under `var`.
+All variables and filters provided by default *only* apply to the CSS, not the markdown or HTML content. The default
+provided variables are namespaced under `var`.
 
-The Markdown and HTML content only receives the variables that are given via `template_vars` parameters and any options via the `template_env_options`; user defined variables will get passed to the CSS, but not the options. User defined variables will be namespaced under `plugin`.
+The Markdown and HTML content only receives the variables that are given via `template_vars` parameters and any options
+via the `template_env_options`; user defined variables will get passed to the CSS, but not the options. User defined
+variables will be namespaced under `plugin`.
 
 ### CSS Filter
 
-With the template environment, colors and style from the current Sublime color scheme can be accessed and manipulated.  Access to the Sublime color scheme styles CSS is done via the `css` filter.
+With the template environment, colors and style from the current Sublime color scheme can be accessed and manipulated.
+Access to the Sublime color scheme styles CSS is done via the `css` filter.
 
 `css`
 : 
-    Retrieves the style for a specific Sublime scope from a Sublime color scheme.  By specifying either `foreground`, `background`, or any scope (complexity doesn't really matter) and feeding it into the `css` filter, all the related styling of the specified scope will be inserted as CSS into the CSS document.
+    Retrieves the style for a specific Sublime scope from a Sublime color scheme.  By specifying either `foreground`,
+    `background`, or any scope (complexity doesn't really matter) and feeding it into the `css` filter, all the related
+    styling of the specified scope will be inserted as CSS into the CSS document.
 
     **Example**:
 
@@ -190,9 +223,11 @@ With the template environment, colors and style from the current Sublime color s
     h1, h2, h3, h4, h5, h6 { color: #888888; font-style: italic; }
     ```
 
-    Notice that the format of insertion is `key: value; `.  You do not need a semicolon after as the CSS lines are all formatted properly with semicolons.  If you add one, you may get multiple semicolons which *may* break the CSS.
+    Notice that the format of insertion is `key: value; `.  You do not need a semicolon after as the CSS lines are all
+    formatted properly with semicolons.  If you add one, you may get multiple semicolons which *may* break the CSS.
 
-    If you need to get at a specific CSS attribute, you can specify its name in the `css` filter (available attributes are `color`, `background-color`, `font-style`, and `font-weight`).
+    If you need to get at a specific CSS attribute, you can specify its name in the `css` filter (available attributes
+    are `color`, `background-color`, `font-style`, and `font-weight`).
 
     This:
 
@@ -206,7 +241,9 @@ With the template environment, colors and style from the current Sublime color s
     h1, h2, h3, h4, h5, h6 { color: #888888; }
     ```
 
-    In general, a foreground color is always returned, but by default, a background color is only returned if one is explicitly defined. To always get a background (which most likely will default to the overall scheme background), you can set the additional `explicit_background` parameter to `#!py False`.
+    In general, a foreground color is always returned, but by default, a background color is only returned if one is
+    explicitly defined. To always get a background (which most likely will default to the overall scheme background),
+    you can set the additional `explicit_background` parameter to `#!py False`.
 
     ```css+jinja
     /* If `keyword.operator` is not explicitly used, fallback to `.keyword` */
@@ -215,9 +252,15 @@ With the template environment, colors and style from the current Sublime color s
 
 ### Color Filters
 
-MdPopups also provides a number of color filters within the template environment that can manipulate the CSS colors returned from the `css` filter (or equivalent formatted CSS). These filters will strip out the color and modify it, and return the appropriate CSS.  To manipulate a color value directly, you can use Sublime's built in color blending.  In most cases, it is advised to use Sublime's color blending functionality, but these are available to aid those who wish to access and manipulate CSS of scopes directly.  See Sublime's [`minihtml` documentation][minihtml] for more info.
+MdPopups also provides a number of color filters within the template environment that can manipulate the CSS colors
+returned from the `css` filter (or equivalent formatted CSS). These filters will strip out the color and modify it, and
+return the appropriate CSS.  To manipulate a color value directly, you can use Sublime's built in color blending.  In
+most cases, it is advised to use Sublime's color blending functionality, but these are available to aid those who wish
+to access and manipulate CSS of scopes directly.  See Sublime's [`minihtml` documentation][minihtml] for more info.
 
-Even though Sublime generally provides contrast to popups, lets pretend you had a popup that was the same color as the view window and it was difficult to see where the popup starts and ends.  You can take the color schemes background and apply a brightness filter to it allowing you now see the popup clearly.
+Even though Sublime generally provides contrast to popups, lets pretend you had a popup that was the same color as the
+view window and it was difficult to see where the popup starts and ends.  You can take the color schemes background and
+apply a brightness filter to it allowing you now see the popup clearly.
 
 Here we can make the background of the popup darker:
 
@@ -225,14 +268,20 @@ Here we can make the background of the popup darker:
 .mdpopups div.myplugin { {{'.background'|css('background-color')|brightness(0.9)}} }
 ```
 
-Color filters take a single color attribute of the form `key: value;`.  So when feeding the color template filters your CSS via the `css` filter, you should specify the color attribute (`background-color` or `color`) that you wish to apply the filter to; it may be difficult to tell how many attributes `css` could return without explicitly specifying attribute.  Color filters only take either `color` or `background-color` attributes.
+Color filters take a single color attribute of the form `key: value;`.  So when feeding the color template filters your
+CSS via the `css` filter, you should specify the color attribute (`background-color` or `color`) that you wish to apply
+the filter to; it may be difficult to tell how many attributes `css` could return without explicitly specifying
+attribute.  Color filters only take either `color` or `background-color` attributes.
 
-Filters can be chained if more intensity is needed (as some filters may clamp the value in one call), or if you want to apply multiple filters.  These are all the available filters:
+Filters can be chained if more intensity is needed (as some filters may clamp the value in one call), or if you want to
+apply multiple filters.  These are all the available filters:
 
 `foreground` and `background`
 : 
 
-    If desired, you can convert a foreground color to a background color or vice versa.  To convert to a foreground color, you can use the `foreground` filter.  To convert to a background color, you can use the `background` filter. Remember, this is augmenting the CSS returned by the `css` filter, you can't just give it a color. 
+    If desired, you can convert a foreground color to a background color or vice versa.  To convert to a foreground
+    color, you can use the `foreground` filter.  To convert to a background color, you can use the `background` filter.
+    Remember, this is augmenting the CSS returned by the `css` filter, you can't just give it a color. 
 
 
     To convert a background to a foreground.
@@ -251,7 +300,8 @@ Filters can be chained if more intensity is needed (as some filters may clamp th
 
 `brightness`
 : 
-    Shifts brightness either dark or lighter. Brightness is relative to 1 where 1 means no change.  Accepted values are floats that are greater than 0.  Ranges are clamped between 0 and 2.
+    Shifts brightness either dark or lighter. Brightness is relative to `1` where `1` means no change.  Accepted values
+    are floats that are greater than `0`.  Ranges are clamped between `0` and `2`.
 
     **Example - Darken**:
     ```css+jinja
@@ -265,7 +315,8 @@ Filters can be chained if more intensity is needed (as some filters may clamp th
 
 `contrast`
 : 
-    Increases/decreases the contrast.  Contrast is relative to 1 where 1 means no change.  Accepted values are floats that are greater than 0.  Ranges are clamped between 0 and 2.
+    Increases/decreases the contrast.  Contrast is relative to `1` where `1` means no change.  Accepted values are
+    floats that are greater than `0`.  Ranges are clamped between `0` and `2`.
 
     **Example - Decrease contrast**:
     ```css+jinja
@@ -279,7 +330,8 @@ Filters can be chained if more intensity is needed (as some filters may clamp th
 
 `saturation`
 : 
-    Shifts the saturation either to right (saturate) or the left (desaturate).  Saturation is relative to 1 where 1 means no change.  Accepted values are floats that are greater than 0.  Ranges are clamped between 0 and 2.
+    Shifts the saturation either to right (saturate) or the left (desaturate).  Saturation is relative to `1` where `1`
+    means no change.  Accepted values are floats that are greater than `0`.  Ranges are clamped between `0` and `2`.
 
     **Example - Desaturate**:
     ```css+jinja
@@ -320,7 +372,9 @@ Filters can be chained if more intensity is needed (as some filters may clamp th
 
 `colorize`
 : 
-    Filters all colors to a shade of the specified hue.  Think grayscale, but instead of gray, you define a non-gray hue.  The values are angular dimensions starting at the red primary at 0°, passing through the green primary at 120° and the blue primary at 240°, and then wrapping back to red at 360°.
+    Filters all colors to a shade of the specified hue.  Think grayscale, but instead of gray, you define a non-gray
+    hue.  The values are angular dimensions starting at the red primary at 0°, passing through the green primary at 120°
+    and the blue primary at 240°, and then wrapping back to red at 360°.
 
     **Example**:
     ```css+jinja
@@ -329,7 +383,9 @@ Filters can be chained if more intensity is needed (as some filters may clamp th
 
 `hue`
 : 
-    Shifts the current hue either to the left or right.  The values are angular dimensions starting at the red primary at 0°, passing through the green primary at 120° and the blue primary at 240°, and then wrapping back to red at 360°.  Values can either be negative to shift left or positive to shift the hue to the right.
+    Shifts the current hue either to the left or right.  The values are angular dimensions starting at the red primary
+    at 0°, passing through the green primary at 120° and the blue primary at 240°, and then wrapping back to red at
+    360°.  Values can either be negative to shift left or positive to shift the hue to the right.
 
     **Example - Left Shift**:
     ```css+jinja
@@ -343,7 +399,8 @@ Filters can be chained if more intensity is needed (as some filters may clamp th
 
 `fade`
 : 
-    Fades a color. Essentially it is like apply transparency to the color allowing the color schemes base background color to show through.
+    Fades a color. Essentially it is like apply transparency to the color allowing the color schemes base background
+    color to show through.
 
     **Example - Fade 50%**:
     ```css+jinja
@@ -352,11 +409,13 @@ Filters can be chained if more intensity is needed (as some filters may clamp th
 
 ### Include CSS Filter
 
-The template environment allows for retrieving CSS resources from Sublime Packages or built-in Pygments CSS from the Pygments library.
+The template environment allows for retrieving CSS resources from Sublime Packages or built-in Pygments CSS from the
+Pygments library.
 
 `getcss`
 : 
-    Retrieve a CSS file from Sublime's `Packages` folder.  CSS retrieved in this manner can include template variables and filters.
+    Retrieve a CSS file from Sublime's `Packages` folder.  CSS retrieved in this manner can include template variables
+    and filters.
 
     **Example**:
     ```css+jinja
@@ -374,11 +433,13 @@ The template environment allows for retrieving CSS resources from Sublime Packag
 
 ## Template Variables
 
-The template environment provides a couple of variables that can be used to conditionally alter the CSS output.  Variables are found under `var`.
+The template environment provides a couple of variables that can be used to conditionally alter the CSS output.
+Variables are found under `var`.
 
 `var.sublime_version`
 : 
-    `sublime_version` contains the current Sublime Text version.  This allows you conditionally handle CSS features that are specific to a Sublime Text version.
+    `sublime_version` contains the current Sublime Text version.  This allows you conditionally handle CSS features that
+    are specific to a Sublime Text version.
 
     **Example**
     ```css+jinja
@@ -404,11 +465,13 @@ The template environment provides a couple of variables that can be used to cond
 
 `var.default_style`
 : 
-    Flag specifying whether default styling is being used.  See [`mdpopups.default_style`](./settings.md#mdpopupsdefault_style) for how to control this flag.  And see [`default.css`][default-css] for an example of how it is used.
+    Flag specifying whether default styling is being used.  See [`mdpopups.default_style`](./settings.md#mdpopupsdefault_style)
+    for how to control this flag.  And see [`default.css`][default-css] for an example of how it is used.
 
 `var.is_dark` and `var.is_light`
 : 
-    `is_dark` checks if the color scheme is a dark color scheme.  Alternatively, `is_light` checks if the color scheme is a light color scheme.
+    `is_dark` checks if the color scheme is a dark color scheme.  Alternatively, `is_light` checks if the color scheme
+    is a light color scheme.
 
     **Example**:
     ```css+jinja
@@ -421,7 +484,8 @@ The template environment provides a couple of variables that can be used to cond
 
 `var.is_popup`, `var.is_phantom`, and `var.is_sheet`
 : 
-    `is_phantom` checks if the current CSS is for a phantom instead of a popup.  Alternatively, `is_popup` and `is_sheet` checks if the current use of the CSS is for a popup or HTML sheet respectively.
+    `is_phantom` checks if the current CSS is for a phantom instead of a popup.  Alternatively, `is_popup` and
+    `is_sheet` checks if the current use of the CSS is for a popup or HTML sheet respectively.
 
     **Example**:
     ```css+jinja
