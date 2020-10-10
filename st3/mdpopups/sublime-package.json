@@ -1,0 +1,70 @@
+{
+  "contributions": {
+    "settings": [
+      {
+        "file_patterns": [
+          "/Preferences.sublime-settings"
+        ],
+        "schema": {
+          "properties": {
+            "mdpopups.killswitch": {
+              "type": "boolean",
+              "markdownDescription": "Global kill switch to prevent popups (created by MdPopups) from appearing.",
+              "default": false
+            },
+            "mdpopups.debug": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3,
+              "default": 0,
+              "markdownDescription": "Controls which information is dumped out to the console. This is more useful for plugin developers. It works by specifying an error level.\n\n- `0` don't print any message\n- `1` print errors\n- `2` print errors, warnings\n- `3` print errors, warnings, debug, information"
+            },
+            "mdpopups.cache_refresh_time": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 30,
+              "markdownDescription": "Control how long a CSS theme file will be in the cache before being refreshed. Units are in minutes."
+            },
+            "mdpopups.cache_limit": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 10,
+              "markdownDescription": "Control how many CSS theme files will be kept in cache at any given time."
+            },
+            "mdpopups.use_sublime_highlighter": {
+              "type": "boolean",
+              "default": true,
+              "markdownDescription": "Controls whether the Pygments or the native Sublime syntax highlighter is used for code highlighting. This affects code highlighting in Markdown conversion and when code is directly processed using syntax_highlight. Valid values are:\n\n- `true`: use Sublime Text\n- `false`: use Pygments"
+            },
+            "mdpopups.sublime_user_lang_map": {
+              "type": "object",
+              "markdownDescription": "This setting is for the Sublime Syntax Highlighter and allows the mapping of personal Sublime syntax languages which are not yet included, or will not be included, in the official mapping table. You can either define your own new entry, or use the same language name of an existing entry to extend the language mapping_alias or syntax languages. When extending, the user mappings will be cycled through first.",
+              "additionalProperties": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "mdpopups.default_style": {
+              "type": "boolean",
+              "default": true,
+              "markdownDescription": "Controls whether MdPopups' default styling (contained in `default.css`) will be applied or not."
+            },
+            "mdpopups.user_css": {
+              "type": "string",
+              "default": "Packages/User/mdpopups.css",
+              "markdownDescription": "Relative path of the user defined stylesheet. Overrides the default CSS and/or CSS of plugins."
+            }
+          }
+        }
+      }
+    ]
+  }
+}
