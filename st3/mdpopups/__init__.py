@@ -13,6 +13,11 @@ import markdown
 import jinja2
 import traceback
 import time
+import html
+import html.parser
+import urllib
+import functools
+import base64
 from . import version as ver
 from . import colorbox
 from collections import OrderedDict
@@ -293,12 +298,11 @@ def _get_theme(view, css=None, css_type=POPUP, template_vars=None):
 def _remove_entities(text):
     """Remove unsupported HTML entities."""
 
-    import html.parser
-    html = html.parser.HTMLParser()
+    p = html.parser.HTMLParser()
 
     def repl(m):
         """Replace entities except &, <, >, and `nbsp`."""
-        return html.unescape(m.group(1))
+        return p.unescape(m.group(1))
 
     return RE_BAD_ENTITIES.sub(repl, text)
 
@@ -815,3 +819,117 @@ def format_frontmatter(values):
     """Format values as frontmatter."""
 
     return frontmatter.dump_frontmatter(values)
+
+
+class _ImagesToResolveParser(html.parser.HTMLParser):
+
+    def __init__(self):
+        super().__init__()
+        self.images_to_resolve = {}
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "img":
+            for name, value in attrs:
+                if name == "src":
+                    if urllib.parse.urlparse(value).scheme in ("http", "https"):
+                        self.images_to_resolve.setdefault(value, []).append(self.getpos())
+                        return
+
+
+class _ReplaceUrlParser(html.parser.HTMLParser):
+
+    def __init__(self, images):
+        super().__init__()
+        self.images = images
+        self.result = ""
+
+    def _render_tag(self, tag, attrs, startend):
+        if tag == "img":
+            for index, (name, value) in enumerate(attrs):
+                if name == "src":
+                    if urllib.parse.urlparse(value).scheme in ("http", "https"):
+                        embbeded = "data:{0}, {1}".format(*self.images[value])
+                        attrs[index] = (name, embbeded)
+        if attrs:
+            rendered = " ".join('{}="{}"'.format(k, v) for k, v in attrs)
+            self.result += "<" + tag + " " + rendered + startend + ">"
+        else:
+            self.result += "<" + tag + startend + ">"
+
+    def handle_starttag(self, tag, attrs):
+        self._render_tag(tag, attrs, "")
+
+    def handle_startendtag(self, tag, attrs):
+        self._render_tag(tag, attrs, "/")
+
+    def handle_endtag(self, tag):
+        self.result += "</" + tag + ">"
+
+    def handle_data(self, data):
+        self.result += data
+
+
+class _ImageResolver:
+
+    def __init__(self, minihtml, resolver, done_callback, images_to_resolve):
+        self.minihtml = minihtml
+        self.done_callback = done_callback
+        self.images_to_resolve = images_to_resolve
+        self.resolved_images = {}
+        for url in self.images_to_resolve.keys():
+            resolver(url, functools.partial(self.on_image_resolved, url))
+
+    def on_image_resolved(self, url, data):
+        path = urllib.parse.urlparse(url).path.lower()
+        if path.endswith(".jpg") or path.endswith(".jpeg"):
+            mime = "image/jpeg"
+        elif path.endswith(".png"):
+            mime = "image/png"
+        elif path.endswith(".gif"):
+            mime = "image/gif"
+        else:
+            # last effort
+            mime = "image/png"
+        self.resolved_images[url] = (mime, base64.b64encode(data).decode("ascii"))
+        if len(self.resolved_images) == len(self.images_to_resolve):
+            self.finalize()
+
+    def finalize(self):
+        parser = _ReplaceUrlParser(self.resolved_images)
+        parser.feed(self.minihtml)
+        self.done_callback(parser.result)
+
+
+def blocking_resolver(url, done):
+    import urllib.request
+    done(urllib.request.urlopen(url).readall())
+
+
+def ui_thread_resolver(url, done):
+    sublime.set_timeout(lambda: blocking_resolver(url, done))
+
+
+def worker_thread_resolver(url, done):
+    sublime.set_timeout_async(lambda: blocking_resolver(url, done))
+
+
+def resolve_urls(minihtml, resolver, done_callback):
+    """
+    Given minihtml containing <img> tags with a src attribute that points to an image located on the internet, download
+    those images and replace the src attribute with embedded base64-encoded image data.
+
+    The first argument is minihtml as returned by the md2html function.
+
+    The second argument is a callable that shall take two arguments.
+    - The first argument is a URL to be downloaded.
+    - The second argument is a callable that shall take one argument:
+      - An object of type `bytes`: the raw image data. The result of downloading the image.
+
+    The third argument is a callable that shall take one argument:
+    - A string that is the final minihtml containing embedded base64 encoded images, ready to be presented to ST.
+
+    This function is non-blocking.
+    """
+    parser = _ImagesToResolveParser()
+    parser.feed(minihtml)
+    return _ImageResolver(minihtml, resolver, done_callback, parser.images_to_resolve)
