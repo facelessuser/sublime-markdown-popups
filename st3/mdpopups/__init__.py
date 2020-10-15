@@ -8,7 +8,6 @@ TextMate theme to CSS.
 
 https://manual.macromates.com/en/language_grammars#naming_conventions
 """
-from base64 import b64encode
 import sublime
 import markdown
 import jinja2
@@ -849,7 +848,7 @@ RE_TAG_LINK_ATTR = re.compile(
 
 
 def _image_parser(text):
-    """Retrieve image source attributes with external png, jpg, and gif sources."""
+    """Retrieve image source whose attribute src url has scheme 'http' or 'https'."""
 
     images = {}
     for m in RE_TAG_HTML.finditer(text):
@@ -874,7 +873,6 @@ class _ImageResolver:
         self.done_callback = done_callback
         self.images_to_resolve = images_to_resolve
         self.resolved = {}
-        total_images = len(images_to_resolve) - 1
         for url in self.images_to_resolve.keys():
             resolver(url, functools.partial(self.on_image_resolved, url))
 
@@ -920,6 +918,7 @@ class _ImageResolver:
 
 
 def blocking_resolver(url, done):
+    """A simple url resolver that will block the caller."""
     import urllib.request
     try:
         with urllib.request.urlopen(url) as response:
@@ -931,27 +930,38 @@ def blocking_resolver(url, done):
 
 
 def ui_thread_resolver(url, done):
+    """A url resolver that runs on the main thread."""
     sublime.set_timeout(lambda: blocking_resolver(url, done))
 
 
 def worker_thread_resolver(url, done):
+    """A url resolver that runs on the worker ("async") thread of Sublime Text."""
     sublime.set_timeout_async(lambda: blocking_resolver(url, done))
 
 
 def resolve_urls(minihtml, resolver, done_callback):
     """
-    Given minihtml containing <img> tags with a src attribute that points to an image located on the internet, download
-    those images and replace the src attribute with embedded base64-encoded image data.
-    The first argument is minihtml as returned by the md2html function.
+    Download images from the internet.
+
+    Given minihtml containing `<img>` tags with a src attribute that points to an image located on the internet,
+    download those images and replace the src attribute with embedded base64-encoded image data.
+
+    The first argument is minihtml as returned by the `md2html` function.
+
     The second argument is a callable that shall take two arguments.
+
     - The first argument is a URL to be downloaded.
-    - The second argument is a callable that shall take one argument:
-      - An object of type `bytes`: the raw image data. The result of downloading the image.
+    - The second argument is a callable that shall take one argument: An object of type `bytes`: the raw image data.
+      The result of downloading the image.
+
     The third argument is a callable that shall take one argument:
+
     - A string that is the final minihtml containing embedded base64 encoded images, ready to be presented to ST.
+
     This function is non-blocking.
-    It will invoke the passed-in done_callback on the UI thread.
-    It returns an opaque object that should be kept alive for as long as the passed-in done_callback is not yet invoked.
+    It will invoke the passed-in `done_callback` on the UI thread.
+    It returns an opaque object that should be kept alive for as long as the passed-in `done_callback` is not yet
+    invoked.
     """
     images = _image_parser(minihtml)
     if images:
