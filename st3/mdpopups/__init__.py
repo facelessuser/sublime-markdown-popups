@@ -907,7 +907,7 @@ class _ImageResolver:
                 current_start = todo[index][1]
                 chunks.append(self.minihtml[current_start:current_end])
             else:
-                # replace the url with the base64 data
+                # replace the URL with the base64 data
                 chunks.append("data:")
                 chunks.append(mime)
                 chunks.append(";base64,")
