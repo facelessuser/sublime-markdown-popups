@@ -867,7 +867,12 @@ def _image_parser(text):
 
 
 class _ImageResolver:
-    """Keeps track of which images are downloaded, and builds the final html after all of them have been downloaded."""
+    """
+    Keeps track of which images are downloaded, and builds the final html after all of them have been downloaded.
+
+    Note that this entire class is a workaround for not having a scatter-gather function and not having a promise type.
+    In an asynchronous world, we would of course use `asyncio.gather`.
+    """
 
     def __init__(self, minihtml, resolver, done_callback, images_to_resolve):
         """The constructor."""
@@ -934,16 +939,34 @@ class _ImageResolver:
         sublime.set_timeout(lambda: self.done_callback(finalhtml))
 
 
+@functools.lru_cache(maxsize=8)
+def _retrieve(url):
+    """
+    Actually download the image pointed to by the passed URL.
+
+    The most recently used images (8 at most) are kept in a cache.
+    """
+    import urllib.request
+    with urllib.request.urlopen(url) as response:
+        mime = response.headers.get("content-type", "image/png").lower()
+        return response.readall(), mime
+
+
 def blocking_resolver(url, done):
     """A simple URL resolver that will block the caller."""
-    import urllib.request
+    exception = None
+    payload = None
+    mime = None
     try:
-        with urllib.request.urlopen(url) as response:
-            mime = response.headers.get("content-type", "image/png").lower()
-            payload = response.readall()
-        done(payload, mime, None)
+        payload, mime = _retrieve(url)
     except Exception as ex:
-        done(None, None, ex)
+        exception = ex
+    if exception:
+        done(None, None, exception)
+    elif payload and mime:
+        done(payload, mime, None)
+    else:
+        done(None, None, RuntimeError("failed to retrieve image"))
 
 
 def ui_thread_resolver(url, done):
