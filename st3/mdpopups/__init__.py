@@ -848,8 +848,6 @@ RE_TAG_LINK_ATTR = re.compile(
 
 
 def _image_parser(text):
-    """Retrieve image source whose attribute src url has scheme 'http' or 'https'."""
-
     images = {}
     for m in RE_TAG_HTML.finditer(text):
         if m.group('avoid'):
