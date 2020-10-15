@@ -867,9 +867,7 @@ def _image_parser(text):
 
 
 class _ImageResolver:
-    """
-    Keeps track of which images are downloaded, and builds the final html after all of them have been downloaded.
-    """
+    """Keeps track of which images are downloaded, and builds the final html after all of them have been downloaded."""
 
     def __init__(self, minihtml, resolver, done_callback, images_to_resolve):
         """The constructor."""
