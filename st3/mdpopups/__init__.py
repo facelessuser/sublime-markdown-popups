@@ -948,6 +948,16 @@ def _retrieve(url):
     """
     import urllib.request
     with urllib.request.urlopen(url) as response:
+        # We provide some basic protection against absurdly large images.
+        # 32MB is chosen as an arbitrary upper limit. This can be raised if desired.
+        length = response.headers.get("content-length")
+        if length is None:
+            raise ValueError("missing content-length header")
+        length = int(length)
+        if length == 0:
+            raise ValueError("empty payload")
+        elif length >= 32 * 1024 * 1024:
+            raise ValueError("refusing to read payloads larger than or equal to 32MB")
         mime = response.headers.get("content-type", "image/png").lower()
         return response.readall(), mime
 
