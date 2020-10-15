@@ -918,7 +918,7 @@ class _ImageResolver:
 
 
 def blocking_resolver(url, done):
-    """A simple url resolver that will block the caller."""
+    """A simple URL resolver that will block the caller."""
     import urllib.request
     try:
         with urllib.request.urlopen(url) as response:
@@ -930,12 +930,12 @@ def blocking_resolver(url, done):
 
 
 def ui_thread_resolver(url, done):
-    """A url resolver that runs on the main thread."""
+    """A URL resolver that runs on the main thread."""
     sublime.set_timeout(lambda: blocking_resolver(url, done))
 
 
 def worker_thread_resolver(url, done):
-    """A url resolver that runs on the worker ("async") thread of Sublime Text."""
+    """A URL resolver that runs on the worker ("async") thread of Sublime Text."""
     sublime.set_timeout_async(lambda: blocking_resolver(url, done))
 
 
@@ -943,8 +943,8 @@ def resolve_urls(minihtml, resolver, done_callback):
     """
     Download images from the internet.
 
-    Given minihtml containing `<img>` tags with a src attribute that points to an image located on the internet,
-    download those images and replace the src attribute with embedded base64-encoded image data.
+    Given minihtml containing `<img>` tags with a `src` attribute that points to an image located on the internet,
+    download those images and replace the `src` attribute with embedded base64-encoded image data.
 
     The first argument is minihtml as returned by the `md2html` function.
 
@@ -956,7 +956,7 @@ def resolve_urls(minihtml, resolver, done_callback):
 
     The third argument is a callable that shall take one argument:
 
-    - A string that is the final minihtml containing embedded base64 encoded images, ready to be presented to ST.
+    - A string that is the final minihtml containing embedded base64 encoded images, ready to be presented to a view.
 
     This function is non-blocking.
     It will invoke the passed-in `done_callback` on the UI thread.
