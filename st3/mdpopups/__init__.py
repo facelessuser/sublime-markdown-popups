@@ -848,7 +848,7 @@ RE_TAG_LINK_ATTR = re.compile(
 
 
 def _image_parser(text):
-    """Retrieve image source whose attribute src url has scheme 'http' or 'https'."""
+    """Retrieve image source whose attribute `src` URL has scheme 'http' or 'https'."""
 
     images = {}
     for m in RE_TAG_HTML.finditer(text):
@@ -867,8 +867,12 @@ def _image_parser(text):
 
 
 class _ImageResolver:
+    """
+    Keeps track of which images are downloaded, and builds the final html after all of them have been downloaded.
+    """
 
     def __init__(self, minihtml, resolver, done_callback, images_to_resolve):
+        """The constructor."""
         self.minihtml = minihtml
         self.done_callback = done_callback
         self.images_to_resolve = images_to_resolve
@@ -877,6 +881,14 @@ class _ImageResolver:
             resolver(url, functools.partial(self.on_image_resolved, url))
 
     def on_image_resolved(self, url, data, mime, exception):
+        """
+        Called by a resolver when an image has been downloaded.
+
+        The `data` is a bytes object.
+        The `mime` is the mime-type, e.g. image/png.
+        When the resolver function encountered an exception, the exception is passed in via the last
+        argument. So its type is Optional[Exception].
+        """
         if exception:
             value = (exception, None)
         else:
@@ -886,6 +898,13 @@ class _ImageResolver:
             self.finalize()
 
     def finalize(self):
+        """
+        Called when all necessary images have been downloaded.
+
+        This method reconstructs the final html to be presented.
+
+        It invokes the `done_callback` from the `resolve_urls` function in the main thread of Sublime Text.
+        """
 
         def flattened():
             for url, positions in self.images_to_resolve.items():
