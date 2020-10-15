@@ -8,6 +8,7 @@ TextMate theme to CSS.
 
 https://manual.macromates.com/en/language_grammars#naming_conventions
 """
+from base64 import b64encode
 import sublime
 import markdown
 import jinja2
@@ -821,52 +822,49 @@ def format_frontmatter(values):
     return frontmatter.dump_frontmatter(values)
 
 
-class _ImagesToResolveParser(html.parser.HTMLParser):
+RE_TAG_HTML = re.compile(
+    r'''(?xus)
+    (?:
+        (?P<avoid>
+            <\s*(?P<script_name>script|style)[^>]*>.*?</\s*(?P=script_name)\s*> |
+            (?:(\r?\n?\s*)<!--[\s\S]*?-->(\s*)(?=\r?\n)|<!--[\s\S]*?-->)
+        )|
+        (?P<open><\s*(?P<tag>img))
+        (?P<attr>(?:\s+[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)
+        (?P<close>\s*(?:\/?)>)
+    )
+    '''
+)
 
-    def __init__(self):
-        super().__init__()
-        self.images_to_resolve = {}
+RE_TAG_LINK_ATTR = re.compile(
+    r'''(?xus)
+    (?P<attr>
+        (?:
+            (?P<name>\s+src\s*=\s*)
+            (?P<path>"[^"]*"|'[^']*')
+        )
+    )
+    '''
+)
 
-    def handle_starttag(self, tag, attrs):
-        if tag == "img":
-            for name, value in attrs:
-                if name == "src":
-                    if urllib.parse.urlparse(value).scheme in ("http", "https"):
-                        self.images_to_resolve.setdefault(value, []).append(self.getpos())
-                        return
 
+def _image_parser(text):
+    """Retrieve image source attributes with external png, jpg, and gif sources."""
 
-class _ReplaceUrlParser(html.parser.HTMLParser):
-
-    def __init__(self, images):
-        super().__init__()
-        self.images = images
-        self.result = ""
-
-    def _render_tag(self, tag, attrs, startend):
-        if tag == "img":
-            for index, (name, value) in enumerate(attrs):
-                if name == "src":
-                    if urllib.parse.urlparse(value).scheme in ("http", "https"):
-                        embbeded = "data:{0}, {1}".format(*self.images[value])
-                        attrs[index] = (name, embbeded)
-        if attrs:
-            rendered = " ".join('{}="{}"'.format(k, v) for k, v in attrs)
-            self.result += "<" + tag + " " + rendered + startend + ">"
-        else:
-            self.result += "<" + tag + startend + ">"
-
-    def handle_starttag(self, tag, attrs):
-        self._render_tag(tag, attrs, "")
-
-    def handle_startendtag(self, tag, attrs):
-        self._render_tag(tag, attrs, "/")
-
-    def handle_endtag(self, tag):
-        self.result += "</" + tag + ">"
-
-    def handle_data(self, data):
-        self.result += data
+    images = {}
+    for m in RE_TAG_HTML.finditer(text):
+        if m.group('avoid'):
+            continue
+        start = m.start('attr')
+        m2 = RE_TAG_LINK_ATTR.search(m.group('attr'))
+        if m2:
+            src = m2.group('path')[1:-1]
+            src = html.parser.HTMLParser().unescape(src)
+            if urllib.parse.urlparse(src).scheme in ("http", "https"):
+                s = start + m2.start('path') + 1
+                e = start + m2.end('path') - 1
+                images.setdefault(src, []).append((s, e))
+    return images
 
 
 class _ImageResolver:
@@ -875,34 +873,61 @@ class _ImageResolver:
         self.minihtml = minihtml
         self.done_callback = done_callback
         self.images_to_resolve = images_to_resolve
-        self.resolved_images = {}
+        self.resolved = {}
+        total_images = len(images_to_resolve) - 1
         for url in self.images_to_resolve.keys():
             resolver(url, functools.partial(self.on_image_resolved, url))
 
-    def on_image_resolved(self, url, data):
-        path = urllib.parse.urlparse(url).path.lower()
-        if path.endswith(".jpg") or path.endswith(".jpeg"):
-            mime = "image/jpeg"
-        elif path.endswith(".png"):
-            mime = "image/png"
-        elif path.endswith(".gif"):
-            mime = "image/gif"
+    def on_image_resolved(self, url, data, mime, exception):
+        if exception:
+            value = (exception, None)
         else:
-            # last effort
-            mime = "image/png"
-        self.resolved_images[url] = (mime, base64.b64encode(data).decode("ascii"))
-        if len(self.resolved_images) == len(self.images_to_resolve):
+            value = (base64.b64encode(data).decode("ascii"), mime)
+        self.resolved[url] = value
+        if len(self.resolved) == len(self.images_to_resolve):
             self.finalize()
 
     def finalize(self):
-        parser = _ReplaceUrlParser(self.resolved_images)
-        parser.feed(self.minihtml)
-        self.done_callback(parser.result)
+
+        def flattened():
+            for url, positions in self.images_to_resolve.items():
+                for position in positions:
+                    yield url, position[0], position[1]
+
+        todo = sorted(flattened(), key=lambda t: (t[1], t[2]))
+        chunks = [self.minihtml[:todo[0][1]]]
+        for index in range(0, len(todo)):
+            next_index = index + 1
+            if next_index >= len(todo):
+                next_start = len(self.minihtml)
+            else:
+                next_start = todo[next_index][1]
+            data, mime = self.resolved[todo[index][0]]
+            current_end = todo[index][2]
+            if isinstance(data, Exception):
+                # keep the minihtml unchanged
+                current_start = todo[index][1]
+                chunks.append(self.minihtml[current_start:current_end])
+            else:
+                # replace the url with the base64 data
+                chunks.append("data:")
+                chunks.append(mime)
+                chunks.append(";base64,")
+                chunks.append(data)
+            chunks.append(self.minihtml[current_end:next_start])
+        finalhtml = "".join(chunks)
+        sublime.set_timeout(lambda: self.done_callback(finalhtml))
 
 
 def blocking_resolver(url, done):
     import urllib.request
-    done(urllib.request.urlopen(url).readall())
+    try:
+        with urllib.request.urlopen(url) as response:
+            mime = response.headers.get("content-type", "image/png").lower()
+            payload = response.readall()
+        done(payload, mime, None)
+    except Exception as ex:
+        done(None, None, ex)
 
 
 def ui_thread_resolver(url, done):
@@ -917,19 +942,20 @@ def resolve_urls(minihtml, resolver, done_callback):
     """
     Given minihtml containing <img> tags with a src attribute that points to an image located on the internet, download
     those images and replace the src attribute with embedded base64-encoded image data.
-
     The first argument is minihtml as returned by the md2html function.
-
     The second argument is a callable that shall take two arguments.
     - The first argument is a URL to be downloaded.
     - The second argument is a callable that shall take one argument:
       - An object of type `bytes`: the raw image data. The result of downloading the image.
-
     The third argument is a callable that shall take one argument:
     - A string that is the final minihtml containing embedded base64 encoded images, ready to be presented to ST.
-
     This function is non-blocking.
+    It will invoke the passed-in done_callback on the UI thread.
+    It returns an opaque object that should be kept alive for as long as the passed-in done_callback is not yet invoked.
     """
-    parser = _ImagesToResolveParser()
-    parser.feed(minihtml)
-    return _ImageResolver(minihtml, resolver, done_callback, parser.images_to_resolve)
+    images = _image_parser(minihtml)
+    if images:
+        return _ImageResolver(minihtml, resolver, done_callback, images)
+    else:
+        sublime.set_timeout(lambda: done_callback(minihtml))
+        return None
