@@ -278,7 +278,7 @@ MdPopups provides a number of accessible functions.
     `template_vars`        | `#!py3 dict`         | `#!py3 None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
     `template_env_options` | `#!py3 dict`         | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
 
-    !!! alert "Removed in 4.0"
+    !!! warning "Removed in 4.0"
         4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
 
         To disable `nl2br`, you can customize which extensions get loaded; see
@@ -302,7 +302,7 @@ MdPopups provides a number of accessible functions.
     `template_vars`        | `#!py3 dict`         | `#!py3 None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
     `template_env_options` | `#!py3 dict`         | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
 
-    !!! alert "Removed in 4.0"
+    !!! warning "Removed in 4.0"
         4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
 
         To disable `nl2br`, you can customize which extensions get loaded; see
@@ -352,7 +352,7 @@ MdPopups provides a number of accessible functions.
     `template_vars`        | `#!py3 dict`           | `#!py3 None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content.A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
     `template_env_options` | `#!py3 dict`           | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`.A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
 
-    !!! alert "Removed in 4.0"
+    !!! warning "Removed in 4.0"
         4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
 
         To disable `nl2br`, you can customize which extensions get loaded; see
@@ -440,7 +440,7 @@ MdPopups provides a number of accessible functions.
     `template_vars`        | `#!py3 dict`           | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content.A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
     `template_env_options` | `#!py3 dict`           | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`.A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
 
-    !!! alert "Removed in 4.0"
+    !!! warning "Removed in 4.0"
         4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
 
         To disable `nl2br`, you can customize which extensions get loaded; see
@@ -496,7 +496,7 @@ MdPopups provides a number of accessible functions.
 !!! new "New 3.6.0"
     `new_html_sheet` is new in 3.6.0.
 
-!!! alert "Removed in 4.0"
+!!! warning "Removed in 4.0"
     4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
 
     To disable `nl2br`, you can customize which extensions get loaded; see
@@ -527,7 +527,7 @@ MdPopups provides a number of accessible functions.
 !!! new "New 3.6.0"
     `new_html_sheet` is new in 3.6.0.
 
-!!! alert "Removed in 4.0"
+!!! warning "Removed in 4.0"
     4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
 
     To disable `nl2br`, you can customize which extensions get loaded; see
@@ -557,7 +557,7 @@ MdPopups provides a number of accessible functions.
     `template_vars`        | `#!py3 dict`         | No           | `#!py3 None`  | A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content.A dictionary containing template vars.  These can be used in either the CSS or the HTML/Markdown content. These vars are found under the object `plugin`.
     `template_env_options` | `#!py3 dict`         | No           | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content. Content plugin vars are found under the object: `plugin`.A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
 
-    !!! alert "Removed in 4.0"
+    !!! warning "Removed in 4.0"
         4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
 
         To disable `nl2br`, you can customize which extensions get loaded; see
