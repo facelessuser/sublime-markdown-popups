@@ -2,6 +2,8 @@
 
 ## 4.0.0
 
+- **NEW**: Added new `resolve_images` function to allow for processing remote image URLs and downloading the content in
+  an HTML buffer.
 - **NEW**: `nl2br` can only be set through `markdown_extensions` via frontmatter. If passed as a parameter for any API
   function, it will be ignored.
 - **NEW**: `allow_code_wrap` can only be set through the frontmatter option `allow_code_wrap`. If passed as a parameter
@@ -63,7 +65,8 @@
 - **NEW**: Add support for parsing `alpha(+value)`, `alpha(-value)`, and `alpha(*value)` in color schemes.
 - **NEW**: Add support for parsing `lightness()` and `saturation()` in color schemes.
 - **NEW**: Add support for `foreground_adjust` properties when parsing color schemes.
-- **NEW**: Add support for parsing blended colors in the HSL and HWB namespace. Blended colors do not always match Sublime Text's colors, this is due to a Sublime Text bug: https://github.com/sublimehq/sublime_text/issues/3176.
+- **NEW**: Add support for parsing blended colors in the HSL and HWB namespace. Blended colors do not always match
+  Sublime Text's colors, this is due to a Sublime Text bug: https://github.com/sublimehq/sublime_text/issues/3176.
 
 ## 3.5.0
 
@@ -90,13 +93,15 @@
 
 Jan 1, 2018
 
-- **FIX**: Allow `-` in variables names. Write color translations to main scheme object and ensure filtering is done after color translations.
+- **FIX**: Allow `-` in variables names. Write color translations to main scheme object and ensure filtering is done
+  after color translations.
 
 ## 3.3.0
 
 Dec 3, 2017
 
-- **NEW**: Add `tabs2spaces` to process text and convert tabs to spaces according to tab stops. Use case would include formatting text for `syntax_highlight`.
+- **NEW**: Add `tabs2spaces` to process text and convert tabs to spaces according to tab stops. Use case would include
+  formatting text for `syntax_highlight`.
 
 ## 3.2.0
 
@@ -191,28 +196,45 @@ June 21, 2017
 
 June 20, 2017
 
-- **NEW**: Allow adding and configuring extensions via YAML frontmatter. This feature deprecates `nl2br` function parameter which will be removed some time in the future.
-- **NEW**: Allow setting whether block, code tags will allow word wrapping via YAML frontmatter. This feature deprecates the `allow_word_wrap` function parameter which will be removed some time in the future.
+- **NEW**: Allow adding and configuring extensions via YAML frontmatter. This feature deprecates `nl2br` function
+  parameter which will be removed some time in the future.
+- **NEW**: Allow setting whether block, code tags will allow word wrapping via YAML frontmatter. This feature deprecates
+  the `allow_word_wrap` function parameter which will be removed some time in the future.
 - **NEW**: Expose SuperFences' `custom_fences` feature via YAML frontmatter.
 - **NEW**: Upgrade internal extensions.
-- **NEW**: Import official `pymdownx` extension if `pymdownx` is installed as a dependency so we can drop internal vendored extension copies in the future. This is allowed to be optional for a time until people can update their dependencies.
-- **NEW**: Import `pyyaml` extension if `pyyaml` is installed for frontmatter. This is allowed to be optional for a time until people can update their dependencies.
-- **NEW**: `inline-highlight` class in no longer applied to inline code.  Instead `highlight` is applied to both inline and block code.
+- **NEW**: Import official `pymdownx` extension if `pymdownx` is installed as a dependency so we can drop internal
+  vendored extension copies in the future. This is allowed to be optional for a time until people can update their
+  dependencies.
+- **NEW**: Import `pyyaml` extension if `pyyaml` is installed for frontmatter. This is allowed to be optional for a time
+  until people can update their dependencies.
+- **NEW**: `inline-highlight` class in no longer applied to inline code.  Instead `highlight` is applied to both inline
+  and block code.
 
 ## 2.0
 
 June 1, 2017
 
 - **NEW**: Add `kbd` styling and `admontion` styling.
-- **NEW**: New rewritten `default.css`. Adds styling that uses new Sublime CSS features and drops legacy styling for old ST versions. No more `base.css`.
-- **NEW**: No longer outputs scope CSS into default CSS. Users must use template to acquire CSS for specific scopes. This helps keep the CSS namespace clean. In general, CSS should start using Sublime CSS variables like `--bluish`, `--redish` etc.  If a user needs CSS for a scope, they can use the `css` template filter to add the scope's CSS to a class of their choice.
+- **NEW**: New rewritten `default.css`. Adds styling that uses new Sublime CSS features and drops legacy styling for old
+  ST versions. No more `base.css`.
+- **NEW**: No longer outputs scope CSS into default CSS. Users must use template to acquire CSS for specific scopes.
+  This helps keep the CSS namespace clean. In general, CSS should start using Sublime CSS variables like `--bluish`,
+  `--redish` etc.  If a user needs CSS for a scope, they can use the `css` template filter to add the scope's CSS to a
+  class of their choice.
 - **NEW**: MdPopups now requires ST 3124+ and all legacy styling and workarounds for ST < 3124 have been dropped.
 - **NEW**: Code blocks are now forced to use a monospace fonts.
-- **NEW**: Legacy `relativesize` template filter has been dropped. Users should use native CSS `rem` units for relative sizes.
-- **NEW**: Upgraded `pymdownx` extensions which includes fixes and enhancements. Also abandoned using `CodeHilite` in favor of `pymdownx.highlight`.
+- **NEW**: Legacy `relativesize` template filter has been dropped. Users should use native CSS `rem` units for relative
+  sizes.
+- **NEW**: Upgraded `pymdownx` extensions which includes fixes and enhancements. Also abandoned using `CodeHilite` in
+  favor of `pymdownx.highlight`.
 - **NEW**: Add option to support wrapping in code blocks.
-- **NEW**: CSS filters are no longer limited to a set list of TextMate or Sublime scopes, and you no longer specify the parameters as CSS classes (but MdPopups will be forgiving if you do), but you should specify them as scopes (complexity doesn't matter). Also no more specifying multiple scopes separated by commas. Read documentation for more info.
-- **NEW**: CSS filter now accepts an `explicit_background` option to return a background only when explicitly defined (which is the default). When disabled, the filter will always return a valid background color (which is usually the base background).
+- **NEW**: CSS filters are no longer limited to a set list of TextMate or Sublime scopes, and you no longer specify the
+  parameters as CSS classes (but MdPopups will be forgiving if you do), but you should specify them as scopes
+  (complexity doesn't matter). Also no more specifying multiple scopes separated by commas. Read documentation for more
+  info.
+- **NEW**: CSS filter now accepts an `explicit_background` option to return a background only when explicitly defined
+  (which is the default). When disabled, the filter will always return a valid background color (which is usually the
+  base background).
 - **NEW**: Pygments is no longer the default syntax highlighter.
 - **FIX**: Fix foreground output that was missing semicolon according to spec.
 - **FIX**: Numerous CSS fixes.

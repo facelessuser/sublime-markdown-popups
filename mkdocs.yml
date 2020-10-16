@@ -10,16 +10,18 @@ docs_dir: docs/src/markdown
 theme:
   name: material
   custom_dir: docs/theme
-  palette:
-    primary: drac-purple
-    accent: drac-purple
   icon:
     logo: material/book-open-page-variant
+  palette:
+    scheme: dracula
+    primary: deep purple
+    accent: deep purple
   font:
     text: Roboto
     code: Roboto Mono
   features:
-    - tabs
+    - navigation.tabs
+
 
 nav:
   - About Markdown Popups: index.md
@@ -61,10 +63,6 @@ markdown_extensions:
           format: !!python/name:pymdownx.arithmatex.fence_mathjax_format
   - pymdownx.highlight:
       extend_pygments_lang:
-        - name: php-inline
-          lang: php
-          options:
-            startinline: true
         - name: pycon3
           lang: pycon
           options:
