@@ -13,6 +13,11 @@ import markdown
 import jinja2
 import traceback
 import time
+import html
+import html.parser
+import urllib
+import functools
+import base64
 from . import version as ver
 from . import colorbox
 from collections import OrderedDict
@@ -293,12 +298,11 @@ def _get_theme(view, css=None, css_type=POPUP, template_vars=None):
 def _remove_entities(text):
     """Remove unsupported HTML entities."""
 
-    import html.parser
-    html = html.parser.HTMLParser()
+    p = html.parser.HTMLParser()
 
     def repl(m):
         """Replace entities except &, <, >, and `nbsp`."""
-        return html.unescape(m.group(1))
+        return p.unescape(m.group(1))
 
     return RE_BAD_ENTITIES.sub(repl, text)
 
@@ -815,3 +819,203 @@ def format_frontmatter(values):
     """Format values as frontmatter."""
 
     return frontmatter.dump_frontmatter(values)
+
+
+RE_TAG_HTML = re.compile(
+    r'''(?xus)
+    (?:
+        (?P<avoid>
+            <\s*(?P<script_name>script|style)[^>]*>.*?</\s*(?P=script_name)\s*> |
+            (?:(\r?\n?\s*)<!--[\s\S]*?-->(\s*)(?=\r?\n)|<!--[\s\S]*?-->)
+        )|
+        (?P<open><\s*(?P<tag>img))
+        (?P<attr>(?:\s+[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)
+        (?P<close>\s*(?:\/?)>)
+    )
+    '''
+)
+
+RE_TAG_LINK_ATTR = re.compile(
+    r'''(?xus)
+    (?P<attr>
+        (?:
+            (?P<name>\s+src\s*=\s*)
+            (?P<path>"[^"]*"|'[^']*')
+        )
+    )
+    '''
+)
+
+
+def _image_parser(text):
+    """Retrieve image source whose attribute `src` URL has scheme 'http' or 'https'."""
+
+    images = {}
+    for m in RE_TAG_HTML.finditer(text):
+        if m.group('avoid'):
+            continue
+        start = m.start('attr')
+        m2 = RE_TAG_LINK_ATTR.search(m.group('attr'))
+        if m2:
+            src = m2.group('path')[1:-1]
+            src = html.parser.HTMLParser().unescape(src)
+            if urllib.parse.urlparse(src).scheme in ("http", "https"):
+                s = start + m2.start('path') + 1
+                e = start + m2.end('path') - 1
+                images.setdefault(src, []).append((s, e))
+    return images
+
+
+class _ImageResolver:
+    """
+    Keeps track of which images are downloaded, and builds the final html after all of them have been downloaded.
+
+    Note that this entire class is a workaround for not having a scatter-gather function and not having a promise type.
+    In an asynchronous world, we would of course use `asyncio.gather`.
+    """
+
+    def __init__(self, minihtml, resolver, done_callback, images_to_resolve):
+        """The constructor."""
+        self.minihtml = minihtml
+        self.done_callback = done_callback
+        self.images_to_resolve = images_to_resolve
+        self.resolved = {}
+        for url in self.images_to_resolve.keys():
+            resolver(url, functools.partial(self.on_image_resolved, url))
+
+    def on_image_resolved(self, url, data, mime, exception):
+        """
+        Called by a resolver when an image has been downloaded.
+
+        The `data` is a bytes object.
+        The `mime` is the mime-type, e.g. image/png.
+        When the resolver function encountered an exception, the exception is passed in via the last
+        argument. So its type is Optional[Exception].
+        """
+        if exception:
+            value = (exception, None)
+        else:
+            value = (base64.b64encode(data).decode("ascii"), mime)
+        self.resolved[url] = value
+        if len(self.resolved) == len(self.images_to_resolve):
+            self.finalize()
+
+    def finalize(self):
+        """
+        Called when all necessary images have been downloaded.
+
+        This method reconstructs the final html to be presented.
+
+        It invokes the `done_callback` from the `resolve_urls` function in the main thread of Sublime Text.
+        """
+
+        def flattened():
+            for url, positions in self.images_to_resolve.items():
+                for position in positions:
+                    yield url, position[0], position[1]
+
+        todo = sorted(flattened(), key=lambda t: (t[1], t[2]))
+        chunks = [self.minihtml[:todo[0][1]]]
+        for index in range(0, len(todo)):
+            next_index = index + 1
+            if next_index >= len(todo):
+                next_start = len(self.minihtml)
+            else:
+                next_start = todo[next_index][1]
+            data, mime = self.resolved[todo[index][0]]
+            current_end = todo[index][2]
+            if isinstance(data, Exception):
+                # keep the minihtml unchanged
+                current_start = todo[index][1]
+                chunks.append(self.minihtml[current_start:current_end])
+            else:
+                # replace the URL with the base64 data
+                chunks.append("data:")
+                chunks.append(mime)
+                chunks.append(";base64,")
+                chunks.append(data)
+            chunks.append(self.minihtml[current_end:next_start])
+        finalhtml = "".join(chunks)
+        sublime.set_timeout(lambda: self.done_callback(finalhtml))
+
+
+@functools.lru_cache(maxsize=8)
+def _retrieve(url):
+    """
+    Actually download the image pointed to by the passed URL.
+
+    The most recently used images (8 at most) are kept in a cache.
+    """
+    import urllib.request
+    with urllib.request.urlopen(url) as response:
+        # We provide some basic protection against absurdly large images.
+        # 32MB is chosen as an arbitrary upper limit. This can be raised if desired.
+        length = response.headers.get("content-length")
+        if length is None:
+            raise ValueError("missing content-length header")
+        length = int(length)
+        if length == 0:
+            raise ValueError("empty payload")
+        elif length >= 32 * 1024 * 1024:
+            raise ValueError("refusing to read payloads larger than or equal to 32MB")
+        mime = response.headers.get("content-type", "image/png").lower()
+        return response.readall(), mime
+
+
+def blocking_resolver(url, done):
+    """A simple URL resolver that will block the caller."""
+    exception = None
+    payload = None
+    mime = None
+    try:
+        payload, mime = _retrieve(url)
+    except Exception as ex:
+        exception = ex
+    if exception:
+        done(None, None, exception)
+    elif payload and mime:
+        done(payload, mime, None)
+    else:
+        done(None, None, RuntimeError("failed to retrieve image"))
+
+
+def ui_thread_resolver(url, done):
+    """A URL resolver that runs on the main thread."""
+    sublime.set_timeout(lambda: blocking_resolver(url, done))
+
+
+def worker_thread_resolver(url, done):
+    """A URL resolver that runs on the worker ("async") thread of Sublime Text."""
+    sublime.set_timeout_async(lambda: blocking_resolver(url, done))
+
+
+def resolve_urls(minihtml, resolver, done_callback):
+    """
+    Download images from the internet.
+
+    Given minihtml containing `<img>` tags with a `src` attribute that points to an image located on the internet,
+    download those images and replace the `src` attribute with embedded base64-encoded image data.
+
+    The first argument is minihtml as returned by the `md2html` function.
+
+    The second argument is a callable that shall take two arguments.
+
+    - The first argument is a URL to be downloaded.
+    - The second argument is a callable that shall take one argument: An object of type `bytes`: the raw image data.
+      The result of downloading the image.
+
+    The third argument is a callable that shall take one argument:
+
+    - A string that is the final minihtml containing embedded base64 encoded images, ready to be presented to a view.
+
+    This function is non-blocking.
+    It will invoke the passed-in `done_callback` on the UI thread.
+    It returns an opaque object that should be kept alive for as long as the passed-in `done_callback` is not yet
+    invoked.
+    """
+    images = _image_parser(minihtml)
+    if images:
+        return _ImageResolver(minihtml, resolver, done_callback, images)
+    else:
+        sublime.set_timeout(lambda: done_callback(minihtml))
+        return None
