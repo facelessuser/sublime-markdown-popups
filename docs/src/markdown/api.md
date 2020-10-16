@@ -471,10 +471,6 @@ MdPopups provides a number of accessible functions.
 
 ### New HTML Sheet
 
-!!! warning "Experimental Feature"
-    This feature is new in Sublime Text 4. Sublime's API may change in future versions for this feature and may break
-    this.
-
 `#!py3 mdpopups.new_html_sheet`
 : 
     Accepts Markdown and creates a Sublime HTML sheet.  By default, the built-in Sublime syntax highlighter will be used
@@ -494,7 +490,7 @@ MdPopups provides a number of accessible functions.
     `template_env_options` | `#!py3 dict`                              | `#!py3 None`  | A dictionary containing options for the Jinja2 template environment. This **only** applies to the **HTML/Markdown** content.
 
 !!! new "New 3.6.0"
-    `new_html_sheet` is new in 3.6.0.
+    `new_html_sheet` is new in 3.6.0. This feature should be considered experimental.
 
 !!! warning "Removed in 4.0"
     4.0 removed the parameter `nl2br` and `alow_code_wrap`. If passed to the function, they will be ignored.
@@ -732,5 +728,35 @@ MdPopups provides a number of accessible functions.
     Parameter | Type                 | Default | Description
     --------- | -------------------- | ------- | -----------
     `view`    | `#!py3 sublime.View` |         | Sublime text View object.
+
+### Resolve Remote Images
+
+`#!py3 str mdpopups.resolve_images`
+: 
+    This was added to download remote images. `resolve_images` accepts an HTML buffer, a resolver and a callback and
+    will search the HTML buffer for image URLs and download them if appropriate.
+
+    Since this function can have a resolver that can download the images asynchronously, it is not performed in the
+    main path when showing popups or phantoms.
+
+    Ideally, this would be used after manually running Markdown through `md2html`.
+
+    The following resolve functions are available:
+
+    Name                     | Description
+    ------------------------ | -----------
+    `blocking_resolver`      | A blocking image resolver. Will block while download an image.
+    `ui_thread_resolver`     | Will execute image downloads on the main thread.
+    `worker_thread_resolver` | Will execute image downloads on the worker ("async") thread of Sublime Text.
+
+    Parameter | Type                 | Default | Description
+    --------- | -------------------- | ------- | -----------
+    `minihtml`| `#!py3 str`          |         | A `minihtml` string buffer.
+    `resolver`| function             |         | A function that resolves an image URL by downloading it. It accepts a URL and callback.
+    `on_done` | function             |         | A callback for when the image resolving is complete. Accepts a `minihtml` string buffer.
+
+
+!!! new "New in 4.0"
+    This is a new feature added in 4.0, and is currently considered experimental.
 
 --8<-- "refs.txt"

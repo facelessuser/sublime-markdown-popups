@@ -989,7 +989,7 @@ def worker_thread_resolver(url, done):
     sublime.set_timeout_async(lambda: blocking_resolver(url, done))
 
 
-def resolve_urls(minihtml, resolver, done_callback):
+def resolve_images(minihtml, resolver, on_done):
     """
     Download images from the internet.
 
@@ -1015,7 +1015,7 @@ def resolve_urls(minihtml, resolver, done_callback):
     """
     images = _image_parser(minihtml)
     if images:
-        return _ImageResolver(minihtml, resolver, done_callback, images)
+        return _ImageResolver(minihtml, resolver, on_done, images)
     else:
         sublime.set_timeout(lambda: done_callback(minihtml))
         return None
