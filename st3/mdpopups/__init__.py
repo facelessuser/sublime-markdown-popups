@@ -1017,5 +1017,5 @@ def resolve_images(minihtml, resolver, on_done):
     if images:
         return _ImageResolver(minihtml, resolver, on_done, images)
     else:
-        sublime.set_timeout(lambda: done_callback(minihtml))
+        sublime.set_timeout(lambda: on_done(minihtml))
         return None
