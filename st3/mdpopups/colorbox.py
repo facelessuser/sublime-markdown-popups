@@ -5,7 +5,7 @@ Licensed under MIT
 Copyright (c) 2015 - 2020 Isaac Muse <isaacmuse@gmail.com>
 """
 from .png import Writer
-from .rgba import RGBA
+from coloraide import Color
 import base64
 import io
 
@@ -51,9 +51,9 @@ def to_list(rgb, alpha=False):
 def checkered_color(color, background):
     """Mix color with the checkered color."""
 
-    checkered = RGBA(color)
-    checkered.apply_alpha(background)
-    return checkered.get_rgb()
+    checkered = Color(color)
+    checkered.overlay(background)
+    return checkered.to_string(hex=True)
 
 
 def get_border_size(direction, border_map):

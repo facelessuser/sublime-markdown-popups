@@ -91,6 +91,7 @@ preformatted
 pycqa
 pymdown
 requesters
+sRGB
 squidfunk
 stylesheet
 sublicense

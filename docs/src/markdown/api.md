@@ -15,7 +15,8 @@ Your plugin should include the Package Control dependencies listed below. Please
             "python-jinja2",
             "markupsafe",
             "pymdownx",
-            "pyyaml"
+            "pyyaml",
+            "coloraide"
         ]
     }
 }
