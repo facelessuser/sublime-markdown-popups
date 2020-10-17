@@ -52,8 +52,7 @@ def checkered_color(color, background):
     """Mix color with the checkered color."""
 
     checkered = Color(color)
-    checkered.overlay(background)
-    return checkered.to_string(hex=True)
+    return checkered.overlay(background).to_string(hex=True, alpha=False)
 
 
 def get_border_size(direction, border_map):
