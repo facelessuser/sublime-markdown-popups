@@ -237,7 +237,7 @@ if pygments:
 
             if self.linenos == 2 and self.pymdownx_inline:
                 source = self._wrap_customlinenums(source)
-            return self._wrap_code(self, source)
+            return self._wrap_code(source)
 
         def _wrap_code(self, source):
             """
