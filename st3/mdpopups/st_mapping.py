@@ -57,5 +57,6 @@ lang_map = {
     'xml': (('xml',), ('XML/XML',)),
     'yaml': (('yaml',), ('YAML/YAML',)),
     'vhdl': (('vhdl',), ('VHDL/Syntaxes/VHDL', 'HDLProject/sublime-vhdl/Syntaxes/VHDL')),
-    'verilog': (('verilog',), ('Verilog/Verilog', 'HDLProject/sublime-verilog/Verilog'))
+    'verilog': (('verilog',), ('Verilog/Verilog', 'HDLProject/sublime-verilog/Verilog')),
+    'zig': (('zig',), ('Zig Language/Syntaxes/Zig',))
 }
