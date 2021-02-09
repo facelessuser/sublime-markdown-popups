@@ -282,7 +282,7 @@ class SublimeHighlight(object):
     def syntax_highlight(self, src, lang, hl_lines=[], inline=False, no_wrap=False, code_wrap=False):
         """Syntax Highlight."""
 
-        self.set_view(src, 'text' if not lang else lang)
+        self.set_view(src.rstrip(), 'text' if not lang else lang)
         if not self.legacy_color_matcher:
             self.defaults = self.view.style()
             self.fground = self.defaults.get('foreground', '#000000')
