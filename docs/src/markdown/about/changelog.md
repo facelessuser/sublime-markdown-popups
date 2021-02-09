@@ -9,6 +9,7 @@
 - **NEW**: `allow_code_wrap` can only be set through the frontmatter option `allow_code_wrap`. If passed as a parameter
   for any API function (except `syntax_highlight`), it will be ignored.
 - **FIX**: Fix exception when using Pygments.
+- **FIX**: Fix extra newlines in code blocks.
 
 ## 3.7.5
 
