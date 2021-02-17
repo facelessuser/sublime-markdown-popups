@@ -94,12 +94,4 @@ For a list of all currently supported syntax mappings, see the official [mapping
     used in Pygments so a User can switch between Pygments' and Sublime's syntax highlighter and still get
     highlighting.
 
-## `mdpopups.legacy_color_matcher`
-
-Enables the legacy color matcher instead of using the Sublime API. Sometimes this can be useful to work around bugs in
-the Sublime API. In general it is recommended to leave this set to `#!py3 False`.
-
-!!! new "New 3.7.0"
-    Added `mdpopups.legacy_color_matcher` in 3.7.0.
-
 --8<-- "refs.txt"

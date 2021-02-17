@@ -11,6 +11,7 @@
 - **NEW**: Support latest Markdown and Pymdown Extensions. Must use `markdown.extensions.md_in_html` instead of
   `pymdownx.extrarawhtml`.
 - **NEW**: Requires `coloraide` dependency.
+- **NEW**: Remove `mdpopups.legacy_color_matcher` option along with legacy color match logic.
 - **FIX**: Fix exception when using Pygments.
 - **FIX**: Fix extra newlines in code blocks.
 

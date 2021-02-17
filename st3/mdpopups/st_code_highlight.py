@@ -24,12 +24,9 @@ Original code has been heavily modified by Isaac Muse <isaacmuse@gmail.com> for 
 """
 import sublime
 import re
-from .st_color_scheme_matcher import ColorSchemeMatcher
 from .st_mapping import lang_map
 
 RE_TAIL = re.compile(r'(?:\r\n|(?!\r\n)[\n\r])*\z')
-
-NEW_SCHEMES = int(sublime.version()) >= 3150
 
 INLINE_BODY_START = '<code class="inline-highlight">'
 BODY_START = '<div class="highlight"><pre>'
@@ -49,15 +46,6 @@ class SublimeHighlight(object):
         """Initialization."""
 
         self.view = None
-        self.legacy_color_matcher = not NEW_SCHEMES or sublime.load_settings(
-            'Preferences.sublime-settings'
-        ).get('mdpopups.legacy_color_matcher', False)
-
-        if self.legacy_color_matcher:
-            self.csm = ColorSchemeMatcher(scheme)
-
-            self.fground = self.csm.get_special_color('foreground', simulate_transparency=True)
-            self.bground = self.csm.get_special_color('background', simulate_transparency=True)
 
     def setup(self, **kwargs):
         """Get get general document preferences from sublime preferences."""
@@ -168,30 +156,25 @@ class SublimeHighlight(object):
             scope_name = self.view.scope_name(self.pt)
             while self.view.scope_name(self.end) == scope_name and self.end < self.size:
                 self.end += 1
-            if not self.legacy_color_matcher:
-                color_match = self.view.style_for_scope(scope_name)
-                color = color_match.get('foreground', self.fground)
-                bgcolor = color_match.get('background')
-                style = []
-                if color_match.get('bold', False):
-                    style.append('bold')
-                if color_match.get('italic', False):
-                    style.append('italic')
-                if color_match.get('underline', False):
-                    style.append('underline')
-                if color_match.get('glow', False):
-                    style.append('glow')
 
-                if do_highlight:
-                    sfg = color_match.get('selection_forground', self.defaults.get('selection_forground'))
-                    if sfg:
-                        color = sfg
-                    bgcolor = color_match.get('selection', '#0000FF')
-            else:
-                color_match = self.csm.guess_color(scope_name, selected=do_highlight, explicit_background=True)
-                color = color_match.fg_simulated
-                bgcolor = color_match.bg_simulated
-                style = color_match.style.split(' ')
+            color_match = self.view.style_for_scope(scope_name)
+            color = color_match.get('foreground', self.fground)
+            bgcolor = color_match.get('background')
+            style = []
+            if color_match.get('bold', False):
+                style.append('bold')
+            if color_match.get('italic', False):
+                style.append('italic')
+            if color_match.get('underline', False):
+                style.append('underline')
+            if color_match.get('glow', False):
+                style.append('glow')
+
+            if do_highlight:
+                sfg = color_match.get('selection_forground', self.defaults.get('selection_forground'))
+                if sfg:
+                    color = sfg
+                bgcolor = color_match.get('selection', '#0000FF')
 
             region = sublime.Region(self.pt, self.end)
             # Normal text formatting
@@ -206,12 +189,8 @@ class SublimeHighlight(object):
         # # Get the color for the space at the end of a line
         # if self.end < self.view.size():
         #     end_key = self.view.scope_name(self.pt)
-        #     if not self.legacy_color_matcher:
-        #         color_match = self.view.style_for_scope(end_key)
-        #         self.ebground = color_match.get('background')
-        #     else:
-        #         color_match = self.csm.guess_color(end_key, explicit_background=True)
-        #         self.ebground = color_match.bg_simulated
+        #     color_match = self.view.style_for_scope(end_key)
+        #     self.ebground = color_match.get('background')
         # ~~~
 
         # Join line segments
@@ -285,10 +264,9 @@ class SublimeHighlight(object):
         """Syntax Highlight."""
 
         self.set_view(RE_TAIL.sub('', src), 'text' if not lang else lang)
-        if not self.legacy_color_matcher:
-            self.defaults = self.view.style()
-            self.fground = self.defaults.get('foreground', '#000000')
-            self.bground = self.defaults.get('background', '#FFFFFF')
+        self.defaults = self.view.style()
+        self.fground = self.defaults.get('foreground', '#000000')
+        self.bground = self.defaults.get('background', '#FFFFFF')
         self.inline = inline
         self.hl_lines = hl_lines
         self.no_wrap = no_wrap

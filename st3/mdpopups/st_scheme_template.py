@@ -18,14 +18,11 @@ import re
 from . import version as ver
 from coloraide import util
 from .st_colormod import Color
-from .st_color_scheme_matcher import ColorSchemeMatcher
 import jinja2
 from pygments.formatters import HtmlFormatter
 from collections import OrderedDict
 from .st_clean_css import clean_css
 import copy
-
-NEW_SCHEMES = int(sublime.version()) >= 3150
 
 INVALID = -1
 POPUP = 0
@@ -213,44 +210,31 @@ class SchemeTemplate(object):
     def guess_style(self, view, scope, selected=False, explicit_background=False):
         """Guess color."""
 
-        # Remove leading '.' to account for old style CSS class scopes.
-        if self.legacy_color_matcher:
-            return self.csm.guess_color(scope.lstrip('.'), selected, explicit_background)
-        else:
-            scope_style = view.style_for_scope(scope.lstrip('.'))
-            style = {}
-            style['foreground'] = scope_style['foreground']
-            style['background'] = scope_style.get('background')
-            style['bold'] = scope_style.get('bold', False)
-            style['italic'] = scope_style.get('italic', False)
-            style['underline'] = scope_style.get('underline', False)
-            style['glow'] = scope_style.get('glow', False)
+        # Remove leading '.' to account for old style CSS
+        scope_style = view.style_for_scope(scope.lstrip('.'))
+        style = {}
+        style['foreground'] = scope_style['foreground']
+        style['background'] = scope_style.get('background')
+        style['bold'] = scope_style.get('bold', False)
+        style['italic'] = scope_style.get('italic', False)
+        style['underline'] = scope_style.get('underline', False)
+        style['glow'] = scope_style.get('glow', False)
 
-            defaults = view.style()
-            if not explicit_background and not style.get('background'):
-                style['background'] = defaults.get('background', '#FFFFFF')
-            if selected:
-                sfg = scope_style.get('selection_forground', defaults.get('selection_forground'))
-                if sfg:
-                    style['foreground'] = sfg
-                style['background'] = scope_style.get('selection', '#0000FF')
-            return style
+        defaults = view.style()
+        if not explicit_background and not style.get('background'):
+            style['background'] = defaults.get('background', '#FFFFFF')
+        if selected:
+            sfg = scope_style.get('selection_forground', defaults.get('selection_forground'))
+            if sfg:
+                style['foreground'] = sfg
+            style['background'] = scope_style.get('selection', '#0000FF')
+        return style
 
-    def legacy_parse_global(self):
-        """
-        Parse global settings.
+    def get_variables(self):
+        """Get variables."""
 
-        LEGACY.
-        """
-
-        self.csm = ColorSchemeMatcher(self.scheme_file)
-
-        # Get general theme colors from color scheme file
-        self.bground = self.csm.special_colors['background']['color_simulated']
-        rgba = Color(self.bground)
-        self.lums = rgba.luminance()
-        is_dark = self.lums <= LUM_MIDPOINT
-        self._variables = {
+        is_dark = self.is_dark()
+        return {
             "is_dark": is_dark,
             "is_light": not is_dark,
             "sublime_version": int(sublime.version()),
@@ -259,30 +243,11 @@ class SchemeTemplate(object):
             "use_pygments": self.use_pygments,
             "default_style": self.default_style
         }
-        self.html_border = rgba.to_string(hex=True)
-        self.fground = self.csm.special_colors['foreground']['color_simulated']
-
-    def get_variables(self):
-        """Get variables."""
-
-        if not self.legacy_color_matcher:
-            is_dark = self.is_dark()
-            return {
-                "is_dark": is_dark,
-                "is_light": not is_dark,
-                "sublime_version": int(sublime.version()),
-                "mdpopups_version": ver.version(),
-                "color_scheme": self.scheme_file,
-                "use_pygments": self.use_pygments,
-                "default_style": self.default_style
-            }
-        else:
-            return self._variables
 
     def get_html_border(self):
         """Get HTML border."""
 
-        return self.get_bg() if not self.legacy_color_matcher else self.html_border
+        return self.get_bg()
 
     def is_dark(self):
         """Check if scheme is dark."""
@@ -292,22 +257,19 @@ class SchemeTemplate(object):
     def get_lums(self):
         """Get luminance."""
 
-        if not self.legacy_color_matcher:
-            bg = self.get_bg()
-            rgba = Color(bg)
-            return rgba.luminance()
-        else:
-            return self.lums
+        bg = self.get_bg()
+        rgba = Color(bg)
+        return rgba.luminance()
 
     def get_fg(self):
         """Get foreground."""
 
-        return self.view.style().get('foreground', '#000000') if not self.legacy_color_matcher else self.fground
+        return self.view.style().get('foreground', '#000000')
 
     def get_bg(self):
         """Get background."""
 
-        return self.view.style().get('background', '#FFFFFF') if not self.legacy_color_matcher else self.bground
+        return self.view.style().get('background', '#FFFFFF')
 
     def setup(self):
         """Setup the template environment."""
@@ -315,10 +277,6 @@ class SchemeTemplate(object):
         settings = sublime.load_settings("Preferences.sublime-settings")
         self.use_pygments = not settings.get('mdpopups.use_sublime_highlighter', True)
         self.default_style = settings.get('mdpopups.default_style', True)
-        self.legacy_color_matcher = not NEW_SCHEMES or settings.get('mdpopups.legacy_color_matcher', False)
-
-        if self.legacy_color_matcher:
-            self.legacy_parse_global()
 
         # Create Jinja template
         self.env = jinja2.Environment()
@@ -490,27 +448,21 @@ class SchemeTemplate(object):
     def retrieve_selector(self, selector, key=None, explicit_background=True):
         """Get the CSS key, value pairs for a rule."""
 
-        if not self.legacy_color_matcher:
-            general = self.view.style()
-            fg = general.get('foreground', '#000000')
-            bg = general.get('background', '#ffffff')
-            scope = self.view.style_for_scope(selector)
-            style = []
-            if scope.get('bold', False):
-                style.append('bold')
-            if scope.get('italic', False):
-                style.append('italic')
-            if scope.get('underline', False):
-                style.append('underline')
-            if scope.get('glow', False):
-                style.append('glow')
-            color = scope.get('foreground', fg)
-            bgcolor = scope.get('background', (None if explicit_background else bg))
-        else:
-            scope = self.guess_style(self.view, selector, explicit_background=explicit_background)
-            color = scope.fg_simulated
-            bgcolor = scope.bg_simulated
-            style = scope.style.split(' ')
+        general = self.view.style()
+        fg = general.get('foreground', '#000000')
+        bg = general.get('background', '#ffffff')
+        scope = self.view.style_for_scope(selector)
+        style = []
+        if scope.get('bold', False):
+            style.append('bold')
+        if scope.get('italic', False):
+            style.append('italic')
+        if scope.get('underline', False):
+            style.append('underline')
+        if scope.get('glow', False):
+            style.append('glow')
+        color = scope.get('foreground', fg)
+        bgcolor = scope.get('background', (None if explicit_background else bg))
 
         css = []
         if color and (key is None or key == 'color'):
