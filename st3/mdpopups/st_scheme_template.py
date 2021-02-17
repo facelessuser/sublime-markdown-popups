@@ -38,7 +38,7 @@ re_base_colors = re.compile(r'^\s*\.(?:dummy)\s*\{([^}]+)\}', re.MULTILINE)
 re_color = re.compile(r'(?<!-)(color\s*:\s*#[A-Fa-z\d]{6})')
 re_bgcolor = re.compile(r'(?<!-)(background(?:-color)?\s*:\s*#[A-Fa-z\d]{6})')
 re_pygments_selectors = re.compile(r'\.dummy (\.[a-zA-Z\d]+) ')
-CODE_BLOCKS = '.mdpopups .highlight, .mdpopups .inline-highlight { %s; %s; }'
+CODE_BLOCKS = '.mdpopups .highlight, .mdpopups .inline-highlight {{ {}; {}; }}'
 OLD_DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
 DEFAULT_CSS = 'Packages/mdpopups/mdpopups_css/default.css'
 
@@ -329,7 +329,7 @@ class SchemeTemplate(object):
                 rgba = Color(parts[1])
                 rgba.alpha = max(min(float(factor), 1.0), 0.0)
                 rgba.overlay(self.get_bg())
-                return '%s: %s; ' % (parts[0], rgba.to_string(hex=True))
+                return '{}: {}; '.format(parts[0], rgba.to_string(hex=True))
         except Exception:
             pass
         return css
@@ -341,8 +341,8 @@ class SchemeTemplate(object):
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = Color(parts[1])
             _Filters.colorize(rgba, degree)
-            parts[1] = "%s; " % rgba.to_string(hex=True)
-            return '%s: %s ' % (parts[0], parts[1])
+            parts[1] = "{}; ".format(rgba.to_string(hex=True))
+            return '{}: {} '.format(parts[0], parts[1])
         return css
 
     def hue(self, css, degree):
@@ -352,8 +352,8 @@ class SchemeTemplate(object):
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = Color(parts[1])
             _Filters.hue(rgba, degree)
-            parts[1] = "%s; " % rgba.to_string(hex=True)
-            return '%s: %s ' % (parts[0], parts[1])
+            parts[1] = "{}; ".format(rgba.to_string(hex=True))
+            return '{}: {} '.format(parts[0], parts[1])
         return css
 
     def invert(self, css):
@@ -363,8 +363,8 @@ class SchemeTemplate(object):
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = Color(parts[1])
             _Filters.invert(rgba)
-            parts[1] = "%s; " % rgba.to_string(hex=True)
-            return '%s: %s ' % (parts[0], parts[1])
+            parts[1] = "{}; ".format(rgba.to_string(hex=True))
+            return '{}: {} '.format(parts[0], parts[1])
         return css
 
     def contrast(self, css, factor):
@@ -374,8 +374,8 @@ class SchemeTemplate(object):
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = Color(parts[1])
             _Filters.contrast(rgba, factor)
-            parts[1] = "%s; " % rgba.to_string(hex=True)
-            return '%s: %s ' % (parts[0], parts[1])
+            parts[1] = "{}; ".format(rgba.to_string(hex=True))
+            return '{}: {} '.format(parts[0], parts[1])
         return css
 
     def saturation(self, css, factor):
@@ -385,8 +385,8 @@ class SchemeTemplate(object):
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = Color(parts[1])
             _Filters.saturation(rgba, factor)
-            parts[1] = "%s; " % rgba.to_string(hex=True)
-            return '%s: %s ' % (parts[0], parts[1])
+            parts[1] = "{}; ".format(rgba.to_string(hex=True))
+            return '{}: {} '.format(parts[0], parts[1])
         return css
 
     def grayscale(self, css):
@@ -396,8 +396,8 @@ class SchemeTemplate(object):
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = Color(parts[1])
             _Filters.grayscale(rgba)
-            parts[1] = "%s; " % rgba.to_string(hex=True)
-            return '%s: %s ' % (parts[0], parts[1])
+            parts[1] = "{}; ".format(rgba.to_string(hex=True))
+            return '{}: {} '.format(parts[0], parts[1])
         return css
 
     def sepia(self, css):
@@ -407,8 +407,8 @@ class SchemeTemplate(object):
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = Color(parts[1])
             _Filters.sepia(rgba)
-            parts[1] = "%s; " % rgba.to_string(hex=True)
-            return '%s: %s ' % (parts[0], parts[1])
+            parts[1] = "{}; ".format(rgba.to_string(hex=True))
+            return '{}: {} '.format(parts[0], parts[1])
         return css
 
     def brightness(self, css, factor):
@@ -418,8 +418,8 @@ class SchemeTemplate(object):
         if len(parts) == 2 and parts[0] in ('background-color', 'color'):
             rgba = Color(parts[1])
             _Filters.brightness(rgba, factor)
-            parts[1] = "%s; " % rgba.to_string(hex=True)
-            return '%s: %s ' % (parts[0], parts[1])
+            parts[1] = "{}; ".format(rgba.to_string(hex=True))
+            return '{}: {} '.format(parts[0], parts[1])
         return css
 
     def to_fg(self, css):
@@ -428,7 +428,7 @@ class SchemeTemplate(object):
         parts = [c.strip('; ') for c in css.split(':')]
         if len(parts) == 2 and parts[0] == 'background-color':
             parts[0] = 'color'
-            return '%s: %s; ' % (parts[0], parts[1])
+            return '{}: {}; '.format(parts[0], parts[1])
         return css
 
     def to_bg(self, css):
@@ -437,7 +437,7 @@ class SchemeTemplate(object):
         parts = [c.strip('; ') for c in css.split(':')]
         if len(parts) == 2 and parts[0] == 'color':
             parts[0] = 'background-color'
-            return '%s: %s; ' % (parts[0], parts[1])
+            return '{}: {}; '.format(parts[0], parts[1])
         return css
 
     def pygments(self, style):
@@ -466,9 +466,9 @@ class SchemeTemplate(object):
 
         css = []
         if color and (key is None or key == 'color'):
-            css.append('color: %s' % color)
+            css.append('color: {}'.format(color))
         if bgcolor and (key is None or key == 'background-color'):
-            css.append('background-color: %s' % bgcolor)
+            css.append('background-color: {}'.format(bgcolor))
         for s in style:
             if "bold" in s and (key is None or key == 'font-weight'):
                 css.append('font-weight: bold')
@@ -561,7 +561,7 @@ def get_pygments(style):
         css = clean_css(
             (
                 text[:m.start(0)] +
-                (code_blocks % (bg, fg)) +
+                (code_blocks.format(bg, fg)) +
                 text[m.end(0):] +
                 '\n'
             )
@@ -569,7 +569,7 @@ def get_pygments(style):
     else:
         css = clean_css(
             (
-                (code_blocks % (bg, fg)) + '\n' + text + '\n'
+                (code_blocks.format(bg, fg)) + '\n' + text + '\n'
             )
         )
 

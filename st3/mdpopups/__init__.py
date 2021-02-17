@@ -62,7 +62,7 @@ INFO = 3
 def _log(msg):
     """Log."""
 
-    print('mdpopups: %s' % str(msg))
+    print('mdpopups: {}'.format(str(msg)))
 
 
 def _debug(msg, level):
@@ -263,8 +263,9 @@ class _MdWrapper(markdown.Markdown):
                     ext._extendMarkdown(self)
                 elif ext is not None:
                     raise TypeError(
-                        'Extension "%s.%s" must be of type: "markdown.Extension"'
-                        % (ext.__class__.__module__, ext.__class__.__name__)
+                        'Extension "{}.{}" must be of type: "markdown.Extension"'.format(
+                            ext.__class__.__module__, ext.__class__.__name__
+                        )
                     )
             except Exception:
                 # We want to gracefully continue even if an extension fails.
@@ -341,12 +342,12 @@ def _create_html(
             _debug('\n' + content, INFO)
 
     if wrapper_class:
-        wrapper = ('<div class="mdpopups"><div class="%s">' % wrapper_class) + '%s</div></div>'
+        wrapper = ('<div class="mdpopups"><div class="{}">'.format(wrapper_class)) + '{}</div></div>'
     else:
-        wrapper = '<div class="mdpopups">%s</div>'
+        wrapper = '<div class="mdpopups">{}</div>'
 
-    html = "<style>%s</style>" % (style)
-    html += _remove_entities(wrapper % content)
+    html = "<style>{}</style>".format(style)
+    html += _remove_entities(wrapper.format(content))
     return html
 
 

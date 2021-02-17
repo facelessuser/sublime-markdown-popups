@@ -30,10 +30,10 @@ RE_TAIL = re.compile(r'(?:\r\n|(?!\r\n)[\n\r])*\z')
 
 INLINE_BODY_START = '<code class="inline-highlight">'
 BODY_START = '<div class="highlight"><pre>'
-LINE = '%(code)s<br>'
-INLINE_LINE = '%(code)s'
-CODE = '<span style="color: %(color)s;%(style)s">%(content)s</span>'
-CODEBG = '<span style="background-color: %(highlight)s; color: %(color)s;%(style)s">%(content)s</span>'
+LINE = '{code}<br>'
+INLINE_LINE = '{code}'
+CODE = '<span style="color: {color};{style}">{content}</span>'
+CODEBG = '<span style="background-color: {highlight}; color: {color};{style}">{content}</span>'
 BODY_END = '</pre></div>\n'
 INLINE_BODY_END = '</code>'
 ST_LANGUAGES = ('.sublime-syntax', '.tmLanguage')
@@ -71,10 +71,7 @@ class SublimeHighlight(object):
     def print_line(self, line, num):
         """Print the line."""
 
-        html_line = (INLINE_LINE if self.inline else LINE) % {
-            "code": line,
-        }
-
+        html_line = (INLINE_LINE if self.inline else LINE).format(code=line)
         return html_line
 
     def convert_view_to_html(self):
@@ -135,13 +132,13 @@ class SublimeHighlight(object):
                 css_style += ' text-shadow: 0 0 3px currentColor;'
 
         if bgcolor is None:
-            code = CODE % {
-                "color": color, "content": text, "style": css_style
-            }
+            code = CODE.format(
+                color=color, content=text, style=css_style
+            )
         else:
-            code = CODEBG % {
-                "highlight": bgcolor, "color": color, "content": text, "style": css_style
-            }
+            code = CODEBG.format(
+                highlight=bgcolor, color=color, content=text, style=css_style
+            )
 
         line.append(code)
 
@@ -237,7 +234,7 @@ class SublimeHighlight(object):
             if lang in (tuple(user_v[0]) + v[0]):
                 for l in (tuple(user_v[1]) + v[1]):
                     for ext in ST_LANGUAGES:
-                        sytnax_file = 'Packages/%s%s' % (l, ext)
+                        sytnax_file = 'Packages/{}{}'.format(l, ext)
                         try:
                             sublime.load_binary_resource(sytnax_file)
                         except Exception:
@@ -253,7 +250,7 @@ class SublimeHighlight(object):
             # Default to plain text
             for ext in ST_LANGUAGES:
                 # Just in case text one day switches to 'sublime-syntax'
-                sytnax_file = 'Packages/Text/Plain text%s' % ext
+                sytnax_file = 'Packages/Text/Plain text{}'.format(ext)
                 try:
                     sublime.load_binary_resource(sytnax_file)
                 except Exception:

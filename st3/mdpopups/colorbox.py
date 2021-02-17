@@ -245,6 +245,6 @@ def color_box_raw(
 def color_box(*args, **kwargs):
     """Generate palette preview and base64 encode it."""
 
-    return "<img src=\"data:image/png;base64,%s\">" % (
+    return '<img src="data:image/png;base64,{}">'.format(
         base64.b64encode(color_box_raw(*args, **kwargs)).decode('ascii')
     )

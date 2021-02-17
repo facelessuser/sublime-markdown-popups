@@ -32,7 +32,7 @@ def tint_raw(byte_string, color, opacity=255):
         for x in range(columns):
             rgba = Color(color)
             rgba.alpha = opacity / 255.0
-            rgba.overlay(background='#%02X%02X%02XFF' % tuple(row[start:start + 3]))
+            rgba.overlay(background='#{:02X}{:02X}{:02X}FF'.format(*row[start:start + 3]))
             rgba.fit(in_place=True)
             p[y] += [
                 int(util.round_half_up(rgba.red * 255)),
@@ -61,13 +61,13 @@ def tint(byte_string, color, opacity=255, height=None, width=None):
 
     style = ''
     if width:
-        style = 'style="width: %dpx;"' % width
+        style = 'style="width: {:d}px;"'.format(width)
     if height is not None and style is None:
-        style = 'style="height: %dpx;"' % width
+        style = 'style="height: {:d}px;"'.format(width)
     elif height is not None:
-        style = style[:-1] + (' height: %dpx;" ' % height)
+        style = style[:-1] + (' height: {:d}px;" '.format(height))
 
-    return "<img %ssrc=\"data:image/png;base64,%s\">" % (
+    return '<img {}src="data:image/png;base64,{}">'.format(
         style,
         base64.b64encode(tint_raw(byte_string, color, opacity)).decode('ascii')
     )

@@ -60,7 +60,7 @@ def yaml_dump(data, stream=None, dumper=yaml.Dumper):
 def dump_frontmatter(values):
     """Turn Python dict values to frontmatter string."""
 
-    return '---\n%s\n...\n' % yaml_dump(values)
+    return '---\n{}\n...\n'.format(yaml_dump(values))
 
 
 def get_frontmatter(string):
