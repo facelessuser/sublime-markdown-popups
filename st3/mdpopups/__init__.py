@@ -414,7 +414,7 @@ def md2html(
                 "markdown.extensions.def_list",
                 "pymdownx.betterem",
                 "pymdownx.magiclink",
-                "pymdownx.extrarawhtml",
+                "markdown.extensions.md_in_html",
                 "markdown.extensions.nl2br"
             ]
         )

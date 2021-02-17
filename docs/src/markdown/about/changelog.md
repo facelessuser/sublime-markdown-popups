@@ -8,6 +8,8 @@
   function, it will be ignored.
 - **NEW**: `allow_code_wrap` can only be set through the frontmatter option `allow_code_wrap`. If passed as a parameter
   for any API function (except `syntax_highlight`), it will be ignored.
+- **NEW**: Support latest Markdown and Pymdown Extensions. Must use `markdown.extensions.md_in_html` instead of
+  `pymdownx.extrarawhtml`.
 - **FIX**: Fix exception when using Pygments.
 - **FIX**: Fix extra newlines in code blocks.
 
