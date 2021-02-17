@@ -45,7 +45,7 @@ class SublimeWrapBlockFormatter(HtmlFormatter):
         to 4 spaces as well.  We also manually inject line breaks.
         """
 
-        yield 0, '<div class="%s"><pre>' % self.cssclass
+        yield 0, '<div class="{}"><pre>'.format(self.cssclass)
         for i, t in source:
             text = ''
             matched = False
@@ -89,7 +89,7 @@ class SublimeBlockFormatter(HtmlFormatter):
         to 4 spaces as well.  We also manually inject line breaks.
         """
 
-        yield 0, '<div class="%s"><pre>' % self.cssclass
+        yield 0, '<div class="{}"><pre>'.format(self.cssclass)
         for i, t in source:
             text = ''
             matched = False
@@ -133,7 +133,7 @@ class SublimeInlineHtmlFormatter(HtmlFormatter):
         to 4 spaces as well.
         """
 
-        yield 0, '<code class="%s">' % self.cssclass
+        yield 0, '<code class="{}">'.format(self.cssclass)
         for i, t in source:
             text = ''
             matched = False

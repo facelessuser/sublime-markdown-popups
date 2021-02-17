@@ -51,7 +51,6 @@ there are helpful errors.</p></div>
 '''
 HL_SETTING = 'mdpopups.use_sublime_highlighter'
 STYLE_SETTING = 'mdpopups.default_style'
-LEGACY_MATCHER_SETTING = 'mdpopups.legacy_color_matcher'
 RE_BAD_ENTITIES = re.compile(r'(&(?!amp;|lt;|gt;|nbsp;)(?:\w+;|#\d+;))')
 
 NODEBUG = 0
@@ -63,7 +62,7 @@ INFO = 3
 def _log(msg):
     """Log."""
 
-    print('mdpopups: %s' % str(msg))
+    print('mdpopups: {}'.format(str(msg)))
 
 
 def _debug(msg, level):
@@ -178,8 +177,7 @@ def _get_scheme(scheme):
             if (
                 _is_cache_expired(t) or
                 obj.use_pygments != (not settings.get(HL_SETTING, True)) or
-                obj.default_style != settings.get(STYLE_SETTING, True) or
-                obj.legacy_color_matcher != settings.get(LEGACY_MATCHER_SETTING, False)
+                obj.default_style != settings.get(STYLE_SETTING, True)
             ):
                 obj = None
                 user_css = ''
@@ -265,8 +263,9 @@ class _MdWrapper(markdown.Markdown):
                     ext._extendMarkdown(self)
                 elif ext is not None:
                     raise TypeError(
-                        'Extension "%s.%s" must be of type: "markdown.Extension"'
-                        % (ext.__class__.__module__, ext.__class__.__name__)
+                        'Extension "{}.{}" must be of type: "markdown.Extension"'.format(
+                            ext.__class__.__module__, ext.__class__.__name__
+                        )
                     )
             except Exception:
                 # We want to gracefully continue even if an extension fails.
@@ -343,12 +342,12 @@ def _create_html(
             _debug('\n' + content, INFO)
 
     if wrapper_class:
-        wrapper = ('<div class="mdpopups"><div class="%s">' % wrapper_class) + '%s</div></div>'
+        wrapper = ('<div class="mdpopups"><div class="{}">'.format(wrapper_class)) + '{}</div></div>'
     else:
-        wrapper = '<div class="mdpopups">%s</div>'
+        wrapper = '<div class="mdpopups">{}</div>'
 
-    html = "<style>%s</style>" % (style)
-    html += _remove_entities(wrapper % content)
+    html = "<style>{}</style>".format(style)
+    html += _remove_entities(wrapper.format(content))
     return html
 
 
@@ -546,23 +545,19 @@ def scope2style(view, scope, selected=False, explicit_background=False):
     }
     obj = _get_scheme(view.settings().get('color_scheme'))[0]
     style_obj = obj.guess_style(view, scope, selected, explicit_background)
-    if not obj.legacy_color_matcher:
-        style['color'] = style_obj['foreground']
-        style['background'] = style_obj['background']
-        font = []
-        if style_obj['bold']:
-            font.append('bold')
-        if style_obj['italic']:
-            font.append('italic')
-        if style_obj['underline']:
-            font.append('underline')
-        if style_obj['glow']:
-            font.append('glow')
-        style['style'] = ' '.join(font)
-    else:
-        style['color'] = style_obj.fg_simulated
-        style['background'] = style_obj.bg_simulated
-        style['style'] = style_obj.style
+    style['color'] = style_obj['foreground']
+    style['background'] = style_obj['background']
+    font = []
+    if style_obj['bold']:
+        font.append('bold')
+    if style_obj['italic']:
+        font.append('italic')
+    if style_obj['underline']:
+        font.append('underline')
+    if style_obj['glow']:
+        font.append('glow')
+    style['style'] = ' '.join(font)
+
     return style
 
 
