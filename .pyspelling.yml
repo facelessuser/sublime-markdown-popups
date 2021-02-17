@@ -79,7 +79,7 @@ matrix:
 
 - name: python
   sources:
-  - "{st3,tests}/**/*.py|!**/png.py"
+  - "{st3,tests}/**/*.py|!**/png.py|!**/coloraide/**"
   aspell:
     lang: en
   dictionary:
