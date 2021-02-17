@@ -5,7 +5,7 @@ Licensed under MIT
 Copyright (c) 2015 - 2020 Isaac Muse <isaacmuse@gmail.com>
 """
 from .png import Writer
-from coloraide import Color
+from .coloraide import Color
 import base64
 import io
 

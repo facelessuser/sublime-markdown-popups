@@ -16,7 +16,7 @@ https://manual.macromates.com/en/language_grammars#naming_conventions
 import sublime
 import re
 from . import version as ver
-from coloraide import util
+from .coloraide import util
 from .st_colormod import Color
 import jinja2
 from pygments.formatters import HtmlFormatter
