@@ -201,7 +201,10 @@ div.mdpopups {
   margin-bottom: 0.5rem;
   font-size: 1rem;
 }
-.mdpopups code.highlight{
+.mdpopups code.highlight {
   padding: 0.05rem 0.25rem;
+}
+.mdpopups br {
+  display: block;
 }
 {%- endif %}
