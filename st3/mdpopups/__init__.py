@@ -423,11 +423,23 @@ def md2html(
                 k, v = next(iter(ext.items()))
                 # We don't allow plugins to overrides the internal color
                 if not k.startswith('mdpopups.'):
+                    if k == "pymdownx.extrarawhtml":
+                        k = 'markdown.extensions.md_in_html'
+                        _log(
+                            "Warning: 'pymdownx.extrarawhtml' no longer exists. 'markdown.extensions.md_in_html'"
+                            " will be used instead. Plugins should migrate as mdpopups will not redirect in the future."
+                        )
                     extensions.append(k)
                     if v is not None:
                         configs[k] = v
             elif isinstance(ext, str):
                 if not ext.startswith('mdpopups.'):
+                    if ext == "pymdownx.extrarawhtml":
+                        ext = 'markdown.extensions.md_in_html'
+                        _log(
+                            "Warning: 'pymdownx.extrarawhtml' no longer exists. 'markdown.extensions.md_in_html'"
+                            " will be used instead. Plugins should migrate as mdpopups will not redirect in the future."
+                        )
                     extensions.append(ext)
 
     return _MdWrapper(
