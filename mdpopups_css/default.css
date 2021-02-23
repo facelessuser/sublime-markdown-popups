@@ -204,7 +204,4 @@ div.mdpopups {
 .mdpopups code.highlight {
   padding: 0.05rem 0.25rem;
 }
-.mdpopups br {
-  display: block;
-}
 {%- endif %}
