@@ -503,7 +503,8 @@ MdPopups provides a number of accessible functions.
 ### Update HTML Content
 
 !!! warning "Experimental Feature"
-    This feature is new in Sublime Text 4. Sublime's API may change in future versions for this feature and may break this.
+    This feature is new in Sublime Text 4. Sublime's API may change in future versions for this feature and may break
+    this.
 
 `#!py3 mdpopups.update_html_sheet`
 : 
