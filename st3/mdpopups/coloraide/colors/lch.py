@@ -1,12 +1,45 @@
 """LCH class."""
 from ._space import Space, RE_DEFAULT_MATCH
+from .lab import LAB
 from ._cylindrical import Cylindrical
 from ._gamut import GamutUnbound
 from . _range import Angle, Percent
-from . import _convert as convert
 from . import _parse as parse
+from . import _convert as convert
 from .. import util
 import re
+import math
+
+ACHROMATIC_THRESHOLD = 0.015
+
+
+def lab_to_lch(lab):
+    """LAB to LCH."""
+
+    l, a, b = lab
+
+    return (
+        l,
+        math.sqrt(math.pow(a, 2) + math.pow(b, 2)),
+        convert.constrain_hue(math.atan2(b, a) * 180 / math.pi)
+    )
+
+
+def lch_to_lab(lch):
+    """LCH to LAB."""
+
+    l, c, h = lch
+
+    # If, for whatever reason (mainly direct user input),
+    # if chroma is less than zero, clamp to zero.
+    if c < 0.0:
+        c = 0.0
+
+    return (
+        l,
+        c * math.cos(h * math.pi / 180.0),
+        c * math.sin(h * math.pi / 180.0)
+    )
 
 
 class LCH(Cylindrical, Space):
@@ -33,7 +66,7 @@ class LCH(Cylindrical, Space):
         super().__init__(color)
 
         if isinstance(color, Space):
-            self.lightness, self.chroma, self.hue = convert.convert(color.coords(), color.space(), self.space())
+            self.lightness, self.chroma, self.hue = color.convert(self.space()).coords()
             self.alpha = color.alpha
         elif isinstance(color, str):
             values = self.match(color)[0]
@@ -54,7 +87,7 @@ class LCH(Cylindrical, Space):
         """Test if hue is null."""
 
         l, c, h = self.coords()
-        return c < util.ACHROMATIC_THRESHOLD
+        return c < ACHROMATIC_THRESHOLD
 
     def hue_index(self):
         """Get hue index."""
@@ -114,3 +147,27 @@ class LCH(Cylindrical, Space):
         """To string."""
 
         return super().to_string(alpha=alpha, precision=precision, fit=fit)
+
+    @classmethod
+    def _to_lab(cls, lch):
+        """To Lab."""
+
+        return lch_to_lab(lch)
+
+    @classmethod
+    def _from_lab(cls, lab):
+        """To Lab."""
+
+        return lab_to_lch(lab)
+
+    @classmethod
+    def _to_xyz(cls, lch):
+        """To XYZ."""
+
+        return LAB._to_xyz(cls._to_lab(lch))
+
+    @classmethod
+    def _from_xyz(cls, xyz):
+        """From XYZ."""
+
+        return cls._from_lab(LAB._from_xyz(xyz))

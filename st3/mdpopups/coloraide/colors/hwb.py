@@ -1,12 +1,38 @@
 """HWB class."""
 from ._space import Space, RE_DEFAULT_MATCH
+from .srgb import SRGB
+from .hsl import HSL
+from .hsv import HSV
 from ._cylindrical import Cylindrical
 from ._gamut import GamutBound
 from . _range import Angle, Percent
-from . import _convert as convert
 from . import _parse as parse
+from . import _convert as convert
 from .. import util
 import re
+
+
+def srgb_to_hwb(rgb):
+    """SRGB to HWB."""
+
+    h, s, v = HSV._from_srgb(rgb)
+    w = v * (100.0 - s) / 100.0
+    b = 100.0 - v
+    return convert.constrain_hue(h), w, b
+
+
+def hwb_to_srgb(hwb):
+    """HWB to RGB."""
+
+    h, w, b = hwb
+    w /= 100.0
+    b /= 100.0
+    wb = w + b
+
+    if wb > 1.0:
+        return [w / wb] * 3
+
+    return [(c * (1.0 - w - b)) + w for c in HSL._to_srgb([h, 100.0, 50.0])]
 
 
 class HWB(Cylindrical, Space):
@@ -16,6 +42,7 @@ class HWB(Cylindrical, Space):
     DEF_BG = "color(hwb 0 0 0 / 1)"
     CHANNEL_NAMES = frozenset(["hue", "blackness", "whiteness", "alpha"])
     DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space=SPACE))
+    GAMUT = "srgb"
 
     _range = (
         GamutBound([Angle(0.0), Angle(360.0)]),
@@ -29,7 +56,7 @@ class HWB(Cylindrical, Space):
         super().__init__(color)
 
         if isinstance(color, Space):
-            self.hue, self.whiteness, self.blackness = convert.convert(color.coords(), color.space(), self.space())
+            self.hue, self.whiteness, self.blackness = color.convert(self.space()).coords()
             self.alpha = color.alpha
         elif isinstance(color, str):
             values = self.match(color)[0]
@@ -105,3 +132,51 @@ class HWB(Cylindrical, Space):
         """To string."""
 
         return super().to_string(alpha=alpha, precision=precision, fit=fit)
+
+    @classmethod
+    def _to_xyz(cls, hwb):
+        """SRGB to XYZ."""
+
+        return SRGB._to_xyz(cls._to_srgb(hwb))
+
+    @classmethod
+    def _from_xyz(cls, xyz):
+        """XYZ to SRGB."""
+
+        return cls._from_srgb(SRGB._from_xyz(xyz))
+
+    @classmethod
+    def _to_srgb(cls, hwb):
+        """To sRGB."""
+
+        return hwb_to_srgb(hwb)
+
+    @classmethod
+    def _from_srgb(cls, srgb):
+        """From sRGB."""
+
+        return srgb_to_hwb(srgb)
+
+    @classmethod
+    def _to_hsl(cls, hwb):
+        """To HSL."""
+
+        return HSL._from_srgb(cls._to_srgb(hwb))
+
+    @classmethod
+    def _from_hsl(cls, hsl):
+        """From HSL."""
+
+        return cls._from_srgb(HSL._to_srgb(hsl))
+
+    @classmethod
+    def _to_hsv(cls, hwb):
+        """To HSV."""
+
+        return HSV._from_srgb(cls._to_srgb(hwb))
+
+    @classmethod
+    def _from_hsv(cls, hsv):
+        """From HSV."""
+
+        return cls._from_srgb(HSV._to_srgb(hsv))

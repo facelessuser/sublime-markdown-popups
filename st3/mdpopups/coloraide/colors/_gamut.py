@@ -40,7 +40,7 @@ def lch_chroma(base, color):
         threshold = .001
         # Compare mapped against desired space
         mapcolor = color.convert("lch")
-        error = base_error
+        error = color.delta(mapcolor, method="2000")
         low = 0.0
         high = mapcolor.chroma
 
@@ -94,6 +94,25 @@ def clip(base, color):
     return fit
 
 
+def norm_angles(color):
+    """Normalize angles."""
+
+    channels = color.coords()
+    gamut = color._range
+    fit = []
+    for i, value in enumerate(channels):
+        a, b = gamut[i]
+
+        # Wrap the angle
+        if isinstance(a, Angle) and isinstance(b, Angle):
+            fit.append(value if 0.0 <= value <= 360.0 else value % 360.0)
+            continue
+
+        # Fit value in bounds.
+        fit.append(value)
+    return fit
+
+
 class Gamut:
     """Gamut handling."""
 
@@ -105,7 +124,7 @@ class Gamut:
 
         space = (self.space() if space is None else space).lower()
         method = self.space() if method is None else method
-        if not self.in_gamut(space=space):
+        if not self.in_gamut(space=space, tolerance=0.0):
             clone = self.clone()
             clone.fit(method=method, in_place=True)
             return clone.coords()
@@ -134,15 +153,25 @@ class Gamut:
         else:
             c = self.clone()
 
+        # If we are redirected to a different space to fit,
+        # fit that color space and normalize any angles afterwards
+        # TODO: Which fitting should we use?
+        if c.GAMUT is not None and False:  # pragma: no cover
+            c2 = self.convert(c.GAMUT)
+            c2.fit(method=method, in_place=True)
+            c.update(c2)
+            c._coords = norm_angles(c)
+            this.update(c)
+            return this
+
         # If we are perfectly in gamut, don't waste time fitting
         if c.in_gamut(tolerance=0.0):
+            c._coords = norm_angles(c)
             this.update(c)
             return this
 
         # Apply mapping/clipping/etc.
-        fit = func(self.clone(), c)
-        for i in range(len(fit)):
-            c._coords[i] = fit[i]
+        c._coords = func(self.clone(), c)
 
         # Adjust "this" color
         this.update(c)
@@ -154,7 +183,16 @@ class Gamut:
         # Check gamut in the provided space
         if space is not None:
             c = self.convert(space)
-            return c.in_gamut()
+            return c.in_gamut(tolerance=tolerance)
+
+        # Check the color space specified for gamut checking.
+        # If it proves to be in gamut, we will then test if the current
+        # space is constrained properly.
+        # TODO: Do we really gain anything by doing this?
+        if self.GAMUT is not None and False:  # pragma: no cover
+            c2 = self.convert(self.GAMUT)
+            if not c2.in_gamut(tolerance=tolerance):
+                return False
 
         # Verify the values are in bound
         channels = self.coords()
