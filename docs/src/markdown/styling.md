@@ -162,6 +162,9 @@ MdPopups also provides its own CSS variables that can be overridden by a user:
 Variable                            | Description
 ----------------------------------- | -----------
 `--mdpopups-font-mono`              | Monospace font stack for elements that require monospace (like code blocks).
+`--mdpopups-fg`                     | Foreground color.
+`--mdpopups-bg`                     | Background color.
+`--mdpopups-link`                   | Hyperlink color.
 `--mdpopups-hr`                     | `#!html <hr>` tag color.
 `--mdpopups-admon-fg`               | General admonition foreground/text color.
 `--mdpopups-admon-info-fg`          | Info admonition foreground/text color.

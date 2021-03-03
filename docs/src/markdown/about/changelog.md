@@ -14,6 +14,10 @@
 - **NEW**: Remove `mdpopups.legacy_color_matcher` option along with legacy color match logic.
 - **FIX**: Fix exception when using Pygments.
 - **FIX**: Fix extra newlines in code blocks.
+- **FIX**: Popups will assign a default background, foreground, and link color. This is to ensure good colors when
+  a color scheme assigns unexpected colors via `popup_css`. `popup_css` can override the CSS variables if desired, or a
+  user can always specify a custom CSS via settings to change the variables. New CSS variables `--mdpopups-fg`,
+  `--mdpopups-bg`, and `--mdpopups-link` have been added to to control these colors.
 
 ## 3.7.5
 
