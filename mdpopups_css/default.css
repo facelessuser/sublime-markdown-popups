@@ -40,7 +40,11 @@ html {
   --mdpopups-kbd-bg: var(--foreground);
 }
 html.light {
+{%- if var.is_phantom or var.is_sheet %}
+  --mdpopups-bg:  var(--background);
+{%- else %}
   --mdpopups-bg: color(var(--background) blend(black 95%));
+{%- endif %}
   --mdpopups-hr: color(var(--foreground) blend(white 80%));
   --mdpopups-kbd-border: color(var(--foreground) blend(white 80%));
   --mdpopups-hl-border: color(var(--background) blend(black 90%));
@@ -48,7 +52,11 @@ html.light {
   background-color: var(--mdpopups-bg);
 }
 html.dark {
+{%- if var.is_phantom or var.is_sheet %}
+  --mdpopups-bg:  var(--background);
+{%- else %}
   --mdpopups-bg: color(var(--background) blend(white 95%));
+{%- endif %}
   --mdpopups-hr: color(var(--foreground) blend(black 80%));
   --mdpopups-kbd-border: color(var(--foreground) blend(black 80%));
   --mdpopups-hl-border: color(var(--background) blend(white 90%));
