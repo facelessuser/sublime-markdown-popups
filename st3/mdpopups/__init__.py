@@ -425,7 +425,7 @@ def md2html(
                 if not k.startswith('mdpopups.'):
                     if k == "pymdownx.extrarawhtml":
                         k = 'markdown.extensions.md_in_html'
-                        _log(
+                        _debug(
                             "Warning: 'pymdownx.extrarawhtml' no longer exists. 'markdown.extensions.md_in_html'"
                             " will be used instead. Plugins should migrate as mdpopups will not redirect in the future."
                         )
@@ -436,7 +436,7 @@ def md2html(
                 if not ext.startswith('mdpopups.'):
                     if ext == "pymdownx.extrarawhtml":
                         ext = 'markdown.extensions.md_in_html'
-                        _log(
+                        _debug(
                             "Warning: 'pymdownx.extrarawhtml' no longer exists. 'markdown.extensions.md_in_html'"
                             " will be used instead. Plugins should migrate as mdpopups will not redirect in the future."
                         )
