@@ -1,6 +1,7 @@
 """Pro Photo RGB color class."""
 from ._space import RE_DEFAULT_MATCH
 from .srgb import SRGB
+from . import _convert as convert
 from .. import util
 import re
 import math
@@ -79,10 +80,11 @@ class ProPhoto_RGB(SRGB):
     """Pro Photo RGB class."""
 
     SPACE = "prophoto-rgb"
-    DEF_BG = "color(prophoto-rgb 0 0 0 / 1)"
+    DEF_VALUE = "color(prophoto-rgb 0 0 0 / 1)"
     DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space=SPACE))
+    WHITE = convert.WHITES["D50"]
 
-    def __init__(self, color=DEF_BG):
+    def __init__(self, color=DEF_VALUE):
         """Initialize."""
 
         super().__init__(color)

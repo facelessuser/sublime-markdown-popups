@@ -3,11 +3,11 @@ from ._space import Space, RE_DEFAULT_MATCH
 from ._gamut import GamutUnbound
 from . _range import Percent
 from . import _parse as parse
+from . import _convert as convert
 from .. import util
 import re
 import math
 
-D50_REF_WHITE = [0.96422, 1.00000, 0.82521]  # D50 reference white
 KAPPA = 24389 / 27  # `29^3 / 3^3`
 EPSILON = 216 / 24389  # `6^3 / 29^3`
 
@@ -34,14 +34,14 @@ def lab_to_xyz(lab):
     ]
 
     # Compute XYZ by scaling `xyz` by reference `white`
-    return util.multiply(xyz, D50_REF_WHITE)
+    return util.multiply(xyz, LAB.white())
 
 
 def xyz_to_lab(xyz):
     """Assuming XYZ is relative to D50, convert to CIE Lab from CIE standard."""
 
     # compute `xyz`, which is XYZ scaled relative to reference white
-    xyz = util.divide(xyz, D50_REF_WHITE)
+    xyz = util.divide(xyz, LAB.white())
     # Compute `f`
     f = [util.cbrt(i) if i > EPSILON else (KAPPA * i + 16.0) / 116.0 for i in xyz]
 
@@ -56,9 +56,10 @@ class LAB(Space):
     """LAB class."""
 
     SPACE = "lab"
-    DEF_BG = "color(lab 0 0 0 / 1)"
+    DEF_VALUE = "color(lab 0 0 0 / 1)"
     CHANNEL_NAMES = frozenset(["lightness", "a", "b", "alpha"])
     DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space=SPACE))
+    WHITE = convert.WHITES["D50"]
 
     _range = (
         GamutUnbound([Percent(0), Percent(100.0)]),  # Technically we could/should clamp the zero side.
@@ -66,7 +67,7 @@ class LAB(Space):
         GamutUnbound([-160, 160])  # No limit, but we could impose one +/-160?
     )
 
-    def __init__(self, color=DEF_BG):
+    def __init__(self, color=DEF_VALUE):
         """Initialize."""
 
         super().__init__(color)

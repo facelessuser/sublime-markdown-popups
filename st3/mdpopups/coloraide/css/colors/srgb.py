@@ -11,7 +11,7 @@ RE_COMPRESS = re.compile(r'(?i)^#({hex})\1({hex})\2({hex})\3(?:({hex})\4)?$'.for
 class SRGB(generic.SRGB):
     """SRGB class."""
 
-    DEF_BG = "rgb(0 0 0 / 1)"
+    DEF_VALUE = "rgb(0 0 0 / 1)"
     START = re.compile(r'(?i)\brgba?\(')
     MATCH = re.compile(
         r"""(?xi)
@@ -45,7 +45,7 @@ class SRGB(generic.SRGB):
 
     HEX_MATCH = re.compile(r"(?i)#(?:({hex}{{6}})({hex}{{2}})?|({hex}{{3}})({hex})?)\b".format(**parse.COLOR_PARTS))
 
-    def __init__(self, color=DEF_BG):
+    def __init__(self, color=DEF_VALUE):
         """Initialize."""
 
         super().__init__(color)

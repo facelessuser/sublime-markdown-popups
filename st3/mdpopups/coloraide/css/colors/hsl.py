@@ -8,7 +8,7 @@ from ... import util
 class HSL(generic.HSL):
     """HSL class."""
 
-    DEF_BG = "hsl(0 0% 0% / 1)"
+    DEF_VALUE = "hsl(0 0% 0% / 1)"
     START = re.compile(r'(?i)\bhsla?\(')
     MATCH = re.compile(
         r"""(?xi)
@@ -23,7 +23,7 @@ class HSL(generic.HSL):
         """.format(**parse.COLOR_PARTS)
     )
 
-    def __init__(self, color=DEF_BG):
+    def __init__(self, color=DEF_VALUE):
         """Initialize."""
 
         super().__init__(color)

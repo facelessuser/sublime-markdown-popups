@@ -47,9 +47,13 @@ def split_channels(cls, color):
 class Space(contrast.Contrast, interpolate.Interpolate, distance.Distance, gamut.Gamut, convert.Convert):
     """Base color space object."""
 
-    DEF_BG = ""
+    # Default color value (black)
+    DEF_VALUE = ""
+    # Color space name
     SPACE = ""
+    # Number of channels
     NUM_COLOR_CHANNELS = 3
+    # Channel names
     CHANNEL_NAMES = frozenset(["alpha"])
     # For matching the default form of `color(space coords+ / alpha)`.
     # Classes should define this if they want to use the default match.
@@ -71,6 +75,8 @@ class Space(contrast.Contrast, interpolate.Interpolate, distance.Distance, gamut
     #   the coordinates for the derived color space should be within spec. We only normalize angles outside of 0-360
     #   after the parent color space is fit.
     GAMUT = None
+    # White point
+    WHITE = convert.WHITES["D50"]
 
     def __init__(self, color=None):
         """Initialize."""
@@ -126,6 +132,12 @@ class Space(contrast.Contrast, interpolate.Interpolate, distance.Distance, gamut
         """Get the color space."""
 
         return cls.SPACE
+
+    @classmethod
+    def white(cls):
+        """Get the white color for this color space."""
+
+        return cls.WHITE
 
     @property
     def alpha(self):

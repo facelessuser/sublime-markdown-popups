@@ -8,7 +8,7 @@ from ... import util
 class HWB(generic.HWB):
     """HWB class."""
 
-    DEF_BG = "hwb(0 0% 0% / 1)"
+    DEF_VALUE = "hwb(0 0% 0% / 1)"
     START = re.compile(r'(?i)\bhwb\(')
     MATCH = re.compile(
         r"""(?xi)
@@ -23,7 +23,7 @@ class HWB(generic.HWB):
         """.format(**parse.COLOR_PARTS)
     )
 
-    def __init__(self, color=DEF_BG):
+    def __init__(self, color=DEF_VALUE):
         """Initialize."""
 
         super().__init__(color)

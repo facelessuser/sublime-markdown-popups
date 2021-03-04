@@ -8,7 +8,7 @@ from ... import util
 class LCH(generic.LCH):
     """LCH class."""
 
-    DEF_BG = "lch(0% 0 0 / 1)"
+    DEF_VALUE = "lch(0% 0 0 / 1)"
     START = re.compile(r'(?i)\blch\(')
     MATCH = re.compile(
         r"""(?xi)
@@ -23,7 +23,7 @@ class LCH(generic.LCH):
         """.format(**parse.COLOR_PARTS)
     )
 
-    def __init__(self, color=DEF_BG):
+    def __init__(self, color=DEF_VALUE):
         """Initialize."""
 
         super().__init__(color)

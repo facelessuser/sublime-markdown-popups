@@ -8,7 +8,7 @@ from ... import util
 class LAB(generic.LAB):
     """LAB class."""
 
-    DEF_BG = "lab(0% 0 0 / 1)"
+    DEF_VALUE = "lab(0% 0 0 / 1)"
     START = re.compile(r'(?i)\blab\(')
     MATCH = re.compile(
         r"""(?xi)
@@ -25,7 +25,7 @@ class LAB(generic.LAB):
         """.format(**parse.COLOR_PARTS)
     )
 
-    def __init__(self, color=DEF_BG):
+    def __init__(self, color=DEF_VALUE):
         """Initialize."""
 
         super().__init__(color)
