@@ -1,6 +1,7 @@
 """Colors."""
 from .hsv import HSV
 from .srgb import SRGB
+from .srgb_linear import SRGB_Linear
 from .hsl import HSL
 from .hwb import HWB
 from .lab import LAB
@@ -11,14 +12,13 @@ from .prophoto_rgb import ProPhoto_RGB
 from .rec2020 import Rec2020
 from .xyz import XYZ
 from .. import util
-from ._cylindrical import Cylindrical
 import functools
 
 DEF_FIT = "lch-chroma"
 DEF_DELTA_E = "76"
 
 SUPPORTED = (
-    HSL, HWB, LAB, LCH, SRGB, HSV,
+    HSL, HWB, LAB, LCH, SRGB, SRGB_Linear, HSV,
     Display_P3, A98_RGB, ProPhoto_RGB, Rec2020, XYZ
 )
 
@@ -53,33 +53,28 @@ class Color:
 
     CS_MAP = {obj.space(): obj for obj in SUPPORTED}
 
+    PRECISION = util.DEF_PREC
+    FIT = util.DEF_FIT
+    DELTA_E = util.DEF_DELTA_E
+
     def __init__(self, color, data=None, alpha=util.DEF_ALPHA, *, filters=None, **kwargs):
         """Initialize."""
 
-        self.defaults = {
-            "fit": DEF_FIT,
-            "delta-e": DEF_DELTA_E
-        }
         self._attach(self._parse(color, data, alpha, filters=filters, **kwargs))
 
-    def is_hue_null(self, space=None):
-        """Check if hue is treated as null."""
+    def __eq__(self, other):
+        """Compare equal."""
 
-        if space is None:
-            space = self.space()
-        else:
-            space = space.lower()
+        return (
+            other.space() == self.space() and
+            other.coords() == self.coords() and
+            other.alpha == self.alpha
+        )
 
-        this = self if self.space() == space else self.convert(space)
-        if isinstance(this._color, Cylindrical):
-            return this._color.is_hue_null()
-        else:
-            return False
+    def is_nan(self, name):
+        """Check if channel is NaN."""
 
-    def get_default(self, name):
-        """Get default."""
-
-        return self.defaults[name]
+        return util.is_nan(self.get(name))
 
     def _attach(self, color):
         """Attach the this objects convert space to the color."""
@@ -182,7 +177,9 @@ class Color:
     def update(self, color, data=None, alpha=util.DEF_ALPHA, *, filters=None, **kwargs):
         """Update the existing color space with the provided color."""
 
+        clone = self.clone()
         obj = self._parse(color, data, alpha, filters=filters, **kwargs)
+        clone._attach(obj)
         self._color.update(obj)
         return self
 
@@ -237,18 +234,28 @@ class Color:
             return self.new(obj.space(), obj.coords(), obj.alpha)
         return self
 
-    def interpolate(self, color, *, space="lab", progress=None, out_space=None, adjust=None, hue=util.DEF_HUE_ADJ):
+    def interpolate(
+        self, color, *, space="lab", out_space=None, progress=None, adjust=None, hue=util.DEF_HUE_ADJ,
+        premultiplied=False
+    ):
         """Interpolate."""
 
         color = self._handle_color_input(color)
-        interp = self._color.interpolate(color, space=space, progress=progress, out_space=None, adjust=adjust, hue=hue)
+        interp = self._color.interpolate(
+            color, space=space, progress=progress, out_space=None, adjust=adjust, hue=hue, premultiplied=premultiplied
+        )
         return functools.partial(_interpolate, color=self.clone(), interp=interp)
 
     def steps(self, color, *, steps=2, max_steps=1000, max_delta_e=0, **interpolate_args):
         """Interpolate discrete steps."""
 
         color = self._handle_color_input(color)
-        return self._color.steps(color, steps=steps, max_steps=max_steps, max_delta_e=max_delta_e, **interpolate_args)
+        colors = []
+        for obj in self._color.steps(
+            color, steps=steps, max_steps=max_steps, max_delta_e=max_delta_e, **interpolate_args
+        ):
+            colors.append(self.new(obj.space(), obj.coords(), obj.alpha))
+        return colors
 
     def mix(self, color, percent=util.DEF_MIX, *, space=None, in_place=False, **interpolate_args):
         """Mix the two colors."""

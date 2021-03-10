@@ -57,7 +57,8 @@ class HSV(Cylindrical, Space):
     DEF_VALUE = "color(hsv 0 0 0 / 1)"
     CHANNEL_NAMES = frozenset(["hue", "saturation", "value", "alpha"])
     DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space=SPACE))
-    GAMUT = "srgb"
+    GAMUT = "hsl"
+    ALPHA_COMPOSITE = "srgb"
     WHITE = convert.WHITES["D65"]
 
     _range = (
@@ -88,12 +89,6 @@ class HSV(Cylindrical, Space):
             self.alpha = 1.0 if len(color) == 3 else color[3]
         else:
             raise TypeError("Unexpected type '{}' received".format(type(color)))
-
-    def is_hue_null(self):
-        """Test if hue is null."""
-
-        h, s, v = self.coords()
-        return s < util.ACHROMATIC_THRESHOLD
 
     @property
     def hue(self):
@@ -132,6 +127,14 @@ class HSV(Cylindrical, Space):
         self._coords[2] = self._handle_input(value)
 
     @classmethod
+    def null_adjust(cls, coords):
+        """On color update."""
+
+        if coords[1] == 0:
+            coords[0] = util.NaN
+        return coords
+
+    @classmethod
     def translate_channel(cls, channel, value):
         """Translate channel string."""
 
@@ -143,11 +146,6 @@ class HSV(Cylindrical, Space):
             return parse.norm_alpha_channel(value)
         else:
             raise ValueError("Unexpected channel index of '{}'".format(channel))
-
-    def to_string(self, *, alpha=None, precision=util.DEF_PREC, fit=True, **kwargs):
-        """To string."""
-
-        return super().to_string(alpha=alpha, precision=precision, fit=fit)
 
     @classmethod
     def _to_xyz(cls, hsv):

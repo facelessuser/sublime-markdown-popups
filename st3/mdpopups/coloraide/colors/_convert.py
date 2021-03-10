@@ -46,7 +46,7 @@ class Convert:
     def _constrain_hue(cls, hue):
         """Constrain hue to 0 - 360."""
 
-        return hue % 360
+        return hue % 360 if not util.is_nan(hue) else hue
 
     @classmethod
     def _chromatic_adaption(cls, w1, w2, xyz):
@@ -70,8 +70,8 @@ class Convert:
             method = None if not isinstance(fit, str) else fit
             if not self.in_gamut(space, tolerance=0.0):
                 clone = self.clone()
-                clone.fit(space, method=method, in_place=True)
                 result = clone.convert(space)
+                result.fit(space, method=method, in_place=True)
                 return result
 
         convert_to = '_to_{}'.format(space)
@@ -110,6 +110,7 @@ class Convert:
         """Update from color."""
 
         if self is obj:
+            obj._coords = obj.null_adjust(obj._coords)
             return
 
         if not isinstance(obj, type(self)):
@@ -118,4 +119,5 @@ class Convert:
         for i, value in enumerate(obj.coords()):
             self._coords[i] = value
         self.alpha = obj.alpha
+        self._coords = self.null_adjust(self._coords)
         return self

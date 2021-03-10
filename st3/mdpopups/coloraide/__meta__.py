@@ -1,5 +1,4 @@
 """Meta related things."""
-from __future__ import unicode_literals
 from collections import namedtuple
 import re
 
@@ -114,7 +113,7 @@ class Version(namedtuple("Version", ["major", "minor", "micro", "release", "pre"
             elif dev:
                 raise ValueError("Version is not a development release.")
 
-        return super(Version, cls).__new__(cls, major, minor, micro, release, pre, post, dev)
+        return super().__new__(cls, major, minor, micro, release, pre, post, dev)
 
     def _is_pre(self):
         """Is prerelease."""
@@ -189,5 +188,5 @@ def parse_version(ver):
     return Version(major, minor, micro, release, pre, post, dev)
 
 
-__version_info__ = Version(0, 1, 0, "alpha", 1)
+__version_info__ = Version(0, 1, 0, "alpha", 7)
 __version__ = __version_info__._get_canonical()

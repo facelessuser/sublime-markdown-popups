@@ -16,37 +16,42 @@ import math
 import functools
 from .. import util
 from . _cylindrical import Cylindrical
+from . _range import Angle
 
 
-def overlay(c1, c2, a1, a2):
+def overlay(c1, c2, a1, a2, a0):
     """Overlay one color channel over the other."""
 
-    if math.isnan(c1) and math.isnan(c2):
+    if util.is_nan(c1) and util.is_nan(c2):
         return 0.0
-    elif math.isnan(c1):
+    elif util.is_nan(c1):
         return c2 * a2
-    elif math.isnan(c2):
-        return c1 * c1
+    elif util.is_nan(c2):
+        return c1 * a1
 
-    return c1 * a1 + c2 * a2 * (1 - a1)
+    c0 = c1 * a1 + c2 * a2 * (1 - a1)
+    return c0 / a0 if a0 else c0
 
 
-def interpolate(p, coords1, coords2, create, progress, outspace):
+def interpolate(p, coords1, coords2, create, progress, outspace, premultiplied):
     """Run through the coordinates and run the interpolation on them."""
 
     coords = []
     for i, c1 in enumerate(coords1):
         c2 = coords2[i]
-        if math.isnan(c1) and math.isnan(c2):
+        if util.is_nan(c1) and util.is_nan(c2):
             value = 0.0
-        elif math.isnan(c1):
+        elif util.is_nan(c1):
             value = c2
-        elif math.isnan(c2):
+        elif util.is_nan(c2):
             value = c1
         else:
             value = c1 + (c2 - c1) * (p if progress is None else progress(p))
         coords.append(value)
-    return create.new(coords).convert(outspace)
+    color = create.new(coords).convert(outspace)
+    if premultiplied:
+        postdivide(color)
+    return color
 
 
 def prepare_coords(color, adjust=None):
@@ -58,17 +63,54 @@ def prepare_coords(color, adjust=None):
     then we need to set all other channels to NaN.
     """
 
-    if isinstance(color, Cylindrical):
-        if color.is_hue_null():
-            name = color.hue_name()
-            color.set(name, util.NAN)
-
     if adjust:
         to_adjust = adjust & color.CHANNEL_NAMES
         to_avoid = color.CHANNEL_NAMES - adjust
         if to_adjust:
             for channel in to_avoid:
-                color.set(channel, util.NAN)
+                color.set(channel, util.NaN)
+
+
+def postdivide(color):
+    """Premultiply the given transparent color."""
+
+    if color.alpha >= 1.0:
+        return
+
+    channels = color.coords()
+    gamut = color._range
+    alpha = color.alpha
+    coords = []
+    for i, value in enumerate(channels):
+        a = gamut[i][0]
+
+        # Wrap the angle
+        if isinstance(a, Angle):
+            coords.append(value)
+            continue
+        coords.append(value / alpha if alpha != 0 else value)
+    color._coords = coords
+
+
+def premultiply(color):
+    """Premultiply the given transparent color."""
+
+    if color.alpha >= 1.0:
+        return
+
+    channels = color.coords()
+    gamut = color._range
+    alpha = color.alpha
+    coords = []
+    for i, value in enumerate(channels):
+        a = gamut[i][0]
+
+        # Wrap the angle
+        if isinstance(a, Angle):
+            coords.append(value)
+            continue
+        coords.append(value * alpha)
+    color._coords = coords
 
 
 def adjust_hues(color1, color2, hue):
@@ -85,7 +127,7 @@ def adjust_hues(color1, color2, hue):
     c1 = c1 % 360
     c2 = c2 % 360
 
-    if math.isnan(c1) or math.isnan(c2):
+    if util.is_nan(c1) or util.is_nan(c2):
         color1.set(name, c1)
         color2.set(name, c2)
         return
@@ -127,8 +169,10 @@ class Interpolate:
         This attempts to give a color that represents what the eye
         sees with the transparent color against the given background.
 
-        Best to use in linear color spaces, but there are no restrictions
-        for using it in cylindrical.
+        Some spaces will require the action to take place in a different
+        space. For instance, cylindrical representations of sRGB (HSL, HSV, HWB),
+        will request interpolation to be done under sRGB. This is because alpha
+        compositing does not work well in cylindrical spaces.
         """
 
         current_space = self.space()
@@ -144,22 +188,30 @@ class Interpolate:
             if this is None:
                 raise ValueError('Invalid colorspace value: {}'.format(space))
 
+            # Some spaces, like those that are cylindrical, will not work well,
+            # so a space can specify a rectangular space that is better suited.
+            if this.ALPHA_COMPOSITE is not None:
+                this = this.convert(this.ALPHA_COMPOSITE, fit=True)
+                background = background.convert(background.ALPHA_COMPOSITE, fit=True)
+                if this.space() != background.space():  # pragma: no cover
+                    # Catch the rare event that two spaces request incompatible spaces (maybe some weird
+                    # derived class instance).
+                    raise ValueError('Cannot overlay space {} onto space {}'.format(this.space(), background.space()))
+
             # Get the coordinates and indexes of valid hues
             prepare_coords(this)
             prepare_coords(background)
 
-            # Adjust hues if we have two valid hues
-            if isinstance(this, Cylindrical):
-                adjust_hues(this, background, util.DEF_HUE_ADJ)
-
-            # Blend the channels using the alpha channel values as the factors
-            # Afterwards, blend the alpha channels. This is different than blend.
             coords1 = this.coords()
             coords2 = background.coords()
             a1 = this.alpha
             a2 = background.alpha
-            this._coords = [overlay(c1, coords2[i], a1, a2) for i, c1 in enumerate(coords1)]
-            this.alpha = a1 + a2 * (1.0 - a1)
+            a0 = a1 + a2 * (1.0 - a1)
+            coords = []
+            for i, value in enumerate(coords1):
+                coords.append(overlay(coords1[i], coords2[i], a1, a2, a0))
+            this._coords = coords
+            this.alpha = a0
         else:
             this = self
 
@@ -240,7 +292,10 @@ class Interpolate:
             return self.update(obj)
         return obj
 
-    def interpolate(self, color, *, space="lab", out_space=None, progress=None, adjust=None, hue=util.DEF_HUE_ADJ):
+    def interpolate(
+        self, color, *, space="lab", out_space=None, progress=None, adjust=None, hue=util.DEF_HUE_ADJ,
+        premultiplied=False
+    ):
         """
         Return an interpolation function.
 
@@ -274,6 +329,10 @@ class Interpolate:
         if isinstance(color1, Cylindrical):
             adjust_hues(color1, color2, hue)
 
+        if premultiplied:
+            premultiply(color1)
+            premultiply(color2)
+
         coords1 = color1.coords()
         coords2 = color2.coords()
 
@@ -287,5 +346,6 @@ class Interpolate:
             coords2=coords2,
             create=color1,
             progress=progress,
-            outspace=outspace
+            outspace=outspace,
+            premultiplied=premultiplied
         )

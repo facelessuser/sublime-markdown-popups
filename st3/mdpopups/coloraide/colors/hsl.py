@@ -14,23 +14,24 @@ def srgb_to_hsl(rgb):
     """SRGB to HSL."""
 
     r, g, b = rgb
-    mx = max(r, max(g, b))
-    mn = min(r, min(g, b))
-    h = 0.0
+    mx = max(rgb)
+    mn = min(rgb)
+    h = util.NaN
     s = 0.0
     l = (mn + mx) / 2
     c = mx - mn
 
     if c != 0.0:
-        s = c / (1.0 - abs(2.0 * l - 1))
         if mx == r:
             h = (g - b) / c
         elif mx == g:
             h = (b - r) / c + 2.0
         else:
             h = (r - g) / c + 4.0
+        s = c / (1.0 - abs(2.0 * l - 1))
+        h *= 60.0
 
-    return HSL._constrain_hue(h * 60.0), s * 100.0, l * 100.0
+    return HSL._constrain_hue(h), s * 100.0, l * 100.0
 
 
 def hsl_to_srgb(hsl):
@@ -41,6 +42,7 @@ def hsl_to_srgb(hsl):
     """
 
     h, s, l = hsl
+    h = util.no_nan(h)
     h = h % 360
     s /= 100.0
     l /= 100.0
@@ -61,7 +63,7 @@ class HSL(Cylindrical, Space):
     DEF_VALUE = "color(hsl 0 0 0 / 1)"
     CHANNEL_NAMES = frozenset(["hue", "saturation", "lightness", "alpha"])
     DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space=SPACE))
-    GAMUT = "srgb"
+    ALPHA_COMPOSITE = "srgb"
     WHITE = convert.WHITES["D65"]
 
     _range = (
@@ -92,12 +94,6 @@ class HSL(Cylindrical, Space):
             self.alpha = 1.0 if len(color) == 3 else color[3]
         else:
             raise TypeError("Unexpected type '{}' received".format(type(color)))
-
-    def is_hue_null(self):
-        """Test if hue is null."""
-
-        h, s, l = self.coords()
-        return s < util.ACHROMATIC_THRESHOLD
 
     @property
     def hue(self):
@@ -136,6 +132,14 @@ class HSL(Cylindrical, Space):
         self._coords[2] = self._handle_input(value)
 
     @classmethod
+    def null_adjust(cls, coords):
+        """On color update."""
+
+        if coords[1] == 0:
+            coords[0] = util.NaN
+        return coords
+
+    @classmethod
     def translate_channel(cls, channel, value):
         """Translate channel string."""
 
@@ -147,11 +151,6 @@ class HSL(Cylindrical, Space):
             return parse.norm_alpha_channel(value)
         else:
             raise ValueError("Unexpected channel index of '{}'".format(channel))
-
-    def to_string(self, *, alpha=None, precision=util.DEF_PREC, fit=True, **kwargs):
-        """To string."""
-
-        return super().to_string(alpha=alpha, precision=precision, fit=fit)
 
     @classmethod
     def _to_srgb(cls, hsl):

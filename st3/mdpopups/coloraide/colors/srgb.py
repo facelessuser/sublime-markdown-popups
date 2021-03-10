@@ -78,6 +78,9 @@ class SRGB(Space):
     """SRGB class."""
 
     SPACE = "srgb"
+    # HSL is much more sensitive to small gamut changes, so sync up our check with HSL.
+    # This is mainly for a better user experience.
+    GAMUT = "hsl"
     DEF_VALUE = "color(srgb 0 0 0 / 1)"
     DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space=SPACE))
     CHANNEL_NAMES = frozenset(["red", "green", "blue", "alpha"])
@@ -158,11 +161,6 @@ class SRGB(Space):
             return parse.norm_alpha_channel(value)
         else:
             raise ValueError("Unexpected channel index of '{}'".format(channel))
-
-    def to_string(self, *, options=None, alpha=None, precision=util.DEF_PREC, fit=True, **kwargs):
-        """To string."""
-
-        return super().to_string(alpha=alpha, precision=precision, fit=fit)
 
     @classmethod
     def _to_xyz(cls, rgb):
