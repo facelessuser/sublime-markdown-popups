@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.1
+
+- **FIX**: Fixes related to new color handling library.
+
 ## 4.0.0
 
 - **NEW**: Added new `resolve_images` function to allow for processing remote image URLs and downloading the content in
