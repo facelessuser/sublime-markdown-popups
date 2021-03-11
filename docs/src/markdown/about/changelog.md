@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.2
+
+- **FIX**: A few more fixes related to new color handling library.
+
 ## 4.0.1
 
 - **FIX**: Fixes related to new color handling library.

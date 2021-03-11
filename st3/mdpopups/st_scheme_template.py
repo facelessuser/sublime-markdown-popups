@@ -50,14 +50,16 @@ class _Filters:
     def colorize(color, deg):
         """Colorize the color with the given hue."""
 
-        h = color.get('hsl.hue')
-        h = util.clamp(deg, 0, 360)
-        color.set('hsl.hue', h)
+        if color.is_nan('hsl.hue'):
+            return
+        color.set('hsl.hue', deg % 360)
 
     @staticmethod
     def hue(color, deg):
         """Shift the hue."""
 
+        if color.get('hsl.is_nan'):
+            return
         h = color.get('hsl.hue')
         h += deg
         h = color.set('hsl.hue', h % 360)
@@ -66,7 +68,7 @@ class _Filters:
     def contrast(color, factor):
         """Adjust contrast."""
 
-        r, g, b = [util.round_half_up(util.clamp(c * 255, 0, 255)) for c in color.coords()]
+        r, g, b = [util.round_half_up(util.clamp(c * 255, 0, 255)) for c in util.no_nan(color.coords())]
         # Algorithm can't handle any thing beyond +/-255 (or a factor from 0 - 2)
         # Convert factor between (-255, 255)
         f = (util.clamp(factor, 0.0, 2.0) - 1.0) * 255.0
@@ -84,7 +86,7 @@ class _Filters:
     def invert(color):
         """Invert the color."""
 
-        r, g, b = [int(util.round_half_up(util.clamp(c * 255, 0, 255))) for c in color.coords()]
+        r, g, b = [int(util.round_half_up(util.clamp(c * 255, 0, 255))) for c in util.no_nan(color.coords())]
         r ^= 0xFF
         g ^= 0xFF
         b ^= 0xFF
@@ -96,7 +98,7 @@ class _Filters:
     def saturation(color, factor):
         """Saturate or unsaturate the color by the given factor."""
 
-        s = color.get('hsl.saturation') / 100.0
+        s = util.no_nan(color.get('hsl.saturation')) / 100.0
         s = util.clamp(s + factor - 1.0, 0.0, 1.0)
         color.set('hsl.saturation', s * 100)
 
@@ -113,9 +115,10 @@ class _Filters:
     def sepia(color):
         """Apply a sepia filter to the color."""
 
-        r = util.clamp((color.red * .393) + (color.green * .769) + (color.blue * .189), 0, 1)
-        g = util.clamp((color.red * .349) + (color.green * .686) + (color.blue * .168), 0, 1)
-        b = util.clamp((color.red * .272) + (color.green * .534) + (color.blue * .131), 0, 1)
+        red, green, blue = util.no_nan(color.coords())
+        r = util.clamp((red * .393) + (green * .769) + (blue * .189), 0, 1)
+        g = util.clamp((red * .349) + (green * .686) + (blue * .168), 0, 1)
+        b = util.clamp((red * .272) + (green * .534) + (blue * .131), 0, 1)
         color.red = r
         color.green = g
         color.blue = b
@@ -164,7 +167,7 @@ class _Filters:
         Brightness is determined by perceived luminance.
         """
 
-        red, green, blue = [util.round_half_up(util.clamp(c * 255, 0, 255)) for c in color.coords()]
+        red, green, blue = [util.round_half_up(util.clamp(c * 255, 0, 255)) for c in util.no_nan(color.coords())]
         channels = ["r", "g", "b"]
         total_lumes = util.clamp(util.clamp(color.luminance(), 0, 1) * 255 + (255.0 * factor) - 255.0, 0.0, 255.0)
 
