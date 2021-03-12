@@ -26,7 +26,7 @@ import sublime
 import re
 from .st_mapping import lang_map
 
-RE_TAIL = re.compile(r'(?:\r\n|(?!\r\n)[\n\r])*\z')
+RE_TAIL = re.compile(r'(?:\r\n|(?!\r\n)[\n\r])*\Z')
 
 INLINE_BODY_START = '<code class="inline-highlight">'
 BODY_START = '<div class="highlight"><pre>'

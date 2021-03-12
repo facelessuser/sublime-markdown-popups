@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.3
+
+- **FIX**: Fix stripping of `z` in code.
+
 ## 4.0.2
 
 - **FIX**: A few more fixes related to new color handling library.
