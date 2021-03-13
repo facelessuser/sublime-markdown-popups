@@ -227,10 +227,10 @@ class SchemeTemplate(object):
         if not explicit_background and not style.get('background'):
             style['background'] = defaults.get('background', '#FFFFFF')
         if selected:
-            sfg = scope_style.get('selection_forground', defaults.get('selection_forground'))
-            if sfg:
+            sfg = scope_style.get('selection_foreground', defaults.get('selection_foreground'))
+            if sfg != '#00000000':
                 style['foreground'] = sfg
-            style['background'] = scope_style.get('selection', '#0000FF')
+            style['background'] = defaults.get('selection', '#0000FF')
         return style
 
     def get_variables(self):

@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.5
+
+- **FIX**: Fix issues with acquiring scheme selection colors.
+
 ## 4.0.4
 
 - **FIX**: Fix failure when displaying a specific debug message.
