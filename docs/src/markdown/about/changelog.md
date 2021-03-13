@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.4
+
+- **FIX**: Fix failure when displaying a specific debug message.
+
 ## 4.0.3
 
 - **FIX**: Fix stripping of `z` in code.
