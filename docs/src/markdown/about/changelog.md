@@ -6,9 +6,6 @@
   setting with the same name. This allows plugins to specify plugin specific languages that are maybe not good for
   general use.
 - **NEW**: Tweak `<hr>` color.
-
-## 4.0.5
-
 - **FIX**: Fix issues with acquiring scheme selection colors.
 
 ## 4.0.4
