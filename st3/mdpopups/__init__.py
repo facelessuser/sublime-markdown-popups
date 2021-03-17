@@ -234,6 +234,9 @@ class _MdWrapper(markdown.Markdown):
         if 'allow_code_wrap' in kwargs:
             self.sublime_wrap = kwargs['allow_code_wrap']
             del kwargs['allow_code_wrap']
+        if 'language_map' in kwargs:
+            self.plugin_map = kwargs['language_map']
+            del kwargs['language_map']
         if 'sublime_hl' in kwargs:
             self.sublime_hl = kwargs['sublime_hl']
             del kwargs['sublime_hl']
@@ -450,7 +453,8 @@ def md2html(
         extensions=extensions,
         extension_configs=configs,
         sublime_hl=sublime_hl,
-        allow_code_wrap=fm.get('allow_code_wrap', False)
+        allow_code_wrap=fm.get('allow_code_wrap', False),
+        language_map=fm.get('language_map', {})
     ).convert(_markup_template(markup, template_vars, template_env_options)).replace('&quot;', '"')
 
 
@@ -520,14 +524,14 @@ def get_language_from_view(view):
     return lang
 
 
-def syntax_highlight(view, src, language=None, inline=False, allow_code_wrap=False):
+def syntax_highlight(view, src, language=None, inline=False, allow_code_wrap=False, language_map=None):
     """Syntax highlighting for code."""
 
     try:
         if _get_setting('mdpopups.use_sublime_highlighter'):
             highlighter = _get_sublime_highlighter(view)
             code = highlighter.syntax_highlight(
-                src, language, inline=inline, code_wrap=(not inline and allow_code_wrap)
+                src, language, inline=inline, code_wrap=(not inline and allow_code_wrap), plugin_map=language_map
             )
         else:
             code = pyg_syntax_hl(

@@ -204,6 +204,9 @@ function to exactly this:
 ```py3
 frontmatter = {
     "allow_code_wrap": false,
+    "language_map": {
+        "language": [["mapping_alias"], ["MyPackage/MySyntaxLanguage"]]
+    },
     "markdown_extensions": [
         "markdown.extensions.admonition",
         "markdown.extensions.attr_list",
@@ -228,6 +231,10 @@ frontmatter = {
 
 content = mdpopups.format_frontmatter(frontmatter) + markdown_content
 ```
+
+!!! new "New in 4.1.0"
+    Added support for `language_map` in front matter. See [`sublime_user_lang_map` option](settings.md#mdpopupssublime_user_lang_map)
+    to learn more about the structure.
 
 ## Styling
 
@@ -676,6 +683,11 @@ MdPopups provides a number of accessible functions.
     `language`        | `#!py3 str`          | `#!py3 None`  | Specifies the language to highlight as.
     `inline`          | `#!py3 bool`         | `#!py3 False` | Will return the code formatted for inline display.
     `allow_code_wrap` | `#!py3 bool`         | `#!py3 False` | Do not convert all the spaces in code blocks to `&nbsp;` so that wrapping can occur.
+    `language_map`    | `#!py3 Dict`         | `#!py3 None`  | Language map that can be passed in to add to the built-in language map. Mainly for Plugins to add plugin specific languages that are too specific to be added globally.
+
+    !!! new "New in 4.1.0"
+        Added `language_map` parameter. See [`sublime_user_lang_map` option](settings.md#mdpopupssublime_user_lang_map)
+        to learn more about the structure.
 
 ### Tabs to Spaces
 

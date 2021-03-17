@@ -366,11 +366,12 @@ class Highlight(object):
                     ]
 
     @classmethod
-    def set_sublime_vars(cls, sublime_hl, sublime_wrap):
+    def set_sublime_vars(cls, sublime_hl, sublime_wrap, plugin_map):
         """Set Sublime_vars."""
 
         cls.sublime_hl = sublime_hl
         cls.sublime_wrap = sublime_wrap
+        cls.plugin_map = plugin_map
 
     def get_extended_language(self, language):
         """Get extended language."""
@@ -430,7 +431,8 @@ class Highlight(object):
         if self.sublime_hl[0]:
             # Sublime highlight
             code = self.sublime_hl[1].syntax_highlight(
-                src, language, inline=inline, no_wrap=inline, code_wrap=(not inline and self.sublime_wrap)
+                src, language, inline=inline, no_wrap=inline, code_wrap=(not inline and self.sublime_wrap),
+                plugin_map=self.plugin_map
             )
             if inline:
                 class_str = css_class
@@ -616,7 +618,7 @@ class HighlightExtension(Extension):
     def extendMarkdown(self, md):
         """Add support for code highlighting."""
 
-        Highlight.set_sublime_vars(md.sublime_hl, md.sublime_wrap)
+        Highlight.set_sublime_vars(md.sublime_hl, md.sublime_wrap, md.plugin_map)
         config = self.getConfigs()
         self.md = md
         self.enabled = config.get("_enabled", False)

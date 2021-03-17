@@ -32,7 +32,7 @@ html.light {
 {%- else %}
   --mdpopups-bg: color(var(--background) blend(black 95%));
 {%- endif %}
-  --mdpopups-hr: color(var(--foreground) blend(white 80%));
+  --mdpopups-hr: color(var(--background) blend(black 85%));
   --mdpopups-kbd-border: color(var(--foreground) blend(white 80%));
   --mdpopups-hl-border: color(var(--background) blend(black 90%));
   --mdpopups-hl-bg: color(var(--background) blend(black 98%));
@@ -44,7 +44,7 @@ html.dark {
 {%- else %}
   --mdpopups-bg: color(var(--background) blend(white 95%));
 {%- endif %}
-  --mdpopups-hr: color(var(--foreground) blend(black 80%));
+  --mdpopups-hr: color(var(--background) blend(white 85%));
   --mdpopups-kbd-border: color(var(--foreground) blend(black 80%));
   --mdpopups-hl-border: color(var(--background) blend(white 90%));
   --mdpopups-hl-bg: color(var(--background) blend(white 98%));

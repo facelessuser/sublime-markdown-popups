@@ -210,8 +210,11 @@ class SublimeHighlight(object):
         if not self.no_wrap:
             self.html.append(INLINE_BODY_END if self.inline else BODY_END)
 
-    def set_view(self, src, lang):
+    def set_view(self, src, lang, plugin_map):
         """Setup view for conversion."""
+
+        if plugin_map is None:
+            plugin_map = {}
 
         # Get the output panel
         self.view = sublime.active_window().create_output_panel('mdpopups', unlisted=True)
@@ -226,13 +229,14 @@ class SublimeHighlight(object):
         # Setup the proper syntax
         lang = lang.lower()
         user_map = sublime.load_settings('Preferences.sublime-settings').get('mdpopups.sublime_user_lang_map', {})
-        keys = set(list(user_map.keys()) + list(lang_map.keys()))
+        keys = set(user_map.keys()) | (set(plugin_map.keys()) | set(lang_map.keys()))
         loaded = False
         for key in keys:
             v = lang_map.get(key, (tuple(), tuple()))
+            plugin_v = plugin_map.get(key, (tuple(), tuple()))
             user_v = user_map.get(key, (tuple(), tuple()))
-            if lang in (tuple(user_v[0]) + v[0]):
-                for l in (tuple(user_v[1]) + v[1]):
+            if lang in (tuple(user_v[0]) + plugin_v[0] + v[0]):
+                for l in (tuple(user_v[1]) + plugin_v[1] + v[1]):
                     for ext in ST_LANGUAGES:
                         sytnax_file = 'Packages/{}{}'.format(l, ext)
                         try:
@@ -257,10 +261,10 @@ class SublimeHighlight(object):
                     continue
                 self.view.set_syntax_file(sytnax_file)
 
-    def syntax_highlight(self, src, lang, hl_lines=[], inline=False, no_wrap=False, code_wrap=False):
+    def syntax_highlight(self, src, lang, hl_lines=[], inline=False, no_wrap=False, code_wrap=False, plugin_map=None):
         """Syntax Highlight."""
 
-        self.set_view(RE_TAIL.sub('', src), 'text' if not lang else lang)
+        self.set_view(RE_TAIL.sub('', src), 'text' if not lang else lang, plugin_map)
         self.defaults = self.view.style()
         self.fground = self.defaults.get('foreground', '#000000')
         self.bground = self.defaults.get('background', '#FFFFFF')

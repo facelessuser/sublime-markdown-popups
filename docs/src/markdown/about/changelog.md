@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.1.0
+
+- **NEW**: Plugins can now specify a language map in the front matter via `language_map`. The format matches the
+  setting with the same name. This allows plugins to specify plugin specific languages that are maybe not good for
+  general use.
+- **NEW**: Tweak `<hr>` color.
+
 ## 4.0.5
 
 - **FIX**: Fix issues with acquiring scheme selection colors.
@@ -24,9 +31,9 @@
 
 - **NEW**: Added new `resolve_images` function to allow for processing remote image URLs and downloading the content in
   an HTML buffer.
-- **NEW**: `nl2br` can only be set through `markdown_extensions` via frontmatter. If passed as a parameter for any API
+- **NEW**: `nl2br` can only be set through `markdown_extensions` via front matter. If passed as a parameter for any API
   function, it will be ignored.
-- **NEW**: `allow_code_wrap` can only be set through the frontmatter option `allow_code_wrap`. If passed as a parameter
+- **NEW**: `allow_code_wrap` can only be set through the front matter option `allow_code_wrap`. If passed as a parameter
   for any API function (except `syntax_highlight`), it will be ignored.
 - **NEW**: Support latest Markdown and Pymdown Extensions. Must use `markdown.extensions.md_in_html` instead of
   `pymdownx.extrarawhtml`.
@@ -220,23 +227,23 @@ Oct 11, 2017
 
 June 21, 2017
 
-- **FIX**: Strip frontmatter when `md=False`. Throw it away as we only use the frontmatter for Markdown.
+- **FIX**: Strip front matter when `md=False`. Throw it away as we only use the front matter for Markdown.
 
 ## 2.1.0
 
 June 20, 2017
 
-- **NEW**: Allow adding and configuring extensions via YAML frontmatter. This feature deprecates `nl2br` function
+- **NEW**: Allow adding and configuring extensions via YAML front matter. This feature deprecates `nl2br` function
   parameter which will be removed some time in the future.
-- **NEW**: Allow setting whether block, code tags will allow word wrapping via YAML frontmatter. This feature deprecates
-  the `allow_word_wrap` function parameter which will be removed some time in the future.
-- **NEW**: Expose SuperFences' `custom_fences` feature via YAML frontmatter.
+- **NEW**: Allow setting whether block, code tags will allow word wrapping via YAML front matter. This feature
+  deprecates the `allow_word_wrap` function parameter which will be removed some time in the future.
+- **NEW**: Expose SuperFences' `custom_fences` feature via YAML front matter.
 - **NEW**: Upgrade internal extensions.
 - **NEW**: Import official `pymdownx` extension if `pymdownx` is installed as a dependency so we can drop internal
   vendored extension copies in the future. This is allowed to be optional for a time until people can update their
   dependencies.
-- **NEW**: Import `pyyaml` extension if `pyyaml` is installed for frontmatter. This is allowed to be optional for a time
-  until people can update their dependencies.
+- **NEW**: Import `pyyaml` extension if `pyyaml` is installed for front matter. This is allowed to be optional for a
+  time until people can update their dependencies.
 - **NEW**: `inline-highlight` class in no longer applied to inline code.  Instead `highlight` is applied to both inline
   and block code.
 
