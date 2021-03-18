@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.1
+
+- **FIX**: Upgrade color library to fix some color related corner cases. Also fix handling of `tmTheme` colors.
+
 ## 4.1.0
 
 - **NEW**: Plugins can now specify a language map in the front matter via `language_map`. The format matches the
