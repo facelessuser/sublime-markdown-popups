@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.2
+
+- **FIX**: A few more color related issues.
+
 ## 4.1.1
 
 - **FIX**: Upgrade color library to fix some color related corner cases. Also fix handling of `tmTheme` colors.
