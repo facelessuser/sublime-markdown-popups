@@ -58,7 +58,8 @@ class Convert:
             return d50_to_d65(xyz)
         elif w1 == WHITES["D65"] and w2 == WHITES["D50"]:
             return d65_to_d50(xyz)
-        else:
+        else:  # pragma: no cover
+            # Should only occur internally if we are doing something wrong.
             raise ValueError('Unknown white point encountered: {} -> {}'.format(str(w1), str(w2)))
 
     def convert(self, space, *, fit=False):
@@ -100,24 +101,7 @@ class Convert:
                 func = getattr(obj, '_from_xyz')
                 coords = func(coords)
 
-        coords = list(coords) + [self.alpha]
-        result = obj(coords)
+        result = obj(coords, self.alpha)
         result.parent = self.parent
 
         return result
-
-    def update(self, obj):
-        """Update from color."""
-
-        if self is obj:
-            obj._coords = obj.null_adjust(obj._coords)
-            return
-
-        if not isinstance(obj, type(self)):
-            obj = type(self)(obj)
-
-        for i, value in enumerate(obj.coords()):
-            self._coords[i] = value
-        self.alpha = obj.alpha
-        self._coords = self.null_adjust(self._coords)
-        return self
