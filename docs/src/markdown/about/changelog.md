@@ -3,6 +3,7 @@
 ## 4.2.0
 
 - **NEW**: MdPopups is now self contained and vendors all dependencies.
+- **NEW**: Update internal, default CSS to load from inside `mdpopups` to prepare for Package Control 4.0.
 
 ## 4.1.2
 
