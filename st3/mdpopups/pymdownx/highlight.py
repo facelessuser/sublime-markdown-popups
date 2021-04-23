@@ -103,22 +103,7 @@ DEFAULT_CONFIG = {
     ]
 }
 
-multi_space = re.compile(r'(?<= ) {2,}')
-
-
-def replace_nbsp(m):
-    """Replace spaces with `nbsp`."""
-
-    return '&nbsp;' * len(m.group(0))
-
-
 if pygments:
-    html_re = re.compile(
-        r'''(?x)
-        (?P<start><span [^<>]+>)|(?P<content>[^<>]+)|(?P<end></span>)
-        '''
-    )
-
     class InlineHtmlFormatter(HtmlFormatter):
         """Format the code blocks."""
 
@@ -201,132 +186,6 @@ if pygments:
             for t, line in HtmlFormatter._wrap_tablelinenos(self, inner):
                 yield t, self.RE_TABLE_NUMS.sub(r'\1<span></span>', line)
 
-    class SublimeInlineHtmlFormatter(HtmlFormatter):
-        """Format the code blocks."""
-
-        def wrap(self, source, outfile):
-            """Overload wrap."""
-
-            return self._wrap_code(source)
-
-        def _wrap_code(self, source):
-            """
-            Wrap the Pygments code.
-
-            Sublime popups don't really support 'code', but since it doesn't
-            hurt anything, we leave it in for the possibility of future support.
-            We get around the lack of proper 'code' support by converting any
-            spaces after the initial space to `nbsp`.  We go ahead and convert tabs
-            to 4 spaces as well.
-            """
-
-            yield 0, ''
-            for i, t in source:
-                text = ''
-                matched = False
-                for m in html_re.finditer(t):
-                    matched = True
-                    if m.group(1):
-                        text += m.group(1)
-                    elif m.group(3):
-                        text += m.group(3)
-                    else:
-                        text += multi_space.sub(
-                            replace_nbsp, m.group(2).replace('\t', ' ' * 4)
-                        )
-                if not matched:
-                    text = multi_space.sub(
-                        replace_nbsp, t.replace('\t', ' ' * 4)
-                    )
-                yield i, text
-            yield 0, ''
-
-    class SublimeBlockFormatter(BlockHtmlFormatter):
-        """Format the code blocks."""
-
-        def wrap(self, source, outfile):
-            """Overload wrap."""
-
-            if self.linenos == 2 and self.pymdownx_inline:
-                source = self._wrap_customlinenums(source)
-            return self._wrap_code(source)
-
-        def _wrap_code(self, source):
-            """
-            Wrap the Pygments code.
-
-            Sublime popups don't really support 'pre', but since it doesn't
-            hurt anything, we leave it in for the possibility of future support.
-            We get around the lack of proper 'pre' support by converting any
-            spaces after the initial space to `nbsp`.  We go ahead and convert tabs
-            to 4 spaces as well.  We also manually inject line breaks.
-            """
-
-            yield 0, '<div class="%s"><pre>' % self.cssclass
-            for i, t in source:
-                text = ''
-                matched = False
-                for m in html_re.finditer(t):
-                    matched = True
-                    if m.group(1):
-                        text += m.group(1)
-                    elif m.group(3):
-                        text += m.group(3)
-                    else:
-                        text += m.group(2).replace('\t', ' ' * 4).replace(' ', '&nbsp;')
-                if not matched:
-                    text = t.replace('\t', ' ' * 4).replace(' ', '&nbsp;')
-                if i == 1:
-                    # it's a line of formatted code
-                    text += '<br>'
-                yield i, text
-            yield 0, '</pre></div>'
-
-    class SublimeWrapBlockFormatter(BlockHtmlFormatter):
-        """Format the code blocks."""
-
-        def wrap(self, source, outfile):
-            """Overload wrap."""
-
-            if self.linenos == 2 and self.pymdownx_inline:
-                source = self._wrap_customlinenums(source)
-            return self._wrap_code(source)
-
-        def _wrap_code(self, source):
-            """
-            Wrap the Pygments code.
-
-            Sublime popups don't really support 'pre', but since it doesn't
-            hurt anything, we leave it in for the possibility of future support.
-            We get around the lack of proper 'pre' support by converting any
-            spaces after the initial space to `nbsp`.  We go ahead and convert tabs
-            to 4 spaces as well.  We also manually inject line breaks.
-            """
-
-            yield 0, '<div class="%s"><pre>' % self.cssclass
-            for i, t in source:
-                text = ''
-                matched = False
-                for m in html_re.finditer(t):
-                    matched = True
-                    if m.group(1):
-                        text += m.group(1)
-                    elif m.group(3):
-                        text += m.group(3)
-                    else:
-                        text += multi_space.sub(
-                            replace_nbsp, m.group(2).replace('\t', ' ' * 4)
-                        )
-                if not matched:
-                    text = multi_space.sub(
-                        replace_nbsp, t.replace('\t', ' ' * 4)
-                    )
-                if i == 1:
-                    # it's a line of formatted code
-                    text += '<br>'
-                yield i, text
-            yield 0, '</pre></div>'
-
 
 class Highlight(object):
     """Highlight class."""
@@ -350,8 +209,6 @@ class Highlight(object):
         self.wrapcode = wrapcode
         self.language_prefix = language_prefix
         self.code_attr_on_pre = code_attr_on_pre
-        self.sublime_hl = Highlight.sublime_hl
-        self.sublime_wrap = Highlight.sublime_wrap
 
         if extend_pygments_lang is None:  # pragma: no cover
             extend_pygments_lang = []
@@ -364,14 +221,6 @@ class Highlight(object):
                         language.get('lang'),
                         language.get('options', {})
                     ]
-
-    @classmethod
-    def set_sublime_vars(cls, sublime_hl, sublime_wrap, plugin_map):
-        """Set Sublime_vars."""
-
-        cls.sublime_hl = sublime_hl
-        cls.sublime_wrap = sublime_wrap
-        cls.plugin_map = plugin_map
 
     def get_extended_language(self, language):
         """Get extended language."""
@@ -402,18 +251,12 @@ class Highlight(object):
             lexer = get_lexer_by_name('text')
         return lexer
 
-    def escape(self, txt, code_wrap):
+    def escape(self, txt):
         """Basic HTML escaping."""
 
         txt = txt.replace('&', '&amp;')
         txt = txt.replace('<', '&lt;')
         txt = txt.replace('>', '&gt;')
-        # Special format for sublime.
-        if code_wrap:
-            txt = multi_space.sub(replace_nbsp, txt.replace('\t', ' ' * 4))
-        else:
-            txt = txt.replace('\t', '&nbsp;' * 4)
-            txt = txt.replace(' ', '&nbsp;')
         return txt
 
     def highlight(
@@ -428,17 +271,7 @@ class Highlight(object):
         linenums_enabled = (self.linenums or (self.linenums is not False and linestart >= 0)) and not inline > 0
 
         # Convert with Pygments.
-        if self.sublime_hl[0]:
-            # Sublime highlight
-            code = self.sublime_hl[1].syntax_highlight(
-                src, language, inline=inline, no_wrap=inline, code_wrap=(not inline and self.sublime_wrap),
-                plugin_map=self.plugin_map
-            )
-            if inline:
-                class_str = css_class
-                attr_str = ''
-                id_str = ''
-        elif pygments and self.use_pygments:
+        if pygments and self.use_pygments:
             # Setup language lexer.
             lexer = self.get_lexer(src, language)
             linenums = self.linenums_style if linenums_enabled else False
@@ -464,12 +297,7 @@ class Highlight(object):
                 hl_lines = []
 
             # Setup formatter
-            if inline:
-                html_formatter = SublimeInlineHtmlFormatter
-            elif self.sublime_wrap:
-                html_formatter = SublimeWrapBlockFormatter
-            else:
-                html_formatter = SublimeBlockFormatter
+            html_formatter = InlineHtmlFormatter if inline else BlockHtmlFormatter
             formatter = html_formatter(
                 cssclass=css_class,
                 linenos=linenums,
@@ -618,7 +446,6 @@ class HighlightExtension(Extension):
     def extendMarkdown(self, md):
         """Add support for code highlighting."""
 
-        Highlight.set_sublime_vars(md.sublime_hl, md.sublime_wrap, md.plugin_map)
         config = self.getConfigs()
         self.md = md
         self.enabled = config.get("_enabled", False)

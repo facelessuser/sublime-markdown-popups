@@ -9,7 +9,7 @@ TextMate theme to CSS.
 https://manual.macromates.com/en/language_grammars#naming_conventions
 """
 import sublime
-import markdown
+from . import markdown
 from . import jinja2
 import traceback
 import time
@@ -255,8 +255,8 @@ class _MdWrapper(markdown.Markdown):
 
         """
 
-        from markdown import util
-        from markdown.extensions import Extension
+        from .markdown import util
+        from .markdown.extensions import Extension
 
         for ext in extensions:
             try:
