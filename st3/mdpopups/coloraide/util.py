@@ -3,6 +3,8 @@ import decimal
 import math
 import numbers
 import re
+import warnings
+from functools import wraps
 
 RE_FLOAT_TRIM = re.compile(r'^(?P<keep>-?\d+)(?P<trash>\.0+|(?P<keep2>\.\d*[1-9])0+)$')
 NaN = float('nan')
@@ -16,6 +18,76 @@ DEF_HUE_ADJ = "shorter"
 DEF_DISTANCE_SPACE = "lab"
 DEF_FIT = "lch-chroma"
 DEF_DELTA_E = "76"
+
+# Many libraries use 200, but `Colorjs.io` uses 203
+# The author explains why 203 was chosen:
+#
+#   Maximum luminance in PQ is 10,000 cd/m^2
+#   Relative XYZ has Y=1 for media white
+#   BT.2048 says media white Y=203 at PQ 58
+#
+# We will currently use 203 for now as the difference is minimal.
+# If there were a significant difference, and one clearly gave
+# better results, that would make the decision easier, but the
+# explanation above seems sufficient for now.
+YW = 203
+
+# PQ Constants
+# https://en.wikipedia.org/wiki/High-dynamic-range_video#Perceptual_quantizer
+M1 = 2610 / 16384
+M2 = 2523 / 32
+C1 = 3424 / 4096
+C2 = 2413 / 128
+C3 = 2392 / 128
+
+
+def pq_st2084_inverse_eotf(values, c1=C1, c2=C2, c3=C3, m1=M1, m2=M2):
+    """Perceptual quantizer (SMPTE ST 2084) - inverse EOTF."""
+
+    adjusted = []
+    for c in values:
+        c = npow(c / 10000, m1)
+        r = (c1 + c2 * c) / (1 + c3 * c)
+        adjusted.append(npow(r, m2))
+    return adjusted
+
+
+def pq_st2084_eotf(values, c1=C1, c2=C2, c3=C3, m1=M1, m2=M2):
+    """Perceptual quantizer (SMPTE ST 2084) - EOTF."""
+
+    im1 = 1 / m1
+    im2 = 1 / m2
+
+    adjusted = []
+    for c in values:
+        c = npow(c, im2)
+        r = (c - c1) / (c2 - c3 * c)
+        adjusted.append(10000 * npow(r, im1))
+    return adjusted
+
+
+def xyz_d65_to_absxyzd65(xyzd65):
+    """XYZ D65 to Absolute XYZ D65."""
+
+    return [max(c * YW, 0) for c in xyzd65]
+
+
+def absxyzd65_to_xyz_d65(absxyzd65):
+    """Absolute XYZ D65 XYZ D65."""
+
+    return [max(c / YW, 0) for c in absxyzd65]
+
+
+def npow(base, exp):
+    """Perform `pow` with a negative number."""
+
+    return math.copysign(abs(base) ** exp, base)
+
+
+def constrain_hue(hue):
+    """Constrain hue to 0 - 360."""
+
+    return hue % 360 if not is_nan(hue) else hue
 
 
 def is_number(value):
@@ -225,3 +297,23 @@ def round_half_up(n, scale=0):
 
     mult = 10 ** scale
     return math.floor(n * mult + 0.5) / mult
+
+
+def deprecated(message, stacklevel=2):  # pragma: no cover
+    """
+    Raise a `DeprecationWarning` when wrapped function/method is called.
+
+    Borrowed from https://stackoverflow.com/a/48632082/866026
+    """
+
+    def _decorator(func):
+        @wraps(func)
+        def _func(*args, **kwargs):
+            warnings.warn(
+                "'{}' is deprecated. {}".format(func.__name__, message),
+                category=DeprecationWarning,
+                stacklevel=stacklevel
+            )
+            return func(*args, **kwargs)
+        return _func
+    return _decorator

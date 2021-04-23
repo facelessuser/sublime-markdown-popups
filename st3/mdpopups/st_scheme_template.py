@@ -331,7 +331,7 @@ class SchemeTemplate(object):
             if len(parts) == 2 and parts[0] in ('background-color', 'color'):
                 rgba = Color(parts[1])
                 rgba.alpha = max(min(float(factor), 1.0), 0.0)
-                rgba.overlay(self.get_bg())
+                rgba.compose(self.get_bg())
                 return '{}: {}; '.format(parts[0], rgba.to_string(hex=True))
         except Exception:
             pass
