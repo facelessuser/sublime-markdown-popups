@@ -23,6 +23,11 @@ from pygments.formatters import HtmlFormatter
 from collections import OrderedDict
 from .st_clean_css import clean_css
 import copy
+import codecs
+import os
+
+LOCATION = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_CSS_PATH = os.path.join(LOCATION, 'css', 'default.css')
 
 INVALID = -1
 POPUP = 0
@@ -313,6 +318,16 @@ class SchemeTemplate(object):
 
             if css == OLD_DEFAULT_CSS:
                 css = DEFAULT_CSS
+
+            if css == DEFAULT_CSS:
+                css = ''
+                try:
+                    with codecs.open(DEFAULT_CSS_PATH, encoding='utf-8') as f:
+                        css = clean_css(f.read())
+                except Exception:
+                    pass
+
+                return self.env.from_string(css).render(var=var, plugin=self.plugin_vars)
 
             return self.env.from_string(
                 clean_css(sublime.load_resource(css))

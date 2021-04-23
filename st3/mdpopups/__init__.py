@@ -13,6 +13,7 @@ from . import markdown
 from . import jinja2
 import traceback
 import time
+import codecs
 import html
 import html.parser
 import urllib
@@ -36,6 +37,9 @@ except Exception:
     bs4 = None
 
 HTML_SHEET_SUPPORT = int(sublime.version()) >= 4074
+
+LOCATION = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_CSS_PATH = os.path.join(LOCATION, 'css', 'default.css')
 
 DEFAULT_CSS = 'Packages/mdpopups/mdpopups_css/default.css'
 OLD_DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
@@ -198,7 +202,14 @@ def _get_scheme(scheme):
 def _get_default_css():
     """Get default CSS."""
 
-    return clean_css(sublime.load_resource(DEFAULT_CSS))
+    css = ''
+    try:
+        with codecs.open(DEFAULT_CSS_PATH, encoding='utf-8') as f:
+            css = clean_css(f.read())
+    except Exception:
+        pass
+
+    return css
 
 
 def _get_user_css():
@@ -209,10 +220,13 @@ def _get_user_css():
     user_css = _get_setting('mdpopups.user_css', DEFAULT_USER_CSS)
     if user_css == OLD_DEFAULT_CSS:
         user_css = DEFAULT_CSS
-    try:
-        css = clean_css(sublime.load_resource(user_css))
-    except Exception:
-        pass
+    if user_css == DEFAULT_CSS:
+        css = _get_default_css()
+    else:
+        try:
+            css = clean_css(sublime.load_resource(user_css))
+        except Exception:
+            pass
     return css if css else ''
 
 
@@ -379,7 +393,7 @@ def md2html(
 ):
     """Convert Markdown to HTML."""
 
-    if _get_setting('mdpopups.use_sublime_highlighter'):
+    if _get_setting('mdpopups.use_sublime_highlighter', True):
         sublime_hl = (True, _get_sublime_highlighter(view))
     else:
         sublime_hl = (False, None)
@@ -528,7 +542,7 @@ def syntax_highlight(view, src, language=None, inline=False, allow_code_wrap=Fal
     """Syntax highlighting for code."""
 
     try:
-        if _get_setting('mdpopups.use_sublime_highlighter'):
+        if _get_setting('mdpopups.use_sublime_highlighter', True):
             highlighter = _get_sublime_highlighter(view)
             code = highlighter.syntax_highlight(
                 src, language, inline=inline, code_wrap=(not inline and allow_code_wrap), plugin_map=language_map
