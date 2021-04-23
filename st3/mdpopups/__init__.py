@@ -10,7 +10,7 @@ https://manual.macromates.com/en/language_grammars#naming_conventions
 """
 import sublime
 import markdown
-import jinja2
+from . import jinja2
 import traceback
 import time
 import html
