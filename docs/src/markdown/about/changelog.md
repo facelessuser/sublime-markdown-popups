@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.2.0
+
+- **NEW**: MdPopups is now self contained and vendors all dependencies.
+
 ## 4.1.2
 
 - **FIX**: A few more color related issues.

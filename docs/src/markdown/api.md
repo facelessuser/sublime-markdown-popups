@@ -9,13 +9,7 @@ Your plugin should include the Package Control dependencies listed below. Please
 {
     "*": {
         ">=3124": [
-            "pygments",
-            "python-markdown",
-            "mdpopups",
-            "python-jinja2",
-            "markupsafe",
-            "pymdownx",
-            "pyyaml"
+            "mdpopups"
         ]
     }
 }
