@@ -1,5 +1,5 @@
 """Frontmatter stripping."""
-import yaml
+from . import yaml
 import re
 from collections import OrderedDict
 
