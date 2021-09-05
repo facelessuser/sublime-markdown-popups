@@ -1,6 +1,5 @@
 """XYZ class."""
 from ..spaces import Space, RE_DEFAULT_MATCH, GamutUnbound
-from . import _cat
 import re
 
 
@@ -8,11 +7,12 @@ class XYZ(Space):
     """XYZ class."""
 
     SPACE = "xyz"
+    SERIALIZE = ("xyz", "--xyz-d50")
     CHANNEL_NAMES = ("x", "y", "z", "alpha")
-    DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space=SPACE))
-    WHITE = _cat.WHITES["D50"]
+    DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space='|'.join(SERIALIZE), channels=3))
+    WHITE = "D50"
 
-    _range = (
+    RANGE = (
         GamutUnbound([0.0, 1.0]),
         GamutUnbound([0.0, 1.0]),
         GamutUnbound([0.0, 1.0])

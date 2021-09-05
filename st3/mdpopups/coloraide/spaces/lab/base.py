@@ -1,22 +1,23 @@
 """Lab class."""
-from ..spaces import Space, RE_DEFAULT_MATCH, GamutUnbound, Percent
-from . import _cat
-from .xyz import XYZ
-from .. import util
+from ...spaces import Space, RE_DEFAULT_MATCH, GamutUnbound, Percent
+from ..xyz import XYZ
+from ... import util
 import re
 
-EPSILON3 = 216 / 24389  # `6^3 / 29^3`
-EPSILON = 24 / 116
-RATIO1 = 16 / 116
-RATIO2 = 108 / 841
-RATIO3 = 841 / 108
+EPSILON = 216 / 24389  # `6^3 / 29^3`
+EPSILON3 = 6 / 29  # Cube root of EPSILON
+KAPPA = 24389 / 27
+KE = 8  # KAPPA * EPSILON = 8
 
 
-def lab_to_xyz(lab):
+def lab_to_xyz(lab, white):
     """
     Convert Lab to D50-adapted XYZ.
 
-    http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+    http://www.brucelindbloom.com/Eqn_Lab_to_XYZ.html
+
+    While the derivation is different than the specification, the results are the same as Appendix D:
+    https://www.cdvplus.cz/file/3-publikace-cie15-2004/
     """
 
     l, a, b = lab
@@ -28,22 +29,29 @@ def lab_to_xyz(lab):
 
     # compute `xyz`
     xyz = [
-        fx ** 3 if fx > EPSILON else (fx - RATIO1) * RATIO2,
-        fy ** 3 if fy > EPSILON or l > 8 else (fy - RATIO1) * RATIO2,
-        fz ** 3 if fz > EPSILON else (fz - RATIO1) * RATIO2
+        fx ** 3 if fx > EPSILON3 else (116 * fx - 16) / KAPPA,
+        fy ** 3 if l > KE else l / KAPPA,
+        fz ** 3 if fz > EPSILON3 else (116 * fz - 16) / KAPPA
     ]
 
     # Compute XYZ by scaling `xyz` by reference `white`
-    return util.multiply(xyz, Lab.white())
+    return util.multiply(xyz, white)
 
 
-def xyz_to_lab(xyz):
-    """Assuming XYZ is relative to D50, convert to CIE Lab from CIE standard."""
+def xyz_to_lab(xyz, white):
+    """
+    Assuming XYZ is relative to D50, convert to CIE Lab from CIE standard.
+
+    http://www.brucelindbloom.com/Eqn_XYZ_to_Lab.html
+
+    While the derivation is different than the specification, the results are the same:
+    https://www.cdvplus.cz/file/3-publikace-cie15-2004/
+    """
 
     # compute `xyz`, which is XYZ scaled relative to reference white
-    xyz = util.divide(xyz, Lab.white())
+    xyz = util.divide(xyz, white)
     # Compute `fx`, `fy`, and `fz`
-    fx, fy, fz = [util.cbrt(i) if i > EPSILON3 else (RATIO3 * i) + RATIO1 for i in xyz]
+    fx, fy, fz = [util.cbrt(i) if i > EPSILON else (KAPPA * i + 16) / 116 for i in xyz]
 
     return (
         (116.0 * fy) - 16.0,
@@ -57,7 +65,7 @@ class LabBase(Space):
 
     CHANNEL_NAMES = ("lightness", "a", "b", "alpha")
 
-    _range = (
+    RANGE = (
         GamutUnbound([Percent(0), Percent(100.0)]),  # Technically we could/should clamp the zero side.
         GamutUnbound([-160, 160]),  # No limit, but we could impose one +/-160?
         GamutUnbound([-160, 160])  # No limit, but we could impose one +/-160?
@@ -104,17 +112,18 @@ class Lab(LabBase):
     """Lab class."""
 
     SPACE = "lab"
-    DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space=SPACE))
-    WHITE = _cat.WHITES["D50"]
+    SERIALIZE = ("--lab",)
+    DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space='|'.join(SERIALIZE), channels=3))
+    WHITE = "D50"
 
     @classmethod
-    def _to_xyz(cls, lab):
+    def _to_xyz(cls, parent, lab):
         """To XYZ."""
 
-        return _cat.chromatic_adaption(cls.white(), XYZ.white(), lab_to_xyz(lab))
+        return parent.chromatic_adaptation(cls.WHITE, XYZ.WHITE, lab_to_xyz(lab, cls.white()))
 
     @classmethod
-    def _from_xyz(cls, xyz):
+    def _from_xyz(cls, parent, xyz):
         """From XYZ."""
 
-        return xyz_to_lab(_cat.chromatic_adaption(XYZ.white(), cls.white(), xyz))
+        return xyz_to_lab(parent.chromatic_adaptation(XYZ.WHITE, cls.WHITE, xyz), cls.white())

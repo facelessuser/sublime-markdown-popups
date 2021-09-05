@@ -235,12 +235,13 @@ class ColorMod:
 
             if color is not None:
                 self._color = color
-                if not self._color.in_gamut():
-                    self._color.fit(method="clip", in_place=True)
+                self._color.fit(method="clip", in_place=True)
 
                 while not done:
                     m = None
-                    for name, pattern in RE_ADJUSTERS.items():
+                    name = None
+                    for key, pattern in RE_ADJUSTERS.items():
+                        name = key
                         m = pattern.match(string, start)
                         if m:
                             start = m.end(0)
@@ -262,8 +263,7 @@ class ColorMod:
                     else:
                         break
 
-                    if not self._color.in_gamut():
-                        self._color.fit(method="clip", in_place=True)
+                    self._color.fit(method="clip", in_place=True)
             else:
                 raise ValueError('Could not calculate base color')
         except Exception:

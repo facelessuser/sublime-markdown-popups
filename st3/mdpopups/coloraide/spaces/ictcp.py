@@ -3,9 +3,8 @@ ICtCp class.
 
 https://professional.dolby.com/siteassets/pdfs/ictcp_dolbywhitepaper_v071.pdf
 """
-from ..spaces import Space, RE_DEFAULT_MATCH, GamutUnbound
-from . import _cat
-from .xyz_d65 import XYZ
+from ..spaces import Space, RE_DEFAULT_MATCH, GamutUnbound, OptionalPercent
+from .xyz import XYZ
 from .. import util
 import re
 
@@ -85,12 +84,13 @@ class ICtCp(Space):
     """ICtCp class."""
 
     SPACE = "ictcp"
+    SERIALIZE = ("--ictcp",)
     CHANNEL_NAMES = ("i", "ct", "cp", "alpha")
-    DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space=SPACE))
-    WHITE = _cat.WHITES["D65"]
+    DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space='|'.join(SERIALIZE), channels=3))
+    WHITE = "D65"
 
-    _range = (
-        GamutUnbound([0, 1]),
+    RANGE = (
+        GamutUnbound([OptionalPercent(0), OptionalPercent(1)]),
         GamutUnbound([-0.5, 0.5]),
         GamutUnbound([-0.5, 0.5])
     )
@@ -132,13 +132,13 @@ class ICtCp(Space):
         self._coords[2] = self._handle_input(value)
 
     @classmethod
-    def _to_xyz(cls, ictcp):
+    def _to_xyz(cls, parent, ictcp):
         """To XYZ."""
 
-        return _cat.chromatic_adaption(cls.white(), XYZ.white(), ictcp_to_xyz_d65(ictcp))
+        return parent.chromatic_adaptation(cls.WHITE, XYZ.WHITE, ictcp_to_xyz_d65(ictcp))
 
     @classmethod
-    def _from_xyz(cls, xyz):
+    def _from_xyz(cls, parent, xyz):
         """From XYZ."""
 
-        return xyz_d65_to_ictcp(_cat.chromatic_adaption(XYZ.white(), cls.white(), xyz))
+        return xyz_d65_to_ictcp(parent.chromatic_adaptation(XYZ.WHITE, cls.WHITE, xyz))
