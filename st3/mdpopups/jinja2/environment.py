@@ -12,23 +12,23 @@ import os
 import sys
 import weakref
 from functools import reduce, partial
-from jinja2 import nodes
-from jinja2.defaults import BLOCK_START_STRING, \
+from . import nodes
+from .defaults import BLOCK_START_STRING, \
      BLOCK_END_STRING, VARIABLE_START_STRING, VARIABLE_END_STRING, \
      COMMENT_START_STRING, COMMENT_END_STRING, LINE_STATEMENT_PREFIX, \
      LINE_COMMENT_PREFIX, TRIM_BLOCKS, NEWLINE_SEQUENCE, \
      DEFAULT_FILTERS, DEFAULT_TESTS, DEFAULT_NAMESPACE, \
      DEFAULT_POLICIES, KEEP_TRAILING_NEWLINE, LSTRIP_BLOCKS
-from jinja2.lexer import get_lexer, TokenStream
-from jinja2.parser import Parser
-from jinja2.nodes import EvalContext
-from jinja2.compiler import generate, CodeGenerator
-from jinja2.runtime import Undefined, new_context, Context
-from jinja2.exceptions import TemplateSyntaxError, TemplateNotFound, \
+from .lexer import get_lexer, TokenStream
+from .parser import Parser
+from .nodes import EvalContext
+from .compiler import generate, CodeGenerator
+from .runtime import Undefined, new_context, Context
+from .exceptions import TemplateSyntaxError, TemplateNotFound, \
      TemplatesNotFound, TemplateRuntimeError
-from jinja2.utils import import_string, LRUCache, Markup, missing, \
+from .utils import import_string, LRUCache, Markup, missing, \
      concat, consume, internalcode, have_async_gen
-from jinja2._compat import imap, ifilter, string_types, iteritems, \
+from ._compat import imap, ifilter, string_types, iteritems, \
      text_type, reraise, implements_iterator, implements_to_string, \
      encode_filename, PY2, PYPY
 
@@ -660,7 +660,7 @@ class Environment(object):
 
         .. versionadded:: 2.4
         """
-        from jinja2.loaders import ModuleLoader
+        from .loaders import ModuleLoader
 
         if log_function is None:
             log_function = lambda x: None
@@ -770,7 +770,7 @@ class Environment(object):
         # get any exceptions in template rendering there is no need to load
         # all of that.
         if _make_traceback is None:
-            from jinja2.debug import make_traceback as _make_traceback
+            from .debug import make_traceback as _make_traceback
         traceback = _make_traceback(exc_info, source_hint)
         if rendered and self.exception_formatter is not None:
             return self.exception_formatter(traceback)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.2.1
+
+- **FIX**: Fix relative importing of internal `pygments` and `jinja2` packages.
+
 ## 4.2.0
 
 - **NEW**: MdPopups is now self contained and vendors all dependencies.

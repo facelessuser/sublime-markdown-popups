@@ -145,7 +145,7 @@ class HttpLexer(RegexLexer):
         content = match.group()
         offset = match.start()
         if content_type:
-            from pygments.lexers import get_lexer_for_mimetype
+            from .pygments.lexers import get_lexer_for_mimetype
             possible_lexer_mimetypes = [content_type]
             if '+' in content_type:
                 # application/calendar+xml can be treated as application/xml

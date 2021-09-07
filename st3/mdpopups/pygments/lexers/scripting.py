@@ -39,7 +39,7 @@ class LuaLexer(RegexLexer):
 
         .. sourcecode:: pycon
 
-            >>> from pygments.lexers._lua_builtins import MODULES
+            >>> from .pygments.lexers._lua_builtins import MODULES
             >>> MODULES.keys()
             ['string', 'coroutine', 'modules', 'io', 'basic', ...]
     """
@@ -122,7 +122,7 @@ class LuaLexer(RegexLexer):
 
         self._functions = set()
         if self.func_name_highlighting:
-            from pygments.lexers._lua_builtins import MODULES
+            from .pygments.lexers._lua_builtins import MODULES
             for mod, func in iteritems(MODULES):
                 if mod not in self.disabled_modules:
                     self._functions.update(func)

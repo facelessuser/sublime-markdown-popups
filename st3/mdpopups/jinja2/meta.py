@@ -9,9 +9,9 @@
     :copyright: (c) 2017 by the Jinja Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from jinja2 import nodes
-from jinja2.compiler import CodeGenerator
-from jinja2._compat import string_types, iteritems
+from . import nodes
+from .compiler import CodeGenerator
+from ._compat import string_types, iteritems
 
 
 class TrackingCodeGenerator(CodeGenerator):
@@ -39,7 +39,7 @@ def find_undeclared_variables(ast):
     variables will be used depending on the path the execution takes at
     runtime, all variables are returned.
 
-    >>> from jinja2 import Environment, meta
+    >>> from . import Environment, meta
     >>> env = Environment()
     >>> ast = env.parse('{% set foo = 42 %}{{ bar + foo }}')
     >>> meta.find_undeclared_variables(ast) == set(['bar'])
@@ -63,7 +63,7 @@ def find_referenced_templates(ast):
     imports.  If dynamic inheritance or inclusion is used, `None` will be
     yielded.
 
-    >>> from jinja2 import Environment, meta
+    >>> from . import Environment, meta
     >>> env = Environment()
     >>> ast = env.parse('{% extends "layout.html" %}{% include helper %}')
     >>> list(meta.find_referenced_templates(ast))

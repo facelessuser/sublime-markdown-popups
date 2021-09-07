@@ -1101,7 +1101,7 @@ if __name__ == '__main__':  # pragma: no cover
     except ImportError:
         from urllib.request import FancyURLopener
 
-    from pygments.util import format_lines
+    from .pygments.util import format_lines
 
     # urllib ends up wanting to import a module called 'math' -- if
     # pygments/lexers is in the path, this ends badly.

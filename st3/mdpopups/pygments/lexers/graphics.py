@@ -280,7 +280,7 @@ class AsymptoteLexer(RegexLexer):
     }
 
     def get_tokens_unprocessed(self, text):
-        from pygments.lexers._asy_builtins import ASYFUNCNAME, ASYVARNAME
+        from .pygments.lexers._asy_builtins import ASYFUNCNAME, ASYVARNAME
         for index, token, value in \
                 RegexLexer.get_tokens_unprocessed(self, text):
             if token is Name and value in ASYFUNCNAME:

@@ -13,7 +13,7 @@ import json
 import errno
 from collections import deque
 from threading import Lock
-from jinja2._compat import text_type, string_types, implements_iterator, \
+from ._compat import text_type, string_types, implements_iterator, \
      url_quote
 
 
@@ -98,7 +98,7 @@ def is_undefined(obj):
                 return default
             return var
     """
-    from jinja2.runtime import Undefined
+    from .runtime import Undefined
     return isinstance(obj, Undefined)
 
 
@@ -114,8 +114,8 @@ def clear_caches():
     the time.  Normally you don't have to care about that but if you are
     measuring memory consumption you may want to clean the caches.
     """
-    from jinja2.environment import _spontaneous_environments
-    from jinja2.lexer import _lexer_cache
+    from .environment import _spontaneous_environments
+    from .lexer import _lexer_cache
     _spontaneous_environments.clear()
     _lexer_cache.clear()
 
@@ -237,7 +237,7 @@ def urlize(text, trim_url_limit=None, rel=None, target=None):
 
 def generate_lorem_ipsum(n=5, html=True, min=20, max=100):
     """Generate some lorem ipsum for the template."""
-    from jinja2.constants import LOREM_IPSUM_WORDS
+    from .constants import LOREM_IPSUM_WORDS
     from random import choice, randrange
     words = LOREM_IPSUM_WORDS.split()
     result = []
@@ -499,7 +499,7 @@ def select_autoescape(enabled_extensions=('html', 'htm', 'xml'),
     If you want to enable it for all templates created from strings or
     for all templates with `.html` and `.xml` extensions::
 
-        from jinja2 import Environment, select_autoescape
+        from . import Environment, select_autoescape
         env = Environment(autoescape=select_autoescape(
             enabled_extensions=('html', 'xml'),
             default_for_string=True,
@@ -508,7 +508,7 @@ def select_autoescape(enabled_extensions=('html', 'htm', 'xml'),
     Example configuration to turn it on at all times except if the template
     ends with `.txt`::
 
-        from jinja2 import Environment, select_autoescape
+        from . import Environment, select_autoescape
         env = Environment(autoescape=select_autoescape(
             disabled_extensions=('txt',),
             default_for_string=True,
@@ -644,4 +644,4 @@ except SyntaxError:
 
 
 # Imported here because that's where it was in the past
-from .markupsafe import Markup, escape, soft_unicode
+from ..markupsafe import Markup, escape, soft_unicode

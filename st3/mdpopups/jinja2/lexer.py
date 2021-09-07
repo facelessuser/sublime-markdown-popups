@@ -18,9 +18,9 @@ import re
 from collections import deque
 from operator import itemgetter
 
-from jinja2._compat import implements_iterator, intern, iteritems, text_type
-from jinja2.exceptions import TemplateSyntaxError
-from jinja2.utils import LRUCache
+from ._compat import implements_iterator, intern, iteritems, text_type
+from .exceptions import TemplateSyntaxError
+from .utils import LRUCache
 
 # cache for the lexers. Exists in order to be able to have multiple
 # environments with the same lexer
@@ -42,14 +42,13 @@ except SyntaxError:
 else:
     # Unicode support, build a pattern to match valid characters, and set flag
     # to use str.isidentifier to validate during lexing
-    from jinja2 import _identifier
+    from . import _identifier
     name_re = re.compile(r'[\w{0}]+'.format(_identifier.pattern))
     check_ident = True
     # remove the pattern from memory after building the regex
     import sys
-    del sys.modules['jinja2._identifier']
-    import jinja2
-    del jinja2._identifier
+    del sys.modules['mdpopups.jinja2._identifier']
+    del sys.modules['mdpopups.jinja2']._identifier
     del _identifier
 
 float_re = re.compile(r'(?<!\.)\d+\.\d+')

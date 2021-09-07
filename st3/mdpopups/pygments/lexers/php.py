@@ -108,7 +108,7 @@ class PhpLexer(RegexLexer):
 
         .. sourcecode:: pycon
 
-            >>> from pygments.lexers._php_builtins import MODULES
+            >>> from .pygments.lexers._php_builtins import MODULES
             >>> MODULES.keys()
             ['PHP Options/Info', 'Zip', 'dba', ...]
 

@@ -19,7 +19,7 @@ from . import version as ver
 from .coloraide import util
 from .st_colormod import Color
 from . import jinja2
-from pygments.formatters import HtmlFormatter
+from .pygments.formatters import HtmlFormatter
 from collections import OrderedDict
 from .st_clean_css import clean_css
 import copy

@@ -15,11 +15,11 @@ import warnings
 
 from itertools import groupby, chain
 from collections import namedtuple
-from jinja2.utils import Markup, escape, pformat, urlize, soft_unicode, \
+from .utils import Markup, escape, pformat, urlize, soft_unicode, \
      unicode_urlencode, htmlsafe_json_dumps
-from jinja2.runtime import Undefined
-from jinja2.exceptions import FilterArgumentError
-from jinja2._compat import imap, string_types, text_type, iteritems, PY2
+from .runtime import Undefined
+from .exceptions import FilterArgumentError
+from ._compat import imap, string_types, text_type, iteritems, PY2
 
 
 _word_re = re.compile(r'\w+', re.UNICODE)

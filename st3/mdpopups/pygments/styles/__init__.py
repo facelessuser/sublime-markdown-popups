@@ -58,7 +58,7 @@ def get_style_by_name(name):
         cls = name.title() + "Style"
 
     try:
-        mod = __import__('pygments.styles.' + mod, None, None, [cls])
+        mod = __import__('mdpopups.pygments.styles.' + mod, None, None, [cls])
     except ImportError:
         raise ClassNotFound("Could not find style module %r" % mod +
                          (builtin and ", though it should be builtin") + ".")

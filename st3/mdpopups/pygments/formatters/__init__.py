@@ -36,6 +36,8 @@ def _fn_matches(fn, glob):
 
 def _load_formatters(module_name):
     """Load a formatter (and all others in the module too)."""
+    if module_name.startswith('pygments'):
+        module_name = module_name.replace('pygments', 'mdpopups.pygments', 1)
     mod = __import__(module_name, None, None, ['__all__'])
     for formatter_name in mod.__all__:
         cls = getattr(mod, formatter_name)

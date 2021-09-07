@@ -14,9 +14,9 @@ import weakref
 from types import ModuleType
 from os import path
 from hashlib import sha1
-from jinja2.exceptions import TemplateNotFound
-from jinja2.utils import open_if_exists, internalcode
-from jinja2._compat import string_types, iteritems
+from .exceptions import TemplateNotFound
+from .utils import open_if_exists, internalcode
+from ._compat import string_types, iteritems
 
 
 def split_template_path(template):
@@ -43,7 +43,7 @@ class BaseLoader(object):
     A very basic example for a loader that looks up templates on the file
     system could look like this::
 
-        from jinja2 import BaseLoader, TemplateNotFound
+        from . import BaseLoader, TemplateNotFound
         from os.path import join, exists, getmtime
 
         class MyLoader(BaseLoader):

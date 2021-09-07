@@ -5,9 +5,9 @@ Licensed under MIT
 Copyright (c) 2015 - 2020 Isaac Muse <isaacmuse@gmail.com>
 """
 import re
-from pygments import highlight
-from pygments.lexers import get_lexer_by_name, guess_lexer
-from pygments.formatters import find_formatter_class
+from .pygments import highlight
+from .pygments.lexers import get_lexer_by_name, guess_lexer
+from .pygments.formatters import find_formatter_class
 HtmlFormatter = find_formatter_class('html')
 pygments = True
 

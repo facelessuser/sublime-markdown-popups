@@ -515,7 +515,7 @@ if __name__ == '__main__':  # pragma: no cover
     except ImportError:
         from urllib.request import urlopen
 
-    from pygments.util import format_lines
+    from .pygments.util import format_lines
 
     # One man's constant is another man's variable.
     SOURCE_URL = 'https://github.com/postgres/postgres/raw/master'

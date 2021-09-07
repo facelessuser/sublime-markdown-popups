@@ -38,6 +38,9 @@ def _fn_matches(fn, glob):
 
 def _load_lexers(module_name):
     """Load a lexer (and all others in the module too)."""
+
+    if module_name.startswith('pygments'):
+        module_name = module_name.replace('pygments', 'mdpopups.pygments', 1)
     mod = __import__(module_name, None, None, ['__all__'])
     for lexer_name in mod.__all__:
         cls = getattr(mod, lexer_name)
@@ -186,7 +189,7 @@ def guess_lexer_for_filename(_fn, _text, **options):
 
     usage::
 
-        >>> from pygments.lexers import guess_lexer_for_filename
+        >>> from .pygments.lexers import guess_lexer_for_filename
         >>> guess_lexer_for_filename('hello.html', '<%= @foo %>')
         <pygments.lexers.templates.RhtmlLexer object at 0xb7d2f32c>
         >>> guess_lexer_for_filename('hello.html', '<h1>{{ title|e }}</h1>')

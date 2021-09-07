@@ -86,7 +86,7 @@ class PygmentsDoc(Directive):
         return node.children
 
     def document_lexers(self):
-        from pygments.lexers._mapping import LEXERS
+        from .pygments.lexers._mapping import LEXERS
         out = []
         modules = {}
         moduledocstrings = {}

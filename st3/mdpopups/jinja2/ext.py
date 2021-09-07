@@ -12,17 +12,17 @@
 """
 import re
 
-from jinja2 import nodes
-from jinja2.defaults import BLOCK_START_STRING, \
+from  import nodes
+from .defaults import BLOCK_START_STRING, \
      BLOCK_END_STRING, VARIABLE_START_STRING, VARIABLE_END_STRING, \
      COMMENT_START_STRING, COMMENT_END_STRING, LINE_STATEMENT_PREFIX, \
      LINE_COMMENT_PREFIX, TRIM_BLOCKS, NEWLINE_SEQUENCE, \
      KEEP_TRAILING_NEWLINE, LSTRIP_BLOCKS
-from jinja2.environment import Environment
-from jinja2.runtime import concat
-from jinja2.exceptions import TemplateAssertionError, TemplateSyntaxError
-from jinja2.utils import contextfunction, import_string, Markup
-from jinja2._compat import with_metaclass, string_types, iteritems
+from .environment import Environment
+from .runtime import concat
+from .exceptions import TemplateAssertionError, TemplateSyntaxError
+from .utils import contextfunction, import_string, Markup
+from ._compat import with_metaclass, string_types, iteritems
 
 
 # the only real useful gettext functions for a Jinja template.  Note
@@ -449,7 +449,7 @@ def extract_from_ast(node, gettext_functions=GETTEXT_FUNCTIONS,
 
     This example explains the behavior:
 
-    >>> from jinja2 import Environment
+    >>> from . import Environment
     >>> env = Environment()
     >>> node = env.parse('{{ (_("foo"), _(), ngettext("foo", "bar", 42)) }}')
     >>> list(extract_from_ast(node))

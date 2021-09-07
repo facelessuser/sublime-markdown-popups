@@ -16,8 +16,8 @@ import types
 import operator
 
 from collections import deque
-from jinja2.utils import Markup
-from jinja2._compat import izip, with_metaclass, text_type, PY2
+from .utils import Markup
+from ._compat import izip, with_metaclass, text_type, PY2
 
 
 #: the types we support for context functions

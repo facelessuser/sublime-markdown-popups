@@ -65,7 +65,7 @@ class ErbLexer(Lexer):
     _block_re = re.compile(r'(<%%|%%>|<%=|<%#|<%-|<%|-%>|%>|^%[^%].*?$)', re.M)
 
     def __init__(self, **options):
-        from pygments.lexers.ruby import RubyLexer
+        from .pygments.lexers.ruby import RubyLexer
         self.ruby_lexer = RubyLexer(**options)
         Lexer.__init__(self, **options)
 

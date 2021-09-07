@@ -441,7 +441,7 @@ def main_inner(popts, args, usage):
        fmter.name in ('Terminal', 'Terminal256'):  # pragma: no cover
         # unfortunately colorama doesn't support binary streams on Py3
         if sys.version_info > (3,):
-            from pygments.util import UnclosingTextIOWrapper
+            from .pygments.util import UnclosingTextIOWrapper
             outfile = UnclosingTextIOWrapper(outfile, encoding=fmter.encoding)
             fmter.encoding = None
         try:

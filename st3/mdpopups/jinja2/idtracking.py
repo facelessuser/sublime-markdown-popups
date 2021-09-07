@@ -1,5 +1,5 @@
-from jinja2.visitor import NodeVisitor
-from jinja2._compat import iteritems
+from .visitor import NodeVisitor
+from ._compat import iteritems
 
 
 VAR_LOAD_PARAMETER = 'param'

@@ -128,7 +128,7 @@ class RstLexer(RegexLexer):
     flags = re.MULTILINE
 
     def _handle_sourcecode(self, match):
-        from pygments.lexers import get_lexer_by_name
+        from .pygments.lexers import get_lexer_by_name
 
         # section header
         yield match.start(1), Punctuation, match.group(1)

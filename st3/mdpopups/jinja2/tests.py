@@ -11,8 +11,8 @@
 import operator
 import re
 from collections import Mapping
-from jinja2.runtime import Undefined
-from jinja2._compat import text_type, string_types, integer_types
+from .runtime import Undefined
+from ._compat import text_type, string_types, integer_types
 import decimal
 
 number_re = re.compile(r'^-?\d+(\.\d+)?$')

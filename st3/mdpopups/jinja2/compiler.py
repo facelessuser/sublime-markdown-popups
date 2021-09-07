@@ -12,15 +12,15 @@ from itertools import chain
 from copy import deepcopy
 from keyword import iskeyword as is_python_keyword
 from functools import update_wrapper
-from jinja2 import nodes
-from jinja2.nodes import EvalContext
-from jinja2.visitor import NodeVisitor
-from jinja2.optimizer import Optimizer
-from jinja2.exceptions import TemplateAssertionError
-from jinja2.utils import Markup, concat, escape
-from jinja2._compat import range_type, text_type, string_types, \
+from . import nodes
+from .nodes import EvalContext
+from .visitor import NodeVisitor
+from .optimizer import Optimizer
+from .exceptions import TemplateAssertionError
+from .utils import Markup, concat, escape
+from ._compat import range_type, text_type, string_types, \
      iteritems, NativeStringIO, imap, izip
-from jinja2.idtracking import Symbols, VAR_LOAD_PARAMETER, \
+from .idtracking import Symbols, VAR_LOAD_PARAMETER, \
      VAR_LOAD_RESOLVE, VAR_LOAD_ALIAS, VAR_LOAD_UNDEFINED
 
 
@@ -696,12 +696,12 @@ class CodeGenerator(NodeVisitor):
         assert frame is None, 'no root frame allowed'
         eval_ctx = EvalContext(self.environment, self.name)
 
-        from jinja2.runtime import __all__ as exported
+        from .runtime import __all__ as exported
         self.writeline('from __future__ import %s' % ', '.join(code_features))
-        self.writeline('from jinja2.runtime import ' + ', '.join(exported))
+        self.writeline('from mdpopups.jinja2.runtime import ' + ', '.join(exported))
 
         if self.environment.is_async:
-            self.writeline('from jinja2.asyncsupport import auto_await, '
+            self.writeline('from mdpopups.jinja2.asyncsupport import auto_await, '
                            'auto_aiter, make_async_loop_context')
 
         # if we want a deferred initialization we cannot move the

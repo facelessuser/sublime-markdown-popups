@@ -13,12 +13,12 @@ import sys
 from itertools import chain
 from types import MethodType
 
-from jinja2.nodes import EvalContext, _context_function_types
-from jinja2.utils import Markup, soft_unicode, escape, missing, concat, \
+from .nodes import EvalContext, _context_function_types
+from .utils import Markup, soft_unicode, escape, missing, concat, \
      internalcode, object_type_repr, evalcontextfunction, Namespace
-from jinja2.exceptions import UndefinedError, TemplateRuntimeError, \
+from .exceptions import UndefinedError, TemplateRuntimeError, \
      TemplateNotFound
-from jinja2._compat import imap, text_type, iteritems, \
+from ._compat import imap, text_type, iteritems, \
      implements_iterator, implements_to_string, string_types, PY2, \
      with_metaclass
 
