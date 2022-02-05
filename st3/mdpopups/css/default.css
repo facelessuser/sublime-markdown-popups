@@ -2,7 +2,7 @@
 html {
   --mdpopups-fg: var(--foreground);
   --mdpopups-link: var(--bluish);
-  --mdpopups-font-mono: "sf mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  --mdpopups-font-mono: "{{ var.font_face }}", "sf mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   --mdpopups-admon-fg: var(--foreground);
   --mdpopups-admon-info-fg: var(--foreground);
   --mdpopups-admon-error-fg: var(--foreground);

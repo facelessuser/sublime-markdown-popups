@@ -522,7 +522,8 @@ class SchemeTemplate(object):
             {
                 'is_phantom': self.css_type == PHANTOM,
                 'is_popup': self.css_type == POPUP,
-                'is_sheet': self.css_type == SHEET
+                'is_sheet': self.css_type == SHEET,
+                'font_face': self.view.settings().get('font_face')
             }
         )
 
