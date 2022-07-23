@@ -1,6 +1,6 @@
 # Changelog
 
-## 4.3.0
+## 4.2.2
 
 - **FIX**: Remove a hack hack related to quote entities.
 - **FIX**: Fix issue related to transient HTML Sheets.
