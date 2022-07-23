@@ -765,5 +765,3 @@ MdPopups provides a number of accessible functions.
 
 !!! new "New in 4.0"
     This is a new feature added in 4.0, and is currently considered experimental.
-
---8<-- "refs.txt"

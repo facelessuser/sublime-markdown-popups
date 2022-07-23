@@ -53,7 +53,7 @@ matrix:
       - .md-source__repository
       - .headerlink
       - .md-icon
-      - .md-footer-social__link
+      - .md-social__link
   - pyspelling.filters.url:
 
 - name: markdown

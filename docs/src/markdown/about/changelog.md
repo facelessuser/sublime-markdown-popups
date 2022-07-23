@@ -299,5 +299,3 @@ June 1, 2017
 Nov 12, 2015
 
 - **NEW**: First release.
-
---8<-- "refs.txt"

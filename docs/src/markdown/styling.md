@@ -531,9 +531,3 @@ Variables are found under `var`.
     a { {{'.support.function'|css('color')}} }
     {% endif %}
     ```
-
---8<--
-refs.txt
-
-uml.txt
---8<-- 
