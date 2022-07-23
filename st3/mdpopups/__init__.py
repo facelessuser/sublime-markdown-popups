@@ -9,6 +9,7 @@ TextMate theme to CSS.
 https://manual.macromates.com/en/language_grammars#naming_conventions
 """
 import sublime
+import sublime_api
 from . import markdown
 from . import jinja2
 import traceback
@@ -741,6 +742,11 @@ if HTML_SHEET_SUPPORT:
         """Update an HTML sheet."""
 
         window = sheet.window()
+
+        # Probably a transient sheet, just get a window
+        if window is None:
+            window = sublime.active_window()
+
         view = window.create_output_panel('mdpopups-dummy', unlisted=True)
 
         try:
@@ -752,8 +758,7 @@ if HTML_SHEET_SUPPORT:
             _log(traceback.format_exc())
             html = IDK
 
-        sheet.set_contents(html)
-
+        sublime_api.html_sheet_set_contents(sheet.id(), html)
 
 class Phantom(sublime.Phantom):
     """A phantom object."""
