@@ -760,6 +760,7 @@ if HTML_SHEET_SUPPORT:
 
         sublime_api.html_sheet_set_contents(sheet.id(), html)
 
+
 class Phantom(sublime.Phantom):
     """A phantom object."""
 
