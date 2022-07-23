@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.0
+
+- **FIX**: Remove a hack hack related to quote entities.
+
 ## 4.2.1
 
 - **FIX**: Fix relative importing of internal `pygments` and `jinja2` packages.
