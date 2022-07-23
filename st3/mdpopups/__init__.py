@@ -469,7 +469,7 @@ def md2html(
         sublime_hl=sublime_hl,
         allow_code_wrap=fm.get('allow_code_wrap', False),
         language_map=fm.get('language_map', {})
-    ).convert(_markup_template(markup, template_vars, template_env_options)).replace('&quot;', '"')
+    ).convert(_markup_template(markup, template_vars, template_env_options))
 
 
 def color_box(

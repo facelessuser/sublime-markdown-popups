@@ -93,5 +93,3 @@ For a list of all currently supported syntax mappings, see the official [mapping
     When submitting new languages to the mapping table, it is encouraged to pick key names that correspond to what is
     used in Pygments so a User can switch between Pygments' and Sublime's syntax highlighter and still get
     highlighting.
-
---8<-- "refs.txt"

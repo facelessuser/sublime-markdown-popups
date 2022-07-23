@@ -12,5 +12,3 @@ If ever you are on a older version than is currently released, and Package Contr
 can force the update by running the `Package Control: Satisfy Dependencies` command from the command palette.
 
 Remember, MdPopups is for Sublime Text 3 builds 3124+.
-
---8<-- "refs.txt"
