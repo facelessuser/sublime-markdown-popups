@@ -238,12 +238,12 @@ class SublimeHighlight(object):
             if lang in (tuple(user_v[0]) + plugin_v[0] + v[0]):
                 for l in (tuple(user_v[1]) + plugin_v[1] + v[1]):
                     for ext in ST_LANGUAGES:
-                        sytnax_file = 'Packages/{}{}'.format(l, ext)
+                        syntax_file = 'Packages/{}{}'.format(l, ext)
                         try:
-                            sublime.load_binary_resource(sytnax_file)
+                            sublime.load_binary_resource(syntax_file)
                         except Exception:
                             continue
-                        self.view.set_syntax_file(sytnax_file)
+                        self.view.assign_syntax(syntax_file)
                         loaded = True
                         break
                     if loaded:
@@ -254,12 +254,12 @@ class SublimeHighlight(object):
             # Default to plain text
             for ext in ST_LANGUAGES:
                 # Just in case text one day switches to 'sublime-syntax'
-                sytnax_file = 'Packages/Text/Plain text{}'.format(ext)
+                syntax_file = 'Packages/Text/Plain text{}'.format(ext)
                 try:
-                    sublime.load_binary_resource(sytnax_file)
+                    sublime.load_binary_resource(syntax_file)
                 except Exception:
                     continue
-                self.view.set_syntax_file(sytnax_file)
+                self.view.assign_syntax(syntax_file)
 
     def syntax_highlight(self, src, lang, hl_lines=[], inline=False, no_wrap=False, code_wrap=False, plugin_map=None):
         """Syntax Highlight."""
