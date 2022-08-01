@@ -250,6 +250,15 @@ class SublimeHighlight(object):
                         break
             if loaded:
                 break
+        # For ST 4, use "source.LANG" and "text.LANG" as fallbacks if possible
+        if not loaded and hasattr(sublime, 'find_syntax_by_scope'):
+            for scope in ('source.' + lang, 'text.' + lang):
+                syntaxes = sublime.find_syntax_by_scope(scope)
+                if not syntaxes:
+                    continue
+                self.view.assign_syntax(syntaxes[0])
+                loaded = True
+                break
         if not loaded:
             # Default to plain text
             for ext in ST_LANGUAGES:
