@@ -243,7 +243,7 @@ class SublimeHighlight(object):
                             sublime.load_binary_resource(syntax_file)
                         except Exception:
                             continue
-                        self.view.set_syntax_file(syntax_file)
+                        self.view.assign_syntax(syntax_file)
                         loaded = True
                         break
                     if loaded:
@@ -259,7 +259,7 @@ class SublimeHighlight(object):
                     sublime.load_binary_resource(syntax_file)
                 except Exception:
                     continue
-                self.view.set_syntax_file(syntax_file)
+                self.view.assign_syntax(syntax_file)
 
     def syntax_highlight(self, src, lang, hl_lines=[], inline=False, no_wrap=False, code_wrap=False, plugin_map=None):
         """Syntax Highlight."""
