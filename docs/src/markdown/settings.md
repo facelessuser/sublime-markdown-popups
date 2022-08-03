@@ -87,6 +87,13 @@ extending, the user mappings will be cycled through first.
 }
 ```
 
+If you are using ST 4, you can also use `scope:BASE_SCOPE` to select a syntax.
+```js
+"mdpopups.sublime_user_lang_map": {
+    "javascript": [["javascript", "js"], ["scope:source.js"]]
+}
+```
+
 For a list of all currently supported syntax mappings, see the official [mapping file][language-map].
 
 !!! tip "Tip"
