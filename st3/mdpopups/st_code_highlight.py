@@ -237,6 +237,13 @@ class SublimeHighlight(object):
             user_v = user_map.get(key, (tuple(), tuple()))
             if lang in (tuple(user_v[0]) + plugin_v[0] + v[0]):
                 for l in (tuple(user_v[1]) + plugin_v[1] + v[1]):
+                    if l.startswith('scope:'):
+                        scope = l[6:]  # remove "scope:" prefix
+                        if self.set_syntax_by_scope(scope):
+                            loaded = True
+                            break
+                        continue
+
                     for ext in ST_LANGUAGES:
                         syntax_file = 'Packages/{}{}'.format(l, ext)
                         try:
@@ -250,6 +257,12 @@ class SublimeHighlight(object):
                         break
             if loaded:
                 break
+        if not loaded:
+            # Use "source.LANG" and "text.LANG" as fallbacks if possible
+            for scope in ('source.' + lang, 'text.' + lang):
+                if self.set_syntax_by_scope(scope):
+                    loaded = True
+                    break
         if not loaded:
             # Default to plain text
             for ext in ST_LANGUAGES:
@@ -276,3 +289,12 @@ class SublimeHighlight(object):
         self.html = []
         self.write_body()
         return ''.join(self.html)
+
+    def set_syntax_by_scope(self, scope):
+        """Set syntax by the `scope`. Only works in ST 4."""
+        if hasattr(sublime, 'find_syntax_by_scope'):
+            syntaxes = sublime.find_syntax_by_scope(scope)
+            if syntaxes:
+                self.view.assign_syntax(syntaxes[0])
+                return True
+        return False
