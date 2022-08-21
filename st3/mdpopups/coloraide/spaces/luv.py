@@ -1,57 +1,49 @@
 """
 Luv class.
 
-https://en.wikipedia.org/wiki/CIELUV
+https://en.wikipedia.org/wiki/CIELuv
 """
-from ..spaces import Space, RE_DEFAULT_MATCH, GamutUnbound, Percent, WHITES
-from .xyz import XYZ
+from ..spaces import Space, Labish
+from ..cat import WHITES
+from ..channels import Channel, FLG_MIRROR_PERCENT
+from .lab import KAPPA, EPSILON, KE
 from .. import util
-import re
+from .. import algebra as alg
+from ..types import Vector
+from typing import Tuple
 
 
-def xyz_to_uv(xyz):
-    """XYZ to UV."""
-
-    x, y, z = xyz
-    denom = (x + 15 * y + 3 * z)
-    if denom != 0:
-        u = (4 * x) / (x + 15 * y + 3 * z)
-        v = (9 * y) / (x + 15 * y + 3 * z)
-    else:
-        u = v = 0
-
-    return u, v
-
-
-def xyz_to_luv(xyz, white):
+def xyz_to_luv(xyz: Vector, white: Tuple[float, float]) -> Vector:
     """XYZ to Luv."""
 
-    u, v = xyz_to_uv(xyz)
-    un, vn = xyz_to_uv(WHITES[white])
+    u, v = util.xy_to_uv(util.xyz_to_xyY(xyz, white)[:2])
+    w_xyz = util.xy_to_xyz(white)
+    ur, vr = util.xy_to_uv(white)
 
-    y = xyz[1] / WHITES[white][1]
-    l = 116 * util.nth_root(y, 3) - 16 if y > ((6 / 29) ** 3) else ((29 / 3) ** 3) * y
+    yr = xyz[1] / w_xyz[1]
+    l = 116 * alg.nth_root(yr, 3) - 16 if yr > EPSILON else KAPPA * yr
 
     return [
         l,
-        13 * l * (u - un),
-        13 * l * (v - vn),
+        13 * l * (u - ur),
+        13 * l * (v - vr),
     ]
 
 
-def luv_to_xyz(luv, white):
+def luv_to_xyz(luv: Vector, white: Tuple[float, float]) -> Vector:
     """Luv to XYZ."""
 
     l, u, v = luv
-    un, vn = xyz_to_uv(WHITES[white])
+    w_xyz = util.xy_to_xyz(white)
+    ur, vr = util.xy_to_uv(white)
 
     if l != 0:
-        up = (u / ( 13 * l)) + un
-        vp = (v / ( 13 * l)) + vn
+        up = (u / (13 * l)) + ur
+        vp = (v / (13 * l)) + vr
     else:
         up = vp = 0
 
-    y = WHITES[white][1] * ((l + 16) / 116) ** 3 if l > 8 else WHITES[white][1] * l * ((3 / 29) ** 3)
+    y = w_xyz[1] * (((l + 16) / 116) ** 3 if l > KE else l / KAPPA)
 
     if vp != 0:
         x = y * ((9 * up) / (4 * vp))
@@ -62,65 +54,28 @@ def luv_to_xyz(luv, white):
     return [x, y, z]
 
 
-class Luv(Space):
-    """Oklab class."""
+class Luv(Labish, Space):
+    """Luv class."""
 
-    SPACE = "luv"
+    BASE = "xyz-d65"
+    NAME = "luv"
     SERIALIZE = ("--luv",)
-    CHANNEL_NAMES = ("lightness", "u", "v", "alpha")
-    DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space='|'.join(SERIALIZE), channels=3))
-    WHITE = "D65"
-
-    RANGE = (
-        GamutUnbound([Percent(0), Percent(100.0)]),
-        GamutUnbound([-175.0, 175.0]),
-        GamutUnbound([-175.0, 175.0])
+    CHANNELS = (
+        Channel("l", 0.0, 100.0),
+        Channel("u", -215.0, 215.0, flags=FLG_MIRROR_PERCENT),
+        Channel("v", -215.0, 215.0, flags=FLG_MIRROR_PERCENT)
     )
+    CHANNEL_ALIASES = {
+        "lightness": "l"
+    }
+    WHITE = WHITES['2deg']['D65']
 
-    @property
-    def lightness(self):
-        """L channel."""
+    def to_base(self, coords: Vector) -> Vector:
+        """To XYZ D50 from Luv."""
 
-        return self._coords[0]
+        return luv_to_xyz(coords, self.WHITE)
 
-    @lightness.setter
-    def lightness(self, value):
-        """Get true luminance."""
+    def from_base(self, coords: Vector) -> Vector:
+        """From XYZ D50 to Luv."""
 
-        self._coords[0] = self._handle_input(value)
-
-    @property
-    def u(self):
-        """U channel."""
-
-        return self._coords[1]
-
-    @u.setter
-    def u(self, value):
-        """U axis."""
-
-        self._coords[1] = self._handle_input(value)
-
-    @property
-    def v(self):
-        """V channel."""
-
-        return self._coords[2]
-
-    @v.setter
-    def v(self, value):
-        """V axis."""
-
-        self._coords[2] = self._handle_input(value)
-
-    @classmethod
-    def _to_xyz(cls, parent, luv):
-        """To XYZ."""
-
-        return parent.chromatic_adaptation(cls.WHITE, XYZ.WHITE, luv_to_xyz(luv, cls.WHITE))
-
-    @classmethod
-    def _from_xyz(cls, parent, xyz):
-        """From XYZ."""
-
-        return xyz_to_luv(parent.chromatic_adaptation(XYZ.WHITE, cls.WHITE, xyz), cls.WHITE)
+        return xyz_to_luv(coords, self.WHITE)

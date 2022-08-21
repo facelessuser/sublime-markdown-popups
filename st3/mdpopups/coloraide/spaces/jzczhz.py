@@ -3,16 +3,18 @@ JzCzhz class.
 
 https://www.osapublishing.org/oe/fulltext.cfm?uri=oe-25-13-15131&id=368272
 """
-from ..spaces import Space, RE_DEFAULT_MATCH, GamutUnbound, Cylindrical, Angle, OptionalPercent
-from .jzazbz import Jzazbz
+from ..spaces import Space, LChish
+from ..cat import WHITES
+from ..channels import Channel, FLG_ANGLE
 from .. import util
-import re
 import math
+from .. import algebra as alg
+from ..types import Vector
 
-ACHROMATIC_THRESHOLD = 0.0002
+ACHROMATIC_THRESHOLD = 0.0003
 
 
-def jzazbz_to_jzczhz(jzazbz):
+def jzazbz_to_jzczhz(jzazbz: Vector) -> Vector:
     """Jzazbz to JzCzhz."""
 
     jz, az, bz = jzazbz
@@ -23,112 +25,67 @@ def jzazbz_to_jzczhz(jzazbz):
     # Achromatic colors will often get extremely close, but not quite hit zero.
     # Essentially, we want to discard noise through rounding and such.
     if cz < ACHROMATIC_THRESHOLD:
-        hz = util.NaN
+        hz = alg.NaN
 
     return [jz, cz, util.constrain_hue(hz)]
 
 
-def jzczhz_to_jzazbz(jzczhz):
+def jzczhz_to_jzazbz(jzczhz: Vector) -> Vector:
     """JzCzhz to Jzazbz."""
 
     jz, cz, hz = jzczhz
-    hz = util.no_nan(hz)
+    if alg.is_nan(hz):  # pragma: no cover
+        return [jz, 0.0, 0.0]
 
-    # If, for whatever reason (mainly direct user input),
-    # if chroma is less than zero, clamp to zero.
-    if cz < 0.0:
-        cz = 0.0
-
-    return (
+    return [
         jz,
         cz * math.cos(math.radians(hz)),
         cz * math.sin(math.radians(hz))
-    )
+    ]
 
 
-class JzCzhz(Cylindrical, Space):
+class JzCzhz(LChish, Space):
     """
     JzCzhz class.
 
     https://www.osapublishing.org/oe/fulltext.cfm?uri=oe-25-13-15131&id=368272
     """
 
-    SPACE = "jzczhz"
+    BASE = "jzazbz"
+    NAME = "jzczhz"
     SERIALIZE = ("--jzczhz",)
-    CHANNEL_NAMES = ("jz", "chroma", "hue", "alpha")
-    DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space='|'.join(SERIALIZE), channels=3))
-    WHITE = "D65"
-
-    RANGE = (
-        GamutUnbound([OptionalPercent(0), OptionalPercent(1)]),
-        GamutUnbound([0.0, 1.0]),
-        GamutUnbound([Angle(0.0), Angle(360.0)]),
+    CHANNELS = (
+        Channel("jz", 0.0, 1.0),
+        Channel("cz", 0.0, 0.5, limit=(0.0, None)),
+        Channel("hz", 0.0, 360.0, flags=FLG_ANGLE)
     )
+    CHANNEL_ALIASES = {
+        "lightness": "jz",
+        "chroma": "cz",
+        "hue": "hz"
+    }
+    WHITE = WHITES['2deg']['D65']
 
-    @property
-    def jz(self):
-        """Jz."""
-
-        return self._coords[0]
-
-    @jz.setter
-    def jz(self, value):
-        """Set jz."""
-
-        self._coords[0] = self._handle_input(value)
-
-    @property
-    def chroma(self):
-        """Chroma."""
-
-        return self._coords[1]
-
-    @chroma.setter
-    def chroma(self, value):
-        """Set chroma."""
-
-        self._coords[1] = self._handle_input(value)
-
-    @property
-    def hue(self):
-        """Hue."""
-
-        return self._coords[2]
-
-    @hue.setter
-    def hue(self, value):
-        """Set hue."""
-
-        self._coords[2] = self._handle_input(value)
-
-    @classmethod
-    def null_adjust(cls, coords, alpha):
+    def normalize(self, coords: Vector) -> Vector:
         """On color update."""
 
+        coords = alg.no_nans(coords)
         if coords[1] < ACHROMATIC_THRESHOLD:
-            coords[2] = util.NaN
-        return coords, alpha
+            coords[2] = alg.NaN
 
-    @classmethod
-    def _to_jzazbz(cls, parent, jzczhz):
-        """To Jzazbz."""
+        return coords
 
-        return jzczhz_to_jzazbz(jzczhz)
+    def hue_name(self) -> str:
+        """Hue name."""
 
-    @classmethod
-    def _from_jzazbz(cls, parent, jzazbz):
-        """From Jzazbz."""
+        return "hz"
 
-        return jzazbz_to_jzczhz(jzazbz)
+    def to_base(self, coords: Vector) -> Vector:
+        """To Jzazbz from JzCzhz."""
 
-    @classmethod
-    def _to_xyz(cls, parent, jzczhz):
-        """To XYZ."""
+        return jzczhz_to_jzazbz(coords)
 
-        return Jzazbz._to_xyz(parent, cls._to_jzazbz(parent, jzczhz))
+    def from_base(self, coords: Vector) -> Vector:
+        """From Jzazbz to JzCzhz."""
 
-    @classmethod
-    def _from_xyz(cls, parent, xyz):
-        """From XYZ."""
-
-        return cls._from_jzazbz(parent, Jzazbz._from_xyz(parent, xyz))
+        return jzazbz_to_jzczhz(coords)

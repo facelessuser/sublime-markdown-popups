@@ -31,13 +31,13 @@ def tint_raw(byte_string, color, opacity=255):
         start = 0
         for x in range(columns):
             rgba = Color(color)
-            rgba.alpha = opacity / 255.0
+            rgba['alpha'] = opacity / 255.0
             rgba.overlay(background='#{:02X}{:02X}{:02X}FF'.format(*row[start:start + 3]))
             rgba.fit(in_place=True)
             p[y] += [
-                int(util.round_half_up(rgba.red * 255)),
-                int(util.round_half_up(rgba.green * 255)),
-                int(util.round_half_up(rgba.blue * 255)),
+                int(util.round_half_up(rgba['red'] * 255)),
+                int(util.round_half_up(rgba['green'] * 255)),
+                int(util.round_half_up(rgba['blue'] * 255)),
                 row[start + 3]
             ]
             start += 4

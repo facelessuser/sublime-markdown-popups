@@ -1,17 +1,16 @@
 """Rec 2020 color class."""
-from ..spaces import RE_DEFAULT_MATCH
-from .srgb.base import SRGB
-from .xyz import XYZ
-from .. import util
-import re
+from ..cat import WHITES
+from .srgb import sRGB
 import math
+from .. import algebra as alg
+from ..types import Vector
 
 ALPHA = 1.09929682680944
 BETA = 0.018053968510807
 BETA45 = 0.018053968510807 * 4.5
 
 
-def lin_2020(rgb):
+def lin_2020(rgb: Vector) -> Vector:
     """
     Convert an array of rec-2020 RGB values in the range 0.0 - 1.0 to linear light (un-corrected) form.
 
@@ -25,11 +24,11 @@ def lin_2020(rgb):
         if abs_i < BETA45:
             result.append(i / 4.5)
         else:
-            result.append(math.copysign(util.nth_root((abs_i + ALPHA - 1) / ALPHA, 0.45), i))
+            result.append(math.copysign(alg.nth_root((abs_i + ALPHA - 1) / ALPHA, 0.45), i))
     return result
 
 
-def gam_2020(rgb):
+def gam_2020(rgb: Vector) -> Vector:
     """
     Convert an array of linear-light rec-2020 RGB  in the range 0.0-1.0 to gamma corrected form.
 
@@ -47,50 +46,19 @@ def gam_2020(rgb):
     return result
 
 
-def lin_2020_to_xyz(rgb):
-    """
-    Convert an array of linear-light rec-2020 values to CIE XYZ using  D65.
-
-    (no chromatic adaptation)
-    http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
-    """
-
-    m = [
-        [6.3701019141110093e-01, 1.4461502739696933e-01, 1.6884478119192992e-01],
-        [2.6272171736164052e-01, 6.7798927550226207e-01, 5.9289007136097520e-02],
-        [4.9945154055471928e-17, 2.8072328847646915e-02, 1.0607576711523534e+00]
-    ]
-
-    return util.dot(m, rgb)
-
-
-def xyz_to_lin_2020(xyz):
-    """Convert XYZ to linear-light rec-2020."""
-
-    m = [
-        [1.7165106697619734, -0.35564166998671587, -0.25334554182190716],
-        [-0.6666930011826241, 1.6165022083469103, 0.015768750389995],
-        [0.017643638767459002, -0.04277978166904461, 0.9423050727200183]
-    ]
-
-    return util.dot(m, xyz)
-
-
-class Rec2020(SRGB):
+class Rec2020(sRGB):
     """Rec 2020 class."""
 
-    SPACE = "rec2020"
-    DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space=SPACE, channels=3))
-    WHITE = "D65"
+    BASE = "rec2020-linear"
+    NAME = "rec2020"
+    WHITE = WHITES['2deg']['D65']
 
-    @classmethod
-    def _to_xyz(cls, parent, rgb):
-        """To XYZ."""
+    def to_base(self, coords: Vector) -> Vector:
+        """To XYZ from Rec 2020."""
 
-        return parent.chromatic_adaptation(cls.WHITE, XYZ.WHITE, lin_2020_to_xyz(lin_2020(rgb)))
+        return lin_2020(coords)
 
-    @classmethod
-    def _from_xyz(cls, parent, xyz):
-        """From XYZ."""
+    def from_base(self, coords: Vector) -> Vector:
+        """From XYZ to Rec 2020."""
 
-        return gam_2020(xyz_to_lin_2020(parent.chromatic_adaptation(XYZ.WHITE, cls.WHITE, xyz)))
+        return gam_2020(coords)

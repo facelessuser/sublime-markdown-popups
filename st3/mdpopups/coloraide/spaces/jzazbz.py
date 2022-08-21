@@ -2,11 +2,28 @@
 Jzazbz class.
 
 https://www.osapublishing.org/oe/fulltext.cfm?uri=oe-25-13-15131&id=368272
+
+There seems to be some debate on how to scale Jzazbz. Colour Science chooses not to scale at all.
+Colorio seems to scale at 100.
+
+The spec mentions multiple times targeting a luminance of 10,000 cd/m^2.
+Relative XYZ has Y=1 for media white
+BT.2048 says media white Y=203 at PQ 58
+This is confirmed here: https://www.itu.int/dms_pub/itu-r/opb/rep/R-REP-BT.2408-3-2019-PDF-E.pdf
+
+It is tough to tell who is correct as everything passes through the MATLAB scripts fine as it
+just scales the results differently, so forward and backwards translation comes out great regardless,
+but looking at the images in the spec, it seems the scaling using Y=203 at PQ 58 may be correct. It
+is almost certain that some scaling is being applied and that applying none is almost certainly wrong.
+
+If at some time that these assumptions are incorrect, we will be happy to alter the model.
 """
-from ..spaces import Space, RE_DEFAULT_MATCH, GamutUnbound, OptionalPercent
-from .xyz import XYZ
+from ..spaces import Space, Labish
+from ..cat import WHITES
+from ..channels import Channel, FLG_MIRROR_PERCENT
 from .. import util
-import re
+from .. import algebra as alg
+from ..types import Vector
 
 B = 1.15
 G = 0.66
@@ -37,8 +54,8 @@ xyz_to_lms_m = [
 
 lms_to_xyz_mi = [
     [1.9242264357876069, -1.0047923125953657, 0.037651404030617994],
-    [0.35031676209499907, 0.7264811939316552, -0.06538442294808501],
-    [-0.09098281098284754, -0.3127282905230739, 1.5227665613052603]
+    [0.350316762094999, 0.7264811939316552, -0.06538442294808501],
+    [-0.09098281098284752, -0.3127282905230739, 1.5227665613052603]
 ]
 
 # LMS to Izazbz matrices
@@ -49,13 +66,13 @@ lms_p_to_izazbz_m = [
 ]
 
 izazbz_to_lms_p_mi = [
-    [1.0, 0.1386050432715393, 0.05804731615611882],
-    [1.0, -0.13860504327153927, -0.05804731615611891],
-    [1.0, -0.09601924202631895, -0.811891896056039]
+    [1.0, 0.1386050432715393, 0.05804731615611886],
+    [1.0, -0.1386050432715393, -0.05804731615611886],
+    [0.9999999999999998, -0.09601924202631895, -0.8118918960560388]
 ]
 
 
-def jzazbz_to_xyz_d65(jzazbz):
+def jzazbz_to_xyz_d65(jzazbz: Vector) -> Vector:
     """From Jzazbz to XYZ."""
 
     jz, az, bz = jzazbz
@@ -64,13 +81,13 @@ def jzazbz_to_xyz_d65(jzazbz):
     iz = (jz + D0) / (1 + D - D * (jz + D0))
 
     # Convert to LMS prime
-    pqlms = util.dot(izazbz_to_lms_p_mi, [iz, az, bz])
+    pqlms = alg.dot(izazbz_to_lms_p_mi, [iz, az, bz], dims=alg.D2_D1)
 
     # Decode PQ LMS to LMS
     lms = util.pq_st2084_eotf(pqlms, m2=M2)
 
     # Convert back to absolute XYZ D65
-    xm, ym, za = util.dot(lms_to_xyz_mi, lms)
+    xm, ym, za = alg.dot(lms_to_xyz_mi, lms, dims=alg.D2_D1)
     xa = (xm + ((B - 1) * za)) / B
     ya = (ym + ((G - 1) * xa)) / G
 
@@ -78,7 +95,7 @@ def jzazbz_to_xyz_d65(jzazbz):
     return util.absxyzd65_to_xyz_d65([xa, ya, za])
 
 
-def xyz_d65_to_jzazbz(xyzd65):
+def xyz_d65_to_jzazbz(xyzd65: Vector) -> Vector:
     """From XYZ to Jzazbz."""
 
     # Convert from XYZ D65 to an absolute XYZ D5
@@ -87,78 +104,43 @@ def xyz_d65_to_jzazbz(xyzd65):
     ym = (G * ya) - ((G - 1) * xa)
 
     # Convert to LMS
-    lms = util.dot(xyz_to_lms_m, [xm, ym, za])
+    lms = alg.dot(xyz_to_lms_m, [xm, ym, za], dims=alg.D2_D1)
 
     # PQ encode the LMS
     pqlms = util.pq_st2084_inverse_eotf(lms, m2=M2)
 
     # Calculate Izazbz
-    iz, az, bz = util.dot(lms_p_to_izazbz_m, pqlms)
+    iz, az, bz = alg.dot(lms_p_to_izazbz_m, pqlms, dims=alg.D2_D1)
 
     # Calculate Jz
     jz = ((1 + D) * iz) / (1 + (D * iz)) - D0
-    return jz, az, bz
+    return [jz, az, bz]
 
 
-class Jzazbz(Space):
+class Jzazbz(Labish, Space):
     """Jzazbz class."""
 
-    SPACE = "jzazbz"
+    BASE = "xyz-d65"
+    NAME = "jzazbz"
     SERIALIZE = ("--jzazbz",)
-    CHANNEL_NAMES = ("jz", "az", "bz", "alpha")
-    DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space='|'.join(SERIALIZE), channels=3))
-    WHITE = "D65"
-
-    RANGE = (
-        GamutUnbound([OptionalPercent(0), OptionalPercent(1)]),
-        GamutUnbound([-0.5, 0.5]),
-        GamutUnbound([-0.5, 0.5])
+    CHANNELS = (
+        Channel("jz", 0.0, 1.0),
+        Channel("az", -0.5, 0.5, flags=FLG_MIRROR_PERCENT),
+        Channel("bz", -0.5, 0.5, flags=FLG_MIRROR_PERCENT)
     )
+    CHANNEL_ALIASES = {
+        "lightness": 'jz',
+        "a": 'az',
+        "b": 'bz'
+    }
+    WHITE = WHITES['2deg']['D65']
 
-    @property
-    def jz(self):
-        """Jz channel."""
+    def to_base(self, coords: Vector) -> Vector:
+        """To XYZ from Jzazbz."""
 
-        return self._coords[0]
+        return jzazbz_to_xyz_d65(coords)
 
-    @jz.setter
-    def jz(self, value):
-        """Set jz channel."""
+    def from_base(self, coords: Vector) -> Vector:
+        """From XYZ to Jzazbz."""
 
-        self._coords[0] = self._handle_input(value)
-
-    @property
-    def az(self):
-        """Az axis."""
-
-        return self._coords[1]
-
-    @az.setter
-    def az(self, value):
-        """Az axis."""
-
-        self._coords[1] = self._handle_input(value)
-
-    @property
-    def bz(self):
-        """Bz axis."""
-
-        return self._coords[2]
-
-    @bz.setter
-    def bz(self, value):
-        """Set bz axis."""
-
-        self._coords[2] = self._handle_input(value)
-
-    @classmethod
-    def _to_xyz(cls, parent, jzazbz):
-        """To XYZ."""
-
-        return parent.chromatic_adaptation(cls.WHITE, XYZ.WHITE, jzazbz_to_xyz_d65(jzazbz))
-
-    @classmethod
-    def _from_xyz(cls, parent, xyz):
-        """From XYZ."""
-
-        return xyz_d65_to_jzazbz(parent.chromatic_adaptation(XYZ.WHITE, cls.WHITE, xyz))
+        return xyz_d65_to_jzazbz(coords)
