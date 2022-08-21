@@ -1,12 +1,13 @@
 """HSV class."""
-from ..spaces import Space, RE_DEFAULT_MATCH, Angle, Percent, GamutBound, Cylindrical
-from .srgb.base import SRGB
-from .hsl.base import HSL
+from ..spaces import Space, Cylindrical
+from ..cat import WHITES
+from ..channels import Channel, FLG_ANGLE
 from .. import util
-import re
+from .. import algebra as alg
+from ..types import Vector
 
 
-def hsv_to_hsl(hsv):
+def hsv_to_hsl(hsv: Vector) -> Vector:
     """
     HSV to HSL.
 
@@ -14,22 +15,16 @@ def hsv_to_hsl(hsv):
     """
 
     h, s, v = hsv
-    s /= 100.0
-    v /= 100.0
     l = v * (1.0 - s / 2.0)
-    s = 0.0 if (l == 0.0 or l == 1.0) else ((v - l) / min(l, 1.0 - l)) * 100
+    s = 0.0 if (l == 0.0 or l == 1.0) else (v - l) / min(l, 1.0 - l)
 
     if s == 0:
-        h = util.NaN
+        h = alg.NaN
 
-    return [
-        util.constrain_hue(h),
-        s,
-        l * 100
-    ]
+    return [util.constrain_hue(h), s, l]
 
 
-def hsl_to_hsv(hsl):
+def hsl_to_hsv(hsl: Vector) -> Vector:
     """
     HSL to HSV.
 
@@ -37,110 +32,50 @@ def hsl_to_hsv(hsl):
     """
 
     h, s, l = hsl
-    s /= 100.0
-    l /= 100.0
 
     v = l + s * min(l, 1.0 - l)
     s = 0.0 if (v == 0.0) else 2 * (1.0 - l / v)
 
     if s == 0:
-        h = util.NaN
+        h = alg.NaN
 
-    return [util.constrain_hue(h), s * 100.0, v * 100.0]
+    return [util.constrain_hue(h), s, v]
 
 
 class HSV(Cylindrical, Space):
     """HSL class."""
 
-    SPACE = "hsv"
+    BASE = "hsl"
+    NAME = "hsv"
     SERIALIZE = ("--hsv",)
-    CHANNEL_NAMES = ("hue", "saturation", "value", "alpha")
-    DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space='|'.join(SERIALIZE), channels=3))
-    GAMUT_CHECK = "srgb"
-    WHITE = "D65"
-
-    RANGE = (
-        GamutBound([Angle(0.0), Angle(360.0)]),
-        GamutBound([Percent(0.0), Percent(100.0)]),
-        GamutBound([Percent(0.0), Percent(100.0)])
+    CHANNELS = (
+        Channel("h", 0.0, 360.0, bound=True, flags=FLG_ANGLE),
+        Channel("s", 0.0, 1.0, bound=True),
+        Channel("v", 0.0, 1.0, bound=True)
     )
+    CHANNEL_ALIASES = {
+        "hue": "h",
+        "saturation": "s",
+        "value": "v"
+    }
+    GAMUT_CHECK = "srgb"
+    WHITE = WHITES['2deg']['D65']
 
-    @property
-    def hue(self):
-        """Hue channel."""
-
-        return self._coords[0]
-
-    @hue.setter
-    def hue(self, value):
-        """Shift the hue."""
-
-        self._coords[0] = self._handle_input(value)
-
-    @property
-    def saturation(self):
-        """Saturation channel."""
-
-        return self._coords[1]
-
-    @saturation.setter
-    def saturation(self, value):
-        """Saturate or unsaturate the color by the given factor."""
-
-        self._coords[1] = self._handle_input(value)
-
-    @property
-    def value(self):
-        """Value channel."""
-
-        return self._coords[2]
-
-    @value.setter
-    def value(self, value):
-        """Set value channel."""
-
-        self._coords[2] = self._handle_input(value)
-
-    @classmethod
-    def null_adjust(cls, coords, alpha):
+    def normalize(self, coords: Vector) -> Vector:
         """On color update."""
 
+        coords = alg.no_nans(coords)
         if coords[1] == 0:
-            coords[0] = util.NaN
-        return coords, alpha
+            coords[0] = alg.NaN
 
-    @classmethod
-    def _to_xyz(cls, parent, hsv):
-        """To XYZ."""
+        return coords
 
-        return SRGB._to_xyz(parent, cls._to_srgb(parent, hsv))
+    def to_base(self, coords: Vector) -> Vector:
+        """To HSL from HSV."""
 
-    @classmethod
-    def _from_xyz(cls, parent, xyz):
-        """From XYZ."""
+        return hsv_to_hsl(coords)
 
-        return cls._from_srgb(parent, SRGB._from_xyz(parent, xyz))
+    def from_base(self, coords: Vector) -> Vector:
+        """From HSL to HSV."""
 
-    @classmethod
-    def _to_hsl(cls, parent, hsv):
-        """To HSL."""
-
-        return hsv_to_hsl(hsv)
-
-    @classmethod
-    def _from_hsl(cls, parent, hsl):
-        """From HSL."""
-
-        return hsl_to_hsv(hsl)
-
-    @classmethod
-    def _to_srgb(cls, parent, hsv):
-        """To sRGB."""
-
-        return HSL._to_srgb(parent, cls._to_hsl(parent, hsv))
-
-    @classmethod
-    def _from_srgb(cls, parent, rgb):
-        """From sRGB."""
-
-        return cls._from_hsl(parent, HSL._from_srgb(parent, rgb))
+        return hsl_to_hsv(coords)

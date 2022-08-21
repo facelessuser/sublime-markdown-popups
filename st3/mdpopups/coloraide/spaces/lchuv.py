@@ -1,15 +1,16 @@
-"""LCH class."""
-from ..spaces import Space, RE_DEFAULT_MATCH, GamutUnbound, Cylindrical, Angle, Percent
-from .luv import Luv
+"""LChuv class."""
+from ..spaces import Space
+from ..cat import WHITES
+from ..channels import Channel, FLG_ANGLE
+from .lch import LCh, ACHROMATIC_THRESHOLD
 from .. import util
-import re
 import math
+from .. import algebra as alg
+from ..types import Vector
 
-ACHROMATIC_THRESHOLD = 0.000000000002
 
-
-def luv_to_lchuv(luv):
-    """Luv to Lch(uv)."""
+def luv_to_lchuv(luv: Vector) -> Vector:
+    """Luv to LChuv."""
 
     l, u, v = luv
 
@@ -19,108 +20,44 @@ def luv_to_lchuv(luv):
     # Achromatic colors will often get extremely close, but not quite hit zero.
     # Essentially, we want to discard noise through rounding and such.
     if c < ACHROMATIC_THRESHOLD:
-        h = util.NaN
+        h = alg.NaN
 
     return [l, c, util.constrain_hue(h)]
 
 
-def lchuv_to_luv(lchuv):
-    """Lch(uv) to Luv."""
+def lchuv_to_luv(lchuv: Vector) -> Vector:
+    """LChuv to Luv."""
 
     l, c, h = lchuv
-    h = util.no_nan(h)
+    if alg.is_nan(h):  # pragma: no cover
+        return [l, 0.0, 0.0]
 
-    # If, for whatever reason (mainly direct user input),
-    # if chroma is less than zero, clamp to zero.
-    if c < 0.0:
-        c = 0.0
-
-    return (
+    return [
         l,
         c * math.cos(math.radians(h)),
         c * math.sin(math.radians(h))
-    )
+    ]
 
 
-class Lchuv(Cylindrical, Space):
-    """Lch(uv) class."""
+class LChuv(LCh, Space):
+    """LChuv class."""
 
-    SPACE = "lchuv"
+    BASE = "luv"
+    NAME = "lchuv"
     SERIALIZE = ("--lchuv",)
-    CHANNEL_NAMES = ("lightness", "chroma", "hue", "alpha")
-    DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space='|'.join(SERIALIZE), channels=3))
-    WHITE = "D65"
-
-    RANGE = (
-        GamutUnbound([Percent(0), Percent(100.0)]),
-        GamutUnbound([0.0, 176.0]),
-        GamutUnbound([Angle(0.0), Angle(360.0)]),
+    WHITE = WHITES['2deg']['D65']
+    CHANNELS = (
+        Channel("l", 0.0, 100.0),
+        Channel("c", 0.0, 220.0, limit=(0.0, None)),
+        Channel("h", 0.0, 360.0, flags=FLG_ANGLE)
     )
 
-    @property
-    def lightness(self):
-        """Lightness."""
+    def to_base(self, coords: Vector) -> Vector:
+        """To Luv from LChuv."""
 
-        return self._coords[0]
+        return lchuv_to_luv(coords)
 
-    @lightness.setter
-    def lightness(self, value):
-        """Get true luminance."""
+    def from_base(self, coords: Vector) -> Vector:
+        """From Luv to LChuv."""
 
-        self._coords[0] = self._handle_input(value)
-
-    @property
-    def chroma(self):
-        """Chroma."""
-
-        return self._coords[1]
-
-    @chroma.setter
-    def chroma(self, value):
-        """chroma."""
-
-        self._coords[1] = self._handle_input(value)
-
-    @property
-    def hue(self):
-        """Hue."""
-
-        return self._coords[2]
-
-    @hue.setter
-    def hue(self, value):
-        """Shift the hue."""
-
-        self._coords[2] = self._handle_input(value)
-
-    @classmethod
-    def null_adjust(cls, coords, alpha):
-        """On color update."""
-
-        if coords[1] < ACHROMATIC_THRESHOLD:
-            coords[2] = util.NaN
-        return coords, alpha
-
-    @classmethod
-    def _to_luv(cls, parent, lchuv):
-        """To Luv."""
-
-        return lchuv_to_luv(lchuv)
-
-    @classmethod
-    def _from_luv(cls, parent, luv):
-        """To Luv."""
-
-        return luv_to_lchuv(luv)
-
-    @classmethod
-    def _to_xyz(cls, parent, lchuv):
-        """To XYZ."""
-
-        return Luv._to_xyz(parent, cls._to_luv(parent, lchuv))
-
-    @classmethod
-    def _from_xyz(cls, parent, xyz):
-        """From XYZ."""
-
-        return cls._from_luv(parent, Luv._from_xyz(parent, xyz))
+        return luv_to_lchuv(coords)

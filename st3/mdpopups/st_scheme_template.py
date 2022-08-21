@@ -16,7 +16,8 @@ https://manual.macromates.com/en/language_grammars#naming_conventions
 import sublime
 import re
 from . import version as ver
-from .coloraide import util
+from .coloraide import algebra as alg
+from .coloraide.css.parse import norm_angle_channel
 from .st_colormod import Color
 from . import jinja2
 from .pygments.formatters import HtmlFormatter
@@ -47,6 +48,40 @@ CODE_BLOCKS = '.mdpopups .highlight, .mdpopups .inline-highlight {{ {}; {}; }}'
 OLD_DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
 DEFAULT_CSS = 'Packages/mdpopups/mdpopups_css/default.css'
 
+re_css_filter = re.compile(
+    r'''(?xi)[\t ]*(?:
+        (brightness|contrast|grayscale|invert|opacity|satruate|sepia|protan|deutan|tritan)
+        \([\t ]*([+\-]?(?:[0-9]*\.)?[0-9]+(?:e[-+]?[0-9]*)?%)?[\t ]*\) |
+        (hue-rotate)
+        \([\t ]*([+\-]?(?:[0-9]*\.)?[0-9]+(?:e[-+]?[0-9]*)?(?:deg|rad|turn|grad))?[\t ]*\)
+    )[\t ]*
+    '''
+)
+
+
+def parse_css_filter(string):
+    """Parse CSS filter string."""
+
+    start = 0
+    length = len(string)
+    filters = []
+    while start < length:
+        m = re_css_filter.match(string, start)
+        if m is None:
+            return []
+        if m.group(1):
+            value = m.group(2)
+            if value is not None:
+                value = float(value[:-1]) / 100
+            filters.append((m.group(1).strip(), value))
+        else:
+            value = m.group(4)
+            if value is not None:
+                value = norm_angle_channel(value)
+            filters.append((m.group(3).strip(), value))
+        start = m.end(0)
+    return filters
+
 
 class _Filters:
     """Color filters."""
@@ -73,38 +108,38 @@ class _Filters:
     def contrast(color, factor):
         """Adjust contrast."""
 
-        r, g, b = [util.round_half_up(util.clamp(c * 255, 0, 255)) for c in util.no_nan(color.coords())]
+        r, g, b = [alg.round_half_up(alg.clamp(c * 255, 0, 255)) for c in alg.no_nans(color[:-1])]
         # Algorithm can't handle any thing beyond +/-255 (or a factor from 0 - 2)
         # Convert factor between (-255, 255)
-        f = (util.clamp(factor, 0.0, 2.0) - 1.0) * 255.0
+        f = (alg.clamp(factor, 0.0, 2.0) - 1.0) * 255.0
         f = (259 * (f + 255)) / (255 * (259 - f))
 
         # Increase/decrease contrast accordingly.
-        r = util.clamp(util.round_half_up((f * (r - 128)) + 128), 0, 255)
-        g = util.clamp(util.round_half_up((f * (g - 128)) + 128), 0, 255)
-        b = util.clamp(util.round_half_up((f * (b - 128)) + 128), 0, 255)
-        color.red = r / 255
-        color.green = g / 255
-        color.blue = b / 255
+        r = alg.clamp(alg.round_half_up((f * (r - 128)) + 128), 0, 255)
+        g = alg.clamp(alg.round_half_up((f * (g - 128)) + 128), 0, 255)
+        b = alg.clamp(alg.round_half_up((f * (b - 128)) + 128), 0, 255)
+        color['red'] = r / 255
+        color['green'] = g / 255
+        color['blue'] = b / 255
 
     @staticmethod
     def invert(color):
         """Invert the color."""
 
-        r, g, b = [int(util.round_half_up(util.clamp(c * 255, 0, 255))) for c in util.no_nan(color.coords())]
+        r, g, b = [int(alg.round_half_up(alg.clamp(c * 255, 0, 255))) for c in alg.no_nans(color[:-1])]
         r ^= 0xFF
         g ^= 0xFF
         b ^= 0xFF
-        color.red = r / 255
-        color.green = g / 255
-        color.blue = b / 255
+        color['red'] = r / 255
+        color['green'] = g / 255
+        color['blue'] = b / 255
 
     @staticmethod
     def saturation(color, factor):
         """Saturate or unsaturate the color by the given factor."""
 
-        s = util.no_nan(color.get('hsl.saturation')) / 100.0
-        s = util.clamp(s + factor - 1.0, 0.0, 1.0)
+        s = alg.no_nan(color.get('hsl.saturation')) / 100.0
+        s = alg.clamp(s + factor - 1.0, 0.0, 1.0)
         color.set('hsl.saturation', s * 100)
 
     @staticmethod
@@ -112,21 +147,21 @@ class _Filters:
         """Convert the color with a grayscale filter."""
 
         luminance = color.luminance()
-        color.red = luminance
-        color.green = luminance
-        color.blue = luminance
+        color['red'] = luminance
+        color['green'] = luminance
+        color['blue'] = luminance
 
     @staticmethod
     def sepia(color):
         """Apply a sepia filter to the color."""
 
-        red, green, blue = util.no_nan(color.coords())
-        r = util.clamp((red * .393) + (green * .769) + (blue * .189), 0, 1)
-        g = util.clamp((red * .349) + (green * .686) + (blue * .168), 0, 1)
-        b = util.clamp((red * .272) + (green * .534) + (blue * .131), 0, 1)
-        color.red = r
-        color.green = g
-        color.blue = b
+        red, green, blue = alg.no_nans(color[:-1])
+        r = alg.clamp((red * .393) + (green * .769) + (blue * .189), 0, 1)
+        g = alg.clamp((red * .349) + (green * .686) + (blue * .168), 0, 1)
+        b = alg.clamp((red * .272) + (green * .534) + (blue * .131), 0, 1)
+        color['red'] = r
+        color['green'] = g
+        color['blue'] = b
 
     @staticmethod
     def _get_overage(c):
@@ -172,9 +207,9 @@ class _Filters:
         Brightness is determined by perceived luminance.
         """
 
-        red, green, blue = [util.round_half_up(util.clamp(c * 255, 0, 255)) for c in util.no_nan(color.coords())]
+        red, green, blue = [alg.round_half_up(alg.clamp(c * 255, 0, 255)) for c in alg.no_nans(color[:-1])]
         channels = ["r", "g", "b"]
-        total_lumes = util.clamp(util.clamp(color.luminance(), 0, 1) * 255 + (255.0 * factor) - 255.0, 0.0, 255.0)
+        total_lumes = alg.clamp(alg.clamp(color.luminance(), 0, 1) * 255 + (255.0 * factor) - 255.0, 0.0, 255.0)
 
         if total_lumes == 255.0:
             # white
@@ -184,7 +219,7 @@ class _Filters:
             r, g, b = 0, 0, 0
         else:
             # Adjust Brightness
-            pts = (total_lumes - util.clamp(color.luminance(), 0, 1) * 255)
+            pts = (total_lumes - alg.clamp(color.luminance(), 0, 1) * 255)
             slots = set(channels)
             components = [float(red) + pts, float(green) + pts, float(blue) + pts]
             count = 0
@@ -195,12 +230,12 @@ class _Filters:
                     components = list(cls._distribute_overage(components, overage, slots))
                 count += 1
 
-            r = util.clamp(util.round_half_up(components[0]), 0, 255) / 255.0
-            g = util.clamp(util.round_half_up(components[1]), 0, 255) / 255.0
-            b = util.clamp(util.round_half_up(components[2]), 0, 255) / 255.0
-        color.red = r
-        color.green = g
-        color.blue = b
+            r = alg.clamp(alg.round_half_up(components[0]), 0, 255) / 255.0
+            g = alg.clamp(alg.round_half_up(components[1]), 0, 255) / 255.0
+            b = alg.clamp(alg.round_half_up(components[2]), 0, 255) / 255.0
+        color['red'] = r
+        color['green'] = g
+        color['blue'] = b
 
 
 class SchemeTemplate(object):
@@ -300,6 +335,7 @@ class SchemeTemplate(object):
         self.env.filters['contrast'] = self.contrast
         self.env.filters['grayscale'] = self.grayscale
         self.env.filters['sepia'] = self.sepia
+        self.env.filters['filters'] = self.filters
         self.env.filters['fade'] = self.fade
         self.env.filters['getcss'] = self.read_css
 
@@ -335,6 +371,22 @@ class SchemeTemplate(object):
         except Exception:
             return ''
 
+    def filters(self, css, string, space='srgb'):
+        """Apply CSS filters."""
+
+        try:
+            filters = parse_css_filter(string)
+            parts = [c.strip('; ') for c in css.split(':')]
+            if len(parts) == 2 and parts[0] in ('background-color', 'color'):
+                rgba = Color(parts[1])
+                for f in filters:
+                    rgba.filter(f[0], f[1], space=space, in_place=True)
+                parts[1] = "{}; ".format(rgba.to_string(hex=True))
+                return '{}: {} '.format(parts[0], parts[1])
+        except Exception:
+            pass
+        return css
+
     def fade(self, css, factor):
         """
         Apply a fake transparency to color.
@@ -345,7 +397,7 @@ class SchemeTemplate(object):
             parts = [c.strip('; ') for c in css.split(':')]
             if len(parts) == 2 and parts[0] in ('background-color', 'color'):
                 rgba = Color(parts[1])
-                rgba.alpha = max(min(float(factor), 1.0), 0.0)
+                rgba['alpha'] = max(min(float(factor), 1.0), 0.0)
                 rgba.compose(self.get_bg())
                 return '{}: {}; '.format(parts[0], rgba.to_string(hex=True))
         except Exception:

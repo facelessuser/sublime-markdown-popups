@@ -28,6 +28,7 @@ from .st_clean_css import clean_css
 from .st_pygments_highlight import syntax_hl as pyg_syntax_hl
 from .st_code_highlight import SublimeHighlight
 from .st_mapping import lang_map
+from .coloraide import Color
 from . import imagetint
 import re
 import os
@@ -480,7 +481,7 @@ def color_box(
     """Color box."""
 
     return colorbox.color_box(
-        colors, border, border2, height, width,
+        [Color(c) for c in colors], Color(border), border2, height, width,
         border_size, check_size, max_colors, alpha, border_map
     )
 
@@ -492,7 +493,7 @@ def color_box_raw(
     """Color box raw."""
 
     return colorbox.color_box_raw(
-        colors, border, border2, height, width,
+        [Color(c) for c in colors], Color(border), border2, height, width,
         border_size, check_size, max_colors, alpha, border_map
     )
 

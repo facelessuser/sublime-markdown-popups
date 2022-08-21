@@ -1,32 +1,38 @@
 """XYZ D65 class."""
-from ..spaces import RE_DEFAULT_MATCH, GamutUnbound
-from .xyz import XYZ
-import re
+from ..spaces import Space
+from ..cat import WHITES
+from ..channels import Channel
+from ..types import Vector
+from typing import Tuple
 
 
-class XYZD65(XYZ):
+class XYZD65(Space):
     """XYZ D65 class."""
 
-    SPACE = "xyz-d65"
-    SERIALIZE = ("--xyz-d65",)
-    CHANNEL_NAMES = ("x", "y", "z", "alpha")
-    DEFAULT_MATCH = re.compile(RE_DEFAULT_MATCH.format(color_space='|'.join(SERIALIZE), channels=3))
-    WHITE = "D65"
-
-    RANGE = (
-        GamutUnbound([0.0, 1.0]),
-        GamutUnbound([0.0, 1.0]),
-        GamutUnbound([0.0, 1.0])
+    BASE = "xyz-d65"
+    NAME = "xyz-d65"
+    SERIALIZE = ("xyz-d65", 'xyz')  # type: Tuple[str, ...]
+    CHANNELS = (
+        Channel("x", 0.0, 1.0),
+        Channel("y", 0.0, 1.0),
+        Channel("z", 0.0, 1.0)
     )
+    WHITE = WHITES['2deg']['D65']
 
-    @classmethod
-    def _to_xyz(cls, parent, xyzd65):
-        """To XYZ."""
+    def to_base(self, coords: Vector) -> Vector:
+        """
+        To XYZ (no change).
 
-        return parent.chromatic_adaptation(cls.WHITE, XYZ.WHITE, xyzd65)
+        Any needed chromatic adaptation is handled in the parent Color object.
+        """
 
-    @classmethod
-    def _from_xyz(cls, parent, xyz):
-        """From XYZ."""
+        return coords
 
-        return parent.chromatic_adaptation(XYZ.WHITE, cls.WHITE, xyz)
+    def from_base(self, coords: Vector) -> Vector:
+        """
+        From XYZ (no change).
+
+        Any needed chromatic adaptation is handled in the parent Color object.
+        """
+
+        return coords

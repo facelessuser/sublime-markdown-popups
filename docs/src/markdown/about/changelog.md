@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.0
+
+- **NEW**: Upgrade internal `coloraide` to version 1.2.
+- **NEW**: Add new color filter called `filters()` which implements filters as stated in
+  https://www.w3.org/TR/filter-effects-1/.
+
 ## 4.2.2
 
 - **FIX**: Remove a hack hack related to quote entities.
