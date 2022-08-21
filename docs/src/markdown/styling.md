@@ -410,6 +410,17 @@ apply multiple filters.  These are all the available filters:
     body { {{'.foreground'|css('color')|fade(0.5)}} }
     ```
 
+`filters`
+: 
+    Applies filters CSS filters as defined in https://www.w3.org/TR/filter-effects-1/. Multiple filters can be applied
+    in the CSS style and will operate like they do in CSS. If desired, the color space can be changed from `srgb` to
+    `srgb-linear`.
+
+    **Example - CSS Brightness at 10% and Contrast at 20%**:
+    ```css+jinja
+    body { {{'.foreground'|css('color')|filters('brightness(10%) contrast(20%)', space='srgb-linear')}} }
+    ```
+
 ### Include CSS Filter
 
 The template environment allows for retrieving CSS resources from Sublime Packages or built-in Pygments CSS from the
