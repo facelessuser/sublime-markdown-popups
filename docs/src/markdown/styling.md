@@ -402,7 +402,7 @@ apply multiple filters.  These are all the available filters:
 
 `fade`
 : 
-    Fades a color. Essentially it is like apply transparency to the color allowing the color schemes base background
+    Fades a color. Essentially it is like applying transparency to the color allowing the color schemes base background
     color to show through.
 
     **Example - Fade 50%**:
@@ -412,8 +412,8 @@ apply multiple filters.  These are all the available filters:
 
 `filters`
 : 
-    Applies filters CSS filters as defined in https://www.w3.org/TR/filter-effects-1/. Multiple filters can be applied
-    in the CSS style and will operate like they do in CSS. If desired, the color space can be changed from `srgb` to
+    Applies CSS filters as defined in https://www.w3.org/TR/filter-effects-1/. Multiple filters can be applied in the
+    CSS style and will operate like they do in CSS. If desired, the color space can be changed from `srgb` to
     `srgb-linear`.
 
     **Example - CSS Brightness at 10% and Contrast at 20%**:
