@@ -63,3 +63,7 @@ target/
 site/*
 *.patch
 dictionary.bin
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
