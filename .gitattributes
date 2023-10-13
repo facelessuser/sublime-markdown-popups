@@ -1,2 +1,13 @@
-docs/ export-ignore
+# git related
 .github/ export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+
+# docs
+docs/ export-ignore
+mkdocs.yml export-ignore
+
+# tests
+tests/ export-ignore
+.pyspelling.yml export-ignore
+tox.ini export-ignore
