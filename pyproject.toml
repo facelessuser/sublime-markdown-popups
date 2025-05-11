@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "" = "st3" }
+packages    = ["mdpopups"]
+
+[project]
+name = "mdpopups"
+requires-python = "== 3.8"
+dependencies = [] # We vendor dependencies
+version = "3.7.0"
