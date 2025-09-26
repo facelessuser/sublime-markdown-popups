@@ -12,7 +12,7 @@
 """
 import re
 
-from  import nodes
+from . import nodes
 from .defaults import BLOCK_START_STRING, \
      BLOCK_END_STRING, VARIABLE_START_STRING, VARIABLE_END_STRING, \
      COMMENT_START_STRING, COMMENT_END_STRING, LINE_STATEMENT_PREFIX, \
