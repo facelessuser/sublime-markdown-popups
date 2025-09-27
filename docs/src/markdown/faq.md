@@ -2,7 +2,7 @@
 
 ## Questions
 
-- **Why don't `#!html <pre>` tags work right when I do them, but MdPopups' work correctly?**
+-   **Why don't `#!html <pre>` tags work right when I do them, but MdPopups' work correctly?**
 
     This is because the HTML engine in Sublime treats `#!html <pre>` tags just as a normal block elements; it doesn't
     treat the content as preformatted.  When MdPopups creates code blocks, it actually does a lot of special formatting
@@ -10,14 +10,14 @@
     Lastly, new lines get converted to `#!html <br>` tags.
     {: style="font-style: italic"}
 
-- **Why in code blocks do tabs get converted to 4 spaces?**
+-   **Why in code blocks do tabs get converted to 4 spaces?**
 
     Because I like it that way.  If you are planning on having a snippet of text sent through the syntax highlighter and
     do not want your tabs to be converted to 4 spaces, you should convert it to the number of spaces you like **before**
     sending it through the syntax highlighter.
     {: style="font-style: italic"}
 
-- **Why does &lt;insert element&gt; not work, or cause the popup/phantom not to show?**
+-   **Why does &lt;insert element&gt; not work, or cause the popup/phantom not to show?**
 
     Because Sublime's HTML engine is extremely limited or the element you are trying to use hasn't been styled correctly
     yet. Though I do not have a complete list of all supported elements, you can check out the provided `default.css` on

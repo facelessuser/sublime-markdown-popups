@@ -13,20 +13,20 @@ MdPopups will use your color scheme to create popups/phantoms that fit your edit
 
 ## Plugins Using Markdown Popups
 
-- @facelessuser/ColorHelper
-- @flashios09/GitGutter
-- @SublimeText/LaTeXTools
-- @Kronuz/SublimeCodeIntel
-- @phil65/KodiDevKit
-- @sublimelsp/LSP
+-   @facelessuser/ColorHelper
+-   @flashios09/GitGutter
+-   @SublimeText/LaTeXTools
+-   @Kronuz/SublimeCodeIntel
+-   @phil65/KodiDevKit
+-   @sublimelsp/LSP
 
 ## Features
 
-- Can take Markdown or HTML and create nice looking popups and phantoms.
-- Dynamically creates popup and phantom themes from your current Sublime color scheme.
-- Can create syntax highlighted code blocks easily using your existing Sublime color scheme (can also use Pygments with
-  some setup).
-- Can create color preview boxes via API calls.
-- A CSS template environment that allows users to override and tweak the overall look of the popups and phantoms to
-  better fit their preferred look.
-- Plugins can extend the current CSS to inject plugin specific class styling.
+-   Can take Markdown or HTML and create nice looking popups and phantoms.
+-   Dynamically creates popup and phantom themes from your current Sublime color scheme.
+-   Can create syntax highlighted code blocks easily using your existing Sublime color scheme (can also use Pygments
+    with some setup).
+-   Can create color preview boxes via API calls.
+-   A CSS template environment that allows users to override and tweak the overall look of the popups and phantoms to
+    better fit their preferred look.
+-   Plugins can extend the current CSS to inject plugin specific class styling.

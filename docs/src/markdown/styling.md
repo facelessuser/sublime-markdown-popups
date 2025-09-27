@@ -54,75 +54,75 @@ If doing your own, the Pygments CSS should define a rule to highlight general ba
 .mdpopups .highlight { background-color: #f8f8f8; color: #4d4d4c }
 ```
 
-??? settings "Full Pygments CSS Example"
-
-    ```css
-    .mdpopups .highlight { background-color: #f8f8f8; color: #4d4d4c }
-    .mdpopups .highlight .c { color: #8e908c; font-style: italic } /* Comment */
-    .mdpopups .highlight .err { color: #c82829 } /* Error */
-    .mdpopups .highlight .k { color: #8959a8; font-weight: bold } /* Keyword */
-    .mdpopups .highlight .l { color: #f5871f } /* Literal */
-    .mdpopups .highlight .n { color: #4d4d4c } /* Name */
-    .mdpopups .highlight .o { color: #3e999f } /* Operator */
-    .mdpopups .highlight .p { color: #4d4d4c } /* Punctuation */
-    .mdpopups .highlight .cm { color: #8e908c; font-style: italic } /* Comment.Multiline */
-    .mdpopups .highlight .cp { color: #8e908c; font-weight: bold } /* Comment.Preproc */
-    .mdpopups .highlight .c1 { color: #8e908c; font-style: italic } /* Comment.Single */
-    .mdpopups .highlight .cs { color: #8e908c; font-style: italic } /* Comment.Special */
-    .mdpopups .highlight .gd { color: #c82829 } /* Generic.Deleted */
-    .mdpopups .highlight .ge { font-style: italic } /* Generic.Emph */
-    .mdpopups .highlight .gh { color: #4d4d4c; font-weight: bold } /* Generic.Heading */
-    .mdpopups .highlight .gi { color: #718c00 } /* Generic.Inserted */
-    .mdpopups .highlight .gp { color: #8e908c; font-weight: bold } /* Generic.Prompt */
-    .mdpopups .highlight .gs { font-weight: bold } /* Generic.Strong */
-    .mdpopups .highlight .gu { color: #3e999f; font-weight: bold } /* Generic.Subheading */
-    .mdpopups .highlight .kc { color: #8959a8; font-weight: bold } /* Keyword.Constant */
-    .mdpopups .highlight .kd { color: #8959a8; font-weight: bold } /* Keyword.Declaration */
-    .mdpopups .highlight .kn { color: #8959a8; font-weight: bold } /* Keyword.Namespace */
-    .mdpopups .highlight .kp { color: #8959a8; font-weight: bold } /* Keyword.Pseudo */
-    .mdpopups .highlight .kr { color: #8959a8; font-weight: bold } /* Keyword.Reserved */
-    .mdpopups .highlight .kt { color: #eab700; font-weight: bold } /* Keyword.Type */
-    .mdpopups .highlight .ld { color: #718c00 } /* Literal.Date */
-    .mdpopups .highlight .m { color: #f5871f } /* Literal.Number */
-    .mdpopups .highlight .s { color: #718c00 } /* Literal.String */
-    .mdpopups .highlight .na { color: #4271ae } /* Name.Attribute */
-    .mdpopups .highlight .nb { color: #4271ae } /* Name.Builtin */
-    .mdpopups .highlight .nc { color: #c82829; font-weight: bold } /* Name.Class */
-    .mdpopups .highlight .no { color: #c82829 } /* Name.Constant */
-    .mdpopups .highlight .nd { color: #3e999f } /* Name.Decorator */
-    .mdpopups .highlight .ni { color: #4d4d4c } /* Name.Entity */
-    .mdpopups .highlight .ne { color: #c82829; font-weight: bold } /* Name.Exception */
-    .mdpopups .highlight .nf { color: #4271ae; font-weight: bold } /* Name.Function */
-    .mdpopups .highlight .nl { color: #4d4d4c } /* Name.Label */
-    .mdpopups .highlight .nn { color: #4d4d4c } /* Name.Namespace */
-    .mdpopups .highlight .nx { color: #4271ae } /* Name.Other */
-    .mdpopups .highlight .py { color: #4d4d4c } /* Name.Property */
-    .mdpopups .highlight .nt { color: #c82829 } /* Name.Tag */
-    .mdpopups .highlight .nv { color: #c82829 } /* Name.Variable */
-    .mdpopups .highlight .ow { color: #3e999f } /* Operator.Word */
-    .mdpopups .highlight .w { color: #4d4d4c } /* Text.Whitespace */
-    .mdpopups .highlight .mb { color: #f5871f } /* Literal.Number.Bin */
-    .mdpopups .highlight .mf { color: #f5871f } /* Literal.Number.Float */
-    .mdpopups .highlight .mh { color: #f5871f } /* Literal.Number.Hex */
-    .mdpopups .highlight .mi { color: #f5871f } /* Literal.Number.Integer */
-    .mdpopups .highlight .mo { color: #f5871f } /* Literal.Number.Oct */
-    .mdpopups .highlight .sb { color: #718c00 } /* Literal.String.Backtick */
-    .mdpopups .highlight .sc { color: #4d4d4c } /* Literal.String.Char */
-    .mdpopups .highlight .sd { color: #8e908c } /* Literal.String.Doc */
-    .mdpopups .highlight .s2 { color: #718c00 } /* Literal.String.Double */
-    .mdpopups .highlight .se { color: #f5871f } /* Literal.String.Escape */
-    .mdpopups .highlight .sh { color: #718c00 } /* Literal.String.Heredoc */
-    .mdpopups .highlight .si { color: #f5871f } /* Literal.String.Interpol */
-    .mdpopups .highlight .sx { color: #718c00 } /* Literal.String.Other */
-    .mdpopups .highlight .sr { color: #718c00 } /* Literal.String.Regex */
-    .mdpopups .highlight .s1 { color: #718c00 } /* Literal.String.Single */
-    .mdpopups .highlight .ss { color: #718c00 } /* Literal.String.Symbol */
-    .mdpopups .highlight .bp { color: #f5871f } /* Name.Builtin.Pseudo */
-    .mdpopups .highlight .vc { color: #c82829 } /* Name.Variable.Class */
-    .mdpopups .highlight .vg { color: #c82829 } /* Name.Variable.Global */
-    .mdpopups .highlight .vi { color: #c82829 } /* Name.Variable.Instance */
-    .mdpopups .highlight .il { color: #f5871f } /* Literal.Number.Integer.Long */
-    ```
+/// details-settings | Full Pygments CSS Example
+```css
+.mdpopups .highlight { background-color: #f8f8f8; color: #4d4d4c }
+.mdpopups .highlight .c { color: #8e908c; font-style: italic } /* Comment */
+.mdpopups .highlight .err { color: #c82829 } /* Error */
+.mdpopups .highlight .k { color: #8959a8; font-weight: bold } /* Keyword */
+.mdpopups .highlight .l { color: #f5871f } /* Literal */
+.mdpopups .highlight .n { color: #4d4d4c } /* Name */
+.mdpopups .highlight .o { color: #3e999f } /* Operator */
+.mdpopups .highlight .p { color: #4d4d4c } /* Punctuation */
+.mdpopups .highlight .cm { color: #8e908c; font-style: italic } /* Comment.Multiline */
+.mdpopups .highlight .cp { color: #8e908c; font-weight: bold } /* Comment.Preproc */
+.mdpopups .highlight .c1 { color: #8e908c; font-style: italic } /* Comment.Single */
+.mdpopups .highlight .cs { color: #8e908c; font-style: italic } /* Comment.Special */
+.mdpopups .highlight .gd { color: #c82829 } /* Generic.Deleted */
+.mdpopups .highlight .ge { font-style: italic } /* Generic.Emph */
+.mdpopups .highlight .gh { color: #4d4d4c; font-weight: bold } /* Generic.Heading */
+.mdpopups .highlight .gi { color: #718c00 } /* Generic.Inserted */
+.mdpopups .highlight .gp { color: #8e908c; font-weight: bold } /* Generic.Prompt */
+.mdpopups .highlight .gs { font-weight: bold } /* Generic.Strong */
+.mdpopups .highlight .gu { color: #3e999f; font-weight: bold } /* Generic.Subheading */
+.mdpopups .highlight .kc { color: #8959a8; font-weight: bold } /* Keyword.Constant */
+.mdpopups .highlight .kd { color: #8959a8; font-weight: bold } /* Keyword.Declaration */
+.mdpopups .highlight .kn { color: #8959a8; font-weight: bold } /* Keyword.Namespace */
+.mdpopups .highlight .kp { color: #8959a8; font-weight: bold } /* Keyword.Pseudo */
+.mdpopups .highlight .kr { color: #8959a8; font-weight: bold } /* Keyword.Reserved */
+.mdpopups .highlight .kt { color: #eab700; font-weight: bold } /* Keyword.Type */
+.mdpopups .highlight .ld { color: #718c00 } /* Literal.Date */
+.mdpopups .highlight .m { color: #f5871f } /* Literal.Number */
+.mdpopups .highlight .s { color: #718c00 } /* Literal.String */
+.mdpopups .highlight .na { color: #4271ae } /* Name.Attribute */
+.mdpopups .highlight .nb { color: #4271ae } /* Name.Builtin */
+.mdpopups .highlight .nc { color: #c82829; font-weight: bold } /* Name.Class */
+.mdpopups .highlight .no { color: #c82829 } /* Name.Constant */
+.mdpopups .highlight .nd { color: #3e999f } /* Name.Decorator */
+.mdpopups .highlight .ni { color: #4d4d4c } /* Name.Entity */
+.mdpopups .highlight .ne { color: #c82829; font-weight: bold } /* Name.Exception */
+.mdpopups .highlight .nf { color: #4271ae; font-weight: bold } /* Name.Function */
+.mdpopups .highlight .nl { color: #4d4d4c } /* Name.Label */
+.mdpopups .highlight .nn { color: #4d4d4c } /* Name.Namespace */
+.mdpopups .highlight .nx { color: #4271ae } /* Name.Other */
+.mdpopups .highlight .py { color: #4d4d4c } /* Name.Property */
+.mdpopups .highlight .nt { color: #c82829 } /* Name.Tag */
+.mdpopups .highlight .nv { color: #c82829 } /* Name.Variable */
+.mdpopups .highlight .ow { color: #3e999f } /* Operator.Word */
+.mdpopups .highlight .w { color: #4d4d4c } /* Text.Whitespace */
+.mdpopups .highlight .mb { color: #f5871f } /* Literal.Number.Bin */
+.mdpopups .highlight .mf { color: #f5871f } /* Literal.Number.Float */
+.mdpopups .highlight .mh { color: #f5871f } /* Literal.Number.Hex */
+.mdpopups .highlight .mi { color: #f5871f } /* Literal.Number.Integer */
+.mdpopups .highlight .mo { color: #f5871f } /* Literal.Number.Oct */
+.mdpopups .highlight .sb { color: #718c00 } /* Literal.String.Backtick */
+.mdpopups .highlight .sc { color: #4d4d4c } /* Literal.String.Char */
+.mdpopups .highlight .sd { color: #8e908c } /* Literal.String.Doc */
+.mdpopups .highlight .s2 { color: #718c00 } /* Literal.String.Double */
+.mdpopups .highlight .se { color: #f5871f } /* Literal.String.Escape */
+.mdpopups .highlight .sh { color: #718c00 } /* Literal.String.Heredoc */
+.mdpopups .highlight .si { color: #f5871f } /* Literal.String.Interpol */
+.mdpopups .highlight .sx { color: #718c00 } /* Literal.String.Other */
+.mdpopups .highlight .sr { color: #718c00 } /* Literal.String.Regex */
+.mdpopups .highlight .s1 { color: #718c00 } /* Literal.String.Single */
+.mdpopups .highlight .ss { color: #718c00 } /* Literal.String.Symbol */
+.mdpopups .highlight .bp { color: #f5871f } /* Name.Builtin.Pseudo */
+.mdpopups .highlight .vc { color: #c82829 } /* Name.Variable.Class */
+.mdpopups .highlight .vg { color: #c82829 } /* Name.Variable.Global */
+.mdpopups .highlight .vi { color: #c82829 } /* Name.Variable.Instance */
+.mdpopups .highlight .il { color: #f5871f } /* Literal.Number.Integer.Long */
+```
+///
 
 ## CSS Styling
 
@@ -206,9 +206,10 @@ variables will be namespaced under `plugin`.
 With the template environment, colors and style from the current Sublime color scheme can be accessed and manipulated.
 Access to the Sublime color scheme styles CSS is done via the `css` filter.
 
+/// define
 `css`
-: 
-    Retrieves the style for a specific Sublime scope from a Sublime color scheme.  By specifying either `foreground`,
+
+-   Retrieves the style for a specific Sublime scope from a Sublime color scheme.  By specifying either `foreground`,
     `background`, or any scope (complexity doesn't really matter) and feeding it into the `css` filter, all the related
     styling of the specified scope will be inserted as CSS into the CSS document.
 
@@ -252,6 +253,7 @@ Access to the Sublime color scheme styles CSS is done via the `css` filter.
     /* If `keyword.operator` is not explicitly used, fallback to `.keyword` */
     h1, h2, h3, h4, h5, h6 { {{'keyword.operator'|css('color', False)}} }
     ```
+///
 
 ### Color Filters
 
@@ -279,10 +281,10 @@ attribute.  Color filters only take either `color` or `background-color` attribu
 Filters can be chained if more intensity is needed (as some filters may clamp the value in one call), or if you want to
 apply multiple filters.  These are all the available filters:
 
+/// define
 `foreground` and `background`
-: 
 
-    If desired, you can convert a foreground color to a background color or vice versa.  To convert to a foreground
+-   If desired, you can convert a foreground color to a background color or vice versa.  To convert to a foreground
     color, you can use the `foreground` filter.  To convert to a background color, you can use the `background` filter.
     Remember, this is augmenting the CSS returned by the `css` filter, you can't just give it a color. 
 
@@ -300,10 +302,12 @@ apply multiple filters.  These are all the available filters:
     ```css+jinja
     body { {{'.foreground'|css('color')|background}} }
     ```
+///
 
+/// define
 `brightness`
-: 
-    Shifts brightness either dark or lighter. Brightness is relative to `1` where `1` means no change.  Accepted values
+
+-   Shifts brightness either dark or lighter. Brightness is relative to `1` where `1` means no change.  Accepted values
     are floats that are greater than `0`.  Ranges are clamped between `0` and `2`.
 
     **Example - Darken**:
@@ -315,10 +319,12 @@ apply multiple filters.  These are all the available filters:
     ```css+jinja
     body { {{'.background'|css('background-color')|brightness(1.1)}} }
     ```
+///
 
+/// define
 `contrast`
-: 
-    Increases/decreases the contrast.  Contrast is relative to `1` where `1` means no change.  Accepted values are
+
+-   Increases/decreases the contrast.  Contrast is relative to `1` where `1` means no change.  Accepted values are
     floats that are greater than `0`.  Ranges are clamped between `0` and `2`.
 
     **Example - Decrease contrast**:
@@ -330,10 +336,12 @@ apply multiple filters.  These are all the available filters:
     ```css+jinja
     body { {{'.background'|css('background-color')|contrast(1.1)}} }
     ```
+///
 
+/// define
 `saturation`
-: 
-    Shifts the saturation either to right (saturate) or the left (desaturate).  Saturation is relative to `1` where `1`
+
+-   Shifts the saturation either to right (saturate) or the left (desaturate).  Saturation is relative to `1` where `1`
     means no change.  Accepted values are floats that are greater than `0`.  Ranges are clamped between `0` and `2`.
 
     **Example - Desaturate**:
@@ -345,37 +353,45 @@ apply multiple filters.  These are all the available filters:
     ```css+jinja
     body { {{'.background'|css('background-color')|saturation(1.1)}} }
     ```
+///
 
+/// define
 `grayscale`
-: 
-    Filters all colors to a grayish tone.
+
+-   Filters all colors to a grayish tone.
 
     **Example**:
     ```css+jinja
     body { {{'.background'|css('background-color')|grayscale}} }
     ```
+///
 
+/// define
 `sepia`
-: 
-    Filters all colors to a sepia tone.
+
+-   Filters all colors to a sepia tone.
 
     **Example**:
     ```css+jinja
     body { {{'.background'|css('background-color')|sepia}} }
     ```
+///
 
+/// define
 `invert`
-: 
-    Inverts a color.
+
+-   Inverts a color.
 
     **Example**:
     ```css+jinja
     body { {{'.background'|css('background-color')|invert}} }
     ```
+///
 
+/// define
 `colorize`
-: 
-    Filters all colors to a shade of the specified hue.  Think grayscale, but instead of gray, you define a non-gray
+
+-   Filters all colors to a shade of the specified hue.  Think grayscale, but instead of gray, you define a non-gray
     hue.  The values are angular dimensions starting at the red primary at 0°, passing through the green primary at 120°
     and the blue primary at 240°, and then wrapping back to red at 360°.
 
@@ -383,10 +399,12 @@ apply multiple filters.  These are all the available filters:
     ```css+jinja
     body { {{'.background'|css('background-color')|colorize(30)}} }
     ```
+///
 
+/// define
 `hue`
-: 
-    Shifts the current hue either to the left or right.  The values are angular dimensions starting at the red primary
+
+-   Shifts the current hue either to the left or right.  The values are angular dimensions starting at the red primary
     at 0°, passing through the green primary at 120° and the blue primary at 240°, and then wrapping back to red at
     360°.  Values can either be negative to shift left or positive to shift the hue to the right.
 
@@ -399,20 +417,24 @@ apply multiple filters.  These are all the available filters:
     ```css+jinja
     body { {{'.background'|css('background-color')|hue(30)}} }
     ```
+///
 
+/// define
 `fade`
-: 
-    Fades a color. Essentially it is like applying transparency to the color allowing the color schemes base background
+
+-   Fades a color. Essentially it is like applying transparency to the color allowing the color schemes base background
     color to show through.
 
     **Example - Fade 50%**:
     ```css+jinja
     body { {{'.foreground'|css('color')|fade(0.5)}} }
     ```
+///
 
+/// define
 `filters`
-: 
-    Applies CSS filters as defined in https://www.w3.org/TR/filter-effects-1/. Multiple filters can be applied in the
+
+-   Applies CSS filters as defined in https://www.w3.org/TR/filter-effects-1/. Multiple filters can be applied in the
     CSS style and will operate like they do in CSS. If desired, the color space can be changed from `srgb` to
     `srgb-linear`.
 
@@ -420,39 +442,45 @@ apply multiple filters.  These are all the available filters:
     ```css+jinja
     body { {{'.foreground'|css('color')|filters('brightness(10%) contrast(20%)', space='srgb-linear')}} }
     ```
+///
 
 ### Include CSS Filter
 
 The template environment allows for retrieving CSS resources from Sublime Packages or built-in Pygments CSS from the
 Pygments library.
 
+/// define
 `getcss`
-: 
-    Retrieve a CSS file from Sublime's `Packages` folder.  CSS retrieved in this manner can include template variables
+
+-   Retrieve a CSS file from Sublime's `Packages` folder.  CSS retrieved in this manner can include template variables
     and filters.
 
     **Example**:
     ```css+jinja
     {{'Packages/User/aprosopo-dark.css'|getcss}}
     ```
+///
 
+/// define
 `pygments`
-: 
-    Retrieve a built-in Pygments color scheme.
+
+-   Retrieve a built-in Pygments color scheme.
 
     **Example**:
     ```css+jinja
     {{'native'|pygments}}
     ```
+///
 
 ## Template Variables
 
 The template environment provides a couple of variables that can be used to conditionally alter the CSS output.
 Variables are found under `var`.
 
+/// define
 `var.sublime_version`
-: 
-    `sublime_version` contains the current Sublime Text version.  This allows you conditionally handle CSS features that
+
+-   `sublime_version` contains the current Sublime Text version.  This allows you conditionally handle CSS features that
     are specific to a Sublime Text version.
 
     **Example**
@@ -463,10 +491,12 @@ Variables are found under `var`.
     padding: 0.2em;
     {% endif %}
     ```
+///
 
+/// define
 `var.mdpopups_version`
-: 
-    `mdpopups_version` contains the current MdPopups version which you can use in your CSS templates if needed.
+
+-   `mdpopups_version` contains the current MdPopups version which you can use in your CSS templates if needed.
 
     **Example**
     ```css+jinja
@@ -476,15 +506,19 @@ Variables are found under `var`.
     /* do something else */
     {% endif %}
     ```
+///
 
+/// define
 `var.default_style`
-: 
-    Flag specifying whether default styling is being used.  See [`mdpopups.default_style`](./settings.md#mdpopupsdefault_style)
-    for how to control this flag.  And see [`default.css`][default-css] for an example of how it is used.
 
+-   Flag specifying whether default styling is being used.  See [`mdpopups.default_style`](./settings.md#mdpopupsdefault_style)
+    for how to control this flag.  And see [`default.css`][default-css] for an example of how it is used.
+///
+
+/// define
 `var.is_dark` and `var.is_light`
-: 
-    `is_dark` checks if the color scheme is a dark color scheme.  Alternatively, `is_light` checks if the color scheme
+
+-   `is_dark` checks if the color scheme is a dark color scheme.  Alternatively, `is_light` checks if the color scheme
     is a light color scheme.
 
     **Example**:
@@ -495,10 +529,12 @@ Variables are found under `var`.
     html{ {{'.background'|css('background-color')|brightness(1.1)}} }
     {% endif %}
     ```
+///
 
+/// define
 `var.is_popup`, `var.is_phantom`, and `var.is_sheet`
-: 
-    `is_phantom` checks if the current CSS is for a phantom instead of a popup.  Alternatively, `is_popup` and
+
+-   `is_phantom` checks if the current CSS is for a phantom instead of a popup.  Alternatively, `is_popup` and
     `is_sheet` checks if the current use of the CSS is for a popup or HTML sheet respectively.
 
     **Example**:
@@ -509,10 +545,12 @@ Variables are found under `var`.
     html{ {{'.background'|css('background-color')|brightness(1.1)}} }
     {% endif %}
     ```
+///
 
+/// define
 `var.use_pygments`
-: 
-    Checks if the Pygments syntax highlighter is being used.
+
+-   Checks if the Pygments syntax highlighter is being used.
 
     **Example**:
     ```css+jinja
@@ -524,10 +562,12 @@ Variables are found under `var`.
     {% endif %}
     {% endif %}
     ```
+///
 
+/// define
 `var.color_scheme`
-: 
-    Retrieves the current color schemes name.
+
+-   Retrieves the current color schemes name.
 
     **Example**:
     ```css+jinja
@@ -542,3 +582,4 @@ Variables are found under `var`.
     a { {{'.support.function'|css('color')}} }
     {% endif %}
     ```
+///
