@@ -278,7 +278,10 @@ class ColorMod:
                 if color is None:
                     m = RE_COLOR_START.match(string, start)
                     if m:
+                        fullmatch = self.fullmatch
+                        self.fullmatch = False
                         color2, start = self._adjust(string, start=start)
+                        self.fullmatch = fullmatch
                         if color2 is None:
                             raise ValueError("Found unterminated or invalid 'color('")
                         color = color2.convert("srgb")
