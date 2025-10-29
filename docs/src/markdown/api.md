@@ -15,6 +15,19 @@ Your plugin should include the Package Control dependencies listed below. Please
 }
 ```
 
+For Python 3.3 support, `typing` is required.
+
+```js
+{
+    "*": {
+        ">=3124": [
+            "mdpopups",
+            "typing"
+        ]
+    }
+}
+```
+
 Check out @facelessuser/mdpopups_test if to create quick and easy popup tests. Clone it into `Packages/mdpopups_test`,
 run `Package Control: Satisfy dependencies`, and then restart Sublime. You should be able to then run the command
 `Mdpopups: Test` to see an example popup, phantom, or (if on Sublime Text 4) HTML sheet. You can even create output of

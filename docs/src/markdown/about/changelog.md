@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.1
+
+- **FIX**: Fixes for Sublime beta using Python 3.13.
+
 ## 4.3.0
 
 - **NEW**: Upgrade internal `coloraide` to version 1.3.
