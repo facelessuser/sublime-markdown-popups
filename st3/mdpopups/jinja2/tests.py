@@ -10,7 +10,7 @@
 """
 import operator
 import re
-from collections import Mapping
+from collections.abc import Mapping
 from .runtime import Undefined
 from ._compat import text_type, string_types, integer_types
 import decimal

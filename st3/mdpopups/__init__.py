@@ -17,6 +17,7 @@ import time
 import codecs
 import html
 import html.parser
+import sys
 import urllib
 import functools
 import base64
@@ -108,6 +109,12 @@ def _can_show(view, location=-1):
         can_show = False
 
     return can_show
+
+
+if sys.version_info < (3, 4):
+    _unescape_html = html.parser.HTMLParser().unescape
+else:
+    _unescape_html = html.unescape
 
 
 ##############################
@@ -316,11 +323,9 @@ def _get_theme(view, css=None, css_type=POPUP, template_vars=None):
 def _remove_entities(text):
     """Remove unsupported HTML entities."""
 
-    p = html.parser.HTMLParser()
-
     def repl(m):
         """Replace entities except &, <, >, and `nbsp`."""
-        return p.unescape(m.group(1))
+        return _unescape_html(m.group(1))
 
     return RE_BAD_ENTITIES.sub(repl, text)
 
@@ -894,7 +899,7 @@ def _image_parser(text):
         m2 = RE_TAG_LINK_ATTR.search(m.group('attr'))
         if m2:
             src = m2.group('path')[1:-1]
-            src = html.parser.HTMLParser().unescape(src)
+            src = _unescape_html(src)
             if urllib.parse.urlparse(src).scheme in ("http", "https"):
                 s = start + m2.start('path') + 1
                 e = start + m2.end('path') - 1
