@@ -24,6 +24,7 @@ Original code has been heavily modified by Isaac Muse <isaacmuse@gmail.com> for 
 """
 import sublime
 import re
+import os
 from .st_mapping import lang_map
 
 RE_TAIL = re.compile(r'(?:\r\n|(?!\r\n)[\n\r])*\Z')
@@ -246,9 +247,14 @@ class SublimeHighlight(object):
 
                     for ext in ST_LANGUAGES:
                         syntax_file = 'Packages/{}{}'.format(l, ext)
-                        try:
-                            sublime.load_binary_resource(syntax_file)
-                        except Exception:
+                        base = os.path.basename(syntax_file)
+                        results = set(sublime.find_resources(base))
+                        if syntax_file in results:
+                            try:
+                                sublime.load_binary_resource(syntax_file)
+                            except Exception:
+                                continue
+                        else:
                             continue
                         self.view.assign_syntax(syntax_file)
                         loaded = True
@@ -268,9 +274,14 @@ class SublimeHighlight(object):
             for ext in ST_LANGUAGES:
                 # Just in case text one day switches to 'sublime-syntax'
                 syntax_file = 'Packages/Text/Plain text{}'.format(ext)
-                try:
-                    sublime.load_binary_resource(syntax_file)
-                except Exception:
+                base = os.path.basename(syntax_file)
+                results = set(sublime.find_resources(base))
+                if syntax_file in results:
+                    try:
+                        sublime.load_binary_resource(syntax_file)
+                    except Exception:
+                        continue
+                else:
                     continue
                 self.view.assign_syntax(syntax_file)
 
