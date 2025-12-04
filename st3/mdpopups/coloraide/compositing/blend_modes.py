@@ -1,8 +1,8 @@
 """Blend modes."""
+from __future__ import annotations
 import math
 from abc import ABCMeta, abstractmethod
 from operator import itemgetter
-from typing import Dict
 from ..types import Vector
 
 
@@ -97,10 +97,10 @@ class NonSeperableBlend(Blend):
 
         raise NotImplementedError('apply is not implemented')
 
-    def blend(self, coords_backgrond: Vector, coords_source: Vector) -> Vector:
+    def blend(self, coords1: Vector, coords2: Vector) -> Vector:
         """Apply blending logic."""
 
-        return self.apply(coords_backgrond, coords_source)
+        return self.apply(coords1, coords2)
 
 
 class BlendNormal(SeperableBlend):
@@ -298,13 +298,13 @@ SUPPORTED = {
     "saturation": BlendSaturation(),
     "luminosity": BlendLuminosity(),
     "color": BlendColor(),
-}  # type: Dict[str, Blend]
+}  # type: dict[str, Blend]
 
 
 def get_blender(blend: str) -> Blend:
     """Get desired blend mode."""
 
-    try:
-        return SUPPORTED[blend]
-    except KeyError:
-        raise ValueError("'{}' is not a recognized blend mode".format(blend))
+    blender = SUPPORTED.get(blend)
+    if not blender:
+        raise ValueError(f"'{blend}' is not a recognized blend mode")
+    return blender

@@ -1,23 +1,21 @@
 """Delta E OK."""
-from .delta_e_76 import DE76
-from typing import TYPE_CHECKING, Any, Optional
+from __future__ import annotations
+from ..distance import DeltaE, distance_euclidean
+from ..types import AnyColor
+from typing import Any
 
-if TYPE_CHECKING:  # pragma: no cover
-    from ..color import Color
 
+class DEOK(DeltaE):
+    """Delta E 99o class."""
 
-class DEOK(DE76):
-    """Delta E OK class."""
-
-    NAME = "ok"
-    SPACE = "oklab"
+    NAME = 'ok'
 
     def __init__(self, scalar: float = 1) -> None:
         """Initialize."""
 
         self.scalar = scalar
 
-    def distance(self, color: 'Color', sample: 'Color', scalar: Optional[float] = None, **kwargs: Any) -> float:
+    def distance(self, color: AnyColor, sample: AnyColor, scalar: float | None = None, **kwargs: Any) -> float:
         """
         Delta E OK color distance formula.
 
@@ -27,5 +25,4 @@ class DEOK(DE76):
         if scalar is None:
             scalar = self.scalar
 
-        # Equation (1)
-        return scalar * super().distance(color, sample)
+        return scalar * distance_euclidean(color, sample, space='oklab')

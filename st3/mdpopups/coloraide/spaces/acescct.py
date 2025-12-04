@@ -3,12 +3,13 @@ ACEScct color space.
 
 https://www.oscars.org/science-technology/aces/aces-documentation
 """
+from __future__ import annotations
 import math
 from ..channels import Channel
-from ..spaces.srgb import sRGB
-from ..types import Vector
-from typing import Tuple
+from ..spaces.srgb_linear import sRGBLinear
 from .acescc import CC_MAX
+from ..cat import WHITES
+from ..types import Vector
 
 CCT_MIN = 0.0729055341958355
 CCT_MAX = CC_MAX
@@ -45,18 +46,24 @@ def acescg_to_acescct(acescg: Vector) -> Vector:
     return acescc
 
 
-class ACEScct(sRGB):
+class ACEScct(sRGBLinear):
     """The ACEScct color class."""
 
     BASE = "acescg"
     NAME = "acescct"
-    SERIALIZE = ("--acescct",)  # type: Tuple[str, ...]
-    WHITE = (0.32168, 0.33767)
+    SERIALIZE = ("--acescct",)  # type: tuple[str, ...]
+    WHITE = WHITES['2deg']['ACES-D60']
     CHANNELS = (
-        Channel("r", CCT_MIN, CCT_MAX, bound=True),
-        Channel("g", CCT_MIN, CCT_MAX, bound=True),
-        Channel("b", CCT_MIN, CCT_MAX, bound=True)
+        Channel("r", CCT_MIN, CCT_MAX, bound=True, nans=CCT_MIN),
+        Channel("g", CCT_MIN, CCT_MAX, bound=True, nans=CCT_MIN),
+        Channel("b", CCT_MIN, CCT_MAX, bound=True, nans=CCT_MIN)
     )
+    DYNAMIC_RANGE = 'hdr'
+
+    def linear(self) -> str:
+        """Return linear version of the RGB (if available)."""
+
+        return self.BASE
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ."""

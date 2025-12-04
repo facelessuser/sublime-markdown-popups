@@ -1,9 +1,6 @@
 """Everything and the kitchen sink."""
+from __future__ import annotations
 from .color import Color as Base
-from .spaces.rec2100pq import Rec2100PQ
-from .spaces.jzazbz import Jzazbz
-from .spaces.jzczhz import JzCzhz
-from .spaces.ictcp import ICtCp
 from .spaces.din99o import DIN99o
 from .spaces.lch99o import LCh99o
 from .spaces.luv import Luv
@@ -12,12 +9,15 @@ from .spaces.hsluv import HSLuv
 from .spaces.hpluv import HPLuv
 from .spaces.okhsl import Okhsl
 from .spaces.okhsv import Okhsv
+from .spaces.oklrab import Oklrab
+from .spaces.oklrch import OkLrCh
 from .spaces.hsi import HSI
 from .spaces.ipt import IPT
 from .spaces.igpgtg import IgPgTg
 from .spaces.cmy import CMY
 from .spaces.cmyk import CMYK
 from .spaces.xyy import xyY
+from .spaces.xyb import XYB
 from .spaces.hunter_lab import HunterLab
 from .spaces.prismatic import Prismatic
 from .spaces.rlab import RLAB
@@ -26,10 +26,27 @@ from .spaces.aces2065_1 import ACES20651
 from .spaces.acescg import ACEScg
 from .spaces.acescc import ACEScc
 from .spaces.acescct import ACEScct
-from .distance.delta_e_itp import DEITP
+from .spaces.cam02 import CAM02JMh
+from .spaces.cam02_ucs import CAM02UCS, CAM02LCD, CAM02SCD
+from .spaces.cam16 import CAM16JMh
+from .spaces.cam16_ucs import CAM16UCS, CAM16LCD, CAM16SCD
+from .spaces.hellwig import HellwigJMh, HellwigHKJMh
+from .spaces.zcam import ZCAMJMh
+from .spaces.hct import HCT
+from .spaces.ucs import UCS
+from .spaces.rec709 import Rec709
+from .spaces.rec709_oetf import Rec709OETF
+from .spaces.ryb import RYB, RYBBiased
+from .spaces.cubehelix import Cubehelix
+from .spaces.rec2020_oetf import Rec2020OETF
+from .spaces.msh import Msh
 from .distance.delta_e_99o import DE99o
-from .distance.delta_e_z import DEZ
+from .distance.delta_e_cam16 import DECAM16
+from .distance.delta_e_cam02 import DECAM02
+from .distance.delta_e_hct import DEHCT
+from .gamut.fit_hct_chroma import HCTChroma
 from .interpolate.catmull_rom import CatmullRom
+from .contrast.lstar import LstarContrast
 from .cat import VonKries, XYZScaling, CAT02, CMCCAT97, Sharp, CMCCAT2000, CAT16
 from .color import ColorMatch
 from .interpolate import stop, hint
@@ -45,16 +62,16 @@ class ColorAll(Base):
 ColorAll.register(
     [
         # Spaces
-        Rec2100PQ(),
-        Jzazbz(),
-        JzCzhz(),
-        ICtCp(),
+        Rec709(),
+        Rec709OETF(),
         DIN99o(),
         LCh99o(),
         Luv(),
         LChuv(),
         Okhsl(),
         Okhsv(),
+        Oklrab(),
+        OkLrCh(),
         HSLuv(),
         HPLuv(),
         HSI(),
@@ -63,6 +80,7 @@ ColorAll.register(
         CMY(),
         CMYK(),
         xyY(),
+        XYB(),
         HunterLab(),
         Prismatic(),
         RLAB(),
@@ -71,11 +89,33 @@ ColorAll.register(
         ACEScg(),
         ACEScc(),
         ACEScct(),
+        CAM02JMh(),
+        CAM02UCS(),
+        CAM02LCD(),
+        CAM02SCD(),
+        CAM16JMh(),
+        CAM16UCS(),
+        CAM16SCD(),
+        CAM16LCD(),
+        HellwigJMh(),
+        HellwigHKJMh(),
+        HCT(),
+        UCS(),
+        RYB(),
+        RYBBiased(),
+        Cubehelix(),
+        ZCAMJMh(),
+        Rec2020OETF(),
+        Msh(),
 
         # Delta E
-        DEITP(),
         DE99o(),
-        DEZ(),
+        DECAM16(),
+        DECAM02(),
+        DEHCT(),
+
+        # Gamut Mapping
+        HCTChroma(),
 
         # CAT
         VonKries(),
@@ -87,6 +127,9 @@ ColorAll.register(
         CAT16(),
 
         # Interpolation
-        CatmullRom()
+        CatmullRom(),
+
+        # Contrast
+        LstarContrast()
     ]
 )

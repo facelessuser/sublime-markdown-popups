@@ -1,12 +1,13 @@
 """Utilities."""
+from __future__ import annotations
 import math
-import warnings
 from functools import wraps
 from . import algebra as alg
 from .types import Vector, VectorLike
-from typing import Any, Callable
+from typing import Any, Callable, Sequence
 
 DEF_PREC = 5
+DEF_ROUND_MODE = 'digits'
 DEF_FIT_TOLERANCE = 0.000075
 DEF_ALPHA = 1.0
 DEF_MIX = 0.5
@@ -15,13 +16,14 @@ DEF_INTERPOLATE = "oklab"
 DEF_FIT = "lch-chroma"
 DEF_HARMONY = "oklch"
 DEF_DELTA_E = "76"
+DEF_AVERAGE = 'srgb-linear'
+DEF_CHROMATIC_ADAPTATION = "bradford"
+DEF_CONTRAST = "wcag21"
+DEF_CCT = "robertson-1968"
+DEF_INTERPOLATOR = "linear"
 
-# Maximum luminance in PQ is 10,000 cd/m^2
-# Relative XYZ has Y=1 for media white
-# BT.2048 says media white Y=203 at PQ 58
-#
-# This is confirmed here: https://www.itu.int/dms_pub/itu-r/opb/rep/R-REP-BT.2408-3-2019-PDF-E.pdf
-YW = 203
+ACHROMATIC_THRESHOLD = 1e-4
+ACHROMATIC_THRESHOLD_SM = 1e-6
 
 # PQ Constants
 # https://en.wikipedia.org/wiki/High-dynamic-range_video#Perceptual_quantizer
@@ -43,7 +45,19 @@ def xy_to_xyz(xy: VectorLike, Y: float = 1.0, scale: float = 1.0) -> Vector:
     """
 
     x, y = xy
-    return [0, 0, 0] if y == 0 else [(x * Y) / y, Y, (scale - x - y) * Y / y]
+    return [0.0, 0.0, 0.0] if y == 0 else [(x * Y) / y, Y, (scale - x - y) * Y / y]
+
+
+def xyz_to_xyY(xyz: VectorLike, white: VectorLike = (0.0, 0.0)) -> Vector:
+    """
+    XYZ to `xyY`.
+
+    If a white point chromaticity pair is given, black will be aligned with the achromatic axis.
+    """
+
+    x, y, z = xyz
+    d = x + y + z
+    return [white[0], white[1], y] if d == 0 else [x / d, y / d, y]
 
 
 def xy_to_uv(xy: VectorLike) -> Vector:
@@ -64,13 +78,7 @@ def xy_to_uv_1960(xy: VectorLike) -> Vector:
 
     x, y = xy
     denom = (12 * y - 2 * x + 3)
-    if denom != 0:
-        u = (4 * x) / denom
-        v = (6 * y) / denom
-    else:
-        u = v = 0
-
-    return [u, v]
+    return [0.0, 0.0] if denom == 0 else [(4 * x) / denom, (6 * y) / denom]
 
 
 def uv_1960_to_xy(uv: VectorLike) -> Vector:
@@ -78,24 +86,10 @@ def uv_1960_to_xy(uv: VectorLike) -> Vector:
 
     u, v = uv
     denom = (2 * u - 8 * v + 4)
-    if denom != 0:
-        x = (3 * u) / denom
-        y = (2 * v) / denom
-    else:
-        x = y = 0
-
-    return [x, y]
+    return [0.0, 0.0] if denom == 0 else [(3 * u) / denom, (2 * v) / denom]
 
 
-def xyz_to_xyY(xyz: VectorLike, white: VectorLike) -> Vector:
-    """XYZ to `xyY`."""
-
-    x, y, z = xyz
-    d = x + y + z
-    return [white[0], white[1], y] if d == 0 else [x / d, y / d, y]
-
-
-def pq_st2084_inverse_eotf(
+def inverse_eotf_st2084(
     values: VectorLike,
     c1: float = C1,
     c2: float = C2,
@@ -107,13 +101,12 @@ def pq_st2084_inverse_eotf(
 
     adjusted = []
     for c in values:
-        c = alg.npow(c / 10000, m1)
-        r = (c1 + c2 * c) / (1 + c3 * c)
-        adjusted.append(alg.npow(r, m2))
+        c = alg.spow(c / 10000, m1)
+        adjusted.append(alg.spow((c1 + c2 * c) / (1 + c3 * c), m2))
     return adjusted
 
 
-def pq_st2084_eotf(
+def eotf_st2084(
     values: VectorLike,
     c1: float = C1,
     c2: float = C2,
@@ -128,28 +121,68 @@ def pq_st2084_eotf(
 
     adjusted = []
     for c in values:
-        c = alg.npow(c, im2)
-        r = (c - c1) / (c2 - c3 * c)
-        adjusted.append(10000 * alg.npow(r, im1))
+        c = alg.spow(c, im2)
+        adjusted.append(10000 * alg.spow(max((c - c1), 0) / (c2 - c3 * c), im1))
     return adjusted
 
 
-def xyz_d65_to_absxyzd65(xyzd65: VectorLike, yw: float = YW) -> Vector:
-    """XYZ D65 to Absolute XYZ D65."""
+def rgb_scale(vec: VectorLike) -> Vector:
+    """
+    Scale the RGB vector.
 
-    return [max(c * yw, 0) for c in xyzd65]
+    If minimum is less than zero, behaves like min/max normalization.
+    If minimum is not less than zero, behaves like maximum normalization.
+    """
+
+    # `(v - min_v)`
+    w = min(vec)
+    if w < 0.0:
+        vec = [v - w for v in vec]
+
+    # `(max_v - min_v)`
+    m = max(vec)
+
+    # `(v - min_v) / (max_v - min_v)`
+    return [v / m if m else v for v in vec]
 
 
-def absxyzd65_to_xyz_d65(absxyzd65: VectorLike, yw: float = YW) -> Vector:
-    """Absolute XYZ D65 XYZ D65."""
+def scale100(coords: Vector) -> Vector:
+    """Scale from 1 to 100."""
 
-    return [max(c / yw, 0) for c in absxyzd65]
+    return [c * 100 for c in coords]
+
+
+def scale1(coords: Vector) -> Vector:
+    """Scale from 100 to 1."""
+
+    return [c * 0.01 for c in coords]
+
+
+def xyz_to_absxyz(xyzd65: VectorLike, yw: float = 100) -> Vector:
+    """XYZ to Absolute XYZ."""
+
+    return [c * yw for c in xyzd65]
+
+
+def absxyz_to_xyz(absxyzd65: VectorLike, yw: float = 100) -> Vector:
+    """Absolute XYZ to XYZ."""
+
+    return [c / yw for c in absxyzd65]
 
 
 def constrain_hue(hue: float) -> float:
-    """Constrain hue to 0 - 360."""
+    """Constrain hue to [0, 360)."""
 
-    return hue % 360 if not alg.is_nan(hue) else hue
+    return hue % 360 if not math.isnan(hue) else hue
+
+
+def get_index(obj: Sequence[Any], idx: int, default: Any = None) -> Any:
+    """Get sequence value at index or return default if not present."""
+
+    try:
+        return obj[idx]
+    except IndexError:
+        return default
 
 
 def cmp_coords(c1: VectorLike, c2: VectorLike) -> bool:
@@ -161,53 +194,53 @@ def cmp_coords(c1: VectorLike, c2: VectorLike) -> bool:
         return all(map(lambda a, b: (math.isnan(a) and math.isnan(b)) or a == b, c1, c2))
 
 
-def fmt_float(f: float, p: int = 0, percent: float = 0.0, offset: float = 0.0) -> str:
+def fmt_float(f: float, p: int = 0, rounding: str = 'digits', percent: float = 0.0, offset: float = 0.0) -> str:
     """
     Set float precision and trim precision zeros.
 
-    0: Round to whole integer
-    -1: Full precision
-    <positive number>: precision level
+    -   `p`: Rounding precision.
+
+    -   `rounding`: Specify specific rounding mode.
+
+    -   `percent`: Treat as a percent.
+
+    -   `offset`: Apply an offset (used in conjunction with `percent`).
+
     """
 
-    if alg.is_nan(f):
+    # Undefined values should be none
+    if math.isnan(f):
         return "none"
 
-    value = alg.round_to((f + offset) / (percent * 0.01) if percent else f, p)
-    string = ('{{:{}f}}'.format('.53' if p == -1 else '.' + str(p))).format(value)
-    s = string if value.is_integer() and p == 0 else string.rstrip('0').rstrip('.')
-    return '{}%'.format(s) if percent else s
+    # Infinite values do not get rounded
+    if not math.isfinite(f):
+        raise ValueError(f'Cannot format non-finite number {f}')
+
+    # Apply rounding
+    f = (f + offset) / (percent * 0.01) if percent else f
+    start, p = alg._round_location(f, p, rounding)
+    value = alg.round_half_up(f, p)
+
+    # Format the string.
+    if (p - start + 1) > 17:
+        # If we are outputting numbers beyond 17 digits, just use normal output.
+        s = str(value).removesuffix('.0')
+    else:
+        # Avoid scientific notation for numbers with 17 digits (double-precision number of decimals).
+        s = f"{{:0.{1 if p < 1 else p}f}}".format(value).rstrip('0').rstrip('.')
+    return s + '%' if percent else s
 
 
-def deprecated(message: str, stacklevel: int = 2) -> Callable[..., Any]:  # pragma: no cover
-    """
-    Raise a `DeprecationWarning` when wrapped function/method is called.
+def debug(func:  Callable[..., Any]) -> Callable[..., Any]:  # pragma: no cover
+    """Intercept function call and print arguments and results."""
 
-    Usage:
+    @wraps(func)
+    def _wrapper(*args: Any, **kwargs: Any) -> Any:
+        """Print debug information about the function."""
 
-        @deprecated("This method will be removed in version X; use Y instead.")
-        def some_method()"
-            pass
-    """
+        print(f"<debug> Calling '{func.__name__}' with args={args} and kwargs={kwargs}")
+        result = func(*args, **kwargs)
+        print(f"<debug> '{func.__name__}' returned {result}")
+        return result
 
-    def _wrapper(func: Callable[..., Any]) -> Callable[..., Any]:
-        @wraps(func)
-        def _deprecated_func(*args: Any, **kwargs: Any) -> Any:
-            warnings.warn(
-                "'{}' is deprecated. {}".format(func.__name__, message),
-                category=DeprecationWarning,
-                stacklevel=stacklevel
-            )
-            return func(*args, **kwargs)
-        return _deprecated_func
     return _wrapper
-
-
-def warn_deprecated(message: str, stacklevel: int = 2) -> None:  # pragma: no cover
-    """Warn deprecated."""
-
-    warnings.warn(
-        message,
-        category=DeprecationWarning,
-        stacklevel=stacklevel
-    )

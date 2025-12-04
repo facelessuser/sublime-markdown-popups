@@ -3,17 +3,15 @@ Catmull-Rom interpolation.
 
 http://www2.cs.uregina.ca/~anima/408/Notes/Interpolation/Parameterized-Curves-Summary.htm
 """
+from __future__ import annotations
 from .bspline import InterpolatorBSpline
 from ..interpolate import Interpolator, Interpolate
 from .. import algebra as alg
-from ..types import Vector
-from typing import Optional, Callable, Mapping, List, Union, Sequence, Dict, Any, Type, TYPE_CHECKING
-
-if TYPE_CHECKING:  # pragma: no cover
-    from ..color import Color
+from .. types import AnyColor
+from typing import Any
 
 
-class InterpolatorCatmullRom(InterpolatorBSpline):
+class InterpolatorCatmullRom(InterpolatorBSpline[AnyColor]):
     """Interpolate with Catmull-Rom spline."""
 
     def setup(self) -> None:
@@ -23,36 +21,12 @@ class InterpolatorCatmullRom(InterpolatorBSpline):
         self.spline = alg.catrom
 
 
-class CatmullRom(Interpolate):
+class CatmullRom(Interpolate[AnyColor]):
     """Catmull-Rom interpolation plugin."""
 
     NAME = "catrom"
 
-    def interpolator(
-        self,
-        coordinates: List[Vector],
-        channel_names: Sequence[str],
-        create: Type['Color'],
-        easings: List[Optional[Callable[..., float]]],
-        stops: Dict[int, float],
-        space: str,
-        out_space: str,
-        progress: Optional[Union[Mapping[str, Callable[..., float]], Callable[..., float]]],
-        premultiplied: bool,
-        extrapolate: bool = False,
-        **kwargs: Any
-    ) -> Interpolator:
+    def interpolator(self, *args: Any, **kwargs: Any) -> Interpolator[AnyColor]:
         """Return the Catmull-Rom interpolator."""
 
-        return InterpolatorCatmullRom(
-            coordinates,
-            channel_names,
-            create,
-            easings,
-            stops,
-            space,
-            out_space,
-            progress,
-            premultiplied,
-            extrapolate
-        )
+        return InterpolatorCatmullRom(*args, **kwargs)

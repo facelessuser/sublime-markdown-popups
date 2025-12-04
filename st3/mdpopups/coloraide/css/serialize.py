@@ -1,128 +1,176 @@
 """String serialization."""
+from __future__ import annotations
 import re
+import math
 from .. import util
 from .. import algebra as alg
-from . import parse
 from .color_names import to_name
-from ..channels import FLG_PERCENT, FLG_OPT_PERCENT
+from ..channels import FLG_ANGLE, ANGLE_DEG, ANGLE_RAD, ANGLE_GRAD, ANGLE_TURN, ANGLE_RANGE
 from ..types import Vector
-from typing import Optional, Union, Match, cast, TYPE_CHECKING
+from typing import Sequence, Any, TYPE_CHECKING
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:  #pragma: no cover
     from ..color import Color
 
-RE_COMPRESS = re.compile(r'(?i)^#({hex})\1({hex})\2({hex})\3(?:({hex})\4)?$'.format(**parse.COLOR_PARTS))
+RE_COMPRESS = re.compile(r'(?i)^#([a-f0-9])\1([a-f0-9])\2([a-f0-9])\3(?:([a-f0-9])\4)?$')
 
 COMMA = ', '
 SLASH = ' / '
 SPACE = ' '
 EMPTY = ''
 
+POSTFIX = {
+    'deg': '',
+    'rad': 'rad',
+    'grad': 'grad',
+    'turn': 'turn'
+}
 
-def named_color(obj: 'Color', alpha: Optional[bool], fit: Union[str, bool]) -> Optional[str]:
+ANGLE_MAX = {
+    'deg': ANGLE_RANGE[ANGLE_DEG][1],
+    'rad': ANGLE_RANGE[ANGLE_RAD][1],
+    'grad': ANGLE_RANGE[ANGLE_GRAD][1],
+    'turn': ANGLE_RANGE[ANGLE_TURN][1]
+}
+
+
+def named_color(
+    obj: Color,
+    alpha: bool | None,
+    fit: str | bool | dict[str, Any]
+) -> str | None:
     """Get the CSS color name."""
 
-    a = get_alpha(obj, alpha, False)
+    a = get_alpha(obj, alpha, False, False)
     if a is None:
         a = 1
-    method = None if not isinstance(fit, str) else fit
-    coords = alg.no_nans(obj.clone().fit(method=method)[:-1])
-    return to_name(coords + [a])
-
-
-def named_color_function(
-    obj: 'Color',
-    func: str,
-    alpha: Optional[bool],
-    precision: int,
-    fit: Union[str, bool],
-    none: bool,
-    percent: bool,
-    legacy: bool,
-    scale: float
-) -> str:
-    """Translate to CSS function form `name(...)`."""
-
-    # Create the function `name` or `namea` if old legacy form.
-    a = get_alpha(obj, alpha, none)
-    string = ['{}{}('.format(func, 'a' if legacy and a is not None else EMPTY)]
-
-    # Iterate the coordinates formatting them for percent, not percent, and even scaling them (sRGB).
-    coords = get_coords(obj, fit, none, legacy)
-    channels = obj._space.CHANNELS
-    for idx, value in enumerate(coords):
-        channel = channels[idx]
-        use_percent = channel.flags & FLG_PERCENT or (percent and channel.flags & FLG_OPT_PERCENT)
-        if not use_percent:
-            value *= scale
-        if idx != 0:
-            string.append(COMMA if legacy else SPACE)
-        string.append(
-            util.fmt_float(
-                value,
-                precision,
-                channel.span if use_percent else 0.0,
-                channel.offset if use_percent else 0.0
-            )
-        )
-
-    # Add alpha if needed
-    if a is not None:
-        string.append('{}{})'.format(COMMA if legacy else SLASH, util.fmt_float(a, max(precision, util.DEF_PREC))))
-    else:
-        string.append(')')
-    return EMPTY.join(string)
+    return to_name(get_coords(obj, fit, False, False) + [a])
 
 
 def color_function(
-    obj: 'Color',
-    alpha: Optional[bool],
-    precision: int,
-    fit: Union[str, bool],
-    none: bool
+    obj: Color,
+    func: str | None,
+    alpha: bool | None,
+    precision: int | Sequence[int],
+    rounding: str,
+    fit: str | bool | dict[str, Any],
+    none: bool,
+    percent: bool | Sequence[bool],
+    legacy: bool,
+    scale: float,
+    angle: str
 ) -> str:
-    """Color format."""
+    """Translate to CSS function form `name(...)`."""
 
-    # Export in the `color(space ...)` format
-    coords = get_coords(obj, fit, none, False)
-    a = get_alpha(obj, alpha, none)
-    return (
-        'color({} {}{})'.format(
-            obj._space._serialize()[0],
-            SPACE.join([util.fmt_float(coord, precision) for coord in coords]),
-            SLASH + util.fmt_float(a, max(precision, util.DEF_PREC)) if a is not None else EMPTY
+    # Prepare coordinates to be serialized
+    a = get_alpha(obj, alpha, none, legacy)
+    coords = get_coords(obj, fit, none, legacy)
+    if a is not None:
+        coords.append(a)
+
+    # `color` should include the color space serialized name.
+    if func is None:
+        string = [f'color({obj._space._serialize()[0]} ']
+    # Create the function `name` or `namea` if old legacy form.
+    else:
+        string = ['{}{}('.format(func, 'a' if legacy and a is not None else EMPTY)]
+
+    # Get channel object and calculate length and the alpha index (last)
+    channels = obj._space.channels
+    l = len(channels)
+    last = l - 1
+
+    # Ensure percent is configured
+    # - `True` assumes all but alpha are attempted to be formatted as percents.
+    # - A list of booleans will attempt formatting the associated channel as percent,
+    #   anything not specified is assumed `False`.
+    if isinstance(percent, bool):
+        percent = obj._space._percents if percent else []
+
+    # Ensure precision list is filled
+    is_precision_list = not isinstance(precision, int)
+
+    # Iterate the coordinates formatting them by scaling the values, formatting for percent, etc.
+    for idx, value in enumerate(coords):
+        is_last = idx == last
+        if is_last:
+            string.append(COMMA if legacy else SLASH)
+        elif idx != 0:
+            string.append(COMMA if legacy else SPACE)
+        channel = channels[idx]
+
+        if channel.flags & FLG_ANGLE:
+            hscale = ANGLE_MAX[angle] / channel.high
+            value *= hscale
+            post = POSTFIX[angle]
+            span = offset = 0.0
+        else:
+            post = ''
+            if percent and util.get_index(percent, idx, False):
+                span, offset = channel.span, channel.offset
+            else:
+                span = offset = 0.0
+                if not is_last:
+                    value *= scale
+
+        string.append(
+            util.fmt_float(
+                value,
+                util.get_index(precision, idx, obj.PRECISION) if is_precision_list else precision,  # type: ignore[arg-type]
+                rounding,
+                span,
+                offset
+            ) + post
         )
-    )
+
+    string.append(')')
+    return EMPTY.join(string)
 
 
-def get_coords(obj: 'Color', fit: Union[str, bool], none: bool, legacy: bool) -> Vector:
+def get_coords(
+    obj: Color,
+    fit: bool | str | dict[str, Any],
+    none: bool,
+    legacy: bool
+) -> Vector:
     """Get the coordinates."""
 
-    method = None if not isinstance(fit, str) else fit
-    coords = obj.fit(method=method)[:-1] if fit else obj[:-1]
-    return alg.no_nans(coords) if legacy or not none else coords
+    if fit:
+        if fit is True:
+            color = obj.fit()
+        elif isinstance(fit, str):
+            color = obj.fit(method=fit)
+        else:
+            color = obj.fit(**fit)
+    else:
+        color = obj
+    return color.coords(nans=False if legacy or not none else True)
 
 
-def get_alpha(obj: 'Color', alpha: Optional[bool], none: bool) -> Optional[float]:
+def get_alpha(
+    obj: Color,
+    alpha: bool | None,
+    none: bool,
+    legacy: bool
+) -> float | None:
     """Get the alpha if required."""
 
-    a = alg.no_nan(obj[-1]) if not none else obj[-1]
-    alpha = alpha is not False and (alpha is True or a < 1.0 or alg.is_nan(a))
+    a = obj.alpha(nans=False if not none or legacy else True)
+    alpha = alpha is not False and (alpha is True or a < 1.0 or math.isnan(a))
     return None if not alpha else a
 
 
 def hexadecimal(
-    obj: 'Color',
-    alpha: Optional[bool] = None,
-    fit: Union[str, bool] = True,
+    obj: Color,
+    alpha: bool | None = None,
+    fit: str | bool | dict[str, Any] = True,
     upper: bool = False,
     compress: bool = False
 ) -> str:
     """Get the hex `RGB` value."""
 
-    method = None if not isinstance(fit, str) else fit
-    coords = [c for c in alg.no_nans(obj.fit(method=method)[:-1])]
-    a = get_alpha(obj, alpha, False)
+    coords = get_coords(obj, fit if fit else True, False, False)
+    a = get_alpha(obj, alpha, False, False)
 
     if a is not None:
         value = "#{:02x}{:02x}{:02x}{:02x}".format(
@@ -142,36 +190,41 @@ def hexadecimal(
         value = value.upper()
 
     if compress:
-        m = cast(Match[str], RE_COMPRESS.match(value))
-        return m.expand(r"#\1\2\3\4") if len(value) == 9 else m.expand(r"#\1\2\3") if m else value
+        m = RE_COMPRESS.match(value)
+        return (m.expand(r"#\1\2\3\4") if len(value) == 9 else m.expand(r"#\1\2\3")) if m is not None else value
     else:
         return value
 
 
 def serialize_css(
-    obj: 'Color',
+    obj: Color,
     func: str = '',
     color: bool = False,
-    alpha: Optional[bool] = None,
-    precision: Optional[int] = None,
-    fit: Union[str, bool] = True,
+    alpha: bool | None = None,
+    precision: int | Sequence[int] | None = None,
+    rounding: str | None = None,
+    fit: bool | str | dict[str, Any] = True,
     none: bool = False,
-    percent: bool = False,
+    percent: bool | Sequence[bool] = False,
     hexa: bool = False,
     upper: bool = False,
     compress: bool = False,
     name: bool = False,
     legacy: bool = False,
     scale: float = 1.0,
+    angle: str = 'deg'
 ) -> str:
     """Convert color to CSS."""
 
     if precision is None:
         precision = obj.PRECISION
 
+    if rounding is None:
+        rounding = obj.ROUNDING
+
     # Color format
     if color:
-        return color_function(obj, alpha, precision, fit, none)
+        return color_function(obj, None, alpha, precision, rounding, fit, none, percent, False, 1.0, angle)
 
     # CSS color names
     if name:
@@ -185,6 +238,6 @@ def serialize_css(
 
     # Normal CSS named function format
     if func:
-        return named_color_function(obj, func, alpha, precision, fit, none, percent, legacy, scale)
+        return color_function(obj, func, alpha, precision, rounding, fit, none, percent, legacy, scale, angle)
 
     raise RuntimeError('Could not identify a CSS format to serialize to')  # pragma: no cover

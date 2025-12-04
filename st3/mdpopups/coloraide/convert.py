@@ -1,11 +1,11 @@
 """Convert the color."""
-from . import algebra as alg
+from __future__ import annotations
 from .types import Vector
-from typing import Type, Tuple, Dict, List, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover
-    from .color import Color
     from .spaces import Space
+    from .color import Color
 
 # XYZ is the absolute base, meaning that XYZ is the final base in any conversion chain.
 # This is a design expectation regardless of whether someone assigns a different base to XYZ or not.
@@ -13,9 +13,9 @@ ABSOLUTE_BASE = 'xyz-d65'
 
 
 def calc_path_to_xyz(
-    color: Type['Color'],
+    color: type[Color],
     space: str
-) -> Tuple[List['Space'], Dict[str, int]]:
+) -> tuple[list[Space], dict[str, int]]:
     """
     Calculate the conversion path between a given color space and XYZ D65.
 
@@ -27,7 +27,7 @@ def calc_path_to_xyz(
 
     obj = color.CS_MAP.get(space)
     if obj is None:
-        raise ValueError("'{}' is not a valid color space".format(space))
+        raise ValueError(f"'{space}' is not a valid color space")
 
     # Create a worse case conversion chain from XYZ to the target
     temp = obj
@@ -53,10 +53,10 @@ def calc_path_to_xyz(
 
 
 def get_convert_chain(
-    color: Type['Color'],
-    space: 'Space',
+    color: type[Color],
+    space: Space,
     target: str
-) -> List[Tuple['Space', 'Space', int, bool]]:
+) -> list[tuple[Space, Space, int, bool]]:
     """
     Create a conversion chain.
 
@@ -74,7 +74,7 @@ def get_convert_chain(
     # If the color space we are converting to is not between
     # the current space and XYZ D65, nothing will get added.
     current = space
-    chain = []  # type: List[Tuple['Space', 'Space', int, bool]]
+    chain = []  # type: list[tuple[Space, Space, int, bool]]
     if current.NAME != ABSOLUTE_BASE:
         count = 0
         while current.NAME not in from_color_index:
@@ -83,7 +83,7 @@ def get_convert_chain(
             base_space = color.CS_MAP[current.BASE]
 
             # Do we need to chromatically adapt towards XYZ D65?
-            adapt = base_space.NAME == ABSOLUTE_BASE
+            adapt = base_space.NAME == ABSOLUTE_BASE and current.WHITE != base_space.WHITE
 
             # Add conversion chain entry
             chain.append((current, base_space, 0, adapt))
@@ -105,13 +105,13 @@ def get_convert_chain(
         # Start in the chain where the current color resides
         start = from_color_index[current.NAME] - 1
 
-        # Do we need to chromatically adapt away from XYZ D65?
-        adapt = current.NAME == ABSOLUTE_BASE
-
-        # Moving away from XYZ D65, convert towards are desired target
+        # Moving away from XYZ D65, convert towards our desired target
         for index in range(start, -1, -1):
             base_space = current
             current = from_color[index]
+
+            # Do we need to chromatically adapt away from XYZ D65?
+            adapt = base_space.NAME == ABSOLUTE_BASE and current.WHITE != base_space.WHITE
 
             # Add the conversion chain entry
             chain.append((base_space, current, 1, adapt))
@@ -119,7 +119,7 @@ def get_convert_chain(
     return chain
 
 
-def convert(color: 'Color', space: str) -> Tuple['Space', Vector]:
+def convert(color: Color, space: str) -> tuple[Space, Vector]:
     """Convert the color coordinates to the specified space."""
 
     # Grab the convert for the current space to the desired space
@@ -127,9 +127,9 @@ def convert(color: 'Color', space: str) -> Tuple['Space', Vector]:
     chain = color._get_convert_chain(color._space, space)  # type: ignore[attr-defined]
 
     # Get coordinates and convert NaN values to 0
-    coords = alg.no_nans(color[:-1])
+    coords = color.coords(nans=False)
 
-    # Navigate the conversion chain translated the coordinates along the way.
+    # Navigate the conversion chain translating the coordinates along the way.
     # Perform chromatic adaption if needed (a conversion to or from XYZ D65).
     last = color._space
     for a, b, direction, adapt in chain:

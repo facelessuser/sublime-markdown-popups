@@ -1,15 +1,13 @@
 """Monotone interpolation based on a Hermite interpolation spline."""
+from __future__ import annotations
 from .bspline import InterpolatorBSpline
 from ..interpolate import Interpolator, Interpolate
 from .. import algebra as alg
-from ..types import Vector
-from typing import Optional, Callable, Mapping, List, Union, Sequence, Dict, Any, Type, TYPE_CHECKING
-
-if TYPE_CHECKING:  # pragma: no cover
-    from ..color import Color
+from .. types import AnyColor
+from typing import Any
 
 
-class InterpolatorMonotone(InterpolatorBSpline):
+class InterpolatorMonotone(InterpolatorBSpline[AnyColor]):
     """Interpolate with monotone spline based on Hermite."""
 
     def setup(self) -> None:
@@ -19,36 +17,12 @@ class InterpolatorMonotone(InterpolatorBSpline):
         self.spline = alg.monotone
 
 
-class Monotone(Interpolate):
+class Monotone(Interpolate[AnyColor]):
     """Monotone interpolation plugin."""
 
     NAME = "monotone"
 
-    def interpolator(
-        self,
-        coordinates: List[Vector],
-        channel_names: Sequence[str],
-        create: Type['Color'],
-        easings: List[Optional[Callable[..., float]]],
-        stops: Dict[int, float],
-        space: str,
-        out_space: str,
-        progress: Optional[Union[Mapping[str, Callable[..., float]], Callable[..., float]]],
-        premultiplied: bool,
-        extrapolate: bool = False,
-        **kwargs: Any
-    ) -> Interpolator:
+    def interpolator(self, *args: Any, **kwargs: Any) -> Interpolator[AnyColor]:
         """Return the monotone interpolator."""
 
-        return InterpolatorMonotone(
-            coordinates,
-            channel_names,
-            create,
-            easings,
-            stops,
-            space,
-            out_space,
-            progress,
-            premultiplied,
-            extrapolate
-        )
+        return InterpolatorMonotone(*args, **kwargs)

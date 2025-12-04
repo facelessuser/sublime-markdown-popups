@@ -1,6 +1,6 @@
 """Porter Duff compositing."""
+from __future__ import annotations
 from abc import ABCMeta, abstractmethod
-from typing import Type
 
 
 class PorterDuff(metaclass=ABCMeta):
@@ -234,10 +234,10 @@ SUPPORTED = {
 }
 
 
-def compositor(name: str) -> Type[PorterDuff]:
+def compositor(name: str) -> type[PorterDuff]:
     """Get the requested compositor."""
 
-    try:
-        return SUPPORTED[name]
-    except KeyError:
-        raise ValueError("'{}' compositing is not supported".format(name))
+    composite = SUPPORTED.get(name)
+    if not composite:
+        raise ValueError(f"'{name}' compositing is not supported")
+    return composite

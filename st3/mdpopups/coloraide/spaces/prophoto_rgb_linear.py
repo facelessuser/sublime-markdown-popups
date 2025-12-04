@@ -1,19 +1,20 @@
 """Linear Pro Photo RGB color class."""
+from __future__ import annotations
 from ..cat import WHITES
-from .srgb import sRGB
+from .srgb_linear import sRGBLinear
 from .. import algebra as alg
 from ..types import Vector
 
 RGB_TO_XYZ = [
-    [0.7977604896723027, 0.13518583717574031, 0.0313493495815248],
-    [0.2880711282292934, 0.7118432178101014, 8.565396060525902e-05],
-    [0.0, 0.0, 0.8251046025104601]
+    [0.7977604896723026, 0.13518583717574031, 0.031349349581524806],
+    [0.28807112822929337, 0.7118432178101014, 8.565396060525903e-05],
+    [0.0, 0.0, 0.8251046025104602]
 ]
 
 XYZ_TO_RGB = [
     [1.3457989731028281, -0.2555801000799754, -0.05110628506753401],
     [-0.5446224939028347, 1.5082327413132781, 0.02053603239147973],
-    [0.0, 0.0, 1.2119675456389454]
+    [0.0, 0.0, 1.2119675456389452]
 ]
 
 
@@ -25,16 +26,16 @@ def lin_prophoto_to_xyz(rgb: Vector) -> Vector:
     http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
     """
 
-    return alg.dot(RGB_TO_XYZ, rgb, dims=alg.D2_D1)
+    return alg.matmul_x3(RGB_TO_XYZ, rgb, dims=alg.D2_D1)
 
 
 def xyz_to_lin_prophoto(xyz: Vector) -> Vector:
     """Convert XYZ to linear-light prophoto-rgb."""
 
-    return alg.dot(XYZ_TO_RGB, xyz, dims=alg.D2_D1)
+    return alg.matmul_x3(XYZ_TO_RGB, xyz, dims=alg.D2_D1)
 
 
-class ProPhotoRGBLinear(sRGB):
+class ProPhotoRGBLinear(sRGBLinear):
     """Linear Pro Photo RGB class."""
 
     BASE = "xyz-d50"
