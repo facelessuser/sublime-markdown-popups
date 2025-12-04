@@ -4,7 +4,7 @@ import pprint
 import re
 import typing as t
 
-from markupsafe import Markup
+from ..markupsafe import Markup
 
 from . import defaults
 from . import nodes

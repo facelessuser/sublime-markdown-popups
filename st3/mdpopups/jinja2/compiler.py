@@ -7,8 +7,8 @@ from io import StringIO
 from itertools import chain
 from keyword import iskeyword as is_python_keyword
 
-from markupsafe import escape
-from markupsafe import Markup
+from ..markupsafe import escape
+from ..markupsafe import Markup
 
 from . import nodes
 from .exceptions import TemplateAssertionError

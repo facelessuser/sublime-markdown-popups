@@ -11,8 +11,8 @@ from collections import deque
 from functools import update_wrapper
 from string import Formatter
 
-from markupsafe import EscapeFormatter
-from markupsafe import Markup
+from ..markupsafe import EscapeFormatter
+from ..markupsafe import Markup
 
 from .environment import Environment
 from .exceptions import SecurityError

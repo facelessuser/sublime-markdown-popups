@@ -6,9 +6,9 @@ import typing as t
 from collections import abc
 from itertools import chain
 
-from markupsafe import escape  # noqa: F401
-from markupsafe import Markup
-from markupsafe import soft_str
+from ..markupsafe import escape  # noqa: F401
+from ..markupsafe import Markup
+from ..markupsafe import soft_str
 
 from .async_utils import auto_aiter
 from .async_utils import auto_await  # noqa: F401

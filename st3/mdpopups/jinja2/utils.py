@@ -11,7 +11,7 @@ from threading import Lock
 from types import CodeType
 from urllib.parse import quote_from_bytes
 
-import markupsafe
+from .. import markupsafe
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
