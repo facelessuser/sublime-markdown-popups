@@ -278,15 +278,14 @@ class _MdWrapper(markdown.Markdown):
 
         """
 
-        from .markdown import util
         from .markdown.extensions import Extension
 
         for ext in extensions:
             try:
-                if isinstance(ext, util.string_type):
+                if isinstance(ext, str):
                     ext = self.build_extension(ext, configs.get(ext, {}))
                 if isinstance(ext, Extension):
-                    ext._extendMarkdown(self)
+                    ext.extendMarkdown(self)
                 elif ext is not None:
                     raise TypeError(
                         'Extension "{}.{}" must be of type: "markdown.Extension"'.format(
