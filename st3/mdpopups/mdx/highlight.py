@@ -93,6 +93,10 @@ DEFAULT_CONFIG = {
         'language-',
         'Controls the language prefix for non-Pygments code blocks. - Defaults: "language-"'
     ],
+    'language_prefix': [
+        'language-',
+        'Controls the language prefix for non-Pygments code blocks. - Defaults: "language-"'
+    ],
     'code_attr_on_pre': [
         False,
         "Attach attribute list values on pre element instead of code element - Default: False"
@@ -674,7 +678,6 @@ class HighlightTreeprocessor(Treeprocessor):
                     linenums_special=self.config['linenums_special'],
                     linenums_class=self.config['linenums_class'],
                     extend_pygments_lang=self.config['extend_pygments_lang'],
-                    wrapcode=not self.config['legacy_no_wrap_code'],
                     language_prefix=self.config['language_prefix'],
                     code_attr_on_pre=self.config['code_attr_on_pre']
                 )
