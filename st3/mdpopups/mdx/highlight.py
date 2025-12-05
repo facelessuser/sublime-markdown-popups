@@ -246,13 +246,13 @@ if pygments:
 
     class SublimeInlineHtmlFormatter(HtmlFormatter):
         """Format the code blocks."""
-        
+
         def _wrap_div(self, inner):
             """Do not wrap with `div`."""
 
             yield from inner
 
-        def wrap(self, source, outfile):
+        def wrap(self, source):
             """Overload wrap."""
 
             return self._wrap_code(source)
@@ -286,6 +286,7 @@ if pygments:
                     text = multi_space.sub(
                         replace_nbsp, t.replace('\t', ' ' * 4)
                     )
+                text = text.rstrip('\n')
                 yield i, text
             yield 0, ''
 
@@ -310,7 +311,7 @@ if pygments:
             to 4 spaces as well.  We also manually inject line breaks.
             """
 
-            yield 0, '<div class="%s"><pre>' % self.cssclass
+            yield 0, '<pre>'
             for i, t in source:
                 text = ''
                 matched = False
@@ -324,11 +325,12 @@ if pygments:
                         text += m.group(2).replace('\t', ' ' * 4).replace(' ', '&nbsp;')
                 if not matched:
                     text = t.replace('\t', ' ' * 4).replace(' ', '&nbsp;')
+                text = text.rstrip('\n')
                 if i == 1:
                     # it's a line of formatted code
                     text += '<br>'
                 yield i, text
-            yield 0, '</pre></div>'
+            yield 0, '</pre>'
 
     class SublimeWrapBlockFormatter(BlockHtmlFormatter):
         """Format the code blocks."""
@@ -351,7 +353,7 @@ if pygments:
             to 4 spaces as well.  We also manually inject line breaks.
             """
 
-            yield 0, '<div class="%s"><pre>' % self.cssclass
+            yield 0, '<pre>'
             for i, t in source:
                 text = ''
                 matched = False
@@ -369,11 +371,12 @@ if pygments:
                     text = multi_space.sub(
                         replace_nbsp, t.replace('\t', ' ' * 4)
                     )
+                text = text.rstrip('\n')
                 if i == 1:
                     # it's a line of formatted code
                     text += '<br>'
                 yield i, text
-            yield 0, '</pre></div>'
+            yield 0, '</pre>'
 
 
 class Highlight:
@@ -569,7 +572,12 @@ class Highlight:
                 title = title.strip()
 
             # Setup formatter
-            html_formatter = InlineHtmlFormatter if inline else BlockHtmlFormatter
+            if inline:
+                html_formatter = SublimeInlineHtmlFormatter
+            elif self.sublime_wrap:
+                html_formatter = SublimeWrapBlockFormatter
+            else:
+                html_formatter = SublimeBlockFormatter
             formatter = html_formatter(
                 cssclass=css_class,
                 linenos=linenums,
