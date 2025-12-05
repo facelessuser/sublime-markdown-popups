@@ -93,10 +93,6 @@ DEFAULT_CONFIG = {
         'language-',
         'Controls the language prefix for non-Pygments code blocks. - Defaults: "language-"'
     ],
-    'language_prefix': [
-        'language-',
-        'Controls the language prefix for non-Pygments code blocks. - Defaults: "language-"'
-    ],
     'code_attr_on_pre': [
         False,
         "Attach attribute list values on pre element instead of code element - Default: False"
@@ -478,7 +474,8 @@ class Highlight(object):
 
     def highlight(
         self, src, language, css_class='highlight', hl_lines=None,
-        linestart=-1, linestep=-1, linespecial=-1, inline=False, classes=None, id_value='', attrs=None
+        linestart=-1, linestep=-1, linespecial=-1, inline=False, classes=None, id_value='', attrs=None,
+        title=None, code_block_count=0
     ):
         """Highlight code."""
 
