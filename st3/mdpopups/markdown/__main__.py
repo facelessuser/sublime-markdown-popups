@@ -1,30 +1,28 @@
-# -*- coding: utf-8 -*-
-"""
-Python Markdown
+# Python Markdown
 
-A Python implementation of John Gruber's Markdown.
+# A Python implementation of John Gruber's Markdown.
 
-Documentation: https://python-markdown.github.io/
-GitHub: https://github.com/Python-Markdown/markdown/
-PyPI: https://pypi.org/project/Markdown/
+# Documentation: https://python-markdown.github.io/
+# GitHub: https://github.com/Python-Markdown/markdown/
+# PyPI: https://pypi.org/project/Markdown/
 
-Started by Manfred Stienstra (http://www.dwerg.net/).
-Maintained for a few years by Yuri Takhteyev (http://www.freewisdom.org).
-Currently maintained by Waylan Limberg (https://github.com/waylan),
-Dmitry Shachnev (https://github.com/mitya57) and Isaac Muse (https://github.com/facelessuser).
+# Started by Manfred Stienstra (http://www.dwerg.net/).
+# Maintained for a few years by Yuri Takhteyev (http://www.freewisdom.org).
+# Currently maintained by Waylan Limberg (https://github.com/waylan),
+# Dmitry Shachnev (https://github.com/mitya57) and Isaac Muse (https://github.com/facelessuser).
 
-Copyright 2007-2018 The Python Markdown Project (v. 1.7 and later)
-Copyright 2004, 2005, 2006 Yuri Takhteyev (v. 0.2-1.6b)
-Copyright 2004 Manfred Stienstra (the original version)
+# Copyright 2007-2023 The Python Markdown Project (v. 1.7 and later)
+# Copyright 2004, 2005, 2006 Yuri Takhteyev (v. 0.2-1.6b)
+# Copyright 2004 Manfred Stienstra (the original version)
 
-License: BSD (see LICENSE.md for details).
-"""
+# License: BSD (see LICENSE.md for details).
+
+from __future__ import annotations
 
 import sys
 import optparse
-import codecs
 import warnings
-from . import markdown
+from .. import markdown
 try:
     # We use `unsafe_load` because users may need to pass in actual Python
     # objects. As this is only available from the CLI, the user has much
@@ -71,7 +69,7 @@ def parse_options(args=None, values=None):
     parser.add_option("-c", "--extension_configs",
                       dest="configfile", default=None,
                       help="Read extension configurations from CONFIG_FILE. "
-                      "CONFIG_FILE must be of JSON or YAML format. YAML"
+                      "CONFIG_FILE must be of JSON or YAML format. YAML "
                       "format requires that a python YAML library be "
                       "installed. The parsed JSON or YAML must result in a "
                       "python dictionary which would be accepted by the "
@@ -101,7 +99,7 @@ def parse_options(args=None, values=None):
 
     extension_configs = {}
     if options.configfile:
-        with codecs.open(
+        with open(
             options.configfile, mode="r", encoding=options.encoding
         ) as fp:
             try:
@@ -147,6 +145,6 @@ def run():  # pragma: no cover
 
 
 if __name__ == '__main__':  # pragma: no cover
-    # Support running module as a commandline command.
-    # `python -m markdown [options] [args]`.
+    # Support running module as a command line command.
+    #     python -m markdown [options] [args]
     run()

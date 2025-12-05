@@ -1,14 +1,17 @@
-'''
-Legacy Em Extension for Python-Markdown
-=======================================
+# Legacy Em Extension for Python-Markdown
+# =======================================
 
-This extention provides legacy behavior for _connected_words_.
+# This extension provides legacy behavior for _connected_words_.
 
-Copyright 2015-2018 The Python Markdown Project
+# Copyright 2015-2018 The Python Markdown Project
 
-License: [BSD](https://opensource.org/licenses/bsd-license.php)
+# License: [BSD](https://opensource.org/licenses/bsd-license.php)
 
-'''
+"""
+This extension provides legacy behavior for _connected_words_.
+"""
+
+from __future__ import annotations
 
 from . import Extension
 from ..inlinepatterns import UnderscoreProcessor, EmStrongItem, EM_STRONG2_RE, STRONG_EM2_RE
@@ -21,7 +24,7 @@ EMPHASIS_RE = r'(_)([^_]+)\1'
 STRONG_RE = r'(_{2})(.+?)\1'
 
 # __strong_em___
-STRONG_EM_RE = r'(_)\1(?!\1)(.+?)\1(?!\1)(.+?)\1{3}'
+STRONG_EM_RE = r'(_)\1(?!\1)([^_]+?)\1(?!\1)(.+?)\1{3}'
 
 
 class LegacyUnderscoreProcessor(UnderscoreProcessor):
@@ -45,5 +48,5 @@ class LegacyEmExtension(Extension):
 
 
 def makeExtension(**kwargs):  # pragma: no cover
-    """ Return an instance of the LegacyEmExtension """
+    """ Return an instance of the `LegacyEmExtension` """
     return LegacyEmExtension(**kwargs)
