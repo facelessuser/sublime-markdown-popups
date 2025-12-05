@@ -35,7 +35,8 @@ RE_SLASH_WIN_DRIVE = re.compile(r"^/[A-Za-z]{1}:/.*")
 file_types = {
     (".png",): "image/png",
     (".jpg", ".jpeg"): "image/jpeg",
-    (".gif",): "image/gif"
+    (".gif",): "image/gif",
+    (".svg",): "image/svg+xml",
 }
 
 RE_TAG_HTML = re.compile(
@@ -69,7 +70,7 @@ def repl_path(m, base_path):
 
     link = m.group(0)
     try:
-        scheme, netloc, path, params, query, fragment, is_url, is_absolute = util.parse_url(m.group('path')[1:-1])
+        _, _, path, _, _, _, is_url, is_absolute = util.parse_url(m.group('path')[1:-1])
         if not is_url:
             path = util.url2path(path)
 
@@ -83,7 +84,7 @@ def repl_path(m, base_path):
             for b64_ext in file_types:
                 if ext in b64_ext:
                     with open(file_name, "rb") as f:
-                        link = " src=\"data:%s;base64,%s\"" % (
+                        link = " src=\"data:{};base64,{}\"".format(
                             file_types[b64_ext],
                             base64.b64encode(f.read()).decode('ascii')
                         )
@@ -128,7 +129,7 @@ class B64Extension(Extension):
             'base_path': [".", "Base path for b64 to use to resolve paths - Default: \".\""]
         }
 
-        super(B64Extension, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def extendMarkdown(self, md):
         """Add base 64 tree processor to Markdown instance."""

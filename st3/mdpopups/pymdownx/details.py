@@ -43,21 +43,39 @@ class DetailsProcessor(BlockProcessor):
         self.current_sibling = None
         self.content_indention = 0
 
-    def get_sibling(self, parent, block):
-        """Get sibling details.
+    def detab_by_length(self, text, length):
+        """Remove a tab from the front of each line of the given text."""
+
+        newtext = []
+        lines = text.split('\n')
+        for line in lines:
+            if line.startswith(' ' * length):
+                newtext.append(line[length:])
+            elif not line.strip():
+                newtext.append('')  # pragma: no cover
+            else:
+                break
+        return '\n'.join(newtext), '\n'.join(lines[len(newtext):])
+
+    def parse_content(self, parent, block):
+        """
+        Get sibling details.
 
         Retrieve the appropriate sibling element. This can get tricky when
         dealing with lists.
 
         """
 
+        old_block = block
+        non_details = ''
+
         # We already acquired the block via test
         if self.current_sibling is not None:
             sibling = self.current_sibling
-            block = block[self.content_indent:]
+            block, non_details = self.detab_by_length(block, self.content_indent)
             self.current_sibling = None
             self.content_indent = 0
-            return sibling, block
+            return sibling, block, non_details
 
         sibling = self.lastChild(parent)
 
@@ -68,16 +86,16 @@ class DetailsProcessor(BlockProcessor):
             # to be under it, then the content's is sibling is in the list.
             last_child = self.lastChild(sibling)
             indent = 0
-            while last_child:
+            while last_child is not None:
                 if (
-                    sibling and block.startswith(' ' * self.tab_length * 2) and
-                    last_child and last_child.tag in ('ul', 'ol', 'dl')
+                    sibling is not None and block.startswith(' ' * self.tab_length * 2) and
+                    last_child is not None and last_child.tag in ('ul', 'ol', 'dl')
                 ):
 
                     # The expectation is that we'll find an `<li>`.
                     # We should get it's last child as well.
                     sibling = self.lastChild(last_child)
-                    last_child = self.lastChild(sibling) if sibling else None
+                    last_child = self.lastChild(sibling) if sibling is not None else None
 
                     # Context has been lost at this point, so we must adjust the
                     # text's indentation level so it will be evaluated correctly
@@ -91,10 +109,12 @@ class DetailsProcessor(BlockProcessor):
                 sibling = None
 
             if sibling is not None:
+                indent += self.tab_length
+                block, non_details = self.detab_by_length(old_block, indent)
                 self.current_sibling = sibling
                 self.content_indent = indent
 
-        return sibling, block
+        return sibling, block, non_details
 
     def test(self, parent, block):
         """Test block."""
@@ -102,7 +122,7 @@ class DetailsProcessor(BlockProcessor):
         if self.START.search(block):
             return True
         else:
-            return self.get_sibling(parent, block)[0] is not None
+            return self.parse_content(parent, block)[0] is not None
 
     def run(self, parent, blocks):
         """Convert to details/summary block."""
@@ -115,11 +135,9 @@ class DetailsProcessor(BlockProcessor):
             if m.start() > 0:
                 self.parser.parseBlocks(parent, [block[:m.start()]])
             block = block[m.end():]
+            block, non_details = self.detab(block)
         else:
-            sibling, block = self.get_sibling(parent, block)
-
-        # Get the details block and and the non-details content
-        block, non_details = self.detab(block)
+            sibling, block, non_details = self.parse_content(parent, block)
 
         if m:
             state = m.group(1)

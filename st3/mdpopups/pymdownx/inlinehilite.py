@@ -21,7 +21,7 @@ from ..markdown import util as md_util
 import xml.etree.ElementTree as etree
 import functools
 
-ESCAPED_BSLASH = '%s%s%s' % (md_util.STX, ord('\\'), md_util.ETX)
+ESCAPED_BSLASH = '{}{}{}'.format(md_util.STX, ord('\\'), md_util.ETX)
 DOUBLE_BSLASH = '\\\\'
 BACKTICK_CODE_RE = r'''(?x)
 (?:
@@ -32,6 +32,10 @@ BACKTICK_CODE_RE = r'''(?x)
 (?<!`)(?P=tic)(?!`)                     # Closing
 )
 '''
+
+
+class InlineHiliteException(Exception):
+    """InlineHilite exception."""
 
 
 def _escape(txt):
@@ -112,8 +116,8 @@ class InlineHilitePattern(InlineProcessor):
             self.highlighter = None
             for ext in self.md.registeredExtensions:
                 try:
-                    config = getattr(ext, "get_pymdownx_highlight_settings")()
-                    self.highlighter = getattr(ext, "get_pymdownx_highlighter")()
+                    config = ext.get_pymdownx_highlight_settings()
+                    self.highlighter = ext.get_pymdownx_highlighter()
                     break
                 except AttributeError:
                     pass
@@ -127,11 +131,13 @@ class InlineHilitePattern(InlineProcessor):
             self.use_pygments = config['use_pygments']
             self.noclasses = config['noclasses']
             self.language_prefix = config['language_prefix']
+            self.pygments_lang_class = config['pygments_lang_class']
 
     def highlight_code(self, src='', language='', classname=None, md=None):
         """Syntax highlight the inline code block."""
 
         process_text = self.style_plain_text or language or self.guess_lang
+        default_lang = self.style_plain_text if isinstance(self.style_plain_text, str) else ''
 
         if process_text:
             el = self.highlighter(
@@ -140,7 +146,9 @@ class InlineHilitePattern(InlineProcessor):
                 use_pygments=self.use_pygments,
                 noclasses=self.noclasses,
                 extend_pygments_lang=self.extend_pygments_lang,
-                language_prefix=self.language_prefix
+                language_prefix=self.language_prefix,
+                pygments_lang_class=self.pygments_lang_class,
+                default_lang=default_lang
             ).highlight(src, language, self.css_class, inline=True)
             el.text = self.md.htmlStash.store(el.text)
         else:
@@ -173,6 +181,8 @@ class InlineHilitePattern(InlineProcessor):
             self.get_settings()
             try:
                 return self.handle_code(lang, src), m.start(0), m.end(0)
+            except InlineHiliteException:
+                raise
             except Exception:
                 return m.group(0), None, None
 
@@ -186,11 +196,12 @@ class InlineHiliteExtension(Extension):
         self.inlinehilite = []
         self.config = {
             'style_plain_text': [
-                False,
-                "Process inline code even when a language is not specified "
-                "or langauge is specified as 'text'. "
-                "When 'False', no classes will be added to 'text' code blocks"
+                0,
+                "Process inline code even when a language is not specified. "
+                "When 'False', no classes will be added to code blocks without shebangs "
                 "and no scoping will performed. The content will just be escaped."
+                "If a language string is provided, then that language will be assumed "
+                "for any inline code block without a shebang. "
                 "- Default: False"
             ],
             'css_class': [
@@ -201,7 +212,7 @@ class InlineHiliteExtension(Extension):
             ],
             'custom_inline': [[], "Custom inline - default []"]
         }
-        super(InlineHiliteExtension, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def extendMarkdown(self, md):
         """Add support for `:::language code` and `#!language code` highlighting."""

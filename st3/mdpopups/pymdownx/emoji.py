@@ -24,11 +24,11 @@ DEALINGS IN THE SOFTWARE.
 """
 from ..markdown import Extension
 from ..markdown.inlinepatterns import InlineProcessor
+from ..markdown.postprocessors import Postprocessor
 from ..markdown import util as md_util
 import xml.etree.ElementTree as etree
 import inspect
 import copy
-import warnings
 from . import util
 
 RE_EMOJI = r'(:[+\-\w]+:)'
@@ -36,8 +36,8 @@ SUPPORTED_INDEXES = ('emojione', 'gemoji', 'twemoji')
 UNICODE_VARIATION_SELECTOR_16 = 'fe0f'
 EMOJIONE_SVG_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/svg/'
 EMOJIONE_PNG_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/'
-TWEMOJI_SVG_CDN = 'https://twemoji.maxcdn.com/v/latest/svg/'
-TWEMOJI_PNG_CDN = 'https://twemoji.maxcdn.com/v/latest/72x72/'
+TWEMOJI_SVG_CDN = 'https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/'
+TWEMOJI_PNG_CDN = 'https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/72x72/'
 GITHUB_UNICODE_CDN = 'https://github.githubassets.com/images/icons/emoji/unicode/'
 GITHUB_CDN = 'https://github.githubassets.com/images/icons/emoji/'
 NO_TITLE = 'none'
@@ -53,14 +53,26 @@ Emoji indexes now take 2 arguments: 'options' and 'md'.
 Please update your custom index accordingly.
 """
 
+MSG_BAD_EMOJI = """
+Emoji Extension (strict mode): The following emoji were detected and either had
+their name change, were removed, or have never existed.
 
-def add_attriubtes(options, attributes):
+{}
+"""
+
+
+def add_attributes(options, attributes):
     """Add additional attributes from options."""
 
     attr = options.get('attributes', {})
     if attr:
         for k, v in attr.items():
             attributes[k] = v
+
+
+# Exists for backwards compatibility as this function
+# was initially spelled incorrectly.
+add_attriubtes = add_attributes
 
 
 def emojione(options, md):
@@ -107,7 +119,7 @@ def to_png(index, shortname, alias, uc, alt, title, category, options, md):
         def_non_std_image_path = GITHUB_CDN
     elif index == 'twemoji':
         def_image_path = TWEMOJI_PNG_CDN
-        def_image_path = TWEMOJI_PNG_CDN
+        def_non_std_image_path = TWEMOJI_PNG_CDN
     else:
         def_image_path = EMOJIONE_PNG_CDN
         def_non_std_image_path = EMOJIONE_PNG_CDN
@@ -119,10 +131,10 @@ def to_png(index, shortname, alias, uc, alt, title, category, options, md):
     # We can tell we have a github specific if there is no Unicode value.
     if is_unicode:
         image_path = options.get('image_path', def_image_path)
-    else:
+    else:  # pragma: no cover
         image_path = options.get('non_standard_image_path', def_non_std_image_path)
 
-    src = "%s%s.png" % (
+    src = "{}{}.png".format(
         image_path,
         uc if is_unicode else shortname[1:-1]
     )
@@ -136,7 +148,7 @@ def to_png(index, shortname, alias, uc, alt, title, category, options, md):
     if title:
         attributes['title'] = title
 
-    add_attriubtes(options, attributes)
+    add_attributes(options, attributes)
 
     return etree.Element("img", attributes)
 
@@ -152,7 +164,7 @@ def to_svg(index, shortname, alias, uc, alt, title, category, options, md):
     attributes = {
         "class": options.get('classes', index),
         "alt": alt,
-        "src": "%s%s.svg" % (
+        "src": "{}{}.svg".format(
             options.get('image_path', svg_path),
             uc
         )
@@ -161,7 +173,7 @@ def to_svg(index, shortname, alias, uc, alt, title, category, options, md):
     if title:
         attributes['title'] = title
 
-    add_attriubtes(options, attributes)
+    add_attributes(options, attributes)
 
     return etree.Element("img", attributes)
 
@@ -181,7 +193,7 @@ def to_png_sprite(index, shortname, alias, uc, alt, title, category, options, md
     if title:
         attributes['title'] = title
 
-    add_attriubtes(options, attributes)
+    add_attributes(options, attributes)
 
     el = etree.Element("span", attributes)
     el.text = md_util.AtomicString(alt)
@@ -199,7 +211,7 @@ def to_svg_sprite(index, shortname, alias, uc, alt, title, category, options, md
     ```
     """
 
-    xlink_href = '%s#emoji-%s' % (
+    xlink_href = '{}#emoji-{}'.format(
         options.get('image_path', './../assets/sprites/emojione.sprites.svg'), uc
     )
     svg = etree.Element("svg", {"class": options.get('classes', index)})
@@ -222,7 +234,7 @@ def to_alt(index, shortname, alias, uc, alt, title, category, options, md):
 class EmojiPattern(InlineProcessor):
     """Return element of type `tag` with a text attribute of group(2) of an `InlineProcessor`."""
 
-    def __init__(self, pattern, config, md):
+    def __init__(self, pattern, config, strict_mode, md):
         """Initialize."""
 
         InlineProcessor.__init__(self, pattern, md)
@@ -236,6 +248,8 @@ class EmojiPattern(InlineProcessor):
         self.remove_var_sel = config['remove_variation_selector']
         self.title = title if title in VALID_TITLE else NO_TITLE
         self.generator = config['emoji_generator']
+        self.strict = config['strict']
+        self.strict_cache = strict_mode
 
     def _set_index(self, index):
         """Set the index."""
@@ -243,7 +257,7 @@ class EmojiPattern(InlineProcessor):
         if len(inspect.getfullargspec(index).args):
             self.emoji_index = index(self.options, self.md)
         else:
-            warnings.warn(MSG_INDEX_WARN, util.PymdownxDeprecationWarning)
+            util.warn_deprecated(MSG_INDEX_WARN)
             self.emoji_index = index()
 
     def _remove_variation_selector(self, value):
@@ -270,10 +284,6 @@ class EmojiPattern(InlineProcessor):
             needed characters to identify the Unicode emoji, but the formatting as well. Joining characters
             and variation characters will be present. If you don't want variation chars, enable the global
             'remove_variation_selector' option.
-
-        If using gemoji, it is possible you will get no Unicode and no Unicode alt.  This occurs with emoji
-        like `:octocat:`.  `:octocat:` is not a real emoji and has no Unicode code points, but it is provided by
-        gemoji as an emoji anyways.
         """
 
         uc = emoji.get('unicode')
@@ -336,8 +346,28 @@ class EmojiPattern(InlineProcessor):
                 self.options,
                 self.md
             )
+        elif self.strict:
+            self.strict_cache.add(shortname)
 
         return el, m.start(0), m.end(0)
+
+
+class EmojiAlertPostprocessor(Postprocessor):
+    """Post processor to strip out unwanted content."""
+
+    def __init__(self, strict_cache, md):
+        """Initialize."""
+
+        self.strict_cache = strict_cache
+
+    def run(self, text):
+        """Strip out ids and classes for a simplified HTML output."""
+
+        if len(self.strict_cache):
+            raise RuntimeError(
+                MSG_BAD_EMOJI.format('\n'.join([f'- {x}' for x in sorted(self.strict_cache)]))
+            )
+        return text
 
 
 class EmojiExtension(Extension):
@@ -371,21 +401,35 @@ class EmojiExtension(Extension):
                 False,
                 "Remove variation selector 16 from unicode. - Default: False"
             ],
+            'strict': [
+                False,
+                "When enabled, if an emoji with a missing name is detected, an exception will be raised."
+            ],
             'options': [
                 {},
                 "Emoji options see documentation for options for github and emojione."
             ]
         }
-        super(EmojiExtension, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+
+    def reset(self):
+        """Reset."""
+
+        self.strict_cache.clear()
 
     def extendMarkdown(self, md):
         """Add support for emoji."""
+
+        md.registerExtension(self)
 
         config = self.getConfigs()
 
         util.escape_chars(md, [':'])
 
-        md.inlinePatterns.register(EmojiPattern(RE_EMOJI, config, md), "emoji", 75)
+        self.strict_cache = set()
+        md.inlinePatterns.register(EmojiPattern(RE_EMOJI, config, self.strict_cache, md), "emoji", 75)
+        if config['strict']:
+            md.postprocessors.register(EmojiAlertPostprocessor(self.strict_cache, md), "emoji-alert", 50)
 
 
 ###################

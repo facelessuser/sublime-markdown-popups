@@ -25,14 +25,19 @@ DEALINGS IN THE SOFTWARE.
 """
 import re
 from ..markdown import Extension
+from ..markdown.inlinepatterns import SimpleTextInlineProcessor
 from . import util
 
 SMART_CONTENT = r'((?:(?<=\s)=+?(?=\s)|.)+?=*?)'
 CONTENT = r'((?:[^=]|(?<!={2})=)+?)'
+
+# Avoid starting a pattern with caret tokens that are surrounded by white space.
+NOT_MARK = r'((^|(?<=\s))(=+)(?=\s|$))'
+
 # ==mark==
-MARK = r'(={2})(?!\s)%s(?<!\s)\1' % CONTENT
+MARK = r'(={{2}})(?!\s){}(?<!\s)\1'.format(CONTENT)
 # ==mark==
-SMART_MARK = r'(?:(?<=_)|(?<![\w=]))(={2})(?![\s=])%s(?<!\s)\1(?:(?=_)|(?![\w=]))' % SMART_CONTENT
+SMART_MARK = r'(?:(?<=_)|(?<![\w=]))(={{2}})(?![\s=]){}(?<!\s)\1(?:(?=_)|(?![\w=]))'.format(SMART_CONTENT)
 
 
 class MarkProcessor(util.PatternSequenceProcessor):
@@ -61,7 +66,7 @@ class MarkExtension(Extension):
             'smart_mark': [True, "Treat ==connected==words== intelligently - Default: True"]
         }
 
-        super(MarkExtension, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def extendMarkdown(self, md):
         """Insert `<mark>test</mark>` tags as `==test==`."""
@@ -75,6 +80,7 @@ class MarkExtension(Extension):
         escape_chars.append('=')
         util.escape_chars(md, escape_chars)
 
+        md.inlinePatterns.register(SimpleTextInlineProcessor(NOT_MARK), 'not_tilde', 70)
         mark = MarkSmartProcessor(r'=') if smart else MarkProcessor(r'=')
         md.inlinePatterns.register(mark, "mark", 65)
 

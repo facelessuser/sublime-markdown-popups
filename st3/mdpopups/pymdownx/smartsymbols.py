@@ -58,7 +58,7 @@ RE_ORDINAL_NUMBERS = (
     (?P<tail>(?<=1)(?:1|2|3)th|1st|2nd|3rd|[04-9]th)
     \b
     ''',
-    lambda m: '%s%s<sup>%s</sup>' % (
+    lambda m: '{}{}<sup>{}</sup>'.format(
         m.group('leading') if m.group('leading') else '',
         m.group('tail')[:-2], m.group('tail')[1:]
     )
@@ -117,7 +117,7 @@ class SmartSymbolsPattern(HtmlInlineProcessor):
     def __init__(self, pattern, replace, md):
         """Setup replace pattern."""
 
-        super(SmartSymbolsPattern, self).__init__(pattern, md)
+        super().__init__(pattern, md)
         self.replace = replace
 
     def handleMatch(self, m, data):
@@ -145,7 +145,7 @@ class SmartSymbolsExtension(Extension):
             'ordinal_numbers': [True, 'Ordinal Numbers'],
             'care_of': [True, 'Care/of']
         }
-        super(SmartSymbolsExtension, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def add_pattern(self, patterns, md):
         """Construct the inline symbol pattern."""
@@ -164,7 +164,7 @@ class SmartSymbolsExtension(Extension):
 
         inline_processor = treeprocessors.InlineProcessor(md)
         inline_processor.inlinePatterns = self.patterns
-        md.treeprocessors.register(inline_processor, "smart-symbols", 2.1)
+        md.treeprocessors.register(inline_processor, "smart-symbols", 6.1)
 
 
 def makeExtension(*args, **kwargs):

@@ -34,18 +34,18 @@ EOT = '\u0004'  # end
 
 CRITIC_KEY = "czjqqkd:%s"
 CRITIC_PLACEHOLDER = CRITIC_KEY % r'[0-9]+'
-SINGLE_CRITIC_PLACEHOLDER = r'%(stx)s(?P<key>%(key)s)%(etx)s' % {
-    "key": CRITIC_PLACEHOLDER, "stx": STX, "etx": ETX
-}
+SINGLE_CRITIC_PLACEHOLDER = r'{stx}(?P<key>{key}){etx}'.format(
+    key=CRITIC_PLACEHOLDER, stx=STX, etx=ETX
+)
 CRITIC_PLACEHOLDERS = r'''(?x)
 (?:
-    (?P<block>\<p\>(?P<block_keys>(?:%(stx)s%(key)s%(etx)s)+)\</p\>) |
-    %(single)s
+    (?P<block>\<p\>(?P<block_keys>(?:{stx}{key}{etx})+)\</p\>) |
+    {single}
 )
-''' % {
-    "key": CRITIC_PLACEHOLDER, "single": SINGLE_CRITIC_PLACEHOLDER,
-    "stx": STX, "etx": ETX
-}
+'''.format(
+    key=CRITIC_PLACEHOLDER, single=SINGLE_CRITIC_PLACEHOLDER,
+    stx=STX, etx=ETX
+)
 ALL_CRITICS = r'''(?x)
 ((?P<critic>(?P<open>\{)
     (?:
@@ -83,7 +83,7 @@ RE_CRITIC_BLOCK = re.compile(r'((?:ins|del|mark)\s+)(class=([\'"]))(.*?)(\3)')
 RE_BLOCK_SEP = re.compile(r'^(?:\r?\n){2,}$')
 
 
-class CriticStash(object):
+class CriticStash:
     """Stash critic marks until ready."""
 
     def __init__(self, stash_key):
@@ -132,7 +132,7 @@ class CriticsPostprocessor(Postprocessor):
     def __init__(self, critic_stash):
         """Initialize."""
 
-        super(CriticsPostprocessor, self).__init__()
+        super().__init__()
         self.critic_stash = critic_stash
 
     def subrestore(self, m):
@@ -181,7 +181,7 @@ class CriticViewPreprocessor(Preprocessor):
     def __init__(self, critic_stash):
         """Initialize."""
 
-        super(CriticViewPreprocessor, self).__init__()
+        super().__init__()
         self.critic_stash = critic_stash
 
     def _ins(self, text):
@@ -298,7 +298,7 @@ class CriticExtension(Extension):
             'raw_view': [False, "Raw view keeps the output as the raw markup for view mode - Default False"]
         }
 
-        super(CriticExtension, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def extendMarkdown(self, md):
         """Register the extension."""

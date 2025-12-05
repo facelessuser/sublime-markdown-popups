@@ -5,17 +5,20 @@ MIT license.
 
 Copyright (c) 2017 Isaac Muse <isaacmuse@gmail.com>
 """
+from __future__ import annotations
+from ..markdown import Markdown
 from ..markdown.inlinepatterns import InlineProcessor
 import xml.etree.ElementTree as etree
 from collections import namedtuple
 import sys
 import copy
 import re
-import html.parser
+import html
 from urllib.request import pathname2url, url2pathname
 from urllib.parse import urlparse
-
-html_parser = html.parser.HTMLParser()
+from functools import wraps
+import warnings
+from typing import Sequence, Callable, Any
 
 RE_WIN_DRIVE_LETTER = re.compile(r"^[A-Za-z]$")
 RE_WIN_DRIVE_PATH = re.compile(r"^[A-Za-z]:(?:\\.*)?$")
@@ -29,60 +32,78 @@ elif sys.platform == "darwin":  # pragma: no cover
 else:
     _PLATFORM = "linux"
 
+PY39 = (3, 9) <= sys.version_info
+PY314 = (3, 14) <= sys.version_info
 
-def is_win():  # pragma: no cover
+
+def clamp(value: float, mn: float, mx: float) -> float:
+    """Clamp the value to the given minimum and maximum."""
+
+    if mn is not None and mx is not None:
+        return max(min(value, mx), mn)
+    elif mn is not None:
+        return max(value, mn)
+    elif mx is not None:
+        return min(value, mx)
+    else:
+        return value
+
+
+def is_win() -> bool:  # pragma: no cover
     """Is Windows."""
 
     return _PLATFORM == "windows"
 
 
-def is_linux():  # pragma: no cover
+def is_linux() -> bool:  # pragma: no cover
     """Is Linux."""
 
     return _PLATFORM == "linux"
 
 
-def is_mac():  # pragma: no cover
+def is_mac() -> bool:  # pragma: no cover
     """Is macOS."""
 
     return _PLATFORM == "osx"
 
 
-def url2path(path):
+def url2path(path: str) -> str:
     """Path to URL."""
 
     return url2pathname(path)
 
 
-def path2url(url):
+def path2url(url: str) -> str:
     """URL to path."""
 
     path = pathname2url(url)
     # If on windows, replace the notation to use a default protocol `///` with nothing.
     if is_win() and RE_WIN_DEFAULT_PROTOCOL.match(path):
         path = path.replace('///', '', 1)
+    if PY314:
+        path = path.replace('///', '/')
     return path
 
 
-def get_code_points(s):
+def get_code_points(s: str) -> list[str]:
     """Get the Unicode code points."""
 
-    return [c for c in s]
+    return list(s)
 
 
-def get_ord(c):
+def get_ord(c: str) -> int:
     """Get Unicode ord."""
 
     return ord(c)
 
 
-def get_char(value):
+def get_char(value: int) -> str:
     """Get the Unicode char."""
 
     return chr(value)
 
 
-def escape_chars(md, echrs):
+def escape_chars(md: Markdown, echrs: Sequence[str]) -> None:
     """
     Add chars to the escape list.
 
@@ -98,7 +119,7 @@ def escape_chars(md, echrs):
     md.ESCAPED_CHARS = escaped
 
 
-def parse_url(url):
+def parse_url(url: str) -> tuple[str, str, str, str, str, str, bool, bool]:
     """
     Parse the URL.
 
@@ -114,7 +135,7 @@ def parse_url(url):
 
     is_url = False
     is_absolute = False
-    scheme, netloc, path, params, query, fragment = urlparse(html_parser.unescape(url))
+    scheme, netloc, path, params, query, fragment = urlparse(html.unescape(url))
 
     if RE_URL.match(scheme):
         # Clearly a URL
@@ -137,7 +158,7 @@ def parse_url(url):
         is_absolute = True
     elif RE_WIN_DRIVE_LETTER.match(scheme):
         # c:/path
-        path = '/%s:%s' % (scheme, path.replace('\\', '/'))
+        path = '/{}:{}'.format(scheme, path.replace('\\', '/'))
         scheme = 'file'
         netloc = ''
         is_absolute = True
@@ -157,50 +178,62 @@ def parse_url(url):
     return (scheme, netloc, path, params, query, fragment, is_url, is_absolute)
 
 
-class PatSeqItem(namedtuple('PatSeqItem', ['pattern', 'builder', 'tags'])):
+class PatSeqItem(namedtuple('PatSeqItem', ['pattern', 'builder', 'tags', 'full_recursion'])):
     """Pattern sequence item item."""
+
+    def __new__(cls, pattern: re.Pattern[str], builder: str, tags: str, full_recursion: bool = False) -> PatSeqItem:
+        """Create object."""
+
+        return super().__new__(cls, pattern, builder, tags, full_recursion)
 
 
 class PatternSequenceProcessor(InlineProcessor):
     """Processor for handling complex nested patterns such as strong and em matches."""
 
-    PATTERNS = []
+    PATTERNS = []  # type: list[PatSeqItem]
 
-    def build_single(self, m, tag, idx):
+    def build_single(self, m: re.Match[str], tag: str, full_recursion: bool, idx: int) -> etree.Element:
         """Return single tag."""
         el1 = etree.Element(tag)
         text = m.group(2)
-        self.parse_sub_patterns(text, el1, None, idx)
+        self.parse_sub_patterns(text, el1, None, full_recursion, idx)
         return el1
 
-    def build_double(self, m, tags, idx):
+    def build_double(self, m: re.Match[str], tags: str, full_recursion: bool, idx: int) -> etree.Element:
         """Return double tag."""
 
         tag1, tag2 = tags.split(",")
         el1 = etree.Element(tag1)
         el2 = etree.Element(tag2)
         text = m.group(2)
-        self.parse_sub_patterns(text, el2, None, idx)
+        self.parse_sub_patterns(text, el2, None, full_recursion, idx)
         el1.append(el2)
         if len(m.groups()) == 3:
             text = m.group(3)
-            self.parse_sub_patterns(text, el1, el2, idx)
+            self.parse_sub_patterns(text, el1, el2, full_recursion, idx)
         return el1
 
-    def build_double2(self, m, tags, idx):
+    def build_double2(self, m: re.Match[str], tags: str, full_recursion: bool, idx: int) -> etree.Element:
         """Return double tags (variant 2): `<strong>text <em>text</em></strong>`."""
 
         tag1, tag2 = tags.split(",")
         el1 = etree.Element(tag1)
         el2 = etree.Element(tag2)
         text = m.group(2)
-        self.parse_sub_patterns(text, el1, None, idx)
+        self.parse_sub_patterns(text, el1, None, full_recursion, idx)
         text = m.group(3)
         el1.append(el2)
-        self.parse_sub_patterns(text, el2, None, idx)
+        self.parse_sub_patterns(text, el2, None, full_recursion, idx)
         return el1
 
-    def parse_sub_patterns(self, data, parent, last, idx):
+    def parse_sub_patterns(
+        self,
+        data: str,
+        parent: etree.Element,
+        last: None | etree.Element,
+        full_recursion: bool,
+        idx: int
+    ) -> None:
         """
         Parses sub patterns.
 
@@ -229,7 +262,7 @@ class PatternSequenceProcessor(InlineProcessor):
                 # See if the we can match an emphasis/strong pattern
                 for index, item in enumerate(self.PATTERNS):
                     # Only evaluate patterns that are after what was used on the parent
-                    if index <= idx:
+                    if not full_recursion and index <= idx:
                         continue
                     m = item.pattern.match(data, pos)
                     if m:
@@ -243,7 +276,7 @@ class PatternSequenceProcessor(InlineProcessor):
                                 last.tail = text
                             else:
                                 parent.text = text
-                        el = self.build_element(m, item.builder, item.tags, index)
+                        el = self.build_element(m, item.builder, item.tags, item.full_recursion, index)
                         parent.append(el)
                         last = el
                         # Move our position past the matched hunk
@@ -264,17 +297,28 @@ class PatternSequenceProcessor(InlineProcessor):
             else:
                 parent.text = text
 
-    def build_element(self, m, builder, tags, index):
+    def build_element(
+        self,
+        m: re.Match[str],
+        builder: str,
+        tags: str,
+        full_recursion: bool,
+        index: int
+    ) -> etree.Element:
         """Element builder."""
 
         if builder == 'double2':
-            return self.build_double2(m, tags, index)
+            return self.build_double2(m, tags, full_recursion, index)
         elif builder == 'double':
-            return self.build_double(m, tags, index)
+            return self.build_double(m, tags, full_recursion, index)
         else:
-            return self.build_single(m, tags, index)
+            return self.build_single(m, tags, full_recursion, index)
 
-    def handleMatch(self, m, data):
+    def handleMatch(  # type: ignore[override]
+        self,
+        m: re.Match[str],
+        data: str
+    ) -> tuple[etree.Element | None, int | None, int | None]:
         """Parse patterns."""
 
         el = None
@@ -286,10 +330,40 @@ class PatternSequenceProcessor(InlineProcessor):
             if m1:
                 start = m1.start(0)
                 end = m1.end(0)
-                el = self.build_element(m1, item.builder, item.tags, index)
+                el = self.build_element(m1, item.builder, item.tags, item.full_recursion, index)
                 break
         return el, start, end
 
 
-class PymdownxDeprecationWarning(UserWarning):  # pragma: no cover
-    """Deprecation warning for Pymdownx that is not hidden."""
+def deprecated(message: str, stacklevel: int = 2) -> Callable[..., Any]:  # pragma: no cover
+    """
+    Raise a `DeprecationWarning` when wrapped function/method is called.
+
+    Usage:
+
+        @deprecated("This method will be removed in version X; use Y instead.")
+        def some_method()"
+            pass
+    """
+
+    def _wrapper(func: Callable[..., Any]) -> Callable[..., Any]:
+        @wraps(func)
+        def _deprecated_func(*args: Any, **kwargs: Any) -> Any:
+            warnings.warn(
+                f"'{func.__name__}' is deprecated. {message}",
+                category=DeprecationWarning,
+                stacklevel=stacklevel
+            )
+            return func(*args, **kwargs)
+        return _deprecated_func
+    return _wrapper
+
+
+def warn_deprecated(message: str, stacklevel: int = 2) -> None:  # pragma: no cover
+    """Warn deprecated."""
+
+    warnings.warn(
+        message,
+        category=DeprecationWarning,
+        stacklevel=stacklevel
+    )
