@@ -52,7 +52,7 @@ DEFAULT_CONFIG = {
         'Default: True'
     ],
     'guess_lang': [
-        False,
+        0,
         "Automatic language detection - Default: False"
     ],
     'css_class': [
@@ -87,11 +87,7 @@ DEFAULT_CONFIG = {
     ],
     'extend_pygments_lang': [
         [],
-        'Extend pygments language with special language entry - Default: {}'
-    ],
-    'language_prefix': [
-        'language-',
-        'Controls the language prefix for non-Pygments code blocks. - Defaults: "language-"'
+        'Extend pygments language with special language entry - Default: []'
     ],
     'language_prefix': [
         'language-',
@@ -163,7 +159,12 @@ if pygments:
     class InlineHtmlFormatter(HtmlFormatter):
         """Format the code blocks."""
 
-        def wrap(self, source, outfile):
+        def _wrap_div(self, inner):
+            """Do not wrap with `div`."""
+
+            yield from inner
+
+        def wrap(self, source):
             """Overload wrap."""
 
             return self._wrap_code(source)
@@ -199,12 +200,13 @@ if pygments:
             # move the line number value to `data-linenos`, but we could
             # wrap the gutter number in the future with a highlight class.
             # The decision to do this has still not be made.
+
             return (
                 m.group(1) +
                 m.group(2) +
                 '"' +
                 m.group(3) +
-                ' data-linenos="' + m.group(4).rstrip() + ' ">' +
+                ' data-linenos="' + m.group(4) + ' ">' +
                 m.group(5)
             )
 
@@ -223,12 +225,12 @@ if pygments:
                     line = self.RE_SPAN_NUMS.sub(self._format_custom_line, line)
                 yield t, line
 
-        def wrap(self, source, outfile):
+        def wrap(self, source):
             """Wrap the source code."""
 
             if self.linenos == 2 and self.pymdownx_inline:
                 source = self._wrap_customlinenums(source)
-            return HtmlFormatter.wrap(self, source, outfile)
+            return HtmlFormatter.wrap(self, source)
 
         def _wrap_tablelinenos(self, inner):
             """
@@ -244,6 +246,11 @@ if pygments:
 
     class SublimeInlineHtmlFormatter(HtmlFormatter):
         """Format the code blocks."""
+        
+        def _wrap_div(self, inner):
+            """Do not wrap with `div`."""
+
+            yield from inner
 
         def wrap(self, source, outfile):
             """Overload wrap."""
@@ -285,7 +292,7 @@ if pygments:
     class SublimeBlockFormatter(BlockHtmlFormatter):
         """Format the code blocks."""
 
-        def wrap(self, source, outfile):
+        def wrap(self, source):
             """Overload wrap."""
 
             if self.linenos == 2 and self.pymdownx_inline:
@@ -369,7 +376,7 @@ if pygments:
             yield 0, '</pre></div>'
 
 
-class Highlight(object):
+class Highlight:
     """Highlight class."""
 
     def __init__(
@@ -650,16 +657,17 @@ class Highlight(object):
 class HighlightTreeprocessor(Treeprocessor):
     """Highlight source code in code blocks."""
 
-    def __init__(self, md):
+    def __init__(self, md, ext):
         """Initialize."""
 
-        super(HighlightTreeprocessor, self).__init__(md)
+        self.ext = ext
+        super().__init__(md)
 
     def code_unescape(self, text):
         """Unescape code."""
-        text = text.replace("&amp;", "&")
         text = text.replace("&lt;", "<")
         text = text.replace("&gt;", ">")
+        text = text.replace("&amp;", "&")
         return text
 
     def run(self, root):
@@ -668,6 +676,8 @@ class HighlightTreeprocessor(Treeprocessor):
         blocks = root.iter('pre')
         for block in blocks:
             if len(block) == 1 and block[0].tag == 'code':
+
+                self.ext.pygments_code_block += 1
                 code = Highlight(
                     guess_lang=self.config['guess_lang'],
                     pygments_style=self.config['pygments_style'],
@@ -679,13 +689,19 @@ class HighlightTreeprocessor(Treeprocessor):
                     linenums_class=self.config['linenums_class'],
                     extend_pygments_lang=self.config['extend_pygments_lang'],
                     language_prefix=self.config['language_prefix'],
-                    code_attr_on_pre=self.config['code_attr_on_pre']
+                    code_attr_on_pre=self.config['code_attr_on_pre'],
+                    auto_title=self.config['auto_title'],
+                    auto_title_map=self.config['auto_title_map'],
+                    pygments_lang_class=self.config['pygments_lang_class'],
+                    stripnl=self.config['stripnl'],
+                    default_lang=self.config['default_lang']
                 )
                 placeholder = self.md.htmlStash.store(
                     code.highlight(
-                        self.code_unescape(block[0].text),
+                        self.code_unescape(block[0].text).rstrip('\n'),
                         '',
-                        self.config['css_class']
+                        self.config['css_class'],
+                        code_block_count=self.ext.pygments_code_block
                     )
                 )
 
@@ -704,7 +720,7 @@ class HighlightExtension(Extension):
         """Initialize."""
 
         self.config = copy.deepcopy(DEFAULT_CONFIG)
-        super(HighlightExtension, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def get_pymdownx_highlight_settings(self):
         """Get the specified extension."""
@@ -717,7 +733,7 @@ class HighlightExtension(Extension):
         if target is None:
             target = {}
             config_clone = copy.deepcopy(DEFAULT_CONFIG)
-            for k, v in config_clone.items():
+            for k in config_clone.keys():
                 target[k] = config_clone[k][0]
 
         return target
@@ -732,11 +748,12 @@ class HighlightExtension(Extension):
 
         Highlight.set_sublime_vars(md.sublime_hl, md.sublime_wrap, md.plugin_map)
         config = self.getConfigs()
+        self.pygments_code_block = -1
         self.md = md
         self.enabled = config.get("_enabled", False)
 
         if self.enabled:
-            ht = HighlightTreeprocessor(self.md)
+            ht = HighlightTreeprocessor(self.md, self)
             ht.config = self.getConfigs()
             self.md.treeprocessors.register(ht, "indent-highlight", 30)
 
@@ -746,6 +763,7 @@ class HighlightExtension(Extension):
             if isinstance(ext, HighlightExtension):
                 register = not ext.enabled and self.enabled
                 break
+            index += 1
 
         if register is None:
             register = True
@@ -756,6 +774,11 @@ class HighlightExtension(Extension):
                 self.md.registerExtension(self)
             else:
                 self.md.registeredExtensions[index] = self
+
+    def reset(self):
+        """Reset."""
+
+        self.pygments_code_block = -1
 
 
 def makeExtension(*args, **kwargs):
