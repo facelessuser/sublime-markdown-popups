@@ -184,7 +184,8 @@ div.mdpopups {
   background-color: var(--mdpopups-admon-info-bg);
   border-color: var(--mdpopups-admon-info-accent);
 }
-.mdpopups .highlight {
+.mdpopups .highlight,
+.mdpopups code {
   border: 1px solid var(--mdpopups-hl-border);
   border-radius: 0.25rem;
   font-size: 0.9rem;
@@ -198,7 +199,13 @@ div.mdpopups {
   margin-bottom: 0.5rem;
   font-size: 1rem;
 }
-.mdpopups code.highlight {
+.mdpopups code.highlight,
+.mdpopups code {
   padding: 0.05rem 0.25rem;
+}
+.mdpopups pre code {
+  border: none;
+  border-radius: 0;
+  padding: 0;
 }
 {%- endif %}
