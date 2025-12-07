@@ -41,6 +41,12 @@ MdPopups uses @Python-Markdown/markdown to parse Markdown by default and transfo
 The Markdown environment supports basic Markdown syntax, but also includes a number of specialty extensions to enhance
 and extend the Markdown environment.
 
+/// tip | CommonMark Support
+If CommonMark support is desired, see how to configure the optional [CommonMark parser](#commonmark-parser)
+@frostming/marko. It doesn't have the same various extensions, but will providea more modern basic parsing of Markdown
+and provides a GitHub Flavored Markdown mode as well.
+///
+
 Due to the `minihtml` environment that Sublime uses, the type of tags and CSS that can be used are a bit limited.
 MdPopups provides a CSS that includes most of the common supported tags that can be used. Then few specific extensions
 (that work well within the `minihtml` environment) have been selected to provide support for a some additional useful
@@ -127,6 +133,39 @@ These are 3rd party extensions provided by PyMdown Extensions:
     be used to get around some of Python Markdown's limitations with HTML parsing.
 
 -   [`pymdownx.blocks.definition`][block-definition] This is a block container definitions.
+
+## CommonMark Parsing
+
+/// new | New 5.0.0
+///
+
+MdPopups includes the CommonMark @frostming/marko. This is not enable by default and requires the caller to specify the
+parser in the [frontmatter](#frontmater) in order to enable its usage.
+
+```yaml
+---
+markdown_parser: marko
+---
+```
+
+Markdo doesn't have all the bells and whistles and extensive extensions of Python Markdown, but what it does offer is
+a CommonMark compliant parser with generally more predictable and reliable behavior based on modern parsers.
+
+It also offers a GitHub Flavored Markdown series of extensions as well. These can be enabled via:
+
+```yaml
+---
+markdown_parser: marko
+markdown_extensions:
+- gfm
+---
+```
+
+It should be noted that MdPopups strips out Table support when using GitHub Flavored Markdown as it is not supported
+in Sublime Text's `minihtml`. Sublime also cannot render strikethrough for deleted content and will try to highlight
+with a redish color (as specified by the theme) by default if encountered.
+
+Other built-in extensions may not render well in Sublime.
 
 ## Frontmatter
 

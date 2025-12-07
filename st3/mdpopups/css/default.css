@@ -195,7 +195,8 @@ div.mdpopups {
   color: var(--mdpopups-admon-fg);
   border: 1px solid var(--mdpopups-admon-accent);
 }
-.mdpopups .admonition-title {
+.mdpopups .admonition-title,
+.mdpopups .alert-title {
   font-weight: 600;
   font-size: 1.1rem;
   margin: 0 -0.5rem 0.5rem -0.5rem;
@@ -234,49 +235,59 @@ div.mdpopups {
   border-color: var(--mdpopups-admon-error-accent);
 }
 /* Admonitions classes that align with GitHub callouts. */
-.mdpopups .admonition.tip .admonition-title {
+.mdpopups .admonition.tip .admonition-title,
+.mdpopups blockquote.alert-tip .alert-title {
   color: var(--mdpopups-admon-tip-title-fg);
   background-color: var(--mdpopups-admon-tip-accent);
 }
-.mdpopups .admonition.tip {
+.mdpopups .admonition.tip,
+.mdpopups blockquote.alert-tip {
   color:  var(--mdpopups-admon-tip-fg);
   background-color: var(--mdpopups-admon-tip-bg);
   border-color: var(--mdpopups-admon-tip-accent);
 }
 .mdpopups .admonition.warning .admonition-title,
+.mdpopups blockquote.alert-warning .alert-title
 .mdpopups .admonition.panel-warning .admonition-title {
   color: var(--mdpopups-admon-warning-title-fg);
   background-color: var(--mdpopups-admon-warning-accent);
 }
 .mdpopups .admonition.warning,
+.mdpopups blockquote.alert-warning,
 .mdpopups .admonition.panel-warning {
   color:  var(--mdpopups-admon-warning-fg);
   background-color: var(--mdpopups-admon-warning-bg);
   border-color: var(--mdpopups-admon-warning-accent);
 }
-.mdpopups .admonition.caution .admonition-title {
+.mdpopups .admonition.caution .admonition-title,
+.mdpopups blockquote.alert-caution .alert-title {
   color: var(--mdpopups-admon-caution-title-fg);
   background-color: var(--mdpopups-admon-caution-accent);
 }
-.mdpopups .admonition.caution {
+.mdpopups .admonition.caution,
+.mdpopups blockquote.alert-caution {
   color:  var(--mdpopups-admon-caution-fg);
   background-color: var(--mdpopups-admon-caution-bg);
   border-color: var(--mdpopups-admon-caution-accent);
 }
-.mdpopups .admonition.note .admonition-title {
+.mdpopups .admonition.note .admonition-title,
+.mdpopups blockquote.alert-note .alert-title {
   color: var(--mdpopups-admon-note-title-fg);
   background-color: var(--mdpopups-admon-note-accent);
 }
-.mdpopups .admonition.note {
+.mdpopups .admonition.note,
+.mdpopups blockquote.alert-note {
   color:  var(--mdpopups-admon-note-fg);
   background-color: var(--mdpopups-admon-note-bg);
   border-color: var(--mdpopups-admon-note-accent);
 }
-.mdpopups .admonition.important .admonition-title {
+.mdpopups .admonition.important .admonition-title,
+.mdpopups blockquote.alert-important .alert-title {
   color: var(--mdpopups-admon-important-title-fg);
   background-color: var(--mdpopups-admon-important-accent);
 }
-.mdpopups .admonition.important {
+.mdpopups .admonition.important,
+.mdpopups blockquote.alert-important {
   color:  var(--mdpopups-admon-important-fg);
   background-color: var(--mdpopups-admon-important-bg);
   border-color: var(--mdpopups-admon-important-accent);

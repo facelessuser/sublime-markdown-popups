@@ -11,6 +11,7 @@ https://manual.macromates.com/en/language_grammars#naming_conventions
 import sublime
 import sublime_api
 from . import markdown
+from .marko import Markdown as marko
 from . import jinja2
 import traceback
 import time
@@ -28,6 +29,8 @@ from .st_scheme_template import SchemeTemplate, POPUP, PHANTOM, SHEET
 from .st_clean_css import clean_css
 from .st_pygments_highlight import syntax_hl as pyg_syntax_hl
 from .st_code_highlight import SublimeHighlight
+from .mdx.marko_highlight import make_extension
+from .mdx.marko_gfm import GFM
 from .st_mapping import lang_map
 from .coloraide import Color
 from . import imagetint
@@ -404,76 +407,99 @@ def md2html(
 
     fm, markup = frontmatter.get_frontmatter(markup)
 
-    # We always include these
-    extensions = [
-        "mdpopups.mdx.highlight",
-        "pymdownx.inlinehilite",
-        "pymdownx.superfences"
-    ]
+    parser = fm.get('markdown_parser', 'markdown')
+    if parser == 'markdown':
 
-    configs = {
-        "mdpopups.mdx.highlight": {
-            "guess_lang": False
-        },
-        "pymdownx.inlinehilite": {
-            "style_plain_text": True
-        },
-        "pymdownx.superfences": {
-            "custom_fences": fm.get('custom_fences', [])
+        # We always include these
+        extensions = [
+            "mdpopups.mdx.highlight",
+            "pymdownx.inlinehilite",
+            "pymdownx.superfences"
+        ]
+
+        configs = {
+            "mdpopups.mdx.highlight": {
+                "guess_lang": False
+            },
+            "pymdownx.inlinehilite": {
+                "style_plain_text": True
+            },
+            "pymdownx.superfences": {
+                "custom_fences": fm.get('custom_fences', [])
+            }
         }
-    }
 
-    # Check if plugin is overriding extensions
-    md_exts = fm.get('markdown_extensions', None)
-    if md_exts is None:
-        # No extension override, use defaults
-        extensions.extend(
-            [
-                "markdown.extensions.admonition",
-                "markdown.extensions.attr_list",
-                "markdown.extensions.def_list",
-                "pymdownx.betterem",
-                "pymdownx.magiclink",
-                "markdown.extensions.md_in_html",
-                "markdown.extensions.nl2br"
-            ]
-        )
-    else:
-        for ext in md_exts:
-            if isinstance(ext, (dict, OrderedDict)):
-                k, v = next(iter(ext.items()))
-                # We don't allow plugins to overrides the internal color
-                if not k.startswith('mdpopups.'):
-                    if k == "pymdownx.extrarawhtml":
-                        k = 'markdown.extensions.md_in_html'
-                        _debug(
-                            "Warning: 'pymdownx.extrarawhtml' no longer exists. 'markdown.extensions.md_in_html'"
-                            " will be used instead. Plugins should migrate as mdpopups will not redirect in the "
-                            "future.",
-                            WARNING
-                        )
-                    extensions.append(k)
-                    if v is not None:
-                        configs[k] = v
-            elif isinstance(ext, str):
-                if not ext.startswith('mdpopups.'):
-                    if ext == "pymdownx.extrarawhtml":
-                        ext = 'markdown.extensions.md_in_html'
-                        _debug(
-                            "Warning: 'pymdownx.extrarawhtml' no longer exists. 'markdown.extensions.md_in_html'"
-                            " will be used instead. Plugins should migrate as mdpopups will not redirect in the"
-                            " future.",
-                            WARNING
-                        )
-                    extensions.append(ext)
+        # Check if plugin is overriding extensions
+        md_exts = fm.get('markdown_extensions', None)
+        if md_exts is None:
+            # No extension override, use defaults
+            extensions.extend(
+                [
+                    "markdown.extensions.admonition",
+                    "markdown.extensions.attr_list",
+                    "markdown.extensions.def_list",
+                    "pymdownx.betterem",
+                    "pymdownx.magiclink",
+                    "markdown.extensions.md_in_html",
+                    "markdown.extensions.nl2br"
+                ]
+            )
+        else:
+            for ext in md_exts:
+                if isinstance(ext, (dict, OrderedDict)):
+                    k, v = next(iter(ext.items()))
+                    # We don't allow plugins to overrides the internal color
+                    if not k.startswith('mdpopups.'):
+                        if k == "pymdownx.extrarawhtml":
+                            k = 'markdown.extensions.md_in_html'
+                            _debug(
+                                "Warning: 'pymdownx.extrarawhtml' no longer exists. 'markdown.extensions.md_in_html'"
+                                " will be used instead. Plugins should migrate as mdpopups will not redirect in the "
+                                "future.",
+                                WARNING
+                            )
+                        extensions.append(k)
+                        if v is not None:
+                            configs[k] = v
+                elif isinstance(ext, str):
+                    if not ext.startswith('mdpopups.'):
+                        if ext == "pymdownx.extrarawhtml":
+                            ext = 'markdown.extensions.md_in_html'
+                            _debug(
+                                "Warning: 'pymdownx.extrarawhtml' no longer exists. 'markdown.extensions.md_in_html'"
+                                " will be used instead. Plugins should migrate as mdpopups will not redirect in the"
+                                " future.",
+                                WARNING
+                            )
+                        extensions.append(ext)
 
-    return _MdWrapper(
-        extensions=extensions,
-        extension_configs=configs,
-        sublime_hl=sublime_hl,
-        allow_code_wrap=fm.get('allow_code_wrap', False),
-        language_map=fm.get('language_map', {})
-    ).convert(_markup_template(markup, template_vars, template_env_options))
+        return _MdWrapper(
+            extensions=extensions,
+            extension_configs=configs,
+            sublime_hl=sublime_hl,
+            allow_code_wrap=fm.get('allow_code_wrap', False),
+            language_map=fm.get('language_map', {})
+        ).convert(_markup_template(markup, template_vars, template_env_options))
+    elif parser == 'marko':
+        extensions = ["mdx.marko_highlight"]
+        md_exts = fm.get('markdown_extensions')
+        if md_exts is not None:
+            for ext in md_exts:
+                if isinstance(ext, (dict, OrderedDict)):
+                    k, v = next(iter(ext.items()))
+                    # We don't allow plugins to overrides the internal color
+                    if not k.startswith('mdpopups.'):
+                        extensions.append(k)
+                elif isinstance(ext, str):
+                    if not ext.startswith('mdpopups.'):
+                        extensions.append(ext)
+        extensions[0] = make_extension(sublime_hl[1], fm.get('allow_code_wrap', False), fm.get('language_map', {}))
+        try:
+            idx = extensions.index('gfm')
+            extensions[idx] = GFM
+        except ValueError:
+            pass
+        return marko(extensions=extensions).convert(_markup_template(markup, template_vars, template_env_options))
 
 
 def color_box(

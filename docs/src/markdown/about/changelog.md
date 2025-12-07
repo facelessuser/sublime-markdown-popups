@@ -8,6 +8,7 @@
     `important`. Legacy classes that do not align are still available: `info`, `success`, `error`.
 -   **NEW**: Admonitions no longer require the `panel-` prefix (`panel-<name>`) and can now just use the name of the
     admonition to trigger default styling.
+-   **NEW**: Add optional CommonMark support via the Marko library using the new frontmatter option `markdown_parser`.
 
 ## 4.3.2
 
