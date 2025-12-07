@@ -1,13 +1,13 @@
 """LCh class."""
+from __future__ import annotations
+from ... import algebra as alg
 from ...spaces import Space, LChish
 from ...cat import WHITES
-from ...channels import Channel, FLG_ANGLE, FLG_OPT_PERCENT
+from ...channels import Channel, FLG_ANGLE
 from ... import util
 import math
-from ... import algebra as alg
 from ...types import Vector
-
-ACHROMATIC_THRESHOLD = 0.0000000002
+from typing import Any
 
 
 def lab_to_lch(lab: Vector) -> Vector:
@@ -18,11 +18,6 @@ def lab_to_lch(lab: Vector) -> Vector:
     c = math.sqrt(a ** 2 + b ** 2)
     h = math.degrees(math.atan2(b, a))
 
-    # Achromatic colors will often get extremely close, but not quite hit zero.
-    # Essentially, we want to discard noise through rounding and such.
-    if c < ACHROMATIC_THRESHOLD:
-        h = alg.NaN
-
     return [l, c, util.constrain_hue(h)]
 
 
@@ -30,8 +25,6 @@ def lch_to_lab(lch: Vector) -> Vector:
     """LCh to Lab."""
 
     l, c, h = lch
-    if alg.is_nan(h):  # pragma: no cover
-        return [l, 0.0, 0.0]
 
     return [
         l,
@@ -43,28 +36,38 @@ def lch_to_lab(lch: Vector) -> Vector:
 class LCh(LChish, Space):
     """LCh class."""
 
-    BASE = "lab"
-    NAME = "lch"
-    SERIALIZE = ("--lch",)
     CHANNELS = (
-        Channel("l", 0.0, 100.0, flags=FLG_OPT_PERCENT),
-        Channel("c", 0.0, 150.0, limit=(0.0, None), flags=FLG_OPT_PERCENT),
-        Channel("h", 0.0, 360.0, flags=FLG_ANGLE)
+        Channel("l", 0.0, 1.0),
+        Channel("c", 0.0, 1.0),
+        Channel("h", flags=FLG_ANGLE)
     )
     CHANNEL_ALIASES = {
         "lightness": "l",
         "chroma": "c",
         "hue": "h"
     }
-    WHITE = WHITES['2deg']['D50']
+
+    def __init__(self, **kwargs: Any):
+        """Initialize."""
+
+        super().__init__(**kwargs)
+        order = alg.order(round(self.channels[self.indexes()[0]].high, 5))
+        self.achromatic_threshold = (1 * 10.0 ** order) / 1_000_000
 
     def normalize(self, coords: Vector) -> Vector:
-        """On color update."""
+        """Normalize coordinates."""
 
-        coords = alg.no_nans(coords)
-        if coords[1] < ACHROMATIC_THRESHOLD:
-            coords[2] = alg.NaN
+        if coords[1] < 0:
+            coords[1] *= -1.0
+            coords[2] += 180.0
+        coords[2] %= 360.0
         return coords
+
+    def is_achromatic(self, coords: Vector) -> bool | None:
+        """Check if color is achromatic."""
+
+        # Account for both positive and negative chroma
+        return abs(coords[1]) < self.achromatic_threshold
 
     def to_base(self, coords: Vector) -> Vector:
         """To Lab from LCh."""
@@ -75,3 +78,22 @@ class LCh(LChish, Space):
         """From Lab to LCh."""
 
         return lab_to_lch(coords)
+
+
+class CIELCh(LCh):
+    """CIE LCh D50."""
+
+    BASE = "lab"
+    NAME = "lch"
+    SERIALIZE = ("--lch",)
+    CHANNELS = (
+        Channel("l", 0.0, 100.0),
+        Channel("c", 0.0, 150.0),
+        Channel("h", 0.0, 360.0, flags=FLG_ANGLE)
+    )
+    CHANNEL_ALIASES = {
+        "lightness": "l",
+        "chroma": "c",
+        "hue": "h"
+    }
+    WHITE = WHITES['2deg']['D50']

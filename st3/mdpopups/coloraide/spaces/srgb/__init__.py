@@ -1,13 +1,12 @@
 """sRGB color class."""
-from ...spaces import Space
-from ...cat import WHITES
-from ...channels import Channel, FLG_OPT_PERCENT
+from __future__ import annotations
+from ..srgb_linear import sRGBLinear
 from ... import algebra as alg
 from ...types import Vector
 import math
 
 
-def lin_srgb(rgb: Vector) -> Vector:
+def eotf_srgb(rgb: Vector) -> Vector:
     """
     Convert an array of sRGB values in the range 0.0 - 1.0 to linear light (un-corrected) form.
 
@@ -25,7 +24,7 @@ def lin_srgb(rgb: Vector) -> Vector:
     return result
 
 
-def gam_srgb(rgb: Vector) -> Vector:
+def inverse_eotf_srgb(rgb: Vector) -> Vector:
     """
     Convert an array of linear-light sRGB values in the range 0.0-1.0 to gamma corrected form.
 
@@ -43,31 +42,24 @@ def gam_srgb(rgb: Vector) -> Vector:
     return result
 
 
-class sRGB(Space):
+class sRGB(sRGBLinear):
     """sRGB class."""
 
     BASE = "srgb-linear"
     NAME = "srgb"
-    CHANNELS = (
-        Channel("r", 0.0, 1.0, bound=True, flags=FLG_OPT_PERCENT),
-        Channel("g", 0.0, 1.0, bound=True, flags=FLG_OPT_PERCENT),
-        Channel("b", 0.0, 1.0, bound=True, flags=FLG_OPT_PERCENT)
-    )
-    CHANNEL_ALIASES = {
-        "red": 'r',
-        "green": 'g',
-        "blue": 'b'
-    }
-    WHITE = WHITES['2deg']['D65']
+    SERIALIZE = ("srgb",)
 
-    EXTENDED_RANGE = True
+    def linear(self) -> str:
+        """Return linear version of the RGB (if available)."""
+
+        return self.BASE
 
     def from_base(self, coords: Vector) -> Vector:
         """From sRGB Linear to sRGB."""
 
-        return gam_srgb(coords)
+        return inverse_eotf_srgb(coords)
 
     def to_base(self, coords: Vector) -> Vector:
         """To sRGB Linear from sRGB."""
 
-        return lin_srgb(coords)
+        return eotf_srgb(coords)

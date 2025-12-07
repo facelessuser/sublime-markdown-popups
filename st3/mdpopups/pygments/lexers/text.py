@@ -1,25 +1,27 @@
-# -*- coding: utf-8 -*-
 """
     pygments.lexers.text
     ~~~~~~~~~~~~~~~~~~~~
 
     Lexers for non-source code file types.
 
-    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2025 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
-from .configs import ApacheConfLexer, NginxConfLexer, \
-    SquidConfLexer, LighttpdConfLexer, IniLexer, RegeditLexer, PropertiesLexer
-from .console import PyPyLogLexer
-from .textedit import VimLexer
-from .markup import BBCodeLexer, MoinWikiLexer, RstLexer, \
+# ruff: noqa: F401
+from ..lexers.configs import ApacheConfLexer, NginxConfLexer, \
+    SquidConfLexer, LighttpdConfLexer, IniLexer, RegeditLexer, PropertiesLexer, \
+    UnixConfigLexer
+from ..lexers.console import PyPyLogLexer
+from ..lexers.textedit import VimLexer
+from ..lexers.markup import BBCodeLexer, MoinWikiLexer, RstLexer, \
     TexLexer, GroffLexer
-from .installers import DebianControlLexer, SourcesListLexer
-from .make import MakefileLexer, BaseMakefileLexer, CMakeLexer
-from .haxe import HxmlLexer
-from .diff import DiffLexer, DarcsPatchLexer
-from .data import YamlLexer
-from .textfmts import IrcLogsLexer, GettextLexer, HttpLexer
+from ..lexers.installers import DebianControlLexer, DebianSourcesLexer, SourcesListLexer
+from ..lexers.make import MakefileLexer, BaseMakefileLexer, CMakeLexer
+from ..lexers.haxe import HxmlLexer
+from ..lexers.sgf import SmartGameFormatLexer
+from ..lexers.diff import DiffLexer, DarcsPatchLexer
+from ..lexers.data import YamlLexer
+from ..lexers.textfmts import IrcLogsLexer, GettextLexer, HttpLexer
 
 __all__ = []

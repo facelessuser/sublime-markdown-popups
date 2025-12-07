@@ -1,6 +1,4 @@
 [![Donate via PayPal][donate-image]][donate-link]
-[![Discord][discord-image]][discord-link]
-[![Build][github-ci-image]][github-ci-link]
 ![License][license-image]
 # Sublime Markdown Popups
 
@@ -31,10 +29,6 @@ Mdpopups will use your color scheme to create popups/phantoms that fit your edit
 
 https://facelessuser.github.io/sublime-markdown-popups
 
-[github-ci-image]: https://github.com/facelessuser/sublime-markdown-popups/workflows/build/badge.svg?branch=master&event=push
-[github-ci-link]: https://github.com/facelessuser/sublime-markdown-popups/actions?query=workflow%3Abuild+branch%3Amaster
-[discord-image]: https://img.shields.io/discord/678289859768745989?logo=discord&logoColor=aaaaaa&color=mediumpurple&labelColor=333333
-[discord-link]: https://discord.gg/TWs8Tgr
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg?labelColor=333333
 [donate-image]: https://img.shields.io/badge/Donate-PayPal-3fabd1?logo=paypal
 [donate-link]: https://www.paypal.me/facelessuser

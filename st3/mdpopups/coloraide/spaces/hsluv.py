@@ -24,26 +24,25 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from ..spaces import Space, Cylindrical
+from __future__ import annotations
 from ..cat import WHITES
 from ..channels import Channel, FLG_ANGLE
-from .lch import ACHROMATIC_THRESHOLD
+from .hsl import HSL
 from .lab import EPSILON, KAPPA
 from .srgb_linear import XYZ_TO_RGB
 import math
-from .. import util
 from .. import algebra as alg
+from .. import util
 from ..types import Vector
-from typing import List, Dict
 
 
-def length_of_ray_until_intersect(theta: float, line: Dict[str, float]) -> float:
+def length_of_ray_until_intersect(theta: float, line: dict[str, float]) -> float:
     """Length of ray until intersect."""
 
     return line['intercept'] / (math.sin(theta) - line['slope'] * math.cos(theta))
 
 
-def get_bounds(l: float) -> List[Dict[str, float]]:
+def get_bounds(l: float) -> list[dict[str, float]]:
     """Get bounds."""
 
     result = []
@@ -74,7 +73,7 @@ def max_chroma_for_lh(l: float, h: float) -> float:
     return min(length for length in lengths if length >= 0)
 
 
-def hsluv_to_lch(hsluv: Vector) -> Vector:
+def hsluv_to_luv(hsluv: Vector) -> Vector:
     """Convert HSLuv to LCh."""
 
     h, s, l = hsluv
@@ -83,39 +82,38 @@ def hsluv_to_lch(hsluv: Vector) -> Vector:
         l = 100.0
     elif l < 1e-08:
         l = 0.0
-    elif not alg.is_nan(h):
+    else:
         _hx_max = max_chroma_for_lh(l, h)
-        c = _hx_max / 100.0 * s
-        if c < ACHROMATIC_THRESHOLD:
-            h = alg.NaN
-    return [l, c, util.constrain_hue(h)]
+        c = _hx_max * 0.01 * s
+
+    a, b = alg.polar_to_rect(c, h)
+    return [l, a, b]
 
 
-def lch_to_hsluv(lch: Vector) -> Vector:
+def luv_to_hsluv(luv: Vector) -> Vector:
     """Convert LCh to HSLuv."""
 
-    l, c, h = lch
+    l = luv[0]
+    c, h = alg.rect_to_polar(luv[1], luv[2])
     s = 0.0
     if l > 100 - 1e-7:
         l = 100.0
     elif l < 1e-08:
         l = 0.0
-    elif not alg.is_nan(h):
+    else:
         _hx_max = max_chroma_for_lh(l, h)
         s = c / _hx_max * 100.0
-    if s < 1e-08:
-        h = alg.NaN
     return [util.constrain_hue(h), s, l]
 
 
-class HSLuv(Cylindrical, Space):
+class HSLuv(HSL):
     """HSLuv class."""
 
-    BASE = 'lchuv'
+    BASE = 'luv'
     NAME = "hsluv"
     SERIALIZE = ("--hsluv",)
     CHANNELS = (
-        Channel("h", 0.0, 360.0, bound=True, flags=FLG_ANGLE),
+        Channel("h", flags=FLG_ANGLE),
         Channel("s", 0.0, 100.0, bound=True),
         Channel("l", 0.0, 100.0, bound=True)
     )
@@ -126,21 +124,27 @@ class HSLuv(Cylindrical, Space):
     }
     WHITE = WHITES['2deg']['D65']
     GAMUT_CHECK = "srgb"
+    CLIP_SPACE = "hsluv"
 
     def normalize(self, coords: Vector) -> Vector:
-        """On color update."""
+        """Normalize coordinates."""
 
-        coords = alg.no_nans(coords)
-        if coords[1] == 0 or coords[2] > (100 - 1e-7) or coords[2] < 1e-08:
-            coords[0] = alg.NaN
+        if coords[1] < 0:
+            return self.from_base(self.to_base(coords))
+        coords[0] %= 360.0
         return coords
+
+    def is_achromatic(self, coords: Vector) -> bool:
+        """Check if color is achromatic."""
+
+        return abs(coords[1]) < self.achromatic_threshold or coords[2] > (100 - 1e-7) or coords[2] < 1e-08
 
     def to_base(self, coords: Vector) -> Vector:
         """To LChuv from HSLuv."""
 
-        return hsluv_to_lch(coords)
+        return hsluv_to_luv(coords)
 
     def from_base(self, coords: Vector) -> Vector:
         """From LChuv to HSLuv."""
 
-        return lch_to_hsluv(coords)
+        return luv_to_hsluv(coords)

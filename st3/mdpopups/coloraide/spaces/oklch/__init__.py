@@ -23,57 +23,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from ...spaces import Space, LChish
+from __future__ import annotations
+from ..lch import LCh
 from ...cat import WHITES
-from ...channels import Channel, FLG_ANGLE, FLG_OPT_PERCENT
-from ... import util
-import math
-from ... import algebra as alg
-from ...types import Vector
-
-ACHROMATIC_THRESHOLD = 0.000002
+from ...channels import Channel, FLG_ANGLE
 
 
-def oklab_to_oklch(oklab: Vector) -> Vector:
-    """Oklab to OkLCh."""
-
-    l, a, b = oklab
-
-    c = math.sqrt(a ** 2 + b ** 2)
-    h = math.degrees(math.atan2(b, a))
-
-    # Achromatic colors will often get extremely close, but not quite hit zero.
-    # Essentially, we want to discard noise through rounding and such.
-    if c < ACHROMATIC_THRESHOLD:
-        h = alg.NaN
-
-    return [l, c, util.constrain_hue(h)]
-
-
-def oklch_to_oklab(oklch: Vector) -> Vector:
-    """OkLCh to Oklab."""
-
-    l, c, h = oklch
-    if alg.is_nan(h):  # pragma: no cover
-        return [l, 0.0, 0.0]
-
-    return [
-        l,
-        c * math.cos(math.radians(h)),
-        c * math.sin(math.radians(h))
-    ]
-
-
-class OkLCh(LChish, Space):
+class OkLCh(LCh):
     """OkLCh class."""
 
     BASE = "oklab"
     NAME = "oklch"
     SERIALIZE = ("--oklch",)
     CHANNELS = (
-        Channel("l", 0.0, 1.0, flags=FLG_OPT_PERCENT),
-        Channel("c", 0.0, 0.4, limit=(0.0, None), flags=FLG_OPT_PERCENT),
-        Channel("h", 0.0, 360.0, flags=FLG_ANGLE)
+        Channel("l", 0.0, 1.0),
+        Channel("c", 0.0, 0.4),
+        Channel("h", flags=FLG_ANGLE)
     )
     CHANNEL_ALIASES = {
         "lightness": "l",
@@ -81,22 +46,3 @@ class OkLCh(LChish, Space):
         "hue": "h"
     }
     WHITE = WHITES['2deg']['D65']
-
-    def normalize(self, coords: Vector) -> Vector:
-        """On color update."""
-
-        coords = alg.no_nans(coords)
-        if coords[1] < ACHROMATIC_THRESHOLD:
-            coords[2] = alg.NaN
-
-        return coords
-
-    def to_base(self, oklch: Vector) -> Vector:
-        """To Lab."""
-
-        return oklch_to_oklab(oklch)
-
-    def from_base(self, oklab: Vector) -> Vector:
-        """To Lab."""
-
-        return oklab_to_oklch(oklab)

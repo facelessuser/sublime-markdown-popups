@@ -1,11 +1,12 @@
 """sRGB color class."""
+from __future__ import annotations
 from .. import srgb as base
 from ...css import parse
 from ...css import serialize
-from typing import Optional, Union, Any, Tuple, TYPE_CHECKING
+from typing import Any, Sequence, TYPE_CHECKING
 from ...types import Vector
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:  #pragma: no cover
     from ...color import Color
 
 
@@ -14,18 +15,19 @@ class sRGB(base.sRGB):
 
     def to_string(
         self,
-        parent: 'Color',
+        parent: Color,
         *,
-        alpha: Optional[bool] = None,
-        precision: Optional[int] = None,
-        fit: Union[bool, str] = True,
+        alpha: bool | None = None,
+        precision: int | Sequence[int] | None = None,
+        rounding: str | None = None,
+        fit: bool | str | dict[str, Any] = True,
         none: bool = False,
         color: bool = False,
         hex: bool = False,  # noqa: A002
         names: bool = False,
         comma: bool = False,
         upper: bool = False,
-        percent: bool = False,
+        percent: bool | Sequence[bool] = False,
         compress: bool = False,
         **kwargs: Any
     ) -> str:
@@ -36,6 +38,7 @@ class sRGB(base.sRGB):
             func='rgb',
             alpha=alpha,
             precision=precision,
+            rounding=rounding,
             fit=fit,
             none=none,
             color=color,
@@ -53,7 +56,7 @@ class sRGB(base.sRGB):
         string: str,
         start: int = 0,
         fullmatch: bool = True
-    ) -> Optional[Tuple[Tuple[Vector, float], int]]:
+    ) -> tuple[tuple[Vector, float], int] | None:
         """Match a CSS color string."""
 
         return parse.parse_css(self, string, start, fullmatch)

@@ -44,6 +44,7 @@ re_base_colors = re.compile(r'^\s*\.(?:dummy)\s*\{([^}]+)\}', re.MULTILINE)
 re_color = re.compile(r'(?<!-)(color\s*:\s*#[A-Fa-z\d]{6})')
 re_bgcolor = re.compile(r'(?<!-)(background(?:-color)?\s*:\s*#[A-Fa-z\d]{6})')
 re_pygments_selectors = re.compile(r'\.dummy (\.[a-zA-Z\d]+) ')
+re_pygments_line_height = re.compile(r'^pre .*\n')
 CODE_BLOCKS = '.mdpopups .highlight, .mdpopups .inline-highlight {{ {}; {}; }}'
 OLD_DEFAULT_CSS = 'Packages/mdpopups/css/default.css'
 DEFAULT_CSS = 'Packages/mdpopups/mdpopups_css/default.css'
@@ -643,4 +644,6 @@ def get_pygments(style):
             )
         )
 
-    return re_pygments_selectors.sub(r'.mdpopups .highlight \1', css)
+    css = re_pygments_selectors.sub(r'.mdpopups .highlight \1', css)
+    css = re_pygments_line_height.sub(r'', css)
+    return css

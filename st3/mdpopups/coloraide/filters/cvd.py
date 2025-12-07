@@ -1,83 +1,83 @@
-# -*- coding: utf-8 -*-
 """Color vision deficiency."""
+from __future__ import annotations
 from .. import algebra as alg
 from ..filters import Filter
 from ..types import Vector, Matrix
-from typing import Any, Optional, Dict, Tuple, Callable, TYPE_CHECKING
+from typing import Any, Callable, TYPE_CHECKING
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:  #pragma: no cover
     from ..color import Color
 
 LRGB_TO_LMS = [
-    [0.1788315947640612, 0.4399813067603072, 0.03597439330845842],
-    [0.033798905547214174, 0.27515876526029825, 0.03621503435966088],
-    [0.00031083956494671645, 0.001916652059097586, 0.015284557008174545]
+    [0.178824041258, 0.4351609057000001, 0.04119349692],
+    [0.034556423182, 0.27155382458, 0.038671308360000003],
+    [0.000299565576, 0.0018430896, 0.01467086136]
 ]
 
 INV_LMS_TO_LRGB = [
-    [8.006605439487906, -12.884009114492532, 11.682514549178705],
-    [-0.9781986265569573, 5.269343182653304, -10.182783982803086],
-    [-0.04016494160643852, -0.39874480300255594, 66.46482888609172]
+    [8.094435598032373, -13.050431460496931, 11.672058453917328],
+    [-1.024850558664669, 5.401931309674975, -11.361471490598715],
+    [-0.036529747159333145, -0.412162807001268, 69.35132423820858]
 ]
 
 BRETTEL_PROTAN = (
     [
-        [0.0, 4.601963481151596, -33.603845913662],
-        [0.0, 3.1330128106441544, -4.649970365182458],
-        [0.0, -0.48646275957526675, 66.69200681278052]
+        [0.0, 4.645203550257065, -35.779576941742434],
+        [0.0, 3.1614562071112173, -5.353537465326408],
+        [0.0, -0.49202224438116643, 69.56547088528569]
     ],
     [
-        [0.0, 4.459087290426133, -30.787672758115008],
-        [0.0, 3.150468559474495, -4.994033368376835],
-        [0.0, -0.4857460246367451, 66.67787954858585]
+        [0.0, 4.500783062899838, -32.818059625581405],
+        [0.0, 3.179741536008844, -5.728500319648271],
+        [0.0, -0.4913704825845725, 69.55210571887513]
     ],
-    [0.0, 0.01751204863221885, -0.3451727051671733]
-)  # type: Tuple[Matrix, Matrix, Vector]
+    [0.0, 0.016813516536000002, -0.344781556122]
+)  # type: tuple[Matrix, Matrix, Vector]
 
 BRETTEL_DEUTAN = (
     [
-        [2.0585800667377834, 0.0, -19.868153658269534],
-        [1.4544437807582153, 0.0, 2.720909033066217],
-        [-0.2242492731553509, 0.0, 65.48837312087291]
+        [2.0757138256610466, 0.0, -21.409141476259606],
+        [1.466463363392979, 0.0, 2.3317439563667293],
+        [-0.22661490011149105, 0.0, 68.30654343816653]
     ],
     [
-        [2.107180806727998, 0.0, -21.685368064956243],
-        [1.4345668949485586, 0.0, 3.464119182966142],
-        [-0.22274513788806224, 0.0, 65.4321324900127]
+        [2.124834794256137, 0.0, -23.323256212281898],
+        [1.4461308480260673, 0.0, 3.124048513815847],
+        [-0.2250635463221503, 0.0, 68.24609126806706]
     ],
-    [-0.01751204863221885, 0.0, 0.6547872948328268]
-)  # type: Tuple[Matrix, Matrix, Vector]
+    [-0.016813516536000002, 0.0, 0.6551784438780001]
+)  # type: tuple[Matrix, Matrix, Vector]
 
 BRETTEL_TRITAN = (
     [
-        [7.282866078566971, -10.918384106846926, 0.0],
-        [-0.347368547887983, 3.5560532261295186, 0.0],
-        [-4.157704241835348, 10.784201234635589, 0.0]
+        [7.392856536180033, -11.148044821248138, 0.0],
+        [-0.34194012421930653, 3.5501661175064, 0.0],
+        [-4.2050692716448586, 10.89115898202731, 0.0]
     ],
     [
-        [7.981703886196052, -12.244068643121977, 0.0],
-        [-0.9564937840814959, 4.711554398878355, 0.0],
-        [-0.18183628056123033, 3.2420410695833217, 0.0]
+        [8.0643934576311, -12.42414705871019, 0.0],
+        [-0.9956078228581946, 4.7923119863996835, 0.0],
+        [-0.2150297288038942, 3.3090019545637928, 0.0]
     ],
-    [0.3451727051671733, -0.6547872948328268, 0.0]
-)  # type: Tuple[Matrix, Matrix, Vector]
+    [0.344781556122, -0.6551784438780001, 0.0]
+)  # type: tuple[Matrix, Matrix, Vector]
 
 VIENOT_PROTAN = [
-    [0.10887256075552479, 0.8911274392444744, -8.326672684688674e-17],
-    [0.10887256075552504, 0.8911274392444752, 0.0],
-    [0.004470319142320402, -0.004470319142320406, 1.0000000000000002]
+    [0.11238276122216405, 0.8876172387778362, 5.551115123125783e-17],
+    [0.11238276122216398, 0.8876172387778362, -2.7755575615628914e-17],
+    [0.0040057682730469425, -0.004005768273046939, 1.0]
 ]
 
 VIENOT_DEUTAN = [
-    [0.2902683260039952, 0.7097316739960047, 2.7755575615628914e-17],
-    [0.29026832600399544, 0.709731673996005, 0.0],
-    [-0.021965353642437093, 0.021965353642437083, 1.0000000000000002]
+    [0.2927501142784356, 0.7072498857215644, 1.1102230246251565e-16],
+    [0.2927501142784356, 0.7072498857215644, -5.551115123125783e-17],
+    [-0.022336587034129083, 0.022336587034129093, 1.0]
 ]
 
 VIENOT_TRITAN = [
-    [1.0000000000000002, 0.15241850478972624, -0.15241850478972596],
-    [-3.0357660829594124e-18, 0.8671480610854684, 0.1328519389145317],
-    [-3.469446951953614e-18, 0.8671480610854685, 0.13285193891453168]
+    [1.0000000000000002, 0.1446122433069361, -0.1446122433069363],
+    [3.469446951953614e-17, 0.8592358078045899, 0.14076419219541025],
+    [-4.163336342344337e-17, 0.8592358078045896, 0.14076419219541023]
 ]
 
 MACHADO_PROTAN = {
@@ -92,7 +92,7 @@ MACHADO_PROTAN = {
     8: [[0.259411, 0.923008, -0.182420], [0.110296, 0.804340, 0.085364], [-0.006276, -0.034346, 1.040622]],
     9: [[0.203876, 0.990338, -0.194214], [0.112975, 0.794542, 0.092483], [-0.005222, -0.041043, 1.046265]],
     10: [[0.152286, 1.052583, -0.204868], [0.114503, 0.786281, 0.099216], [-0.003882, -0.048116, 1.051998]]
-}  # type: Dict[int, Matrix]
+}  # type: dict[int, Matrix]
 
 MACHADO_DEUTAN = {
     0: [[1.000000, 0.000000, -0.000000], [0.000000, 1.000000, 0.000000], [-0.000000, -0.000000, 1.000000]],
@@ -107,7 +107,7 @@ MACHADO_DEUTAN = {
     9: [[0.392952, 0.823610, -0.216562], [0.263559, 0.690210, 0.046232], [-0.011910, 0.040281, 0.971630]],
     10: [[0.367322, 0.860646, -0.227968], [0.280085, 0.672501, 0.047413], [-0.011820, 0.042940, 0.968881]],
 
-}  # type: Dict[int, Matrix]
+}  # type: dict[int, Matrix]
 
 MACHADO_TRITAN = {
     0: [[1.000000, 0.000000, -0.000000], [0.000000, 1.000000, 0.000000], [-0.000000, -0.000000, 1.000000]],
@@ -121,10 +121,10 @@ MACHADO_TRITAN = {
     8: [[1.257728, -0.139648, -0.118081], [-0.078003, 0.975409, 0.102594], [-0.003316, 0.501214, 0.502102]],
     9: [[1.278864, -0.125333, -0.153531], [-0.084748, 0.957674, 0.127074], [-0.000989, 0.601151, 0.399838]],
     10: [[1.255528, -0.076749, -0.178779], [-0.078411, 0.930809, 0.147602], [0.004733, 0.691367, 0.303900]],
-}  # type: Dict[int, Matrix]
+}  # type: dict[int, Matrix]
 
 
-def brettel(color: 'Color', severity: float, wings: Tuple[Matrix, Matrix, Vector]) -> None:
+def brettel(color: Color, severity: float, wings: tuple[Matrix, Matrix, Vector]) -> None:
     """
     Calculate color blindness using Brettel 1997.
 
@@ -135,12 +135,12 @@ def brettel(color: 'Color', severity: float, wings: Tuple[Matrix, Matrix, Vector
 
     w1, w2, sep = wings
 
-    # Which side are we on?
-    lms_c = alg.dot(LRGB_TO_LMS, color[:-1], dims=alg.D2_D1)
-    if alg.dot(lms_c, sep) > 0:
-        coords = alg.dot(w2, lms_c, dims=alg.D2_D1)
-    else:
-        coords = alg.dot(w1, lms_c, dims=alg.D2_D1)
+    # Convert to LMS
+    lms_c = alg.matmul_x3(LRGB_TO_LMS, color[:-1], dims=alg.D2_D1)
+
+    # Apply appropriate wing filter based on which side of the separator we are on.
+    # Tritanopia filter and LMS to sRGB conversion are included in the same matrix.
+    coords = alg.matmul_x3(w2 if alg.matmul_x3(lms_c, sep, dims=alg.D1) > 0 else w1, lms_c, dims=alg.D2_D1)
 
     if severity < 1:
         color[:-1] = [alg.lerp(a, b, severity) for a, b in zip(color[:-1], coords)]
@@ -148,7 +148,7 @@ def brettel(color: 'Color', severity: float, wings: Tuple[Matrix, Matrix, Vector
         color[:-1] = coords
 
 
-def vienot(color: 'Color', severity: float, transform: Matrix) -> None:
+def vienot(color: Color, severity: float, transform: Matrix) -> None:
     """
     Calculate color blindness using the Viénot, Brettel, and Mollon 1999 approach, best for protanopia and deuteranopia.
 
@@ -164,14 +164,14 @@ def vienot(color: 'Color', severity: float, transform: Matrix) -> None:
     then we interpolate against the original color.
     """
 
-    coords = alg.dot(transform, color[:-1], dims=alg.D2_D1)
+    coords = alg.matmul_x3(transform, color[:-1], dims=alg.D2_D1)
     if severity < 1:
         color[:-1] = [alg.lerp(c1, c2, severity) for c1, c2 in zip(color[:-1], coords)]
     else:
         color[:-1] = coords
 
 
-def machado(color: 'Color', severity: float, matrices: Dict[int, Matrix]) -> None:
+def machado(color: Color, severity: float, matrices: dict[int, Matrix]) -> None:
     """
     Machado approach to protanopia, deuteranopia, and tritanopia.
 
@@ -187,7 +187,7 @@ def machado(color: 'Color', severity: float, matrices: Dict[int, Matrix]) -> Non
 
     # Filter the color according to the severity
     m1 = matrices[severity1]
-    coords = alg.dot(m1, color[:-1], dims=alg.D2_D1)
+    coords = alg.matmul_x3(m1, color[:-1], dims=alg.D2_D1)
 
     # If severity was not exact, and it also isn't max severity,
     # let's calculate the next most severity and interpolate
@@ -204,7 +204,7 @@ def machado(color: 'Color', severity: float, matrices: Dict[int, Matrix]) -> Non
         # but it ends up being faster just modifying the color on both the high
         # and low matrix and interpolating the color than interpolating the matrix
         # and then applying it to the color. The results are identical as well.
-        coords2 = alg.dot(m2, color[:-1], dims=alg.D2_D1)
+        coords2 = alg.matmul_x3(m2, color[:-1], dims=alg.D2_D1)
         coords = [alg.lerp(c1, c2, weight) for c1, c2 in zip(coords, coords2)]
 
     # Return the altered color
@@ -222,23 +222,23 @@ class Protan(Filter):
     VIENOT = VIENOT_PROTAN
     MACHADO = MACHADO_PROTAN
 
-    def __init__(self, severe: str = 'vienot', anomalous: str = 'machado') -> None:
+    def __init__(self, severe: str = 'vienot', anomalous: str = 'machado', **kwargs: Any) -> None:
         """Initialize."""
 
         self.severe = severe
         self.anomalous = anomalous
 
-    def brettel(self, color: 'Color', severity: float) -> None:
+    def brettel(self, color: Color, severity: float) -> None:
         """Tritanopia vision deficiency using Brettel method."""
 
         brettel(color, severity, self.BRETTEL)
 
-    def vienot(self, color: 'Color', severity: float) -> None:
+    def vienot(self, color: Color, severity: float) -> None:
         """Tritanopia vision deficiency using Viénot method."""
 
         vienot(color, severity, self.VIENOT)
 
-    def machado(self, color: 'Color', severity: float) -> None:
+    def machado(self, color: Color, severity: float) -> None:
         """Tritanopia vision deficiency using Machado method."""
 
         machado(color, severity, self.MACHADO)
@@ -253,19 +253,19 @@ class Protan(Filter):
         elif method == 'machado':
             return self.machado
         else:
-            raise ValueError("Unrecognized CVD filter method '{}'".format(method))
+            raise ValueError(f"Unrecognized CVD filter method '{method}'")
 
-    def get_best_filter(self, method: Optional[str], max_severity: bool) -> Callable[..., None]:
+    def get_best_filter(self, method: str | None, max_severity: bool) -> Callable[..., None]:
         """Get the best filter based on the situation."""
 
         if method is None:
             method = self.severe if max_severity else self.anomalous
         return self.select_filter(method)
 
-    def filter(self, color: 'Color', amount: Optional[float] = None, **kwargs: Any) -> None:  # noqa: A003
+    def filter(self, color: Color, amount: float | None = None, **kwargs: Any) -> None:  # noqa: A003
         """Filter the color."""
 
-        method = kwargs.get('method')  # type: Optional[str]
+        method = kwargs.get('method')  # type: str | None
         amount = alg.clamp(1 if amount is None else amount, 0, 1)
         self.get_best_filter(method, amount == 1)(color, amount)
 
@@ -289,7 +289,7 @@ class Tritan(Protan):
     VIENOT = VIENOT_TRITAN
     MACHADO = MACHADO_TRITAN
 
-    def __init__(self, severe: str = 'brettel', anomalous: str = 'brettel') -> None:
+    def __init__(self, severe: str = 'brettel', anomalous: str = 'brettel', **kwargs: Any) -> None:
         """Initialize."""
 
         super().__init__(severe, anomalous)

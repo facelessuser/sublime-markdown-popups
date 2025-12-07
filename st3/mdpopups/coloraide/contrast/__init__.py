@@ -1,10 +1,8 @@
 """Contrast."""
+from __future__ import annotations
 from abc import ABCMeta, abstractmethod
-from ..types import Plugin
-from typing import Any, Optional, TYPE_CHECKING
-
-if TYPE_CHECKING:  # pragma: no cover
-    from ..color import Color
+from ..types import Plugin, AnyColor
+from typing import Any
 
 
 class ColorContrast(Plugin, metaclass=ABCMeta):
@@ -13,19 +11,18 @@ class ColorContrast(Plugin, metaclass=ABCMeta):
     NAME = ''
 
     @abstractmethod
-    def contrast(self, color1: 'Color', color2: 'Color', **kwargs: Any) -> float:
+    def contrast(self, color1: AnyColor, color2: AnyColor, **kwargs: Any) -> float:
         """Get the contrast of the two provided colors."""
 
 
-def contrast(name: Optional[str], color1: 'Color', color2: 'Color', **kwargs: Any) -> float:
+def contrast(name: str | None, color1: AnyColor, color2: AnyColor, **kwargs: Any) -> float:
     """Get the appropriate contrast plugin."""
 
     if name is None:
         name = color1.CONTRAST
 
-    try:
-        func = color1.CONTRAST_MAP[name].contrast
-    except KeyError:
-        raise ValueError("'{}' contrast method is not supported".format(name))
+    method = color1.CONTRAST_MAP.get(name)
+    if not method:
+        raise ValueError(f"'{name}' contrast method is not supported")
 
-    return func(color1, color2, **kwargs)
+    return method.contrast(color1, color2, **kwargs)

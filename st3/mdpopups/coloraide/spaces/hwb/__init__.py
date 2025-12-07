@@ -1,47 +1,44 @@
-"""HWB class."""
-from ...spaces import Space, Cylindrical
+"""
+HWB class.
+
+http://alvyray.com/Papers/CG/HWB_JGTv208.pdf
+"""
+from __future__ import annotations
+from ...spaces import Space, HWBish
+from ... import util
 from ...cat import WHITES
-from ...channels import Channel, FLG_ANGLE, FLG_PERCENT
-from ... import algebra as alg
+from ...channels import Channel, FLG_ANGLE
 from ...types import Vector
-
-
-def hwb_to_hsv(hwb: Vector) -> Vector:
-    """HWB to HSV."""
-
-    h, w, b = hwb
-
-    wb = w + b
-    if (wb >= 1):
-        gray = w / wb
-        return [alg.NaN, 0.0, gray]
-
-    v = 1 - b
-    s = 0 if v == 0 else 1 - w / v
-    return [h, s, v]
 
 
 def hsv_to_hwb(hsv: Vector) -> Vector:
     """HSV to HWB."""
 
     h, s, v = hsv
-    w = v * (1 - s)
-    b = 1 - v
-    if w + b >= 1:
-        h = alg.NaN
-    return [h, w, b]
+    return [util.constrain_hue(h), (1 - s) * v, 1 - v]
 
 
-class HWB(Cylindrical, Space):
+def hwb_to_hsv(hwb: Vector) -> Vector:
+    """HWB to HSV."""
+
+    h, w, b = hwb
+    wb = w + b
+    if wb >= 1:
+        return [util.constrain_hue(h), 0, w / wb]
+    v = 1 - b
+    return [util.constrain_hue(h), 1 - w / v if v else 1, v]
+
+
+class HWB(HWBish, Space):
     """HWB class."""
 
     BASE = "hsv"
     NAME = "hwb"
     SERIALIZE = ("--hwb",)
     CHANNELS = (
-        Channel("h", 0.0, 360.0, bound=True, flags=FLG_ANGLE),
-        Channel("w", 0.0, 1.0, bound=True, flags=FLG_PERCENT),
-        Channel("b", 0.0, 1.0, bound=True, flags=FLG_PERCENT)
+        Channel("h", flags=FLG_ANGLE),
+        Channel("w", 0.0, 1.0, bound=True),
+        Channel("b", 0.0, 1.0, bound=True)
     )
     CHANNEL_ALIASES = {
         "hue": "h",
@@ -51,13 +48,10 @@ class HWB(Cylindrical, Space):
     GAMUT_CHECK = "srgb"
     WHITE = WHITES['2deg']['D65']
 
-    def normalize(self, coords: Vector) -> Vector:
-        """On color update."""
+    def is_achromatic(self, coords: Vector) -> bool:
+        """Check if color is achromatic."""
 
-        coords = alg.no_nans(coords)
-        if coords[1] + coords[2] >= 1:
-            coords[0] = alg.NaN
-        return coords
+        return (coords[1] + coords[2]) >= (1 - 1e-07)
 
     def to_base(self, coords: Vector) -> Vector:
         """To HSV from HWB."""

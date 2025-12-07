@@ -1,33 +1,35 @@
-# -*- coding: utf-8 -*-
 """
     pygments.lexers.compiled
     ~~~~~~~~~~~~~~~~~~~~~~~~
 
     Just export lexer classes previously contained in this module.
 
-    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2025 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
-from .jvm import JavaLexer, ScalaLexer
-from .c_cpp import CLexer, CppLexer
-from .d import DLexer
-from .objective import ObjectiveCLexer, \
+# ruff: noqa: F401
+from ..lexers.jvm import JavaLexer, ScalaLexer
+from ..lexers.c_cpp import CLexer, CppLexer
+from ..lexers.d import DLexer
+from ..lexers.objective import ObjectiveCLexer, \
     ObjectiveCppLexer, LogosLexer
-from .go import GoLexer
-from .rust import RustLexer
-from .c_like import ECLexer, ValaLexer, CudaLexer
-from .pascal import DelphiLexer, Modula2Lexer, AdaLexer
-from .business import CobolLexer, CobolFreeformatLexer
-from .fortran import FortranLexer
-from .prolog import PrologLexer
-from .python import CythonLexer
-from .graphics import GLShaderLexer
-from .ml import OcamlLexer
-from .basic import BlitzBasicLexer, BlitzMaxLexer, MonkeyLexer
-from .dylan import DylanLexer, DylanLidLexer, DylanConsoleLexer
-from .ooc import OocLexer
-from .felix import FelixLexer
-from .nimrod import NimrodLexer
+from ..lexers.go import GoLexer
+from ..lexers.rust import RustLexer
+from ..lexers.c_like import ECLexer, ValaLexer, CudaLexer
+from ..lexers.pascal import DelphiLexer, PortugolLexer, Modula2Lexer
+from ..lexers.ada import AdaLexer
+from ..lexers.business import CobolLexer, CobolFreeformatLexer
+from ..lexers.fortran import FortranLexer
+from ..lexers.prolog import PrologLexer
+from ..lexers.python import CythonLexer
+from ..lexers.graphics import GLShaderLexer
+from ..lexers.ml import OcamlLexer
+from ..lexers.basic import BlitzBasicLexer, BlitzMaxLexer, MonkeyLexer
+from ..lexers.dylan import DylanLexer, DylanLidLexer, DylanConsoleLexer
+from ..lexers.ooc import OocLexer
+from ..lexers.felix import FelixLexer
+from ..lexers.nimrod import NimrodLexer
+from ..lexers.crystal import CrystalLexer
 
 __all__ = []

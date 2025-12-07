@@ -36,12 +36,12 @@ def get_checkbox(state, custom_checkbox=False, clickable_checkbox=False):
     if custom_checkbox:
         return (
             '<label class="task-list-control">' +
-            '<input type="checkbox"%s%s/>' % (
+            '<input type="checkbox"{}{}/>'.format(
                 ' disabled' if not clickable_checkbox else '',
                 ' checked' if state.lower() == 'x' else '') +
             '<span class="task-list-indicator"></span></label> '
         )
-    return '<input type="checkbox"%s%s/> ' % (
+    return '<input type="checkbox"{}{}/> '.format(
         ' disabled' if not clickable_checkbox else '',
         ' checked' if state.lower() == 'x' else '')
 
@@ -52,7 +52,7 @@ class TasklistTreeprocessor(Treeprocessor):
     def __init__(self, md):
         """Initialize."""
 
-        super(TasklistTreeprocessor, self).__init__(md)
+        super().__init__(md)
 
     def inline(self, li):
         """Search for checkbox directly in `li` tag."""
@@ -71,7 +71,7 @@ class TasklistTreeprocessor(Treeprocessor):
 
         found = False
         if len(li):
-            first = list(li)[0]
+            first = next(iter(li))
             if first.tag == "p" and first.text is not None:
                 m = RE_CHECKBOX.match(first.text)
                 if m is not None:
@@ -86,7 +86,7 @@ class TasklistTreeprocessor(Treeprocessor):
 
         self.custom_checkbox = bool(self.config["custom_checkbox"])
         self.clickable_checkbox = bool(self.config["clickable_checkbox"])
-        parent_map = dict((c, p) for p in root.iter() for c in p)
+        parent_map = {c: p for p in root.iter() for c in p}
         task_items = []
         lilinks = root.iter('li')
         for li in lilinks:
@@ -132,7 +132,7 @@ class TasklistExtension(Extension):
             'subscript': [True, "Enable subscript - Default: True"]
         }
 
-        super(TasklistExtension, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def extendMarkdown(self, md):
         """Add checklist tree processor to Markdown instance."""

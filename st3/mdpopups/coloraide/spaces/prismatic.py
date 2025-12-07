@@ -6,11 +6,14 @@ Creates a Maxwell color triangle with a lightness component.
 http://psgraphics.blogspot.com/2015/10/prismatic-color-model.html
 https://studylib.net/doc/14656976/the-prismatic-color-space-for-rgb-computations
 """
-from ..spaces import Space
+from __future__ import annotations
+from .. import util
+from ..spaces import Space, Luminant
 from ..channels import Channel
 from ..cat import WHITES
 from ..types import Vector
-from typing import Tuple
+from .. import algebra as alg
+import math
 
 
 def srgb_to_lrgb(rgb: Vector) -> Vector:
@@ -30,13 +33,12 @@ def lrgb_to_srgb(lrgb: Vector) -> Vector:
     return [(l * c) / mx for c in rgb] if mx != 0 else [0, 0, 0]
 
 
-class Prismatic(Space):
+class Prismatic(Luminant, Space):
     """The Prismatic color class."""
 
     BASE = "srgb"
     NAME = "prismatic"
-    SERIALIZE = ("--prismatic",)  # type: Tuple[str, ...]
-    EXTENDED_RANGE = False
+    SERIALIZE = ("--prismatic",)  # type: tuple[str, ...]
     CHANNELS = (
         Channel("l", 0.0, 1.0, bound=True),
         Channel("r", 0.0, 1.0, bound=True),
@@ -50,6 +52,20 @@ class Prismatic(Space):
         "blue": 'b'
     }
     WHITE = WHITES['2deg']['D65']
+    GAMUT_CHECK = 'srgb'
+    CLIP_SPACE = 'prismatic'
+
+    def is_achromatic(self, coords: Vector) -> bool:
+        """Test if color is achromatic."""
+
+        if math.isclose(0.0, coords[0], abs_tol=util.ACHROMATIC_THRESHOLD_SM):
+            return True
+
+        white = [1, 1, 1]
+        for x in alg.vcross(coords[:-1], white):
+            if not math.isclose(0.0, x, abs_tol=util.ACHROMATIC_THRESHOLD_SM):
+                return False
+        return True
 
     def to_base(self, coords: Vector) -> Vector:
         """To sRGB."""

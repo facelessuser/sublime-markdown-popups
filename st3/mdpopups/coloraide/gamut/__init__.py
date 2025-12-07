@@ -1,55 +1,60 @@
 """Gamut handling."""
-from .. import algebra as alg
+from __future__ import annotations
+import math
 from ..channels import FLG_ANGLE
 from abc import ABCMeta, abstractmethod
 from ..types import Plugin
-from typing import TYPE_CHECKING, Optional, Any
+from typing import Any, TYPE_CHECKING
+from . import pointer
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:  #pragma: no cover
     from ..color import Color
 
+__all__ = ('clip_channels', 'verify', 'Fit', 'pointer')
 
-def clip_channels(color: 'Color') -> None:
+
+def clip_channels(color: Color, nans: bool = True) -> bool:
     """Clip channels."""
 
-    channels = alg.no_nans(color[:-1])
+    clipped = False
 
-    for i, value in enumerate(channels):
-        chan = color._space.CHANNELS[i]
-        a = chan.low  # type: Optional[float]
-        b = chan.high  # type: Optional[float]
+    cs = color._space
+    for i, value in enumerate(cs.normalize(color[:-1])):
 
-        # Wrap the angle. Not technically out of gamut, but we will clean it up.
-        if chan.flags & FLG_ANGLE:
-            color[i] = value % 360.0
+        chan = cs.channels[i]
+
+        # Ignore angles, undefined, or unbounded channels
+        if not chan.bound or math.isnan(value) or chan.flags & FLG_ANGLE:
+            color[i] = value
             continue
-
-        # These parameters are unbounded
-        if not chan.bound:  # pragma: no cover
-            # Will not execute unless we have a space that defines some coordinates
-            # as bound and others as not. We do not currently have such spaces.
-            a = b = None
 
         # Fit value in bounds.
-        color[i] = alg.clamp(value, a, b)
-
-
-def verify(color: 'Color', tolerance: float) -> bool:
-    """Verify the values are in bound."""
-
-    channels = alg.no_nans(color[:-1])
-    for i, value in enumerate(channels):
-        chan = color._space.CHANNELS[i]
-        a = chan.low  # type: Optional[float]
-        b = chan.high  # type: Optional[float]
-
-        # Angles will wrap, so no sense checking them
-        if chan.flags & FLG_ANGLE:
+        if value < chan.low:
+            color[i] = chan.low
+        elif value > chan.high:
+            color[i] = chan.high
+        else:
+            color[i] = value
             continue
 
-        # These parameters are unbounded
-        if not chan.bound:
-            a = b = None
+        clipped = True
+
+    return clipped
+
+
+def verify(color: Color, tolerance: float) -> bool:
+    """Verify the values are in bound."""
+
+    cs = color._space
+    for i, value in enumerate(cs.normalize(color[:-1])):
+        chan = cs.channels[i]
+
+        # Ignore undefined channels, angles which wrap, and unbounded channels
+        if not chan.bound or math.isnan(value) or chan.flags & FLG_ANGLE:
+            continue
+
+        a = chan.low
+        b = chan.high
 
         # Check if bounded values are in bounds
         if (a is not None and value < (a - tolerance)) or (b is not None and value > (b + tolerance)):
@@ -63,5 +68,5 @@ class Fit(Plugin, metaclass=ABCMeta):
     NAME = ''
 
     @abstractmethod
-    def fit(self, color: 'Color', **kwargs: Any) -> None:
+    def fit(self, color: Color, space: str, **kwargs: Any) -> None:
         """Get coordinates of the new gamut mapped color."""

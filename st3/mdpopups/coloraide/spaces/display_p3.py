@@ -1,22 +1,27 @@
 """Display-p3 color class."""
-from ..cat import WHITES
-from .srgb import sRGB, lin_srgb, gam_srgb
+from __future__ import annotations
+from .srgb_linear import sRGBLinear
+from .srgb import inverse_eotf_srgb, eotf_srgb
 from ..types import Vector
 
 
-class DisplayP3(sRGB):
+class DisplayP3(sRGBLinear):
     """Display-p3 class."""
 
     BASE = "display-p3-linear"
     NAME = "display-p3"
-    WHITE = WHITES['2deg']['D65']
+
+    def linear(self) -> str:
+        """Return linear version of the RGB (if available)."""
+
+        return self.BASE
 
     def to_base(self, coords: Vector) -> Vector:
         """To XYZ from Display P3."""
 
-        return lin_srgb(coords)
+        return eotf_srgb(coords)
 
     def from_base(self, coords: Vector) -> Vector:
         """From XYZ to Display P3."""
 
-        return gam_srgb(coords)
+        return inverse_eotf_srgb(coords)

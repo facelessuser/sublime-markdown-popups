@@ -3,17 +3,15 @@ Natural B-Spline interpolation.
 
 https://www.math.ucla.edu/~baker/149.1.02w/handouts/dd_splines.pdf.
 """
+from __future__ import annotations
 from .. interpolate import Interpolate, Interpolator
 from .bspline import InterpolatorBSpline
 from .. import algebra as alg
-from ..types import Vector
-from typing import List, Sequence, Any, Optional, Union, Mapping, Callable, Dict, Type, TYPE_CHECKING
-
-if TYPE_CHECKING:  # pragma: no cover
-    from ..color import Color
+from .. types import AnyColor
+from typing import Any
 
 
-class InterpolatorNaturalBSpline(InterpolatorBSpline):
+class InterpolatorNaturalBSpline(InterpolatorBSpline[AnyColor]):
     """Natural B-spline class."""
 
     def setup(self) -> None:
@@ -33,36 +31,12 @@ class InterpolatorNaturalBSpline(InterpolatorBSpline):
         self.adjust_endpoints()
 
 
-class NaturalBSpline(Interpolate):
+class NaturalBSpline(Interpolate[AnyColor]):
     """Natural B-spline interpolation plugin."""
 
     NAME = "natural"
 
-    def interpolator(
-        self,
-        coordinates: List[Vector],
-        channel_names: Sequence[str],
-        create: Type['Color'],
-        easings: List[Optional[Callable[..., float]]],
-        stops: Dict[int, float],
-        space: str,
-        out_space: str,
-        progress: Optional[Union[Mapping[str, Callable[..., float]], Callable[..., float]]],
-        premultiplied: bool,
-        extrapolate: bool = False,
-        **kwargs: Any
-    ) -> Interpolator:
+    def interpolator(self, *args: Any, **kwargs: Any) -> Interpolator[AnyColor]:
         """Return the natural B-spline interpolator."""
 
-        return InterpolatorNaturalBSpline(
-            coordinates,
-            channel_names,
-            create,
-            easings,
-            stops,
-            space,
-            out_space,
-            progress,
-            premultiplied,
-            extrapolate
-        )
+        return InterpolatorNaturalBSpline(*args, **kwargs)

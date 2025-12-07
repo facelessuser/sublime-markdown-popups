@@ -51,6 +51,7 @@ Waylan
 YAML
 async
 builtins
+callouts
 deprecations
 desaturate
 docstring
@@ -69,6 +70,7 @@ html
 http
 https
 inline
+ish
 linting
 luminance
 matcher
@@ -94,6 +96,7 @@ pymdown
 requesters
 sRGB
 squidfunk
+strikethrough
 stylesheet
 sublicense
 sublimelsp

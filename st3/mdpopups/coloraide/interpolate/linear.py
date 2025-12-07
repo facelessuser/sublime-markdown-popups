@@ -1,15 +1,74 @@
 """Piecewise linear interpolation."""
+from __future__ import annotations
+import math
 from .. import algebra as alg
 from ..interpolate import Interpolator, Interpolate
-from ..types import Vector
-from typing import Optional, Callable, Mapping, Union, Any, Type, Sequence, List, Dict, TYPE_CHECKING
-
-if TYPE_CHECKING:  # pragma: no cover
-    from ..color import Color
+from ..types import Vector, AnyColor
+from typing import Any
 
 
-class InterpolatorLinear(Interpolator):
+class InterpolatorLinear(Interpolator[AnyColor]):
     """Interpolate multiple ranges of colors using linear, Piecewise interpolation."""
+
+    def normalize_hue(
+        self,
+        color1: Vector,
+        color2: Vector,
+        hue: str
+    ) -> None:
+        """
+        Adjust hues.
+
+        Undefined hues are not resolved at this point in time.
+        When interpolating between achromatic colors, hue specifications
+        such as shorter and longer will have no affect as undefined hues
+        will remain undefined meaning there is no arc length to choose
+        between. This gives more intuitive interpolation results.
+        """
+
+        index = self.hue_index
+
+        c1 = color1[index]
+        c2 = color2[index]
+
+        if hue == "specified":
+            return
+
+        mx = self.max_hue
+        half = self.half_hue
+
+        c1 %= mx
+        c2 %= mx
+
+        if math.isnan(c1) or math.isnan(c2):
+            return
+
+        if hue == "shorter":
+            if c2 - c1 > half:
+                c1 += mx
+            elif c2 - c1 < -half:
+                c2 += mx
+
+        elif hue == "longer":
+            if 0 < (c2 - c1) < half:
+                c1 += mx
+            elif -half < (c2 - c1) <= 0:
+                c2 += mx
+
+        elif hue == "increasing":
+            if c2 < c1:
+                c2 += mx
+
+        elif hue == "decreasing":
+            if c1 < c2:
+                c1 += mx
+
+        else:
+            raise ValueError(f"Unknown hue adjuster '{hue}'")
+
+        color1[index] = c1
+        color2[index] = c2
+
 
     def setup(self) -> None:
         """Setup for linear interpolation."""
@@ -27,12 +86,16 @@ class InterpolatorLinear(Interpolator):
                 self.coordinates.insert(i + 2, c2[:])
                 end += 1
 
+            if self.hue_index >= 0:
+                self.normalize_hue(c1, c2, self.hue)
+                self.coordinates[i:i + 2] = [c1, c2]
+
             # If we have a NaN for one alpha and the other alpha is not
             # Use the non-NaN alpha, but if we are premultiplied, we need
             # to now premultiply that coordinate set.
             if self.premultiplied:
                 a, b = c1[-1], c2[-1]
-                a_nan, b_nan = alg.is_nan(a), alg.is_nan(b)
+                a_nan, b_nan = math.isnan(a), math.isnan(b)
 
                 # Premultiply the alpha
                 if not a_nan:
@@ -63,17 +126,17 @@ class InterpolatorLinear(Interpolator):
         channels = []
         i = (index - 1) * 2
 
-        for i, values in enumerate(zip(*self.coordinates[i:i + 2])):
+        for i, values in enumerate(zip(*self.coordinates[i:i + 2])):  # noqa: B020
             a, b = values
 
             # Both values are undefined, so return undefined
-            if alg.is_nan(a) and alg.is_nan(b):
-                value = alg.NaN
+            if math.isnan(a) and math.isnan(b):
+                value = math.nan
 
             # One channel is undefined, take the one that is not
-            elif alg.is_nan(a):
+            elif math.isnan(a):
                 value = b
-            elif alg.is_nan(b):
+            elif math.isnan(b):
                 value = a
 
             # Using linear interpolation between the two points
@@ -85,36 +148,12 @@ class InterpolatorLinear(Interpolator):
         return channels
 
 
-class Linear(Interpolate):
+class Linear(Interpolate[AnyColor]):
     """Linear interpolation plugin."""
 
     NAME = "linear"
 
-    def interpolator(
-        self,
-        coordinates: List[Vector],
-        channel_names: Sequence[str],
-        create: Type['Color'],
-        easings: List[Optional[Callable[..., float]]],
-        stops: Dict[int, float],
-        space: str,
-        out_space: str,
-        progress: Optional[Union[Mapping[str, Callable[..., float]], Callable[..., float]]],
-        premultiplied: bool,
-        extrapolate: bool = False,
-        **kwargs: Any
-    ) -> Interpolator:
+    def interpolator(self, *args: Any, **kwargs: Any) -> Interpolator[AnyColor]:
         """Return the linear interpolator."""
 
-        return InterpolatorLinear(
-            coordinates,
-            channel_names,
-            create,
-            easings,
-            stops,
-            space,
-            out_space,
-            progress,
-            premultiplied,
-            extrapolate
-        )
+        return InterpolatorLinear(*args, **kwargs)

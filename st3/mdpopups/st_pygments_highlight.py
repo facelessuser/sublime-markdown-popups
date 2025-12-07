@@ -29,7 +29,7 @@ def replace_nbsp(m):
 class SublimeWrapBlockFormatter(HtmlFormatter):
     """Format the code blocks."""
 
-    def wrap(self, source, outfile):
+    def wrap(self, source):
         """Overload wrap."""
 
         return self._wrap_code(source)
@@ -45,7 +45,7 @@ class SublimeWrapBlockFormatter(HtmlFormatter):
         to 4 spaces as well.  We also manually inject line breaks.
         """
 
-        yield 0, '<div class="{}"><pre>'.format(self.cssclass)
+        yield 0, '<pre>'
         for i, t in source:
             text = ''
             matched = False
@@ -63,17 +63,18 @@ class SublimeWrapBlockFormatter(HtmlFormatter):
                 text = multi_space.sub(
                     replace_nbsp, t.replace('\t', ' ' * 4)
                 ).replace('&#39;', '\'').replace('&quot;', '"')
+            text = text.rstrip('\n')
             if i == 1:
                 # it's a line of formatted code
                 text += '<br>'
             yield i, text
-        yield 0, '</pre></div>'
+        yield 0, '</pre>'
 
 
 class SublimeBlockFormatter(HtmlFormatter):
     """Format the code blocks with wrapping."""
 
-    def wrap(self, source, outfile):
+    def wrap(self, source):
         """Overload wrap."""
 
         return self._wrap_code(source)
@@ -89,7 +90,7 @@ class SublimeBlockFormatter(HtmlFormatter):
         to 4 spaces as well.  We also manually inject line breaks.
         """
 
-        yield 0, '<div class="{}"><pre>'.format(self.cssclass)
+        yield 0, '<pre>'
         for i, t in source:
             text = ''
             matched = False
@@ -110,14 +111,20 @@ class SublimeBlockFormatter(HtmlFormatter):
             if i == 1:
                 # it's a line of formatted code
                 text += '<br>'
+            text = text.rstrip('\n')
             yield i, text
-        yield 0, '</pre></div>'
+        yield 0, '</pre>'
 
 
 class SublimeInlineHtmlFormatter(HtmlFormatter):
     """Format the code blocks."""
 
-    def wrap(self, source, outfile):
+    def _wrap_div(self, inner):
+        """Do not wrap with `div`."""
+
+        yield from inner
+
+    def wrap(self, source):
         """Overload wrap."""
 
         return self._wrap_code(source)
@@ -133,7 +140,7 @@ class SublimeInlineHtmlFormatter(HtmlFormatter):
         to 4 spaces as well.
         """
 
-        yield 0, '<code class="{}">'.format(self.cssclass)
+        yield 0, ''
         for i, t in source:
             text = ''
             matched = False
@@ -151,8 +158,9 @@ class SublimeInlineHtmlFormatter(HtmlFormatter):
                 text = multi_space.sub(
                     replace_nbsp, t.replace('\t', ' ' * 4)
                 ).replace('&#39;', '\'').replace('&quot;', '"')
+            text = text.rstrip('\n')
             yield i, text
-        yield 0, '</code>'
+        yield 0, ''
 
 
 def syntax_hl(src, lang=None, guess_lang=False, inline=False, code_wrap=False):

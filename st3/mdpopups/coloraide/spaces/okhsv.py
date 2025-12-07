@@ -25,34 +25,36 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from ..spaces import Space, Cylindrical
-from ..cat import WHITES
+from __future__ import annotations
+from .hsv import HSV
 from ..channels import FLG_ANGLE, Channel
 from .. import util
-from .oklab import oklab_to_linear_srgb
-from .okhsl import toe, toe_inv, find_cusp, to_st
-from .oklch import ACHROMATIC_THRESHOLD
+from .okhsl import toe, toe_inv, find_cusp, to_st, oklab_to_linear_rgb, LMS_TO_SRGBL, SRGBL_COEFF
 import math
 from .. import algebra as alg
-from ..types import Vector
+from ..types import Vector, Matrix
 
 
-def okhsv_to_oklab(hsv: Vector) -> Vector:
+def okhsv_to_oklab(
+    hsv: Vector,
+    lms_to_rgb: Matrix,
+    ok_coeff: list[Matrix]
+) -> Vector:
     """Convert from Okhsv to Oklab."""
 
     h, s, v = hsv
-    h = alg.no_nan(h)
     h = h / 360.0
 
     l = toe_inv(v)
+
     a = b = 0.0
 
     # Avoid processing gray or colors with undefined hues
-    if v != 0.0 and s != 0.0 and not alg.is_nan(h):
-        a_ = math.cos(2.0 * math.pi * h)
-        b_ = math.sin(2.0 * math.pi * h)
+    if l != 0.0 and s != 0.0:
+        a_ = math.cos(math.tau * h)
+        b_ = math.sin(math.tau * h)
 
-        cusp = find_cusp(a_, b_)
+        cusp = find_cusp(a_, b_, lms_to_rgb, ok_coeff)
         s_max, t_max = to_st(cusp)
         s_0 = 0.5
         k = 1 - s_0 / s_max
@@ -75,7 +77,7 @@ def okhsv_to_oklab(hsv: Vector) -> Vector:
         l = l_new
 
         # RGB scale
-        rs, gs, bs = oklab_to_linear_srgb([l_vt, a_ * c_vt, b_ * c_vt])
+        rs, gs, bs = oklab_to_linear_rgb([l_vt, a_ * c_vt, b_ * c_vt], lms_to_rgb)
         scale_l = alg.nth_root(1.0 / max(max(rs, gs), max(bs, 0.0)), 3)
 
         l = l * scale_l
@@ -87,25 +89,25 @@ def okhsv_to_oklab(hsv: Vector) -> Vector:
     return [l, a, b]
 
 
-def oklab_to_okhsv(lab: Vector) -> Vector:
+def oklab_to_okhsv(
+    lab: Vector,
+    lms_to_rgb: Matrix,
+    ok_coeff: list[Matrix]
+) -> Vector:
     """Oklab to Okhsv."""
 
     l = lab[0]
-    h = alg.NaN
     s = 0.0
     v = toe(l)
 
     c = math.sqrt(lab[1] ** 2 + lab[2] ** 2)
-    if c < ACHROMATIC_THRESHOLD:
-        c = 0
+    h = 0.5 + math.atan2(-lab[2], -lab[1]) / math.tau
 
-    if l not in (0.0, 1.0) and c != 0:
+    if l != 0.0 and l != 1 and c != 0.0:
         a_ = lab[1] / c
         b_ = lab[2] / c
 
-        h = 0.5 + 0.5 * math.atan2(-lab[2], -lab[1]) / math.pi
-
-        cusp = find_cusp(a_, b_)
+        cusp = find_cusp(a_, b_, lms_to_rgb, ok_coeff)
         s_max, t_max = to_st(cusp)
         s_0 = 0.5
         k = 1 - s_0 / s_max
@@ -119,7 +121,7 @@ def oklab_to_okhsv(lab: Vector) -> Vector:
         c_vt = c_v * l_vt / l_v
 
         # we can then use these to invert the step that compensates for the toe and the curved top part of the triangle:
-        rs, gs, bs = oklab_to_linear_srgb([l_vt, a_ * c_vt, b_ * c_vt])
+        rs, gs, bs = oklab_to_linear_rgb([l_vt, a_ * c_vt, b_ * c_vt], lms_to_rgb)
         scale_l = alg.nth_root(1.0 / max(max(rs, gs), max(bs, 0.0)), 3)
 
         l = l / scale_l
@@ -135,14 +137,14 @@ def oklab_to_okhsv(lab: Vector) -> Vector:
     return [util.constrain_hue(h * 360), s, v]
 
 
-class Okhsv(Cylindrical, Space):
+class Okhsv(HSV):
     """Okhsv class."""
 
     BASE = "oklab"
     NAME = "okhsv"
     SERIALIZE = ("--okhsv",)
     CHANNELS = (
-        Channel("h", 0.0, 360.0, bound=True, flags=FLG_ANGLE),
+        Channel("h", flags=FLG_ANGLE),
         Channel("s", 0.0, 1.0, bound=True),
         Channel("v", 0.0, 1.0, bound=True)
     )
@@ -151,23 +153,15 @@ class Okhsv(Cylindrical, Space):
         "saturation": "s",
         "value": "v"
     }
-    WHITE = WHITES['2deg']['D65']
-    GAMUT_CHECK = "srgb"
+    GAMUT_CHECK = None
+    CLIP_SPACE = None
 
-    def normalize(self, coords: Vector) -> Vector:
-        """On color update."""
-
-        coords = alg.no_nans(coords)
-        if coords[2] == 0 or coords[1] == 0.0:
-            coords[0] = alg.NaN
-        return coords
-
-    def to_base(self, okhsv: Vector) -> Vector:
+    def to_base(self, coords: Vector) -> Vector:
         """To Oklab from Okhsv."""
 
-        return okhsv_to_oklab(okhsv)
+        return okhsv_to_oklab(coords, LMS_TO_SRGBL, SRGBL_COEFF)
 
-    def from_base(self, oklab: Vector) -> Vector:
+    def from_base(self, coords: Vector) -> Vector:
         """From Oklab to Okhsv."""
 
-        return oklab_to_okhsv(oklab)
+        return oklab_to_okhsv(coords, LMS_TO_SRGBL, SRGBL_COEFF)

@@ -25,17 +25,51 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from ..spaces import Space, Cylindrical
-from ..cat import WHITES
+from __future__ import annotations
+from .hsl import HSL
 from ..channels import Channel, FLG_ANGLE
-from .oklab import oklab_to_linear_srgb
-from .oklch import ACHROMATIC_THRESHOLD
 from .. import util
 import math
 import sys
 from .. import algebra as alg
-from ..types import Vector
-from typing import Optional
+from ..types import Vector, Matrix
+from . oklab import OKLAB_TO_LMS3
+
+SRGBL_TO_LMS = [
+    [0.4122214694707629, 0.5363325372617349, 0.051445993267502196],
+    [0.2119034958178251, 0.6806995506452345, 0.10739695353694051],
+    [0.08830245919005637, 0.2817188391361215, 0.6299787016738223]
+]
+
+LMS_TO_SRGBL = [
+    [4.076741636075959, -3.307711539258062, 0.2309699031821041],
+    [-1.2684379732850313, 2.6097573492876878, -0.3413193760026569],
+    [-0.004196076138675526, -0.703418617935936, 1.7076146940746113]
+]
+
+SRGBL_COEFF = [
+    # Red
+    [
+        # Limit
+        [-1.8817031, -0.80936501],
+        # `Kn` coefficients
+        [1.19086277, 1.76576728, 0.59662641, 0.75515197, 0.56771245]
+    ],
+    # Green
+    [
+        # Limit
+        [1.8144408, -1.19445267],
+        # `Kn` coefficients
+        [0.73956515, -0.45954404, 0.08285427, 0.12541073, -0.14503204]
+    ],
+    # Blue
+    [
+        # Limit
+        [0.13110758, 1.81333971],
+        # `Kn` coefficients
+        [1.35733652, -0.00915799, -1.1513021, -0.50559606, 0.00692167]
+    ]
+]  # type: list[Matrix]
 
 FLT_MAX = sys.float_info.max
 
@@ -44,16 +78,16 @@ K_2 = 0.03
 K_3 = (1.0 + K_1) / (1.0 + K_2)
 
 
-def toe(x: float) -> float:
+def toe(x: float, k1: float = K_1, k2: float = K_2, k3: float = K_3) -> float:
     """Toe function for L_r."""
 
-    return 0.5 * (K_3 * x - K_1 + math.sqrt((K_3 * x - K_1) * (K_3 * x - K_1) + 4 * K_2 * K_3 * x))
+    return 0.5 * (k3 * x - k1 + math.sqrt((k3 * x - k1) * (k3 * x - k1) + 4 * k2 * k3 * x))
 
 
-def toe_inv(x: float) -> float:
+def toe_inv(x: float, k1: float = K_1, k2: float = K_2, k3: float = K_3) -> float:
     """Inverse toe function for L_r."""
 
-    return (x ** 2 + K_1 * x) / (K_3 * (x + K_2))
+    return (x ** 2 + k1 * x) / (k3 * (x + k2))
 
 
 def to_st(cusp: Vector) -> Vector:
@@ -100,7 +134,27 @@ def get_st_mid(a: float, b: float) -> Vector:
     return [s, t]
 
 
-def find_cusp(a: float, b: float) -> Vector:
+def oklab_to_linear_rgb(lab: Vector, lms_to_rgb: Matrix) -> Vector:
+    """
+    Convert from Oklab to linear RGB.
+
+    Can be any gamut as long as `lms_to_rgb` is a matrix
+    that transform the LMS values to the linear RGB space.
+    """
+
+    return alg.matmul_x3(
+        lms_to_rgb,
+        [c ** 3 for c in alg.matmul_x3(OKLAB_TO_LMS3, lab, dims=alg.D2_D1)],
+        dims=alg.D2_D1
+    )
+
+
+def find_cusp(
+    a: float,
+    b: float,
+    lms_to_rgb: Matrix,
+    ok_coeff: list[Matrix]
+) -> Vector:
     """
     Finds L_cusp and C_cusp for a given hue.
 
@@ -108,10 +162,10 @@ def find_cusp(a: float, b: float) -> Vector:
     """
 
     # First, find the maximum saturation (saturation `S = C/L`)
-    s_cusp = compute_max_saturation(a, b)
+    s_cusp = compute_max_saturation(a, b, lms_to_rgb, ok_coeff)
 
-    # Convert to linear sRGB to find the first point where at least one of r, g or b >= 1:
-    r, g, b = oklab_to_linear_srgb([1, s_cusp * a, s_cusp * b])
+    # Convert to linear RGB to find the first point where at least one of r, g or b >= 1:
+    r, g, b = oklab_to_linear_rgb([1, s_cusp * a, s_cusp * b], lms_to_rgb)
     l_cusp = alg.nth_root(1.0 / max(max(r, g), b), 3)
     c_cusp = l_cusp * s_cusp
 
@@ -124,7 +178,9 @@ def find_gamut_intersection(
     l1: float,
     c1: float,
     l0: float,
-    cusp: Optional[Vector] = None
+    lms_to_rgb: Matrix,
+    ok_coeff: list[Matrix],
+    cusp: Vector | None = None,
 ) -> float:
     """
     Finds intersection of the line.
@@ -140,7 +196,7 @@ def find_gamut_intersection(
     """
 
     if cusp is None:  # pragma: no cover
-        cusp = find_cusp(a, b)
+        cusp = find_cusp(a, b, lms_to_rgb, ok_coeff)
 
     # Find the intersection for upper and lower half separately
     if ((l1 - l0) * cusp[1] - (cusp[0] - l0) * c1) <= 0.0:
@@ -156,9 +212,9 @@ def find_gamut_intersection(
         dl = l1 - l0
         dc = c1
 
-        k_l = +0.3963377774 * a + 0.2158037573 * b
-        k_m = -0.1055613458 * a - 0.0638541728 * b
-        k_s = -0.0894841775 * a - 1.2914855480 * b
+        k_l = alg.vdot(OKLAB_TO_LMS3[0][1:], [a, b])
+        k_m = alg.vdot(OKLAB_TO_LMS3[1][1:], [a, b])
+        k_s = alg.vdot(OKLAB_TO_LMS3[2][1:], [a, b])
 
         l_dt = dl + dc * k_l
         m_dt = dl + dc * k_m
@@ -184,23 +240,23 @@ def find_gamut_intersection(
         mdt2 = 6 * (m_dt ** 2) * m_
         sdt2 = 6 * (s_dt ** 2) * s_
 
-        r = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s - 1
-        r1 = 4.0767416621 * ldt - 3.3077115913 * mdt + 0.2309699292 * sdt
-        r2 = 4.0767416621 * ldt2 - 3.3077115913 * mdt2 + 0.2309699292 * sdt2
+        r = alg.matmul_x3(lms_to_rgb[0], [l, m, s], dims=alg.D1) - 1
+        r1 = alg.matmul_x3(lms_to_rgb[0], [ldt, mdt, sdt], dims=alg.D1)
+        r2 = alg.matmul_x3(lms_to_rgb[0], [ldt2, mdt2, sdt2], dims=alg.D1)
 
         u_r = r1 / (r1 * r1 - 0.5 * r * r2)
         t_r = -r * u_r
 
-        g = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s - 1
-        g1 = -1.2684380046 * ldt + 2.6097574011 * mdt - 0.3413193965 * sdt
-        g2 = -1.2684380046 * ldt2 + 2.6097574011 * mdt2 - 0.3413193965 * sdt2
+        g = alg.matmul_x3(lms_to_rgb[1], [l, m, s], dims=alg.D1) - 1
+        g1 = alg.matmul_x3(lms_to_rgb[1], [ldt, mdt, sdt], dims=alg.D1)
+        g2 = alg.matmul_x3(lms_to_rgb[1], [ldt2, mdt2, sdt2], dims=alg.D1)
 
         u_g = g1 / (g1 * g1 - 0.5 * g * g2)
         t_g = -g * u_g
 
-        b = -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s - 1
-        b1 = -0.0041960863 * ldt - 0.7034186147 * mdt + 1.7076147010 * sdt
-        b2 = -0.0041960863 * ldt2 - 0.7034186147 * mdt2 + 1.7076147010 * sdt2
+        b = alg.matmul_x3(lms_to_rgb[2], [l, m, s], dims=alg.D1) - 1
+        b1 = alg.matmul_x3(lms_to_rgb[2], [ldt, mdt, sdt], dims=alg.D1)
+        b2 = alg.matmul_x3(lms_to_rgb[2], [ldt2, mdt2, sdt2], dims=alg.D1)
 
         u_b = b1 / (b1 * b1 - 0.5 * b * b2)
         t_b = -b * u_b
@@ -214,14 +270,18 @@ def find_gamut_intersection(
     return t
 
 
-def get_cs(lab: Vector) -> Vector:
+def get_cs(
+    lab: Vector,
+    lms_to_rgb: Matrix,
+    ok_coeff: list[Matrix]
+) -> Vector:
     """Get Cs."""
 
     l, a, b = lab
 
-    cusp = find_cusp(a, b)
+    cusp = find_cusp(a, b, lms_to_rgb, ok_coeff)
 
-    c_max = find_gamut_intersection(a, b, l, 1, l, cusp)
+    c_max = find_gamut_intersection(a, b, l, 1, l, lms_to_rgb, ok_coeff, cusp)
     st_max = to_st(cusp)
 
     # Scale factor to compensate for the curved part of gamut shape:
@@ -245,9 +305,14 @@ def get_cs(lab: Vector) -> Vector:
     return [c_0, c_mid, c_max]
 
 
-def compute_max_saturation(a: float, b: float) -> float:
+def compute_max_saturation(
+    a: float,
+    b: float,
+    lms_to_rgb: Matrix,
+    ok_coeff: list[Matrix]
+) -> float:
     """
-    Finds the maximum saturation possible for a given hue that fits in sRGB.
+    Finds the maximum saturation possible for a given hue that fits in RGB.
 
     Saturation here is defined as `S = C/L`.
     `a` and `b` must be normalized so `a^2 + b^2 == 1`.
@@ -257,38 +322,20 @@ def compute_max_saturation(a: float, b: float) -> float:
 
     # Select different coefficients depending on which component goes below zero first.
 
-    if (-1.88170328 * a - 0.80936493 * b) > 1:
+    if alg.vdot(ok_coeff[0][0], [a, b]) > 1:
         # Red component
-        k0 = 1.19086277
-        k1 = 1.76576728
-        k2 = 0.59662641
-        k3 = 0.75515197
-        k4 = 0.56771245
-        wl = 4.0767416621
-        wm = -3.3077115913
-        ws = 0.2309699292
+        k0, k1, k2, k3, k4 = ok_coeff[0][1]
+        wl, wm, ws = lms_to_rgb[0]
 
-    elif (1.81444104 * a - 1.19445276 * b) > 1:
+    elif alg.vdot(ok_coeff[1][0], [a, b]) > 1:
         # Green component
-        k0 = 0.73956515
-        k1 = -0.45954404
-        k2 = 0.08285427
-        k3 = 0.12541070
-        k4 = 0.14503204
-        wl = -1.2684380046
-        wm = 2.6097574011
-        ws = -0.3413193965
+        k0, k1, k2, k3, k4 = ok_coeff[1][1]
+        wl, wm, ws = lms_to_rgb[1]
 
     else:
         # Blue component
-        k0 = 1.35733652
-        k1 = -0.00915799
-        k2 = -1.15130210
-        k3 = -0.50559606
-        k4 = 0.00692167
-        wl = -0.0041960863
-        wm = -0.7034186147
-        ws = 1.7076147010
+        k0, k1, k2, k3, k4 = ok_coeff[2][1]
+        wl, wm, ws = lms_to_rgb[2]
 
     # Approximate max saturation using a polynomial:
     sat = k0 + k1 * a + k2 * b + k3 * (a ** 2) + k4 * a * b
@@ -297,9 +344,9 @@ def compute_max_saturation(a: float, b: float) -> float:
     # This gives an error less than 10e6, except for some blue hues where the `dS/dh` is close to infinite.
     # This should be sufficient for most applications, otherwise do two/three steps.
 
-    k_l = 0.3963377774 * a + 0.2158037573 * b
-    k_m = -0.1055613458 * a - 0.0638541728 * b
-    k_s = -0.0894841775 * a - 1.2914855480 * b
+    k_l = alg.vdot(OKLAB_TO_LMS3[0][1:], [a, b])
+    k_m = alg.vdot(OKLAB_TO_LMS3[1][1:], [a, b])
+    k_s = alg.vdot(OKLAB_TO_LMS3[2][1:], [a, b])
 
     l_ = 1.0 + sat * k_l
     m_ = 1.0 + sat * k_m
@@ -326,8 +373,12 @@ def compute_max_saturation(a: float, b: float) -> float:
     return sat
 
 
-def okhsl_to_oklab(hsl: Vector) -> Vector:
-    """Convert Okhsl to sRGB."""
+def okhsl_to_oklab(
+    hsl: Vector,
+    lms_to_rgb: Matrix,
+    ok_coeff: list[Matrix]
+) -> Vector:
+    """Convert Okhsl to Oklab."""
 
     h, s, l = hsl
     h = h / 360.0
@@ -335,11 +386,11 @@ def okhsl_to_oklab(hsl: Vector) -> Vector:
     L = toe_inv(l)
     a = b = 0.0
 
-    if L not in (0.0, 1.0) and s != 0.0 and not alg.is_nan(h):
-        a_ = math.cos(2.0 * math.pi * h)
-        b_ = math.sin(2.0 * math.pi * h)
+    if L != 0.0 and L != 1.0 and s != 0:
+        a_ = math.cos(math.tau * h)
+        b_ = math.sin(math.tau * h)
 
-        c_0, c_mid, c_max = get_cs([L, a_, b_])
+        c_0, c_mid, c_max = get_cs([L, a_, b_], lms_to_rgb, ok_coeff)
 
         # Interpolate the three values for C so that:
         # ```
@@ -371,25 +422,25 @@ def okhsl_to_oklab(hsl: Vector) -> Vector:
     return [L, a, b]
 
 
-def oklab_to_okhsl(lab: Vector) -> Vector:
+def oklab_to_okhsl(
+    lab: Vector,
+    lms_to_rgb: Matrix,
+    ok_coeff: list[Matrix]
+) -> Vector:
     """Oklab to Okhsl."""
 
-    h = alg.NaN
     L = lab[0]
     s = 0.0
     l = toe(L)
 
     c = math.sqrt(lab[1] ** 2 + lab[2] ** 2)
-    if c < ACHROMATIC_THRESHOLD:
-        c = 0
+    h = 0.5 + math.atan2(-lab[2], -lab[1]) / math.tau
 
-    if l not in (0.0, 1.0) and c != 0:
+    if l != 0.0 and l != 1.0 and c != 0:
         a_ = lab[1] / c
         b_ = lab[2] / c
 
-        h = 0.5 + 0.5 * math.atan2(-lab[2], -lab[1]) / math.pi
-
-        c_0, c_mid, c_max = get_cs([L, a_, b_])
+        c_0, c_mid, c_max = get_cs([L, a_, b_], lms_to_rgb, ok_coeff)
 
         mid = 0.8
         mid_inv = 1.25
@@ -412,14 +463,14 @@ def oklab_to_okhsl(lab: Vector) -> Vector:
     return [util.constrain_hue(h * 360), s, l]
 
 
-class Okhsl(Cylindrical, Space):
+class Okhsl(HSL):
     """HSL class."""
 
     BASE = "oklab"
     NAME = "okhsl"
     SERIALIZE = ("--okhsl",)
     CHANNELS = (
-        Channel("h", 0.0, 360.0, bound=True, flags=FLG_ANGLE),
+        Channel("h", flags=FLG_ANGLE),
         Channel("s", 0.0, 1.0, bound=True),
         Channel("l", 0.0, 1.0, bound=True)
     )
@@ -428,23 +479,23 @@ class Okhsl(Cylindrical, Space):
         "saturation": "s",
         "lightness": "l"
     }
-    WHITE = WHITES['2deg']['D65']
-    GAMUT_CHECK = "srgb"
+    GAMUT_CHECK = None
+    CLIP_SPACE = None
 
     def normalize(self, coords: Vector) -> Vector:
-        """On color update."""
+        """Normalize coordinates."""
 
-        coords = alg.no_nans(coords)
-        if coords[2] in (0.0, 1.0) or coords[1] == 0.0:
-            coords[0] = alg.NaN
+        if coords[1] < 0:
+            return self.from_base(self.to_base(coords))
+        coords[0] %= 360.0
         return coords
 
     def to_base(self, coords: Vector) -> Vector:
         """To Oklab from Okhsl."""
 
-        return okhsl_to_oklab(coords)
+        return okhsl_to_oklab(coords, LMS_TO_SRGBL, SRGBL_COEFF)
 
     def from_base(self, coords: Vector) -> Vector:
         """From Oklab to Okhsl."""
 
-        return oklab_to_okhsl(coords)
+        return oklab_to_okhsl(coords, LMS_TO_SRGBL, SRGBL_COEFF)

@@ -1,11 +1,10 @@
 """Delta E CMC."""
+from __future__ import annotations
 from ..distance import DeltaE
+from ..spaces.lab import CIELab
 import math
-from .. import algebra as alg
-from typing import TYPE_CHECKING, Any, Optional
-
-if TYPE_CHECKING:  # pragma: no cover
-    from ..color import Color
+from ..types import AnyColor
+from typing import Any
 
 
 class DECMC(DeltaE):
@@ -16,19 +15,22 @@ class DECMC(DeltaE):
     def __init__(
         self,
         l: float = 2,
-        c: float = 1
+        c: float = 1,
+        space: str = 'lab-d65'
     ):
         """Initialize."""
 
         self.l = l
         self.c = c
+        self.space = space
 
     def distance(
         self,
-        color: 'Color',
-        sample: 'Color',
-        l: Optional[float] = None,
-        c: Optional[float] = None,
+        color: AnyColor,
+        sample: AnyColor,
+        l: float | None = None,
+        c: float | None = None,
+        space: str | None = None,
         **kwargs: Any
     ) -> float:
         """
@@ -43,8 +45,13 @@ class DECMC(DeltaE):
         if c is None:
             c = self.c
 
-        l1, a1, b1 = alg.no_nans(color.convert("lab")[:-1])
-        l2, a2, b2 = alg.no_nans(sample.convert("lab")[:-1])
+        if space is None:
+            space = self.space
+        if not isinstance(color.CS_MAP[space], CIELab):
+            raise ValueError("Distance color space must be a CIE Lab color space.")
+
+        l1, a1, b1 = color.convert(space).coords(nans=False)
+        l2, a2, b2 = sample.convert(space).coords(nans=False)
 
         # Equation (3)
         c1 = math.sqrt(a1 ** 2 + b1 ** 2)
