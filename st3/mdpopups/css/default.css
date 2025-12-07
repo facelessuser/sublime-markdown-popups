@@ -3,29 +3,47 @@ html {
   --mdpopups-fg: var(--foreground);
   --mdpopups-link: var(--bluish);
   --mdpopups-del: var(--redish);
+  --mdpopups-kbd-fg: var(--background);
+  --mdpopups-kbd-bg: var(--foreground);
   --mdpopups-font-mono: "sf mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  /* New admonition colors */
   --mdpopups-admon-fg: var(--foreground);
+  --mdpopups-admon-note-fg: var(--foreground);
+  --mdpopups-admon-tip-fg: var(--foreground);
+  --mdpopups-admon-warning-fg: var(--foreground);
+  --mdpopups-admon-caution-fg: var(--foreground);
+  --mdpopups-admon-important-fg: var(--foreground);
+  --mdpopups-admon-bg: var(--background);
+  --mdpopups-admon-note-bg: var(--background);
+  --mdpopups-admon-tip-bg: var(--background);
+  --mdpopups-admon-warning-bg: var(--background);
+  --mdpopups-admon-caution-bg: var(--background);
+  --mdpopups-admon-important-bg: var(--background);
+  --mdpopups-admon-title-fg:  var(--foreground);
+  --mdpopups-admon-note-title-fg:  var(--foreground);
+  --mdpopups-admon-tip-title-fg:  var(--foreground);
+  --mdpopups-admon-warning-title-fg:  var(--foreground);
+  --mdpopups-admon-caution-title-fg:  var(--foreground);
+  --mdpopups-admon-important-title-fg:  var(--foreground);
+  --mdpopups-admon-accent: color(var(--background) blend(var(--foreground) 50%));
+  --mdpopups-admon-note-accent: color(var(--background) blend(var(--bluish) 50%));
+  --mdpopups-admon-tip-accent: color(var(--background) blend(var(--greenish) 50%));
+  --mdpopups-admon-warning-accent: color(var(--background) blend(var(--orangish) 50%));
+  --mdpopups-admon-caution-accent: color(var(--background) blend(var(--redish) 50%));
+  --mdpopups-admon-important-accent: color(var(--background) blend(var(--purplish) 50%));
+  /* Legacy admonition panels colors */
   --mdpopups-admon-info-fg: var(--foreground);
   --mdpopups-admon-error-fg: var(--foreground);
-  --mdpopups-admon-warning-fg: var(--foreground);
   --mdpopups-admon-success-fg: var(--foreground);
-  --mdpopups-admon-bg: var(--background);
   --mdpopups-admon-info-bg: var(--background);
   --mdpopups-admon-error-bg: var(--background);
-  --mdpopups-admon-warning-bg: var(--background);
   --mdpopups-admon-success-bg: var(--background);
-  --mdpopups-admon-accent: color(var(--background) blend(var(--foreground) 50%));
-  --mdpopups-admon-title-fg:  var(--foreground);
   --mdpopups-admon-info-title-fg:  var(--foreground);
   --mdpopups-admon-error-title-fg:  var(--foreground);
-  --mdpopups-admon-warning-title-fg:  var(--foreground);
   --mdpopups-admon-success-title-fg:  var(--foreground);
   --mdpopups-admon-info-accent: color(var(--background) blend(var(--bluish) 50%));
   --mdpopups-admon-error-accent: color(var(--background) blend(var(--redish) 50%));
-  --mdpopups-admon-warning-accent: color(var(--background) blend(var(--orangish) 50%));
   --mdpopups-admon-success-accent: color(var(--background) blend(var(--greenish) 50%));
-  --mdpopups-kbd-fg: var(--background);
-  --mdpopups-kbd-bg: var(--foreground);
 }
 html.light {
 {%- if var.is_phantom or var.is_sheet %}
@@ -187,7 +205,16 @@ div.mdpopups {
   color:  var(--mdpopups-admon-title-fg);
   background-color: var(--mdpopups-admon-accent);
 }
-/* Colorized Admonitions classes. */
+/* Legacy Colorized "Panel" Admonitions classes. */
+.mdpopups .admonition.panel-info .admonition-title {
+  color: var(--mdpopups-admon-info-title-fg);
+  background-color: var(--mdpopups-admon-info-accent);
+}
+.mdpopups .admonition.panel-info {
+  color:  var(--mdpopups-admon-info-fg);
+  background-color: var(--mdpopups-admon-info-bg);
+  border-color: var(--mdpopups-admon-info-accent);
+}
 .mdpopups .admonition.panel-success .admonition-title {
   color: var(--mdpopups-admon-success-title-fg);
   background-color: var(--mdpopups-admon-success-accent);
@@ -196,15 +223,6 @@ div.mdpopups {
   color:  var(--mdpopups-admon-success-fg);
   background-color: var(--mdpopups-admon-success-bg);
   border-color: var(--mdpopups-admon-success-accent);
-}
-.mdpopups .admonition.panel-warning .admonition-title {
-  color: var(--mdpopups-admon-warning-title-fg);
-  background-color: var(--mdpopups-admon-warning-accent);
-}
-.mdpopups .admonition.panel-warning {
-  color:  var(--mdpopups-admon-warning-fg);
-  background-color: var(--mdpopups-admon-warning-bg);
-  border-color: var(--mdpopups-admon-warning-accent);
 }
 .mdpopups .admonition.panel-error .admonition-title {
   color: var(--mdpopups-admon-error-title-fg);
@@ -215,14 +233,53 @@ div.mdpopups {
   background-color: var(--mdpopups-admon-error-bg);
   border-color: var(--mdpopups-admon-error-accent);
 }
-.mdpopups .admonition.panel-info .admonition-title {
-  color: var(--mdpopups-admon-info-title-fg);
-  background-color: var(--mdpopups-admon-info-accent);
+/* Admonitions classes that align with GitHub callouts. */
+.mdpopups .admonition.tip .admonition-title {
+  color: var(--mdpopups-admon-tip-title-fg);
+  background-color: var(--mdpopups-admon-tip-accent);
 }
-.mdpopups .admonition.panel-info {
-  color:  var(--mdpopups-admon-info-fg);
-  background-color: var(--mdpopups-admon-info-bg);
-  border-color: var(--mdpopups-admon-info-accent);
+.mdpopups .admonition.tip {
+  color:  var(--mdpopups-admon-tip-fg);
+  background-color: var(--mdpopups-admon-tip-bg);
+  border-color: var(--mdpopups-admon-tip-accent);
+}
+.mdpopups .admonition.warning .admonition-title,
+.mdpopups .admonition.panel-warning .admonition-title {
+  color: var(--mdpopups-admon-warning-title-fg);
+  background-color: var(--mdpopups-admon-warning-accent);
+}
+.mdpopups .admonition.warning,
+.mdpopups .admonition.panel-warning {
+  color:  var(--mdpopups-admon-warning-fg);
+  background-color: var(--mdpopups-admon-warning-bg);
+  border-color: var(--mdpopups-admon-warning-accent);
+}
+.mdpopups .admonition.caution .admonition-title {
+  color: var(--mdpopups-admon-caution-title-fg);
+  background-color: var(--mdpopups-admon-caution-accent);
+}
+.mdpopups .admonition.caution {
+  color:  var(--mdpopups-admon-caution-fg);
+  background-color: var(--mdpopups-admon-caution-bg);
+  border-color: var(--mdpopups-admon-caution-accent);
+}
+.mdpopups .admonition.note .admonition-title {
+  color: var(--mdpopups-admon-note-title-fg);
+  background-color: var(--mdpopups-admon-note-accent);
+}
+.mdpopups .admonition.note {
+  color:  var(--mdpopups-admon-note-fg);
+  background-color: var(--mdpopups-admon-note-bg);
+  border-color: var(--mdpopups-admon-note-accent);
+}
+.mdpopups .admonition.important .admonition-title {
+  color: var(--mdpopups-admon-important-title-fg);
+  background-color: var(--mdpopups-admon-important-accent);
+}
+.mdpopups .admonition.important {
+  color:  var(--mdpopups-admon-important-fg);
+  background-color: var(--mdpopups-admon-important-bg);
+  border-color: var(--mdpopups-admon-important-accent);
 }
 .mdpopups .highlight,
 .mdpopups code {

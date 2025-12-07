@@ -4,6 +4,10 @@
 
 -   **NEW**: Update internal, bundled libraries to the latst version.
 -   **NEW**: Tweaks to default style.
+-   **NEW**: Use default admonition classes that align with GitHub callouts: `note`, `tip`, `warning`, `caution`, and
+    `important`. Legacy classes that do not align are still available: `info`, `success`, `error`.
+-   **NEW**: Admonitions no longer require the `panel-` prefix (`panel-<name>`) and can now just use the name of the
+    admonition to trigger default styling.
 
 ## 4.3.2
 

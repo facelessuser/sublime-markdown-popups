@@ -159,39 +159,64 @@ Or you, as the user, can define one in your user CSS. You can read more about `m
 
 MdPopups also provides its own CSS variables that can be overridden by a user:
 
-Variable                            | Description
------------------------------------ | -----------
-`--mdpopups-font-mono`              | Monospace font stack for elements that require monospace (like code blocks).
-`--mdpopups-fg`                     | Foreground color.
-`--mdpopups-bg`                     | Background color.
-`--mdpopups-link`                   | Hyperlink color.
-`--mdpopups-del`                    | Foreground color for `#!html <del>` tags.
-`--mdpopups-hr`                     | `#!html <hr>` tag color.
-`--mdpopups-admon-fg`               | General admonition foreground/text color.
-`--mdpopups-admon-info-fg`          | Info admonition foreground/text color.
-`--mdpopups-admon-error-fg`         | Error admonition foreground/text color.
-`--mdpopups-admon-success-fg`       | Success admonition foreground/text color.
-`--mdpopups-admon-warning-fg`       | Warning admonition foreground/text color.
-`--mdpopups-admon-title-fg`         | General admonition title foreground/text color.
-`--mdpopups-admon-info-title-fg`    | Info admonition title foreground/text color.
-`--mdpopups-admon-error-title-fg`   | Error admonition title foreground/text color.
-`--mdpopups-admon-success-title-fg` | Success admonition title foreground/text color.
-`--mdpopups-admon-warning-title-fg` | Warning admonition title foreground/text color.
-`--mdpopups-admon-bg`               | General admonition background color.
-`--mdpopups-admon-info-bg`          | Info admonition background color.
-`--mdpopups-admon-error-bg`         | Error admonition background color.
-`--mdpopups-admon-warning-bg`       | Warning admonition background color.
-`--mdpopups-admon-success-bg`       | Success admonition background color.
-`--mdpopups-admon-accent`           | General admonition accent color (border/title bar background).
-`--mdpopups-admon-info-accent`      | Info admonition accent color (border/title bar background).
-`--mdpopups-admon-error-accent`     | Error admonition accent color (border/title bar background).
-`--mdpopups-admon-success-accent`   | Success admonition accent color (border/title bar background).
-`--mdpopups-admon-warning-accent`   | Warning admonition accent color (border/title bar background).
-`--mdpopups-kbd-fg`                 | `#!html <kbd>` foreground/text color.
-`--mdpopups-kbd-bg`                 | `#!html <kbd>` background color.
-`--mdpopups-kbd-border`             | `#!html <kbd>` border color.
-`--mdpopups-hl-border`              | Inline and block code border color.
-`--mdpopups-hl-bg`                  | Inline and block code background color.
+Variable                              | Description
+------------------------------------- | -----------
+`--mdpopups-font-mono`                | Monospace font stack for elements that require monospace (like code blocks).
+`--mdpopups-fg`                       | Foreground color.
+`--mdpopups-bg`                       | Background color.
+`--mdpopups-link`                     | Hyperlink color.
+`--mdpopups-del`                      | Foreground color for `#!html <del>` tags.
+`--mdpopups-hr`                       | `#!html <hr>` tag color.
+`--mdpopups-admon-fg`                 | General admonition foreground/text color.
+`--mdpopups-admon-note-fg`            | Note admonition foreground/text color.
+`--mdpopups-admon-tip-fg`             | Tip admonition foreground/text color.
+`--mdpopups-admon-warning-fg`         | Warning admonition foreground/text color.
+`--mdpopups-admon-caution-fg`         | Caution admonition foreground/text color.
+`--mdpopups-admon-important-fg`       | Important admonition foreground/text color.
+`--mdpopups-admon-title-fg`           | General admonition title foreground/text color.
+`--mdpopups-admon-note-title-fg`      | Note admonition title foreground/text color.
+`--mdpopups-admon-tip-title-fg`       | Tip admonition title foreground/text color.
+`--mdpopups-admon-warning-title-fg`   | Warning admonition title foreground/text color.
+`--mdpopups-admon-caution-title-fg`   | Caution admonition title foreground/text color.
+`--mdpopups-admon-important-title-fg` | Important admonition title foreground/text color.
+`--mdpopups-admon-bg`                 | General admonition background color.
+`--mdpopups-admon-note-bg`            | Note admonition background color.
+`--mdpopups-admon-tip-bg`             | Tip admonition background color.
+`--mdpopups-admon-warning-bg`         | Warning admonition background color.
+`--mdpopups-admon-caution-bg`         | Caution admonition background color.
+`--mdpopups-admon-important-bg`       | Important admonition background color.
+`--mdpopups-admon-accent`             | General admonition accent color (border/title bar background).
+`--mdpopups-admon-note-accent`        | Note admonition accent color (border/title bar background).
+`--mdpopups-admon-tip-accent`         | Tip admonition accent color (border/title bar background).
+`--mdpopups-admon-warning-accent`     | Warning admonition accent color (border/title bar background).
+`--mdpopups-admon-caution-accent`     | Caution admonition accent color (border/title bar background).
+`--mdpopups-admon-important-accent`   | Important admonition accent color (border/title bar background).
+`--mdpopups-kbd-fg`                   | `#!html <kbd>` foreground/text color.
+`--mdpopups-kbd-bg`                   | `#!html <kbd>` background color.
+`--mdpopups-kbd-border`               | `#!html <kbd>` border color.
+`--mdpopups-hl-border`                | Inline and block code border color.
+`--mdpopups-hl-bg`                    | Inline and block code background color.
+
+/// note
+MdPopups 5.0 reworked admonitions to align with the defaults names of GitHub callouts, but legacy names are available
+as well. These names previously required adomitions classes to be prefixed with `panel-`, but this is no longer
+required. Now just using `info` instead of `panel-info` is enough. 
+
+Variable                              | Description
+------------------------------------- | -----------
+`--mdpopups-admon-info-fg`            | Info admonition foreground/text color.
+`--mdpopups-admon-success-fg`         | Success admonition foreground/text color.
+`--mdpopups-admon-error-fg`           | Error admonition foreground/text color.
+`--mdpopups-admon-info-title-fg`      | Info admonition title foreground/text color.
+`--mdpopups-admon-success-title-fg`   | Success admonition title foreground/text color.
+`--mdpopups-admon-error-title-fg`     | Error admonition title foreground/text color.
+`--mdpopups-admon-info-bg`            | Info admonition background color.
+`--mdpopups-admon-success-bg`         | Success admonition background color.
+`--mdpopups-admon-error-bg`           | Error admonition background color.
+`--mdpopups-admon-info-accent`        | Info admonition accent color (border/title bar background).
+`--mdpopups-admon-success-accent`     | Success admonition accent color (border/title bar background).
+`--mdpopups-admon-error-accent`       | Error admonition accent color (border/title bar background).
+///
 
 ## CSS Templates
 
