@@ -186,7 +186,8 @@ div.mdpopups {
   border: 1px solid var(--mdpopups-kbd-border);
 }
 /* Admontions/Panels */
-.mdpopups .admonition {
+.mdpopups .admonition,
+.mdpopups blockquote.alert {
   display: block;
   padding: 0 0.5rem 0.5rem 0.5rem;
   border-radius: 0.25rem;
@@ -247,7 +248,7 @@ div.mdpopups {
   border-color: var(--mdpopups-admon-tip-accent);
 }
 .mdpopups .admonition.warning .admonition-title,
-.mdpopups blockquote.alert-warning .alert-title
+.mdpopups blockquote.alert-warning .alert-title,
 .mdpopups .admonition.panel-warning .admonition-title {
   color: var(--mdpopups-admon-warning-title-fg);
   background-color: var(--mdpopups-admon-warning-accent);
