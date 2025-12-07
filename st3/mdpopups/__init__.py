@@ -501,6 +501,10 @@ def md2html(
             pass
         return marko(extensions=extensions).convert(_markup_template(markup, template_vars, template_env_options))
 
+    # No parser found
+    _log(f'Unknown parser: {parser}')
+    return ''
+
 
 def color_box(
     colors, border="#000000ff", border2=None, height=32, width=32,
