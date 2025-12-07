@@ -56,9 +56,9 @@ class SublimeHighlight(object):
         self.pt = 0
         self.end = 0
         self.curr_row = 0
-        # ~~~
+        # ```
         # self.ebground = self.bground
-        # ~~~
+        # ```
 
     def setup_print_block(self, curr_sel, multi=False):
         """Determine start and end points and whether to parse whole file or selection."""
@@ -183,13 +183,13 @@ class SublimeHighlight(object):
             self.pt = self.end
             self.end = self.pt + 1
 
-        # ~~~
+        # ```
         # # Get the color for the space at the end of a line
         # if self.end < self.view.size():
         #     end_key = self.view.scope_name(self.pt)
         #     color_match = self.view.style_for_scope(end_key)
         #     self.ebground = color_match.get('background')
-        # ~~~
+        # ```
 
         # Join line segments
         return ''.join(line)
