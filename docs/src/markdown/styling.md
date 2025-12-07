@@ -165,6 +165,7 @@ Variable                            | Description
 `--mdpopups-fg`                     | Foreground color.
 `--mdpopups-bg`                     | Background color.
 `--mdpopups-link`                   | Hyperlink color.
+`--mdpopups-del`                    | Foreground color for `#!html <del>` tags.
 `--mdpopups-hr`                     | `#!html <hr>` tag color.
 `--mdpopups-admon-fg`               | General admonition foreground/text color.
 `--mdpopups-admon-info-fg`          | Info admonition foreground/text color.
