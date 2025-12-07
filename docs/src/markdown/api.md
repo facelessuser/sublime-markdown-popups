@@ -35,9 +35,6 @@ the source HTML for debugging. Feel free to try it out.
 
 ## Markdown Support
 
-MdPopups uses @Python-Markdown/markdown to parse Markdown and transform it into a Sublime popup or phantom. The Markdown
-environment supports basic Markdown syntax, but also includes a number of specialty extensions to enhance and extend the
-Markdown environment.
 ### Default Markdown Parsing
 
 MdPopups uses @Python-Markdown/markdown to parse Markdown by default and transform it into a Sublime popup or phantom.
