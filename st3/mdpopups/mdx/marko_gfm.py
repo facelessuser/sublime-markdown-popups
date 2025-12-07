@@ -1,18 +1,19 @@
 """
-Github flavored markdown
-~~~~~~~~~~~~~~~~~~~~~~~~
+GitHub flavored markdown.
 
 https://github.github.com/gfm
 
-Unlike other extensions, GFM provides a self-contained subclass of ``Markdown``
+Unlike other extensions, GFM provides a self-contained subclass of `Markdown`
 with parser and renderer already set.
 User may also use the parser and renderer as bases for further extension.
 
 Example usage::
 
+    ```
     from marko.ext.gfm import gfm
+    lkdja
     print(gfm(text))
-
+    ```
 """
 
 from ..marko import Markdown
@@ -41,17 +42,15 @@ GFM = MarkoExtension(
         elements.Paragraph,
         elements.Strikethrough,
         elements.Url,
-        # elements.Table,
-        # elements.TableRow,
-        # elements.TableCell,
         elements.Alert,
     ],
     renderer_mixins=[GFMRendererMixin],
 )
 
-
 gfm = Markdown(extensions=[GFM])
 
 
 def make_extension():
+    """Return extension."""
+
     return GFM

@@ -43,7 +43,7 @@ and extend the Markdown environment.
 
 /// tip | CommonMark Support
 If CommonMark support is desired, see how to configure the optional [CommonMark parser](#commonmark-parser)
-@frostming/marko. It doesn't have the same various extensions, but will providea more modern basic parsing of Markdown
+@frostming/marko. It doesn't have the same various extensions, but will provide a more modern, basic parsing of Markdown
 and provides a GitHub Flavored Markdown mode as well.
 ///
 
@@ -148,7 +148,7 @@ markdown_parser: marko
 ---
 ```
 
-Markdo doesn't have all the bells and whistles and extensive extensions of Python Markdown, but what it does offer is
+Marko doesn't have all the bells and whistles and extensive extensions of Python Markdown, but what it does offer is
 a CommonMark compliant parser with generally more predictable and reliable behavior based on modern parsers.
 
 It also offers a GitHub Flavored Markdown series of extensions as well. These can be enabled via:
@@ -163,7 +163,7 @@ markdown_extensions:
 
 It should be noted that MdPopups strips out Table support when using GitHub Flavored Markdown as it is not supported
 in Sublime Text's `minihtml`. Sublime also cannot render strikethrough for deleted content and will try to highlight
-with a redish color (as specified by the theme) by default if encountered.
+with a red-ish color (as specified by the theme) by default if encountered.
 
 Other built-in extensions may not render well in Sublime.
 

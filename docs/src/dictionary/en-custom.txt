@@ -3,10 +3,12 @@ CSS
 Changelog
 CodeHilite
 ColorHelper
+CommonMark
 Control's
 Desaturate
 EmojiOne
 Frontmatter
+GFM
 GitGutter
 GitHub
 GitLab
@@ -20,6 +22,7 @@ LSP
 LaTeXTools
 Limberg
 MERCHANTABILITY
+Marko
 MdPopups
 Mdpopups
 MkDocs
@@ -63,6 +66,7 @@ flashios
 formatter
 frontmatter
 frontmatter's
+frostming
 gforcada
 grayscale
 greyscale
@@ -73,6 +77,7 @@ inline
 ish
 linting
 luminance
+marko
 matcher
 mdpopup
 mdpopups
@@ -82,6 +87,7 @@ monospace
 namespace
 namespaced
 overlayed
+parsers
 pha
 phil
 plugin
@@ -93,6 +99,7 @@ pre
 preformatted
 pycqa
 pymdown
+renderer
 requesters
 sRGB
 squidfunk
