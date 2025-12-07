@@ -737,6 +737,7 @@ def new_html_sheet(
 
     return window.new_html_sheet(name, html, flags, group)
 
+
 def update_html_sheet(
     sheet, contents, md=True, css=None, wrapper_class=None,
     template_vars=None, template_env_options=None, **kwargs

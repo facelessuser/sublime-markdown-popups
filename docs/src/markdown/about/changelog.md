@@ -2,7 +2,7 @@
 
 ## 5.0.0
 
--   **NEW**: Update internal, bundled libraries to the latst version.
+-   **NEW**: Update internal, bundled libraries to the latest version.
 -   **NEW**: Tweaks to default style.
 -   **NEW**: Use default admonition classes that align with GitHub callouts: `note`, `tip`, `warning`, `caution`, and
     `important`. Legacy classes that do not align are still available: `info`, `success`, `error`.

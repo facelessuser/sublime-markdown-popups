@@ -109,7 +109,7 @@ These are 3rd party extensions provided by PyMdown Extensions:
 
 -   [`pymdownx.escapeall`][escapeall] allows you to escape almost any character.
 
--   [`pymdownx.saneheaders`][saneheaders] This adjust the handlling of header recognition that prevents conflicts with
+-   [`pymdownx.saneheaders`][saneheaders] This adjusts the handling of header recognition that prevents conflicts with
     things like GitHub issue recognition (`#3`) and headers. It requires headers to have a space after the hash symbol.
 
 -   [`pymdownx.tilde`][tilde] allows you to represent elements via the `<ins>` tag and super script, but Sublime cannot
@@ -117,7 +117,7 @@ These are 3rd party extensions provided by PyMdown Extensions:
 
 -   [`pymdownx.caret`][caret] allows you to represent elements via the `<del>` tag and subscript, but Sublime cannot
     represent subscript well and probably should be disabled if using it. Sublime cannot technically represent `<del>`
-    well either as strikethrough is not supported and MdPopups will just try to highlight with a redish color (as
+    well either as strikethrough is not supported and MdPopups will just try to highlight with a red-ish color (as
     specified by the theme) by default if encountered.
 
 -   [`pymdownx.blocks.admonition`][block-admonition] is an alternative admonition extension using a non-indented block

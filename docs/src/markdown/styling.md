@@ -199,7 +199,7 @@ Variable                              | Description
 
 /// note
 MdPopups 5.0 reworked admonitions to align with the defaults names of GitHub callouts, but legacy names are available
-as well. These names previously required adomitions classes to be prefixed with `panel-`, but this is no longer
+as well. These names previously required admonitions classes to be prefixed with `panel-`, but this is no longer
 required. Now just using `info` instead of `panel-info` is enough. 
 
 Variable                              | Description
