@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.0
+
+-   **NEW**: Update internal, bundled libraries to the latst version.
+-   **NEW**: Tweaks to default style.
+
 ## 4.3.2
 
 -   **FIX**: Avoid calling `sublime.load_binary_resource` when the file doesn't exist as Sublime will sometimes crash
