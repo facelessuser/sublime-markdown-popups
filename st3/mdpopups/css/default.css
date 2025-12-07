@@ -72,18 +72,43 @@ div.mdpopups {
 }
 .mdpopups div { display: block; }
 /* Headers */
-.mdpopups h1 { font-size: 1.5rem; }
-.mdpopups h2 { font-size: 1.4rem; }
-.mdpopups h3 { font-size: 1.3rem; }
-.mdpopups h4 { font-size: 1.2rem; }
-.mdpopups h5 { font-size: 1.1rem; }
-.mdpopups h6 { font-size: 1rem; }
-.mdpopups h1, .mdpopups h2, .mdpopups h3, .mdpopups h4, .mdpopups h5, .mdpopups h6 {
+.mdpopups h1 {
+  font-size: 1.5rem;
+}
+.mdpopups h2 {
+  font-size: 1.4rem;
+}
+.mdpopups h3 {
+  font-size: 1.3rem;
+}
+.mdpopups h4 {
+  font-size: 1.2rem;
+}
+.mdpopups h5 {
+  font-size: 1.1rem;
+}
+.mdpopups h6 {
+  font-size: 1rem;
+}
+.mdpopups h1,
+.mdpopups h2,
+.mdpopups h3,
+.mdpopups h4,
+.mdpopups h5,
+.mdpopups h6 {
   margin-top: 0.2rem;
   margin-bottom: 0.2rem;
 }
 /* Blockquote support. */
-.mdpopups blockquote { display: block; font-style: italic; }
+.mdpopups blockquote {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0.5rem;
+  border-left: 0.25rem solid var(--mdpopups-fg);
+}
 /* Horizontal rule support. */
 .mdpopups hr {
   display: block;
@@ -94,7 +119,9 @@ div.mdpopups {
   margin-bottom: 1rem;
 }
 /* Description list support */
-.mdpopups dl { display: block; }
+.mdpopups dl {
+  display: block;
+}
 .mdpopups dt {
   display: block;
   font-style: italic;
@@ -109,14 +136,20 @@ div.mdpopups {
 /* Preformatted block */
 .mdpopups pre { display: block; }
 /* Blocks */
-.mdpopups blockquote, .mdpopups ol, .mdpopups ul, .mdpopups dl, .mdpopups p {
+.mdpopups ol,
+.mdpopups ul,
+.mdpopups dl,
+.mdpopups p {
   padding: 0;
   margin-top: 0;
   margin-bottom: 0.5rem;
   margin-left: 0;
   margin-right: 0;
 }
-.mdpopups ul, .mdpopups ol { padding-left: 2rem; }
+.mdpopups ul,
+.mdpopups ol {
+  padding-left: 2rem;
+}
 /* kbd */
 .mdpopups kbd {
   display: inline;
