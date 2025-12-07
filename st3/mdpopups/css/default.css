@@ -2,6 +2,7 @@
 html {
   --mdpopups-fg: var(--foreground);
   --mdpopups-link: var(--bluish);
+  --mdpopups-del: var(--redish);
   --mdpopups-font-mono: "sf mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   --mdpopups-admon-fg: var(--foreground);
   --mdpopups-admon-info-fg: var(--foreground);
@@ -63,6 +64,12 @@ div.mdpopups {
 }
 .mdpopups a {
   color: var(--mdpopups-link);
+}
+.mdpopups ins {
+  text-decoration: underline;
+}
+.mdpopups del {
+  color: var(--mdpopups-del);
 }
 .mdpopups .highlight,
 .mdpopups code,
