@@ -39,8 +39,6 @@ try:
 except Exception:
     bs4 = None
 
-HTML_SHEET_SUPPORT = int(sublime.version()) >= 4074
-
 LOCATION = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_CSS_PATH = os.path.join(LOCATION, 'css', 'default.css')
 
@@ -721,49 +719,48 @@ def query_phantoms(view, pids):
     return view.query_phantoms(pids)
 
 
-if HTML_SHEET_SUPPORT:
-    def new_html_sheet(
-        window, name, contents, md=True, css=None, flags=0, group=-1,
-        wrapper_class=None, template_vars=None, template_env_options=None, **kwargs
-    ):
-        """Create new HTML sheet."""
+def new_html_sheet(
+    window, name, contents, md=True, css=None, flags=0, group=-1,
+    wrapper_class=None, template_vars=None, template_env_options=None, **kwargs
+):
+    """Create new HTML sheet."""
 
-        view = window.create_output_panel('mdpopups-dummy', unlisted=True)
-        try:
-            html = _create_html(
-                view, contents, md, css, css_type=SHEET, wrapper_class=wrapper_class,
-                template_vars=template_vars, template_env_options=template_env_options
-            )
-        except Exception:
-            _log(traceback.format_exc())
-            html = IDK
+    view = window.create_output_panel('mdpopups-dummy', unlisted=True)
+    try:
+        html = _create_html(
+            view, contents, md, css, css_type=SHEET, wrapper_class=wrapper_class,
+            template_vars=template_vars, template_env_options=template_env_options
+        )
+    except Exception:
+        _log(traceback.format_exc())
+        html = IDK
 
-        return window.new_html_sheet(name, html, flags, group)
+    return window.new_html_sheet(name, html, flags, group)
 
-    def update_html_sheet(
-        sheet, contents, md=True, css=None, wrapper_class=None,
-        template_vars=None, template_env_options=None, **kwargs
-    ):
-        """Update an HTML sheet."""
+def update_html_sheet(
+    sheet, contents, md=True, css=None, wrapper_class=None,
+    template_vars=None, template_env_options=None, **kwargs
+):
+    """Update an HTML sheet."""
 
-        window = sheet.window()
+    window = sheet.window()
 
-        # Probably a transient sheet, just get a window
-        if window is None:
-            window = sublime.active_window()
+    # Probably a transient sheet, just get a window
+    if window is None:
+        window = sublime.active_window()
 
-        view = window.create_output_panel('mdpopups-dummy', unlisted=True)
+    view = window.create_output_panel('mdpopups-dummy', unlisted=True)
 
-        try:
-            html = _create_html(
-                view, contents, md, css, css_type=SHEET, wrapper_class=wrapper_class,
-                template_vars=template_vars, template_env_options=template_env_options
-            )
-        except Exception:
-            _log(traceback.format_exc())
-            html = IDK
+    try:
+        html = _create_html(
+            view, contents, md, css, css_type=SHEET, wrapper_class=wrapper_class,
+            template_vars=template_vars, template_env_options=template_env_options
+        )
+    except Exception:
+        _log(traceback.format_exc())
+        html = IDK
 
-        sublime_api.html_sheet_set_contents(sheet.id(), html)
+    sublime_api.html_sheet_set_contents(sheet.id(), html)
 
 
 class Phantom(sublime.Phantom):
