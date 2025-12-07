@@ -139,7 +139,7 @@ These are 3rd party extensions provided by PyMdown Extensions:
 /// new | New 5.0.0
 ///
 
-MdPopups includes the CommonMark @frostming/marko. This is not enable by default and requires the caller to specify the
+MdPopups includes the CommonMark @frostming/marko. This is not enabled by default and requires the caller to specify the
 parser in the [frontmatter](#frontmater) in order to enable its usage.
 
 ```yaml
