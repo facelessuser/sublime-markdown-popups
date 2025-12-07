@@ -38,6 +38,11 @@ the source HTML for debugging. Feel free to try it out.
 MdPopups uses @Python-Markdown/markdown to parse Markdown and transform it into a Sublime popup or phantom. The Markdown
 environment supports basic Markdown syntax, but also includes a number of specialty extensions to enhance and extend the
 Markdown environment.
+### Default Markdown Parsing
+
+MdPopups uses @Python-Markdown/markdown to parse Markdown by default and transform it into a Sublime popup or phantom.
+The Markdown environment supports basic Markdown syntax, but also includes a number of specialty extensions to enhance
+and extend the Markdown environment.
 
 Due to the `minihtml` environment that Sublime uses, the type of tags and CSS that can be used are a bit limited.
 MdPopups provides a CSS that includes most of the common supported tags that can be used. Then few specific extensions
@@ -54,7 +59,13 @@ features that aren't compatible.
 Below we will touch on the specific extensions used by default which are known to work in the Sublime `minihtml`
 environment. If you are on version 2.1.0+, read on in [Frontmatter](#frontmatter) to learn how to customize extensions.
 
-### Extensions
+#### Extensions
+
+/// note
+There are more extensions offered than are currently specified. We've only highlighted those that are useful in the
+Sublime Text environment. If included extensions are not listed below, it is likely due to Sublime's inability to render
+them.
+///
 
 These three extensions are setup and configured automatically and should not be configured manually. Also, do not try to
 use `markdown.extensions.codehilite` or `markdown.extensions.fenced_code` as the following extensions have been
@@ -96,6 +107,29 @@ These are 3rd party extensions provided by PyMdown Extensions:
     module is exposing *just* this functionality from the [Python Markdown's Extra extension][md_in_html] as the feature
     could not be enabled without including all of the `Extra` extensions other features.  You can read the Python
     Markdown's Extra extension documentation to learn more about this feature.
+
+-   [`pymdownx.keys`][keys] allows you to specify key mappings using an easy format.
+
+-   [`pymdownx.escapeall`][escapeall] allows you to escape almost any character.
+
+-   [`pymdownx.saneheaders`][saneheaders] This adjust the handlling of header recognition that prevents conflicts with
+    things like GitHub issue recognition (`#3`) and headers. It requires headers to have a space after the hash symbol.
+
+-   [`pymdownx.tilde`][tilde] allows you to represent elements via the `<ins>` tag and super script, but Sublime cannot
+    represent superscript well and probably should be disabled if using it.
+
+-   [`pymdownx.caret`][caret] allows you to represent elements via the `<del>` tag and subscript, but Sublime cannot
+    represent subscript well and probably should be disabled if using it. Sublime cannot technically represent `<del>`
+    well either as strikethrough is not supported and MdPopups will just try to highlight with a redish color (as
+    specified by the theme) by default if encountered.
+
+-   [`pymdownx.blocks.admonition`][block-admonition] is an alternative admonition extension using a non-indented block
+    format. This should be used instead of [`markdown.extensions.admonition`][admonition], not with it.
+
+-   [`pymdownx.blocks.html`][block-html] This is a block container approach to specify HTML wrapper containers. This can
+    be used to get around some of Python Markdown's limitations with HTML parsing.
+
+-   [`pymdownx.blocks.definition`][block-definition] This is a block container definitions.
 
 ## Frontmatter
 
