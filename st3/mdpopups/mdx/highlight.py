@@ -178,8 +178,6 @@ class Highlight:
         self.pygments_lang_class = pygments_lang_class
         self.stripnl = stripnl
         self.default_lang = default_lang
-        self.sublime_hl = Highlight.sublime_hl
-        self.sublime_wrap = Highlight.sublime_wrap
 
         if self.anchor_linenums and not self.line_anchors:
             self.line_anchors = '__codelineno'
@@ -199,14 +197,6 @@ class Highlight:
                         language.get('lang'),
                         language.get('options', {})
                     ]
-
-    @classmethod
-    def set_sublime_vars(cls, sublime_hl, sublime_wrap, plugin_map):
-        """Set Sublime_vars."""
-
-        cls.sublime_hl = sublime_hl
-        cls.sublime_wrap = sublime_wrap
-        cls.plugin_map = plugin_map
 
     def get_extended_language(self, language):
         """Get extended language."""
@@ -455,7 +445,7 @@ class HighlightTreeprocessor(Treeprocessor):
             if len(block) == 1 and block[0].tag == 'code':
 
                 self.ext.pygments_code_block += 1
-                code = Highlight(
+                code = self.ext.highlighter(
                     guess_lang=self.config['guess_lang'],
                     pygments_style=self.config['pygments_style'],
                     use_pygments=self.config['use_pygments'],
@@ -518,12 +508,18 @@ class HighlightExtension(Extension):
     def get_pymdownx_highlighter(self):
         """Get the highlighter."""
 
-        return Highlight
+        return self.highlighter
 
     def extendMarkdown(self, md):
         """Add support for code highlighting."""
 
-        Highlight.set_sublime_vars(md.sublime_hl, md.sublime_wrap, md.plugin_map)
+        class StHighlight(Highlight):
+            sublime_hl = md.sublime_hl
+            sublime_wrap = md.sublime_wrap
+            plugin_map = md.plugin_map
+
+        self.highlighter = StHighlight
+
         config = self.getConfigs()
         self.pygments_code_block = -1
         self.md = md

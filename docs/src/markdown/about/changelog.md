@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.1
+
+-   **FIX**: Fix some cases where code wrap wasn't respected.
+
 ## 5.0.0
 
 -   **NEW**: Update internal, bundled libraries to the latest version.

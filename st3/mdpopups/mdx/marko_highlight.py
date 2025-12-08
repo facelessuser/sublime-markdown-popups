@@ -42,7 +42,7 @@ class CodeHiliteRendererMixin:
 
         code = element.children[0].children
         if self.st_hl is None:
-            return syntax_hl(code, element.lang)
+            return syntax_hl(code, element.lang, code_wrap=self.st_wrap)
         return self.st_hl.syntax_highlight(code, element.lang, code_wrap=self.st_wrap, plugin_map=self.st_lang_map)
 
 
