@@ -42,7 +42,7 @@ The Markdown environment supports basic Markdown syntax, but also includes a num
 and extend the Markdown environment.
 
 /// tip | CommonMark Support
-If CommonMark support is desired, see how to configure the optional [CommonMark parser](#commonmark-parser)
+If CommonMark support is desired, see how to configure the optional [CommonMark parser](#commonmark-parsing)
 @frostming/marko. It doesn't have the same various extensions, but will provide a more modern, basic parsing of Markdown
 and provides a GitHub Flavored Markdown mode as well.
 ///
@@ -137,6 +137,7 @@ These are 3rd party extensions provided by PyMdown Extensions:
 ## CommonMark Parsing
 
 /// new | New 5.0.0
+Only supported on Python 3.13 in Sublime Text 4201+.
 ///
 
 MdPopups includes the CommonMark @frostming/marko. This is not enabled by default and requires the caller to specify the
