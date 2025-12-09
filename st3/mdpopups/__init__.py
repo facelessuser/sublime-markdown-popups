@@ -11,7 +11,7 @@ https://manual.macromates.com/en/language_grammars#naming_conventions
 import sublime
 import sublime_api
 from . import markdown
-import marko
+from . import marko
 from . import jinja2
 import traceback
 import time
