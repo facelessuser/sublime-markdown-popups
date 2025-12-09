@@ -11,7 +11,7 @@ https://manual.macromates.com/en/language_grammars#naming_conventions
 import sublime
 import sublime_api
 from . import markdown
-from .marko import Markdown as marko
+import marko
 from . import jinja2
 import traceback
 import time
@@ -301,6 +301,41 @@ class _MdWrapper(markdown.Markdown):
         return self
 
 
+class MarkoHTMLRenderer(marko.HTMLRenderer):
+    """HTML renderer adjusted for Sublime text."""
+
+    def render_list_item(self, element):
+        """Don't insert newlines right after `<li>` tag as Sublime won't render it quite right."""
+
+        return f"<li>{self.render_children(element)}</li>\n"
+
+
+class _MarkoWrapper(marko.Markdown):
+    """Marko wrapper."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize."""
+
+        if 'allow_code_wrap' in kwargs:
+            self.sublime_wrap = kwargs['allow_code_wrap']
+            del kwargs['allow_code_wrap']
+        if 'language_map' in kwargs:
+            self.sublime_map = kwargs['language_map']
+            del kwargs['language_map']
+        if 'sublime_hl' in kwargs:
+            self.sublime_hl = kwargs['sublime_hl']
+            del kwargs['sublime_hl']
+
+        kwargs['renderer'] = MarkoHTMLRenderer
+        kwargs['extensions'][0] = make_extension(self.sublime_hl, self.sublime_wrap, self.sublime_map)
+        try:
+            idx = kwargs['extensions'].index('gfm')
+            kwargs['extensions'][idx] = GFM
+        except ValueError:
+            pass
+        super().__init__(*args, **kwargs)
+
+
 def _get_theme(view, css=None, css_type=POPUP, template_vars=None):
     """Get the theme."""
 
@@ -493,13 +528,12 @@ def md2html(
                 elif isinstance(ext, str):
                     if not ext.startswith('mdpopups.'):
                         extensions.append(ext)
-        extensions[0] = make_extension(sublime_hl[1], fm.get('allow_code_wrap', False), fm.get('language_map', {}))
-        try:
-            idx = extensions.index('gfm')
-            extensions[idx] = GFM
-        except ValueError:
-            pass
-        return marko(extensions=extensions).convert(_markup_template(markup, template_vars, template_env_options))
+        return _MarkoWrapper(
+            extensions=extensions,
+            sublime_hl=sublime_hl[1],
+            allow_code_wrap=fm.get('allow_code_wrap', False),
+            language_map=fm.get('language_map', {})
+        ).convert(_markup_template(markup, template_vars, template_env_options))
 
     # No parser found
     _log(f'Unknown parser: {parser}')

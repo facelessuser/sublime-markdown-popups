@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.2
+
+-   **FIX**: Provide workaround Sublime quirk when rendering `<li>` tags that start with non-function newlines in.
+    This targets the Marko parser specifically.
+
 ## 5.0.1
 
 -   **FIX**: Fix some cases where code wrap wasn't respected.
