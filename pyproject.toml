@@ -98,7 +98,7 @@ legacy_tox_ini = """
     [tox]
     skipsdist=True
     envlist =
-        py36,py37,py38,py39,lint
+        py38,py313,lint
 
     [testenv]
     deps=

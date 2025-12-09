@@ -1,0 +1,27 @@
+name: publish release
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  documents:
+
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v5
+    - uses: actions/setup-python@v5
+      with:
+        python-version: 3.13
+    - name: Install dependencies
+      run: |
+        python -m pip --disable-pip-version-check --no-color install --upgrade build
+    - name: Deploy package
+      run: |
+        version=$(cd mdpopups && python -c "import version;print(version.__version__)")
+        python -m build --wheel
+        gh release create --generate-notes --latest -t ${version} ${version} dist/*.whl
