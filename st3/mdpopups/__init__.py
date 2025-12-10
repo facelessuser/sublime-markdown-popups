@@ -13,6 +13,7 @@ import sublime_api
 from . import markdown
 from . import marko
 from . import jinja2
+from .markdown.core import logger
 import traceback
 import time
 import codecs
@@ -24,6 +25,7 @@ import functools
 import base64
 from . import version as ver
 from . import colorbox
+from importlib import import_module
 from collections import OrderedDict
 from .st_scheme_template import SchemeTemplate, POPUP, PHANTOM, SHEET
 from .st_clean_css import clean_css
@@ -300,6 +302,58 @@ class _MdWrapper(markdown.Markdown):
 
         return self
 
+    def build_extension(self, ext_name, configs):
+        """
+        Build extension from a string name, then return an instance using the given `configs`.
+
+        Arguments:
+            ext_name: Name of extension as a string.
+            configs: Configuration settings for extension.
+
+        Returns:
+            An instance of the extension with the given configuration settings.
+
+        First attempt to load an entry point. The string name must be registered as an entry point in the
+        `markdown.extensions` group which points to a subclass of the [`markdown.extensions.Extension`][] class.
+        If multiple distributions have registered the same name, the first one found is returned.
+
+        If no entry point is found, assume dot notation (`path.to.module:ClassName`). Load the specified class and
+        return an instance. If no class is specified, import the module and call a `makeExtension` function and return
+        the [`markdown.extensions.Extension`][] instance returned by that function.
+        """
+        configs = dict(configs)
+
+        # Get class name (if provided): `path.to.module:ClassName`
+        ext_name, class_name = ext_name.split(':', 1) if ':' in ext_name else (ext_name, '')
+
+        try:
+            if ext_name.startswith('markdown.extensions.'):
+                ext_name = ext_name.replace('markdown.extensions.', 'mdpopups.markdown.extensions.', 1)
+            if ext_name.startswith('pymdownx.'):
+                ext_name = ext_name.replace('pymdownx.', 'mdpopups.pymdownx.', 1)
+            module = import_module(ext_name)
+            logger.debug(
+                'Successfully imported extension module "%s".' % ext_name
+            )
+        except ImportError as e:
+            message = 'Failed loading extension "%s".' % ext_name
+            e.args = (message,) + e.args[1:]
+            raise
+
+        if class_name:
+            # Load given class name from module.
+            return getattr(module, class_name)(**configs)
+        else:
+            # Expect  `makeExtension()` function to return a class.
+            try:
+                return module.makeExtension(**configs)
+            except AttributeError as e:
+                message = e.args[0]
+                message = "Failed to initiate extension " \
+                          "'%s': %s" % (ext_name, message)
+                e.args = (message,) + e.args[1:]
+                raise
+
 
 class MarkoHTMLRenderer(marko.HTMLRenderer):
     """HTML renderer adjusted for Sublime text."""
@@ -334,6 +388,57 @@ class _MarkoWrapper(marko.Markdown):
         except ValueError:
             pass
         super().__init__(*args, **kwargs)
+
+    def load_extension(self, name, **kwargs):
+        """
+        Load extension object from a string.
+
+        First try `marko.ext.<name>` if possible.
+        """
+        module = None
+        if "." not in name:
+            try:
+                module = import_module(f"mdpopups.marko.ext.{name}")
+            except ImportError:
+                pass
+        if module is None:
+            if not name.startswith('mdpopups.'):
+                name = 'mdpopups.' + name
+            try:
+                module = import_module(name)
+            except ImportError as e:
+                raise ImportError(f"Extension {name} cannot be imported") from e
+
+        try:
+            return module.make_extension(**kwargs)
+        except AttributeError:
+            raise AttributeError(
+                f"Module {name} does not have 'make_extension' attributte."
+            ) from None
+
+    def use(self, *extensions):
+        r"""
+        Register extensions to Markdown object.
+
+        An extension should be either an object providing ``elements``, `parser_mixins``
+        , ``renderer_mixins`` or all attributes, or a string representing the
+        corresponding extension in ``marko.ext`` module.
+
+        :param \*extensions: string or :class:`marko.helpers.MarkoExtension` object.
+
+        .. note:: Marko uses a mixin based extension system, the order of extensions
+            matters: An extension preceding in order will have higher priority.
+        """
+
+        if self._setup_done:
+            raise marko.SetupDone()
+        for extension in extensions:
+            if isinstance(extension, str):
+                extension = self.load_extension(extension)
+
+            self._parser_mixins = extension.parser_mixins + self._parser_mixins
+            self._renderer_mixins = extension.renderer_mixins + self._renderer_mixins
+            self._extra_elements.extend(extension.elements)
 
 
 def _get_theme(view, css=None, css_type=POPUP, template_vars=None):

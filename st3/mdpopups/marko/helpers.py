@@ -119,12 +119,10 @@ def load_extension(name: str, **kwargs: Any) -> MarkoExtension:
     module = None
     if "." not in name:
         try:
-            module = import_module(f"mdpopups.marko.ext.{name}")
+            module = import_module(f"marko.ext.{name}")
         except ImportError:
             pass
     if module is None:
-        if not name.startswith('mdpopups.'):
-            name = 'mdpopups.' + name
         try:
             module = import_module(name)
         except ImportError as e:
@@ -136,7 +134,6 @@ def load_extension(name: str, **kwargs: Any) -> MarkoExtension:
         raise AttributeError(
             f"Module {name} does not have 'make_extension' attributte."
         ) from None
-
 
 class _RendererDispatcher:
     name: str

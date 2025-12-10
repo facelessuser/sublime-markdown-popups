@@ -55,6 +55,7 @@ YAML
 async
 builtins
 callouts
+configs
 deprecations
 desaturate
 docstring
@@ -82,11 +83,13 @@ matcher
 mdpopup
 mdpopups
 minihtml
+mixin
 mkdocs
 monospace
 namespace
 namespaced
 overlayed
+param
 parsers
 pha
 phil

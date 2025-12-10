@@ -213,19 +213,15 @@ class Markdown:
         """
         configs = dict(configs)
 
-        # entry_points = [ep for ep in pkg_resources.iter_entry_points('markdown.extensions', ext_name)]
-        # if entry_points:
-        #     ext = entry_points[0].load()
-        #     return ext(**configs)
+        entry_points = [ep for ep in util.get_installed_extensions() if ep.name == ext_name]
+        if entry_points:
+            ext = entry_points[0].load()
+            return ext(**configs)
 
         # Get class name (if provided): `path.to.module:ClassName`
         ext_name, class_name = ext_name.split(':', 1) if ':' in ext_name else (ext_name, '')
 
         try:
-            if ext_name.startswith('markdown.extensions.'):
-                ext_name = ext_name.replace('markdown.extensions.', 'mdpopups.markdown.extensions.', 1)
-            if ext_name.startswith('pymdownx.'):
-                ext_name = ext_name.replace('pymdownx.', 'mdpopups.pymdownx.', 1)
             module = importlib.import_module(ext_name)
             logger.debug(
                 'Successfully imported extension module "%s".' % ext_name

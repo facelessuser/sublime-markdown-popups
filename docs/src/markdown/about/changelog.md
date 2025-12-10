@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.3
+
+-   **FIX**: Make maintenance easier by moving adjusted import logic for Markdown plugins up into MdPopups main code
+    instead of keeping the modifications in the bundled libraries.
+
 ## 5.0.2
 
 -   **FIX**: Provide workaround Sublime quirk when rendering `<li>` tags that start with non-function newlines in.
