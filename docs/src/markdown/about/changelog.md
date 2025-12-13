@@ -1,14 +1,11 @@
 # Changelog
 
-## 5.0.4
-
--   **FIX**: Fix lint issues.
--   **CHORE**: Move to wheel releases.
-
 ## 5.0.3
 
+-   **FIX**: Fix lint issues.
 -   **FIX**: Make maintenance easier by moving adjusted import logic for Markdown plugins up into MdPopups main code
     instead of keeping the modifications in the bundled libraries.
+-   **CHORE**: Move to wheel releases.
 
 ## 5.0.2
 
