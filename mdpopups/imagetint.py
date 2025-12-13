@@ -14,7 +14,7 @@ def tint_raw(byte_string, color, opacity=255):
     """Tint the image and return a byte string."""
 
     # Read the byte string as a RGBA image.
-    width, height, pixels, meta = Reader(bytes=byte_string).asRGBA()
+    width, height, pixels, _ = Reader(bytes=byte_string).asRGBA()
 
     # Clamp opacity
     if opacity < 0:
@@ -29,7 +29,7 @@ def tint_raw(byte_string, color, opacity=255):
         p.append([])
         columns = int(len(row) / 4)
         start = 0
-        for x in range(columns):
+        for _ in range(columns):
             rgba = Color(color)
             rgba['alpha'] = opacity / 255.0
             rgba.overlay(background='#{:02X}{:02X}{:02X}FF'.format(*row[start:start + 3]))

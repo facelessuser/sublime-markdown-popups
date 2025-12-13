@@ -4,6 +4,7 @@
 # docs
 docs/html/
 site/
+build/
 
 # editors
 .sublime/
