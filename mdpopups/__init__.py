@@ -703,8 +703,8 @@ def get_language_from_view(view):
     syntax = os.path.splitext(view.settings().get('syntax').replace('Packages/', '', 1))[0]
     keys = set(list(lang_map.keys()) + list(user_map.keys()))
     for key in keys:
-        v1 = lang_map.get(key, (tuple(), tuple()))[1]
-        v2 = user_map.get(key, (tuple(), tuple()))[1]
+        v1 = lang_map.get(key, ((), ()))[1]
+        v2 = user_map.get(key, ((), ()))[1]
         if syntax in (tuple(v2) + v1):
             lang = key
             break

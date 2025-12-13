@@ -28,7 +28,7 @@ def clean_css(text, preserve_lines=False):
     def remove_comments(group, preserve_lines=False):
         """Remove comments."""
 
-        return ''.join([x[0] for x in LINE_PRESERVE.findall(group)]) if preserve_lines else ''
+        return ''.join(x[0] for x in LINE_PRESERVE.findall(group)) if preserve_lines else ''
 
     def evaluate(m, preserve_lines):
         """Search for comments."""
@@ -36,4 +36,4 @@ def clean_css(text, preserve_lines=False):
         g = m.groupdict()
         return g["code"] if g["code"] is not None else remove_comments(g["comments"], preserve_lines)
 
-    return ''.join(map(lambda m: evaluate(m, preserve_lines), CSS_PATTERN.finditer(text.replace('\r', ''))))
+    return ''.join(evaluate(m, preserve_lines) for m in CSS_PATTERN.finditer(text.replace('\r', '')))
