@@ -525,7 +525,7 @@ class Highlight(object):
             if id_str:  # pragma: no cover
                 attributes['id'] = id_str
             for k, v in attrs:  # pragma: no cover
-                attributes[k] = v
+                attributes[k] = v  # noqa: PERF403
 
             el = etree.Element('code', attributes)
             el.text = code
@@ -605,7 +605,7 @@ class HighlightExtension(Extension):
         if target is None:
             target = {}
             config_clone = copy.deepcopy(DEFAULT_CONFIG)
-            for k, v in config_clone.items():
+            for k in config_clone.keys():
                 target[k] = config_clone[k][0]
 
         return target

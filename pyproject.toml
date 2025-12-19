@@ -1,0 +1,131 @@
+[project]
+name = "mdpopups"
+dynamic = ["version"]
+description = "Markdown popup library for Sublime"
+readme = "README.md"
+license = {file = "LICENSE.md"}
+authors = [
+    { name = "Isaac Muse", email = "Isaac.Muse@gmail.com" },
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">= 3.3"
+
+[project.urls]
+Homepage = "https://github.com/facelessuser/sublime-markdown-popups"
+
+[build-system]
+requires = ["hatchling>=1.28"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "code"
+path = "mdpopups/version.py"
+
+[tool.hatch.build.targets.wheel]
+include = [
+    "/mdpopups",
+]
+
+[tool.ruff]
+line-length = 120
+
+target-version = "py38"
+
+extend-exclude = [
+    "mdpopups/coloraide/*",
+    "mdpopups/jinja2/*",
+    "mdpopups/markdown/*",
+    "mdpopups/markupsafe/*",
+    "mdpopups/pygments/*",
+    "mdpopups/pymdownx/*",
+    "mdpopups/yaml/*",
+    "mdpopups/png.py",
+    "site/*",
+]
+
+lint.select = [
+    "A",    # flake8-builtins
+    "B",    # flake8-bugbear
+    "D",    # pydocstyle
+    "C4",   # flake8-comprehensions
+    "N",    # pep8-naming
+    "E",    # pycodestyle
+    "F",    # pyflakes
+    "PGH",  # pygrep-hooks
+    "RUF",  # ruff
+    # "UP",   # pyupgrade
+    "W",    # pycodestyle
+    "YTT",  # flake8-2020,
+    "PERF"  # Perflint
+]
+
+lint.ignore = [
+    "B905",
+    "D202",
+    "D203",
+    "D212",
+    "D401",
+    "D405",
+    "D412",
+    "D413",
+    "E731",
+    "E741",
+    "N801",
+    "N802",
+    "N803",
+    "N806",
+    "N813",
+    "N818",
+    "PGH004",
+    "RUF002",
+    "RUF005",
+    "RUF012",
+    "RUF022",
+    "RUF023",
+    "RUF100"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "@overload"
+]
+
+[tool.tox]
+legacy_tox_ini = """
+    [tox]
+    skipsdist=True
+    envlist =
+        py38,py313,lint
+
+    [testenv]
+    deps=
+        pytest
+    commands=
+        py.test tests
+
+    [testenv:documents]
+    deps=
+        -rdocs/src/requirements.txt
+    commands=
+        mkdocs build --clean --verbose --strict
+        "{envpython}" -m pyspelling
+
+    [testenv:lint]
+    deps=
+        ruff
+    commands=
+        "{envbindir}"/ruff check .
+
+    [flake8]
+    ignore=D202,D203,D401,N802,E741,W504,N813,D412,N818
+    max-line-length=120
+    exclude=mdpopups/png.py,site/*.py,.tox/*,mdpopups/coloraide/*,mdpopups/yaml/*,\
+            mdpopups/markupsafe/*,mdpopups/jinja2/*,mdpopups/markdown/*,mdpopups/pymdownx/*,\
+            mdpopups/pygments/*
+"""

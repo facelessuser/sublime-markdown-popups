@@ -233,9 +233,9 @@ class SublimeHighlight(object):
         keys = set(user_map.keys()) | (set(plugin_map.keys()) | set(lang_map.keys()))
         loaded = False
         for key in keys:
-            v = lang_map.get(key, (tuple(), tuple()))
-            plugin_v = plugin_map.get(key, (tuple(), tuple()))
-            user_v = user_map.get(key, (tuple(), tuple()))
+            v = lang_map.get(key, ((), ()))
+            plugin_v = plugin_map.get(key, ((), ()))
+            user_v = user_map.get(key, ((), ()))
             if lang in (tuple(user_v[0]) + plugin_v[0] + v[0]):
                 for l in (tuple(user_v[1]) + plugin_v[1] + v[1]):
                     if l.startswith('scope:'):
@@ -285,8 +285,11 @@ class SublimeHighlight(object):
                     continue
                 self.view.assign_syntax(syntax_file)
 
-    def syntax_highlight(self, src, lang, hl_lines=[], inline=False, no_wrap=False, code_wrap=False, plugin_map=None):
+    def syntax_highlight(self, src, lang, hl_lines=None, inline=False, no_wrap=False, code_wrap=False, plugin_map=None):
         """Syntax Highlight."""
+
+        if hl_lines is None:
+            hl_lines = []
 
         self.set_view(RE_TAIL.sub('', src), 'text' if not lang else lang, plugin_map)
         self.defaults = self.view.style()

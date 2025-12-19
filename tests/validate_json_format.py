@@ -134,8 +134,7 @@ class CheckJsonFormat(object):
                 text = g["code"]
             return text
 
-        content = ''.join(map(lambda m: evaluate(m), RE_COMMENT.finditer(text)))
-        return content
+        return ''.join(evaluate(m) for m in RE_COMMENT.finditer(text))
 
     def check_dangling_commas(self, text):
         """
@@ -156,7 +155,7 @@ class CheckJsonFormat(object):
             g = m.groupdict()
             return check_comma(g, m, self.get_line(m.start(0))) if g["code"] is None else g["code"]
 
-        return ''.join(map(lambda m: evaluate(m), RE_TRAILING_COMMA.finditer(text)))
+        return ''.join(evaluate(m) for m in RE_TRAILING_COMMA.finditer(text))
 
     def log_failure(self, code, line=None):
         """

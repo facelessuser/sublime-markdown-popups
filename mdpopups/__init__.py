@@ -293,7 +293,7 @@ class _MdWrapper(markdown.Markdown):
                             ext.__class__.__module__, ext.__class__.__name__
                         )
                     )
-            except Exception:
+            except Exception:  # noqa: PERF203
                 # We want to gracefully continue even if an extension fails.
                 _log('Failed to load markdown module!')
                 _debug(traceback.format_exc(), ERROR)
@@ -537,8 +537,8 @@ def get_language_from_view(view):
     syntax = os.path.splitext(view.settings().get('syntax').replace('Packages/', '', 1))[0]
     keys = set(list(lang_map.keys()) + list(user_map.keys()))
     for key in keys:
-        v1 = lang_map.get(key, (tuple(), tuple()))[1]
-        v2 = user_map.get(key, (tuple(), tuple()))[1]
+        v1 = lang_map.get(key, ((), ()))[1]
+        v2 = user_map.get(key, ((), ()))[1]
         if syntax in (tuple(v2) + v1):
             lang = key
             break
