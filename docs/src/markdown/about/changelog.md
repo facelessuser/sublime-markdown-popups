@@ -26,6 +26,10 @@
     admonition to trigger default styling.
 -   **NEW**: Add optional CommonMark support via the Marko library using the new frontmatter option `markdown_parser`.
 
+## 4.3.3
+
+-   **CHORE**: Move to wheel releases.
+
 ## 4.3.2
 
 -   **FIX**: Avoid calling `sublime.load_binary_resource` when the file doesn't exist as Sublime will sometimes crash
