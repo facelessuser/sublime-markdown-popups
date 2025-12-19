@@ -52,7 +52,7 @@ def _strip_regex(pattern, text, preserve_lines):
         g = m.groupdict()
         return g["code"] if g["code"] is not None else remove_comments(g["comments"], preserve_lines)
 
-    return ''.join(map(lambda m: evaluate(m, preserve_lines), pattern.finditer(text)))
+    return ''.join(evaluate(m, preserve_lines) for m in pattern.finditer(text))
 
 
 @staticmethod

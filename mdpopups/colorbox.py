@@ -160,10 +160,10 @@ def color_box_raw(
 
     # Top Border
     if border_map & TOP:
-        for x in range(0, border1_size):
+        for _ in range(0, border1_size):
             row = list(border * width)
             p.append(row)
-        for x in range(0, border2_size):
+        for _ in range(0, border2_size):
             row = []
             if border_map & LEFT and border_map & RIGHT:
                 row += list(border * border1_size)
@@ -214,7 +214,7 @@ def color_box_raw(
 
     if border_map & BOTTOM:
         # Bottom border
-        for x in range(0, border2_size):
+        for _ in range(0, border2_size):
             row = []
             if border_map & LEFT and border_map & RIGHT:
                 row += list(border * border1_size)
@@ -233,7 +233,7 @@ def color_box_raw(
             else:
                 row += list(border2 * color_width)
             p.append(row)
-        for x in range(0, border1_size):
+        for _ in range(0, border1_size):
             row = list(border * width)
             p.append(row)
 

@@ -349,7 +349,7 @@ class ColorMod:
 
         self._color = base
         pattern = "color({} {})".format(self._color.clone().clip().to_string(precision=-1), string)
-        color, start = self._adjust(pattern)
+        color, _ = self._adjust(pattern)
         if color is not None:
             self._color.update(color)
         else:
