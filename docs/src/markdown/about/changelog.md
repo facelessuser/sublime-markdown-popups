@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.0
+
+-   **NEW**: Update Marko.
+-   **NEW**: Update Pymdown Extensions.
+-   **NEW**: Update ColorAide.
+
 ## 5.0.3
 
 -   **FIX**: Fix lint issues.
