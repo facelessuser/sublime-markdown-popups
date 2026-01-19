@@ -19,7 +19,7 @@ from . import temperature
 from . import util
 from . import algebra as alg
 from .channels import ANGLE_DEG, ANGLE_RAD, ANGLE_GRAD, ANGLE_TURN, ANGLE_NULL
-from .deprecate import deprecated, warn_deprecated
+from .deprecate import warn_deprecated
 from itertools import zip_longest as zipl
 from .css import parse
 from .types import VectorLike, Vector, ColorInput
@@ -710,7 +710,11 @@ class Color(metaclass=ColorMeta):
             self._space._serialize()[0],
             ' '.join(
                 [
-                    util.fmt_float(self[i], util.DEF_PREC, util.DEF_ROUND_MODE) + POSTFIX[channels[i].angle]
+                    util.fmt_float(
+                        self[i],
+                        util.DEF_PREC,
+                        util.DEF_ROUND_MODE
+                    ) + POSTFIX[channels[i].angle if channels[i].angle and not math.isnan(self[i]) else ANGLE_NULL]
                     for i in range(l - 1)
                 ]
             ),
@@ -1172,7 +1176,6 @@ class Color(metaclass=ColorMeta):
         space: str | None = None,
         out_space: str | None = None,
         premultiplied: bool = True,
-        powerless: bool | None = None,
         **kwargs: Any
     ) -> Self:
         """Average the colors."""
@@ -1182,9 +1185,6 @@ class Color(metaclass=ColorMeta):
 
         if out_space is None:
             out_space = space
-
-        if powerless is not None:  # pragma: no cover
-            warn_deprecated("The use of 'powerless' with 'average()' is deprecated as it is now always enabled")
 
         return average.average(
             cls,
@@ -1226,35 +1226,13 @@ class Color(metaclass=ColorMeta):
 
         return [c.convert(out_space, in_place=True) for c in harmonies.harmonize(self, name, space, **kwargs)]
 
-    @deprecated('Please use the class method Color.layer([source, backdrop])')
-    def compose(
-        self,
-        backdrop: ColorInput | Sequence[ColorInput],
-        *,
-        blend: str | bool = True,
-        operator: str | bool = True,
-        space: str | None = None,
-        out_space: str | None = None,
-        in_place: bool = False
-    ) -> Self:  # pragma: no cover
-        """Blend colors using the specified blend mode."""
-
-        if not isinstance(backdrop, str) and isinstance(backdrop, Sequence):
-            colors = [self._handle_color_input(c) for c in backdrop]
-            colors.insert(0, self)
-        else:
-            colors = [self, self._handle_color_input(backdrop)]
-
-        color = compositing.compose(type(self), colors, blend, operator, space, out_space)
-        return self._hotswap(color) if in_place else color
-
     @classmethod
     def layer(
         cls,
         colors: Sequence[ColorInput],
         *,
-        blend: str | bool = True,
-        operator: str | bool = True,
+        blend: str | bool = 'normal',
+        operator: str | bool = 'source-over',
         space: str | None = None,
         out_space: str | None = None
     ) -> Self:
@@ -1264,7 +1242,19 @@ class Color(metaclass=ColorMeta):
         Colors are overlaid on each other with left being the top of the stack and right being the bottom of the stack.
         """
 
-        return compositing.compose(cls, colors, blend, operator, space, out_space)
+        if isinstance(blend, bool):
+            b = 'normal' if blend else None
+            warn_deprecated("The use of boolean values for 'blend' has been deprecated, please use a specific mode")
+        else:
+            b = blend
+
+        if isinstance(operator, bool):
+            o = 'source-over' if operator else None
+            warn_deprecated("The use of boolean values for 'blend' has been deprecated, please use a specific mode")
+        else:
+            o = operator
+
+        return compositing.compose(cls, colors, b, o, space, out_space)
 
     def delta_e(
         self,
