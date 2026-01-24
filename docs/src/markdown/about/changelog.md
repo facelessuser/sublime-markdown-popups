@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.1.1
+
+-   **NEW**: Pickup bug fix release from Python Markdown.
+-   **NEW**: Pickup bug fix release from Pymdown Extensions.
+
 ## 5.1.0
 
 -   **NEW**: Update Marko.
