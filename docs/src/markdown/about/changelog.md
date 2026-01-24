@@ -1,12 +1,8 @@
 # Changelog
 
-## 5.1.1
-
--   **NEW**: Pickup bug fix release from Python Markdown.
--   **NEW**: Pickup bug fix release from Pymdown Extensions.
-
 ## 5.1.0
 
+_   **NEW**: Update Python Markdown.
 -   **NEW**: Update Marko.
 -   **NEW**: Update Pymdown Extensions.
 -   **NEW**: Update ColorAide.
