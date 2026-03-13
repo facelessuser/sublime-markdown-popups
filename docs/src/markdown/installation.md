@@ -9,6 +9,7 @@ install and update the dependency for you.  Package Control will also ensure tha
 plugin loads.
 
 If ever you are on a older version than is currently released, and Package Control has not updated to the latest, you
-can force the update by running the `Package Control: Satisfy Dependencies` command from the command palette.
+can force the update by running the `Package Control: Satisfy Libraries` command from the command palette. If you are
+on an older version, you might find it under the name `Package Control: Satisfy Dependencies`.
 
-Remember, MdPopups is for Sublime Text 3 builds 3124+.
+Remember, MdPopups is for Sublime Text builds 3124+.
