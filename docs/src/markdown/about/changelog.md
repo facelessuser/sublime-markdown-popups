@@ -37,6 +37,10 @@
     admonition to trigger default styling.
 -   **NEW**: Add optional CommonMark support via the Marko library using the new frontmatter option `markdown_parser`.
 
+## 4.3.4
+
+-  **FIX**: Fix regression in tint API.
+
 ## 4.3.3
 
 -   **CHORE**: Move to wheel releases.
