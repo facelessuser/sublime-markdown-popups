@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.5
+
+-  **FIX**: Really fix regression in tint API.
+
 ## 4.3.4
 
 -  **FIX**: Fix regression in tint API.

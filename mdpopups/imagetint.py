@@ -33,7 +33,7 @@ def tint_raw(byte_string, color, opacity=255):
         for _ in range(columns):
             rgba = Color(color)
             rgba['alpha'] = opacity / 255.0
-            rgba.compose(background='#{:02X}{:02X}{:02X}FF'.format(*row[start:start + 3]))
+            rgba.compose(backdrop='#{:02X}{:02X}{:02X}FF'.format(*row[start:start + 3]))
             rgba.fit(in_place=True)
             p[y] += [
                 int(alg.round_half_up(rgba['red'] * 255)),
