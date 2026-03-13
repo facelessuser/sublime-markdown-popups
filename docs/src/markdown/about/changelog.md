@@ -1,8 +1,12 @@
 # Changelog
 
+## 5.1.1
+
+-   **NEW**: Fix a regression in the tint API.
+
 ## 5.1.0
 
-_   **NEW**: Update Python Markdown.
+-   **NEW**: Update Python Markdown.
 -   **NEW**: Update Marko.
 -   **NEW**: Update Pymdown Extensions.
 -   **NEW**: Update ColorAide.
