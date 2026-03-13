@@ -5,7 +5,8 @@ Licensed under MIT
 Copyright (c) 2015 - 2020 Isaac Muse <isaacmuse@gmail.com>
 """
 from .png import Reader, Writer
-from .coloraide import Color, util
+from .coloraide import Color
+from .coloraide import algebra as alg
 import base64
 import io
 
@@ -32,12 +33,12 @@ def tint_raw(byte_string, color, opacity=255):
         for _ in range(columns):
             rgba = Color(color)
             rgba['alpha'] = opacity / 255.0
-            rgba.overlay(background='#{:02X}{:02X}{:02X}FF'.format(*row[start:start + 3]))
+            rgba.compose(background='#{:02X}{:02X}{:02X}FF'.format(*row[start:start + 3]))
             rgba.fit(in_place=True)
             p[y] += [
-                int(util.round_half_up(rgba['red'] * 255)),
-                int(util.round_half_up(rgba['green'] * 255)),
-                int(util.round_half_up(rgba['blue'] * 255)),
+                int(alg.round_half_up(rgba['red'] * 255)),
+                int(alg.round_half_up(rgba['green'] * 255)),
+                int(alg.round_half_up(rgba['blue'] * 255)),
                 row[start + 3]
             ]
             start += 4
