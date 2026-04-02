@@ -840,7 +840,7 @@ class CodeGenerator(NodeVisitor):
         else:
             exported_names = sorted(exported)
 
-        self.writeline("from jinja2.runtime import " + ", ".join(exported_names))
+        self.writeline("from mdpopups.jinja2.runtime import " + ", ".join(exported_names))
 
         # if we want a deferred initialization we cannot move the
         # environment into a local name

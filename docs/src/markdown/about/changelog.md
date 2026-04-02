@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.1.2
+
+-   **FIX**: Fix `jinja2` vendoring issue.
+
 ## 5.1.1
 
 -   **NEW**: Fix a regression in the tint API.

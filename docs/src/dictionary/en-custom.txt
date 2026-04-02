@@ -119,6 +119,7 @@ tuple
 unescaping
 unsaturate
 vendored
+vendoring
 versa
 webcolor
 whitespace
