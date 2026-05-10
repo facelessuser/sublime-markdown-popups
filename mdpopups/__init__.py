@@ -16,7 +16,6 @@ from . import jinja2
 from .markdown.core import logger
 import traceback
 import time
-import codecs
 import html
 import html.parser
 import sys
@@ -216,7 +215,7 @@ def _get_default_css():
 
     css = ''
     try:
-        with codecs.open(DEFAULT_CSS_PATH, encoding='utf-8') as f:
+        with open(DEFAULT_CSS_PATH, encoding='utf-8', errors='strict') as f:
             css = clean_css(f.read())
     except Exception:
         pass

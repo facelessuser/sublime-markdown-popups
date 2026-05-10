@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.1.3
+
+-   **FIX**: Fix `codecs` deprecation warnings in core `mdpopups` code. Some may still exist in dependencies.
+-   **FIX**: Upgrade Python Markdown version for general bug fixes.
+
 ## 5.1.2
 
 -   **FIX**: Fix `jinja2` vendoring issue.

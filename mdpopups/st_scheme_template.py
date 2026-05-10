@@ -24,7 +24,6 @@ from .pygments.formatters import HtmlFormatter
 from collections import OrderedDict
 from .st_clean_css import clean_css
 import copy
-import codecs
 import os
 
 LOCATION = os.path.dirname(os.path.abspath(__file__))
@@ -359,7 +358,7 @@ class SchemeTemplate(object):
             if css == DEFAULT_CSS:
                 css = ''
                 try:
-                    with codecs.open(DEFAULT_CSS_PATH, encoding='utf-8') as f:
+                    with open(DEFAULT_CSS_PATH, encoding='utf-8', errors='strict') as f:
                         css = clean_css(f.read())
                 except Exception:
                     pass

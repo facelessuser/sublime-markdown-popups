@@ -5,7 +5,6 @@ Licensed under MIT
 Copyright (c) 2012-2015 Isaac Muse <isaacmuse@gmail.com>
 """
 import re
-import codecs
 import json
 
 RE_LINE_PRESERVE = re.compile(r"\r?\n", re.MULTILINE)
@@ -175,7 +174,7 @@ class CheckJsonFormat(object):
 
         self.fail = False
         comment_align = None
-        with codecs.open(file_name, encoding='utf-8') as f:
+        with open(file_name, encoding='utf-8', errors='strict') as f:
             count = 1
             for line in f:
                 indent_match = (RE_LINE_INDENT_TAB if self.use_tabs else RE_LINE_INDENT_SPACE).match(line)
