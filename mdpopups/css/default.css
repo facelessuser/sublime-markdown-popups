@@ -5,7 +5,11 @@ html {
   --mdpopups-del: var(--redish);
   --mdpopups-kbd-fg: var(--background);
   --mdpopups-kbd-bg: var(--foreground);
+{%- if var.font_mono %}
+  --mdpopups-font-mono: "{{ var.font_mono }}", "sf mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+{%- else %}
   --mdpopups-font-mono: "sf mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+{%- endif %}
   /* New admonition colors */
   --mdpopups-admon-fg: var(--foreground);
   --mdpopups-admon-note-fg: var(--foreground);
