@@ -2,9 +2,10 @@
 from . import yaml
 import re
 from collections import OrderedDict
+from typing import Any, cast
 
 
-def yaml_load(stream, loader=yaml.Loader, object_pairs_hook=OrderedDict):
+def yaml_load(stream: str, loader: type[yaml.Loader] = yaml.Loader, object_pairs_hook: type[object] = OrderedDict):
     """
     Custom YAML loader.
 
@@ -42,7 +43,7 @@ def yaml_load(stream, loader=yaml.Loader, object_pairs_hook=OrderedDict):
     return yaml.load(stream, Loader)
 
 
-def yaml_dump(data, stream=None, dumper=yaml.Dumper):
+def yaml_dump(data: dict[Any, Any], stream: Any = None, dumper: type[yaml.Dumper] = yaml.Dumper) -> str:
     """Special dumper wrapper to modify the YAML dumper."""
 
     class Dumper(dumper):
@@ -54,16 +55,19 @@ def yaml_dump(data, stream=None, dumper=yaml.Dumper):
         lambda self, data: self.represent_mapping('tag:yaml.org,2002:map', data.items())
     )
 
-    return yaml.dump(data, stream, Dumper, width=None, indent=4, allow_unicode=True, default_flow_style=False)
+    return cast(
+        str,
+        yaml.dump(data, stream, Dumper, width=None, indent=4, allow_unicode=True, default_flow_style=False)
+    )
 
 
-def dump_frontmatter(values) -> str:
+def dump_frontmatter(values: Any) -> str:
     """Turn Python dict values to frontmatter string."""
 
     return '---\n{}\n...\n'.format(yaml_dump(values))
 
 
-def get_frontmatter(string):
+def get_frontmatter(string: str) -> tuple[Any, str]:
     """Get frontmatter from string."""
 
     frontmatter = OrderedDict()

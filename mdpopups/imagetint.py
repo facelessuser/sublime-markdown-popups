@@ -7,11 +7,16 @@ Copyright (c) 2015 - 2020 Isaac Muse <isaacmuse@gmail.com>
 from .png import Reader, Writer
 from .coloraide import Color
 from .coloraide import algebra as alg
+from .coloraide.types import ColorInput
 import base64
 import io
 
 
-def tint_raw(byte_string, color, opacity=255) -> bytes:
+def tint_raw(
+    byte_string: bytes,
+    color: ColorInput,
+    opacity: int = 255
+) -> bytes:
     """Tint the image and return a byte string."""
 
     # Read the byte string as a RGBA image.
@@ -57,7 +62,13 @@ def tint_raw(byte_string, color, opacity=255) -> bytes:
         return f.read()
 
 
-def tint(byte_string, color, opacity=255, height=None, width=None) -> str:
+def tint(
+    byte_string: bytes,
+    color: ColorInput,
+    opacity: int = 255,
+    height: int | None =None,
+    width: int | None = None
+) -> str:
     """Base64 encode the tint."""
 
     style = ''

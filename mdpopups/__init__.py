@@ -723,7 +723,7 @@ def tint(
 
     if isinstance(img, str):
         try:
-            img = sublime.load_binary_resource(img)
+            return imagetint.tint(sublime.load_binary_resource(img), color, opacity, height, width)
         except Exception:
             _log('Could not open binary file!')
             _debug(traceback.format_exc(), ERROR)
@@ -740,7 +740,7 @@ def tint_raw(
 
     if isinstance(img, str):
         try:
-            img = sublime.load_binary_resource(img)
+            return imagetint.tint_raw(sublime.load_binary_resource(img), color, opacity)
         except Exception:
             _log('Could not open binary file!')
             _debug(traceback.format_exc(), ERROR)
@@ -1230,8 +1230,10 @@ class _ImageResolver:
         value: tuple[Exception | str, str | None]
         if exception:
             value = (exception, None)
+        elif data is not None:
+            value = (base64.b64encode(data).decode("ascii"), mime)
         else:
-            value = (base64.b64encode(cast(bytes, data)).decode("ascii"), mime)
+            value = (RuntimeError('Image data could not be resolved'), None)
         self.resolved[url] = value
         if len(self.resolved) == len(self.images_to_resolve):
             self.finalize()
