@@ -73,6 +73,10 @@ ERROR = 1
 WARNING = 2
 INFO = 3
 
+OnDoneCallback = Callable[[str], None]
+ResolverDoneCallback = Callable[[bytes | None, str | None, Exception | None], None]
+ResolverCallBack = Callable[[str, ResolverDoneCallback], None]
+
 
 def _log(msg: str) -> None:
     """Log."""
@@ -885,7 +889,7 @@ def show_popup(
     location: int = -1,
     max_width: int = 320,
     max_height: int = 240,
-    on_navigate: Callable[[str], None] | None = None,
+    on_navigate: OnDoneCallback | None = None,
     on_hide: Callable[[str], None] | None = None,
     wrapper_class: str | None = None,
     template_vars: dict[str, Any] | None = None,
@@ -931,7 +935,7 @@ def add_phantom(
     layout: sublime.PhantomLayout,
     md: bool = True,
     css: str | None = None,
-    on_navigate: Callable[[str], None] | None = None,
+    on_navigate: OnDoneCallback | None = None,
     wrapper_class: str | None = None,
     template_vars: dict[str, Any] | None = None,
     template_env_options: dict[str, Any] | None = None,
@@ -1050,7 +1054,7 @@ class Phantom(sublime.Phantom):  # type: ignore[misc]
         layout: sublime.PhantomLayout,
         md: bool = True,
         css: str | None = None,
-        on_navigate: Callable[[str], None] | None = None,
+        on_navigate: OnDoneCallback | None = None,
         wrapper_class: str | None = None,
         template_vars: dict[str, Any] | None = None,
         template_env_options: dict[str, Any] | None = None,
@@ -1202,8 +1206,8 @@ class _ImageResolver:
     def __init__(
         self,
         minihtml: str,
-        resolver: Callable[[str, Callable[[bytes | None, str | None, Exception | None], None]], None],
-        done_callback: Callable[[str], None],
+        resolver: ResolverCallBack,
+        done_callback: OnDoneCallback,
         images_to_resolve: dict[str, list[tuple[int, int]]]
     ) -> None:
         """The constructor."""
@@ -1297,7 +1301,7 @@ def _retrieve(url: str) -> tuple[bytes, str]:
 
 def blocking_resolver(
     url: str,
-    done: Callable[[bytes | None, str | None, Exception | None], None]
+    done: ResolverDoneCallback
 ) -> None:
     """A simple URL resolver that will block the caller."""
 
@@ -1316,13 +1320,13 @@ def blocking_resolver(
         done(None, None, RuntimeError("failed to retrieve image"))
 
 
-def ui_thread_resolver(url: str, done: Callable[[bytes | None, str | None, Exception | None], None]) -> None:
+def ui_thread_resolver(url: str, done: ResolverDoneCallback) -> None:
     """A URL resolver that runs on the main thread."""
 
     sublime.set_timeout(lambda: blocking_resolver(url, done))
 
 
-def worker_thread_resolver(url: str, done: Callable[[bytes | None, str | None, Exception | None], None]) -> None:
+def worker_thread_resolver(url: str, done: ResolverDoneCallback) -> None:
     """A URL resolver that runs on the worker ("async") thread of Sublime Text."""
 
     sublime.set_timeout_async(lambda: blocking_resolver(url, done))
@@ -1330,8 +1334,8 @@ def worker_thread_resolver(url: str, done: Callable[[bytes | None, str | None, E
 
 def resolve_images(
     minihtml: str,
-    resolver: Callable[[str, Callable[[bytes | None, str | None, Exception | None], None]], None],
-    on_done: Callable[[str], None]
+    resolver: ResolverCallBack,
+    on_done: OnDoneCallback
 ) -> _ImageResolver | None:
     """
     Download images from the internet.
