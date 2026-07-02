@@ -8,10 +8,13 @@ TextMate theme to CSS.
 
 https://manual.macromates.com/en/language_grammars#naming_conventions
 """
+from __future__ import annotations
 import sublime
 import sublime_api
 from . import markdown
 from . import marko
+from .marko import block
+from .marko.helpers import MarkoExtension
 from . import jinja2
 from .markdown.core import logger
 import traceback
@@ -34,14 +37,17 @@ from .mdx.marko_highlight import make_extension
 from .mdx.marko_gfm import GFM
 from .st_mapping import lang_map
 from .coloraide import Color
+from .coloraide.types import ColorInput
+from .markdown.extensions import Extension
 from . import imagetint
 import re
 import os
 from . import frontmatter
+from typing import Any, Callable, Iterable, Iterator, Self, Mapping, cast
 try:
     import bs4
 except Exception:
-    bs4 = None
+    bs4 = None  # type: ignore[assignment, unused-ignore]
 
 LOCATION = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_CSS_PATH = os.path.join(LOCATION, 'css', 'default.css')
@@ -67,27 +73,31 @@ ERROR = 1
 WARNING = 2
 INFO = 3
 
+OnDoneCallback = Callable[[str], None]
+ResolverDoneCallback = Callable[[bytes | None, str | None, Exception | None], None]
+ResolverCallBack = Callable[[str, ResolverDoneCallback], None]
 
-def _log(msg):
+
+def _log(msg: str) -> None:
     """Log."""
 
     print('mdpopups: {}'.format(str(msg)))
 
 
-def _debug(msg, level):
+def _debug(msg: str, level: int) -> None:
     """Debug log."""
 
     if int(_get_setting('mdpopups.debug', NODEBUG)) >= level:
         _log(msg)
 
 
-def _get_setting(name, default=None):
+def _get_setting(name: str, default: Any = None) -> Any:
     """Get the Sublime setting."""
 
     return sublime.load_settings('Preferences.sublime-settings').get(name, default)
 
 
-def _can_show(view, location=-1):
+def _can_show(view: sublime.View, location: int = -1) -> bool:
     """
     Check if popup can be shown.
 
@@ -122,11 +132,11 @@ else:
 ##############################
 # Theme/Scheme cache management
 ##############################
-_scheme_cache = OrderedDict()
-_highlighter_cache = OrderedDict()
+_scheme_cache: OrderedDict[str, tuple[SchemeTemplate, str, str, float]] = OrderedDict()
+_highlighter_cache: OrderedDict[str, tuple[SublimeHighlight, float]] = OrderedDict()
 
 
-def _clear_cache():
+def _clear_cache() -> None:
     """Clear the CSS cache."""
 
     global _scheme_cache
@@ -135,7 +145,7 @@ def _clear_cache():
     _highlighter_cache = OrderedDict()
 
 
-def _is_cache_expired(cache_time):
+def _is_cache_expired(cache_time: float) -> bool:
     """Check if the cache entry is expired."""
 
     delta_time = _get_setting('mdpopups.cache_refresh_time', 30)
@@ -144,7 +154,7 @@ def _is_cache_expired(cache_time):
     return delta_time == 0 or (time.time() - cache_time) >= (delta_time * 60)
 
 
-def _prune_cache():
+def _prune_cache() -> None:
     """Prune older items in cache (related to when they were inserted)."""
 
     limit = _get_setting('mdpopups.cache_limit', 10)
@@ -156,7 +166,7 @@ def _prune_cache():
         _highlighter_cache.popitem(last=True)
 
 
-def _get_sublime_highlighter(view):
+def _get_sublime_highlighter(view: sublime.View) -> SublimeHighlight | None:
     """Get the `SublimeHighlighter` object."""
 
     scheme = view.settings().get('color_scheme')
@@ -178,7 +188,7 @@ def _get_sublime_highlighter(view):
     return obj
 
 
-def _get_scheme(scheme):
+def _get_scheme(scheme: str | None) -> tuple[SchemeTemplate | None, str, str]:
     """Get the scheme object and user CSS."""
 
     settings = sublime.load_settings("Preferences.sublime-settings")
@@ -210,7 +220,7 @@ def _get_scheme(scheme):
     return obj, user_css, default_css
 
 
-def _get_default_css():
+def _get_default_css() -> str:
     """Get default CSS."""
 
     css = ''
@@ -223,7 +233,7 @@ def _get_default_css():
     return css
 
 
-def _get_user_css():
+def _get_user_css() -> str:
     """Get user CSS."""
 
     css = None
@@ -251,9 +261,9 @@ class _MdWrapper(markdown.Markdown):
     This allows us to gracefully continue when a module doesn't load.
     """
 
-    Meta = {}
+    Meta: Mapping[str, Any] = {}
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         """Call original initialization."""
 
         if 'allow_code_wrap' in kwargs:
@@ -268,7 +278,7 @@ class _MdWrapper(markdown.Markdown):
 
         super(_MdWrapper, self).__init__(*args, **kwargs)
 
-    def registerExtensions(self, extensions, configs):  # noqa
+    def registerExtensions(self, extensions: Iterable[Extension | str], configs: Mapping[str, Any]) -> Self:  # noqa
         """
         Register extensions with this instance of Markdown.
 
@@ -279,8 +289,6 @@ class _MdWrapper(markdown.Markdown):
         * `configs`: A dictionary mapping module names to configuration options.
 
         """
-
-        from .markdown.extensions import Extension
 
         for ext in extensions:
             try:
@@ -301,7 +309,7 @@ class _MdWrapper(markdown.Markdown):
 
         return self
 
-    def build_extension(self, ext_name, configs):
+    def build_extension(self, ext_name: str, configs: Mapping[str, Any]) -> Extension:
         """
         Build extension from a string name, then return an instance using the given `configs`.
 
@@ -341,11 +349,11 @@ class _MdWrapper(markdown.Markdown):
 
         if class_name:
             # Load given class name from module.
-            return getattr(module, class_name)(**configs)
+            return cast(Extension, getattr(module, class_name)(**configs))
         else:
             # Expect  `makeExtension()` function to return a class.
             try:
-                return module.makeExtension(**configs)
+                return cast(Extension, module.makeExtension(**configs))
             except AttributeError as e:
                 message = e.args[0]
                 message = "Failed to initiate extension " \
@@ -357,7 +365,7 @@ class _MdWrapper(markdown.Markdown):
 class MarkoHTMLRenderer(marko.HTMLRenderer):
     """HTML renderer adjusted for Sublime text."""
 
-    def render_list_item(self, element):
+    def render_list_item(self, element: block.ListItem) -> str:
         """Don't insert newlines right after `<li>` tag as Sublime won't render it quite right."""
 
         return f"<li>{self.render_children(element)}</li>\n"
@@ -366,7 +374,7 @@ class MarkoHTMLRenderer(marko.HTMLRenderer):
 class _MarkoWrapper(marko.Markdown):
     """Marko wrapper."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         """Initialize."""
 
         if 'allow_code_wrap' in kwargs:
@@ -388,7 +396,7 @@ class _MarkoWrapper(marko.Markdown):
             pass
         super().__init__(*args, **kwargs)
 
-    def load_extension(self, name, **kwargs):
+    def load_extension(self, name: str, **kwargs: Any) -> MarkoExtension:
         """
         Load extension object from a string.
 
@@ -409,13 +417,13 @@ class _MarkoWrapper(marko.Markdown):
                 raise ImportError(f"Extension {name} cannot be imported") from e
 
         try:
-            return module.make_extension(**kwargs)
+            return cast(MarkoExtension, module.make_extension(**kwargs))
         except AttributeError:
             raise AttributeError(
                 f"Module {name} does not have 'make_extension' attributte."
             ) from None
 
-    def use(self, *extensions):
+    def use(self, *extensions: str | MarkoExtension) -> None:
         r"""
         Register extensions to Markdown object.
 
@@ -440,7 +448,12 @@ class _MarkoWrapper(marko.Markdown):
             self._extra_elements.extend(extension.elements)
 
 
-def _get_theme(view, css=None, css_type=POPUP, template_vars=None):
+def _get_theme(
+    view: sublime.View,
+    css: str | None = None,
+    css_type: int = POPUP,
+    template_vars: dict[str, Any] | None = None
+) -> str:
     """Get the theme."""
 
     obj, user_css, default_css = _get_scheme(view.settings().get('color_scheme'))
@@ -459,10 +472,10 @@ def _get_theme(view, css=None, css_type=POPUP, template_vars=None):
         return ''
 
 
-def _remove_entities(text):
+def _remove_entities(text: str) -> str:
     """Remove unsupported HTML entities."""
 
-    def repl(m):
+    def repl(m: re.Match[str]) -> str:
         """Replace entities except &, <, >, and `nbsp`."""
         return _unescape_html(m.group(1))
 
@@ -470,9 +483,16 @@ def _remove_entities(text):
 
 
 def _create_html(
-    view, content, md=True, css=None, debug=False, css_type=POPUP,
-    wrapper_class=None, template_vars=None, template_env_options=None
-):
+    view: sublime.View,
+    content: str,
+    md: bool = True,
+    css: str | None=None,
+    debug: bool = False,
+    css_type: int = POPUP,
+    wrapper_class: str | None = None,
+    template_vars: dict[str, Any] | None = None,
+    template_env_options: dict[str, Any] | None = None
+) -> str:
     """Create HTML from content."""
 
     debug = _get_setting('mdpopups.debug', NODEBUG)
@@ -514,7 +534,11 @@ def _create_html(
     return html
 
 
-def _markup_template(markup, variables, options):
+def _markup_template(
+    markup: str,
+    variables: dict[str, Any] | None = None,
+    options: dict[str, Any] | None = None
+) -> str:
     """Template for markup."""
 
     if variables:
@@ -528,15 +552,19 @@ def _markup_template(markup, variables, options):
 ##############################
 # Public functions
 ##############################
-def version():
+def version() -> tuple[int, int, int]:
     """Get the current version."""
 
     return ver.version()
 
 
 def md2html(
-    view, markup, template_vars=None, template_env_options=None, **kwargs
-):
+    view: sublime.View,
+    markup: str,
+    template_vars: dict[str, Any] | None = None,
+    template_env_options: dict[str, Any] | None = None,
+    **kwargs: Any
+) -> str:
     """Convert Markdown to HTML."""
 
     if _get_setting('mdpopups.use_sublime_highlighter', True):
@@ -645,35 +673,57 @@ def md2html(
 
 
 def color_box(
-    colors, border="#000000ff", border2=None, height=32, width=32,
-    border_size=1, check_size=4, max_colors=5, alpha=False, border_map=0xF
-):
+    colors: list[ColorInput],
+    border: ColorInput = "#000000ff",
+    border2: ColorInput | None = None,
+    height: int = 32,
+    width: int = 32,
+    border_size: int = 1,
+    check_size: int = 1,
+    max_colors: int = 5,
+    alpha: bool = False,
+    border_map: int = 0xF
+) -> str:
     """Color box."""
 
     return colorbox.color_box(
-        [Color(c) for c in colors], Color(border), border2, height, width,
+        [Color(c) for c in colors], Color(border), border2 if border2 is None else Color(border2), height, width,
         border_size, check_size, max_colors, alpha, border_map
     )
 
 
 def color_box_raw(
-    colors, border="#000000ff", border2=None, height=32, width=32,
-    border_size=1, check_size=4, max_colors=5, alpha=False, border_map=0xF
-):
+    colors: list[ColorInput],
+    border: ColorInput = "#000000ff",
+    border2: ColorInput | None = None,
+    height: int = 32,
+    width: int = 32,
+    border_size: int = 1,
+    check_size: int = 1,
+    max_colors: int = 5,
+    alpha: bool = False,
+    border_map: int = 0xF
+) -> bytes:
     """Color box raw."""
 
     return colorbox.color_box_raw(
-        [Color(c) for c in colors], Color(border), border2, height, width,
+        [Color(c) for c in colors], Color(border), border2 if border2 is None else Color(border2), height, width,
         border_size, check_size, max_colors, alpha, border_map
     )
 
 
-def tint(img, color, opacity=255, height=None, width=None):
+def tint(
+    img: str | bytes,
+    color: ColorInput,
+    opacity: int = 255,
+    height: int | None = None,
+    width: int | None = None
+) -> str:
     """Tint the image."""
 
     if isinstance(img, str):
         try:
-            img = sublime.load_binary_resource(img)
+            return imagetint.tint(sublime.load_binary_resource(img), color, opacity, height, width)
         except Exception:
             _log('Could not open binary file!')
             _debug(traceback.format_exc(), ERROR)
@@ -681,20 +731,24 @@ def tint(img, color, opacity=255, height=None, width=None):
     return imagetint.tint(img, color, opacity, height, width)
 
 
-def tint_raw(img, color, opacity=255):
+def tint_raw(
+    img: str | bytes,
+    color: ColorInput,
+    opacity: int = 255
+) -> bytes:
     """Tint the image."""
 
     if isinstance(img, str):
         try:
-            img = sublime.load_binary_resource(img)
+            return imagetint.tint_raw(sublime.load_binary_resource(img), color, opacity)
         except Exception:
             _log('Could not open binary file!')
             _debug(traceback.format_exc(), ERROR)
-            return ''
+            return b''
     return imagetint.tint_raw(img, color, opacity)
 
 
-def get_language_from_view(view):
+def get_language_from_view(view: sublime.View) -> str | None:
     """Guess current language from view."""
 
     lang = None
@@ -710,12 +764,22 @@ def get_language_from_view(view):
     return lang
 
 
-def syntax_highlight(view, src, language=None, inline=False, allow_code_wrap=False, language_map=None):
+def syntax_highlight(
+    view: sublime.View,
+    src: str,
+    language: str | None = None,
+    inline: bool = False,
+    allow_code_wrap: bool = False,
+    language_map: dict[str, list[list[str]]] | None = None
+) -> str:
     """Syntax highlighting for code."""
 
+    code: str
     try:
         if _get_setting('mdpopups.use_sublime_highlighter', True):
             highlighter = _get_sublime_highlighter(view)
+            if highlighter is None:
+                raise Exception
             code = highlighter.syntax_highlight(
                 src, language, inline=inline, code_wrap=(not inline and allow_code_wrap), plugin_map=language_map
             )
@@ -731,7 +795,7 @@ def syntax_highlight(view, src, language=None, inline=False, allow_code_wrap=Fal
     return code
 
 
-def tabs2spaces(text, tab_size=4):
+def tabs2spaces(text: str, tab_size: int = 4) -> str:
     """
     Convert tabs to spaces on tab stops.
 
@@ -741,7 +805,12 @@ def tabs2spaces(text, tab_size=4):
     return text.expandtabs(tab_size)
 
 
-def scope2style(view, scope, selected=False, explicit_background=False):
+def scope2style(
+    view: sublime.View,
+    scope: str,
+    selected: bool = False,
+    explicit_background: bool = False
+) -> dict[str, Any]:
     """Convert the scope to a style."""
 
     style = {
@@ -750,9 +819,12 @@ def scope2style(view, scope, selected=False, explicit_background=False):
         'style': ''
     }
     obj = _get_scheme(view.settings().get('color_scheme'))[0]
-    style_obj = obj.guess_style(view, scope, selected, explicit_background)
-    style['color'] = style_obj['foreground']
-    style['background'] = style_obj['background']
+    if obj is None:
+        style_obj = {}
+    else:
+        style_obj = obj.guess_style(view, scope, selected, explicit_background)
+    style['color'] = style_obj.get('foreground', 'black')
+    style['background'] = style_obj.get('background', 'white')
     font = []
     if style_obj['bold']:
         font.append('bold')
@@ -767,22 +839,28 @@ def scope2style(view, scope, selected=False, explicit_background=False):
     return style
 
 
-def clear_cache():
+def clear_cache() -> None:
     """Clear cache."""
 
     _clear_cache()
 
 
-def hide_popup(view):
+def hide_popup(view: sublime.View) -> None:
     """Hide the popup."""
 
     view.hide_popup()
 
 
 def update_popup(
-    view, content, md=True, css=None, wrapper_class=None,
-    template_vars=None, template_env_options=None, **kwargs
-):
+    view: sublime.View,
+    content: str,
+    md: bool = True,
+    css: str | None = None,
+    wrapper_class: str | None = None,
+    template_vars: dict[str, Any] | None = None,
+    template_env_options: dict[str, Any] | None = None,
+    **kwargs: Any
+) -> None:
     """Update the popup."""
 
     disabled = _get_setting('mdpopups.disable', False)
@@ -803,11 +881,21 @@ def update_popup(
 
 
 def show_popup(
-    view, content, md=True, css=None,
-    flags=0, location=-1, max_width=320, max_height=240,
-    on_navigate=None, on_hide=None, wrapper_class=None,
-    template_vars=None, template_env_options=None, **kwargs
-):
+    view: sublime.View,
+    content: str,
+    md: bool = True,
+    css: str | None = None,
+    flags: int = 0,
+    location: int = -1,
+    max_width: int = 320,
+    max_height: int = 240,
+    on_navigate: OnDoneCallback | None = None,
+    on_hide: Callable[[str], None] | None = None,
+    wrapper_class: str | None = None,
+    template_vars: dict[str, Any] | None = None,
+    template_env_options: dict[str, Any] | None = None,
+    **kwargs: Any
+) -> None:
     """Parse the color scheme if needed and show the styled pop-up."""
 
     disabled = _get_setting('mdpopups.disable', False)
@@ -833,23 +921,32 @@ def show_popup(
     )
 
 
-def is_popup_visible(view):
+def is_popup_visible(view: sublime.View) -> bool:
     """Check if popup is visible."""
 
-    return view.is_popup_visible()
+    return cast(bool, view.is_popup_visible())
 
 
 def add_phantom(
-    view, key, region, content, layout, md=True,
-    css=None, on_navigate=None, wrapper_class=None,
-    template_vars=None, template_env_options=None, **kwargs
-):
+    view: sublime.View,
+    key: str,
+    region: sublime.Region,
+    content: str,
+    layout: sublime.PhantomLayout,
+    md: bool = True,
+    css: str | None = None,
+    on_navigate: OnDoneCallback | None = None,
+    wrapper_class: str | None = None,
+    template_vars: dict[str, Any] | None = None,
+    template_env_options: dict[str, Any] | None = None,
+    **kwargs: Any
+) -> int:
     """Add a phantom and return phantom id."""
 
     disabled = _get_setting('mdpopups.disable', False)
     if disabled:
         _debug('Phantoms disabled', WARNING)
-        return
+        return -1
 
     try:
         html = _create_html(
@@ -860,37 +957,46 @@ def add_phantom(
         _log(traceback.format_exc())
         html = IDK
 
-    return view.add_phantom(key, region, html, layout, on_navigate)
+    return cast(int, view.add_phantom(key, region, html, layout, on_navigate))
 
 
-def erase_phantoms(view, key):
+def erase_phantoms(view: sublime.View, key: str) -> None:
     """Erase phantoms."""
 
     view.erase_phantoms(key)
 
 
-def erase_phantom_by_id(view, pid):
+def erase_phantom_by_id(view: sublime.View, pid: int) -> None:
     """Erase phantom by ID."""
 
     view.erase_phantom_by_id(pid)
 
 
-def query_phantom(view, pid):
+def query_phantom(view: sublime.View, pid: int) -> sublime.Region:
     """Query phantom."""
 
     return view.query_phantom(pid)
 
 
-def query_phantoms(view, pids):
+def query_phantoms(view: sublime.View, pids: list[int]) -> list[sublime.Region]:
     """Query phantoms."""
 
-    return view.query_phantoms(pids)
+    return cast(list[sublime.Region], view.query_phantoms(pids))
 
 
 def new_html_sheet(
-    window, name, contents, md=True, css=None, flags=0, group=-1,
-    wrapper_class=None, template_vars=None, template_env_options=None, **kwargs
-):
+    window: sublime.Window,
+    name: str,
+    contents: str,
+    md: bool = True,
+    css: str | None = None,
+    flags: sublime.NewFileFlags = sublime.NewFileFlags.NONE,
+    group: int = -1,
+    wrapper_class: str | None = None,
+    template_vars: dict[str, Any] | None = None,
+    template_env_options: dict[str, Any] | None = None,
+    **kwargs: Any
+) -> sublime.HtmlSheet:
     """Create new HTML sheet."""
 
     view = window.create_output_panel('mdpopups-dummy', unlisted=True)
@@ -907,9 +1013,15 @@ def new_html_sheet(
 
 
 def update_html_sheet(
-    sheet, contents, md=True, css=None, wrapper_class=None,
-    template_vars=None, template_env_options=None, **kwargs
-):
+    sheet: sublime.HtmlSheet,
+    contents: str,
+    md: bool = True,
+    css: str | None = None,
+    wrapper_class: str | None = None,
+    template_vars: dict[str, Any] | None = None,
+    template_env_options: dict[str, Any] | None = None,
+    **kwargs: Any
+) -> None:
     """Update an HTML sheet."""
 
     window = sheet.window()
@@ -932,14 +1044,22 @@ def update_html_sheet(
     sublime_api.html_sheet_set_contents(sheet.id(), html)
 
 
-class Phantom(sublime.Phantom):
+class Phantom(sublime.Phantom):  # type: ignore[misc]
     """A phantom object."""
 
     def __init__(
-        self, region, content, layout, md=True,
-        css=None, on_navigate=None, wrapper_class=None,
-        template_vars=None, template_env_options=None, **kwargs
-    ):
+        self,
+        region: sublime.Region,
+        content: str,
+        layout: sublime.PhantomLayout,
+        md: bool = True,
+        css: str | None = None,
+        on_navigate: OnDoneCallback | None = None,
+        wrapper_class: str | None = None,
+        template_vars: dict[str, Any] | None = None,
+        template_env_options: dict[str, Any] | None = None,
+        **kwargs: Any
+    ) -> None:
         """Initialize."""
 
         super().__init__(region, content, layout, on_navigate)
@@ -949,11 +1069,12 @@ class Phantom(sublime.Phantom):
         self.template_vars = template_vars
         self.template_env_options = template_env_options
 
-    def __eq__(self, rhs):
+    def __eq__(self, rhs: sublime.Phantom) -> bool:
         """Check if phantoms are equal."""
 
         # Note that self.id is not considered
-        return (
+        return cast(
+            bool,
             self.region == rhs.region and self.content == rhs.content and
             self.layout == rhs.layout and self.on_navigate == rhs.on_navigate and
             self.md == rhs.md and self.css == rhs.css and
@@ -962,21 +1083,23 @@ class Phantom(sublime.Phantom):
         )
 
 
-class PhantomSet(sublime.PhantomSet):
+class PhantomSet(sublime.PhantomSet):  # type: ignore[misc]
     """Object that allows easy updating of phantoms."""
 
-    def __init__(self, view, key=""):
+    def __init__(self, view: sublime.View, key: str = "") -> None:
         """Initialize."""
+
+        self.phantoms: list[sublime.Phantom]
 
         super().__init__(view, key)
 
-    def __del__(self):
+    def __del__(self) -> None:
         """Delete phantoms."""
 
         for p in self.phantoms:
             erase_phantom_by_id(self.view, p.id)
 
-    def update(self, new_phantoms):
+    def update(self, new_phantoms: list[sublime.Phantom]) -> None:
         """Update the list of phantoms that exist in the text buffer with their current location."""
 
         regions = query_phantoms(self.view, [p.id for p in self.phantoms])
@@ -1021,7 +1144,7 @@ class PhantomSet(sublime.PhantomSet):
         self.phantoms = new_phantoms
 
 
-def format_frontmatter(values):
+def format_frontmatter(values: dict[str, Any]) -> str:
     """Format values as frontmatter."""
 
     return frontmatter.dump_frontmatter(values)
@@ -1053,10 +1176,10 @@ RE_TAG_LINK_ATTR = re.compile(
 )
 
 
-def _image_parser(text):
+def _image_parser(text: str) -> dict[str, list[tuple[int, int]]]:
     """Retrieve image source whose attribute `src` URL has scheme 'http' or 'https'."""
 
-    images = {}
+    images: dict[str, list[tuple[int, int]]] = {}
     for m in RE_TAG_HTML.finditer(text):
         if m.group('avoid'):
             continue
@@ -1080,16 +1203,22 @@ class _ImageResolver:
     In an asynchronous world, we would of course use `asyncio.gather`.
     """
 
-    def __init__(self, minihtml, resolver, done_callback, images_to_resolve):
+    def __init__(
+        self,
+        minihtml: str,
+        resolver: ResolverCallBack,
+        done_callback: OnDoneCallback,
+        images_to_resolve: dict[str, list[tuple[int, int]]]
+    ) -> None:
         """The constructor."""
         self.minihtml = minihtml
         self.done_callback = done_callback
         self.images_to_resolve = images_to_resolve
-        self.resolved = {}
+        self.resolved: dict[str, tuple[Exception | str, str | None]] = {}
         for url in self.images_to_resolve.keys():
             resolver(url, functools.partial(self.on_image_resolved, url))
 
-    def on_image_resolved(self, url, data, mime, exception):
+    def on_image_resolved(self, url: str, data: bytes | None, mime: str | None, exception: Exception | None) -> None:
         """
         Called by a resolver when an image has been downloaded.
 
@@ -1098,15 +1227,18 @@ class _ImageResolver:
         When the resolver function encountered an exception, the exception is passed in via the last
         argument. So its type is Optional[Exception].
         """
+        value: tuple[Exception | str, str | None]
         if exception:
             value = (exception, None)
-        else:
+        elif data is not None:
             value = (base64.b64encode(data).decode("ascii"), mime)
+        else:
+            value = (RuntimeError('Image data could not be resolved'), None)
         self.resolved[url] = value
         if len(self.resolved) == len(self.images_to_resolve):
             self.finalize()
 
-    def finalize(self):
+    def finalize(self) -> None:
         """
         Called when all necessary images have been downloaded.
 
@@ -1115,7 +1247,7 @@ class _ImageResolver:
         It invokes the `done_callback` from the `resolve_urls` function in the main thread of Sublime Text.
         """
 
-        def flattened():
+        def flattened() -> Iterator[tuple[str, int, int]]:
             for url, positions in self.images_to_resolve.items():
                 for position in positions:
                     yield url, position[0], position[1]
@@ -1137,7 +1269,7 @@ class _ImageResolver:
             else:
                 # replace the URL with the base64 data
                 chunks.append("data:")
-                chunks.append(mime)
+                chunks.append(cast(str, mime))
                 chunks.append(";base64,")
                 chunks.append(data)
             chunks.append(self.minihtml[current_end:next_start])
@@ -1146,12 +1278,13 @@ class _ImageResolver:
 
 
 @functools.lru_cache(maxsize=8)
-def _retrieve(url):
+def _retrieve(url: str) -> tuple[bytes, str]:
     """
     Actually download the image pointed to by the passed URL.
 
     The most recently used images (8 at most) are kept in a cache.
     """
+
     import urllib.request
     with urllib.request.urlopen(url) as response:
         # We provide some basic protection against absurdly large images.
@@ -1168,8 +1301,12 @@ def _retrieve(url):
         return response.readall(), mime
 
 
-def blocking_resolver(url, done):
+def blocking_resolver(
+    url: str,
+    done: ResolverDoneCallback
+) -> None:
     """A simple URL resolver that will block the caller."""
+
     exception = None
     payload = None
     mime = None
@@ -1185,17 +1322,23 @@ def blocking_resolver(url, done):
         done(None, None, RuntimeError("failed to retrieve image"))
 
 
-def ui_thread_resolver(url, done):
+def ui_thread_resolver(url: str, done: ResolverDoneCallback) -> None:
     """A URL resolver that runs on the main thread."""
+
     sublime.set_timeout(lambda: blocking_resolver(url, done))
 
 
-def worker_thread_resolver(url, done):
+def worker_thread_resolver(url: str, done: ResolverDoneCallback) -> None:
     """A URL resolver that runs on the worker ("async") thread of Sublime Text."""
+
     sublime.set_timeout_async(lambda: blocking_resolver(url, done))
 
 
-def resolve_images(minihtml, resolver, on_done):
+def resolve_images(
+    minihtml: str,
+    resolver: ResolverCallBack,
+    on_done: OnDoneCallback
+) -> _ImageResolver | None:
     """
     Download images from the internet.
 
@@ -1207,8 +1350,9 @@ def resolve_images(minihtml, resolver, on_done):
     The second argument is a callable that shall take two arguments.
 
     - The first argument is a URL to be downloaded.
-    - The second argument is a callable that shall take one argument: An object of type `bytes`: the raw image data.
-      The result of downloading the image.
+    - The second argument is a callable that shall take three arguments: An optional object of type `bytes`: the raw
+      image data; the result of downloading the image. An optional object of type `str`: the mime type. An optional
+      object of type `Exception`.
 
     The third argument is a callable that shall take one argument:
 
@@ -1219,6 +1363,7 @@ def resolve_images(minihtml, resolver, on_done):
     It returns an opaque object that should be kept alive for as long as the passed-in `done_callback` is not yet
     invoked.
     """
+
     images = _image_parser(minihtml)
     if images:
         return _ImageResolver(minihtml, resolver, on_done, images)

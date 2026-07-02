@@ -7,6 +7,7 @@ Copyright (c) 2015 - 2020 Isaac Muse <isaacmuse@gmail.com>
 from mdpopups.png import Writer
 from .coloraide import Color
 from .coloraide import algebra as alg
+from .coloraide.types import ColorInput, Vector
 import base64
 import io
 
@@ -31,17 +32,17 @@ BIT_DEPTH = 16
 MAX_VALUE = 2 ** BIT_DEPTH - 1
 
 
-def process_channel(c):
+def process_channel(c: float) -> int:
     """Process channel."""
 
     return max(min(int(alg.round_half_up(c * MAX_VALUE)), MAX_VALUE), 0)
 
 
-def to_list(rgb, alpha=False):
+def to_list(rgb: Color, alpha: bool = False) -> Vector:
     """
     Break RGB channel into a list.
 
-    Take a color object or string in the format `#RRGGBBAA` (alpha optional and will be stripped)
+    Take a color object (alpha optional and will be stripped)
     and convert to a list with format `[r, g, b]`.
     """
 
@@ -49,14 +50,14 @@ def to_list(rgb, alpha=False):
     return [r, g, b, a] if alpha else [r, g, b]
 
 
-def checkered_color(color, background):
+def checkered_color(color: ColorInput, background: ColorInput) -> Color:
     """Mix color with the checkered color."""
 
     checkered = Color(color)
     return Color.layer([checkered, background], space=checkered.space(), out_space=checkered.space())
 
 
-def get_border_size(direction, border_map):
+def get_border_size(direction: int, border_map: int) -> int:
     """Get size of border map."""
 
     size = 0
@@ -74,10 +75,18 @@ def get_border_size(direction, border_map):
 
 
 def color_box_raw(
-    colors, border=None, border2=None, height=32, width=32,
-    border_size=1, check_size=4, max_colors=5, alpha=False, border_map=0xF,
-    gamut_space='srgb'
-):
+    colors: list[Color],
+    border: Color | None = None,
+    border2: Color | None = None,
+    height: int = 32,
+    width: int = 32,
+    border_size: int = 1,
+    check_size: int = 4,
+    max_colors: int = 5,
+    alpha: bool = False,
+    border_map: int = 0xF,
+    gamut_space: str = 'srgb'
+) -> bytes:
     """
     Generate palette preview.
 
@@ -108,9 +117,8 @@ def color_box_raw(
     preview_colors = []
     count = max_colors if len(colors) >= max_colors else len(colors)
 
-    border = to_list(border, False)
-    if border2 is not None:
-        border2 = to_list(border2, False)
+    border_vec = to_list(border, False)
+    border2_vec = to_list(border2, False) if border2 is not None else []
 
     border1_size = border2_size = int(border_size / 2)
     border1_size += border_size % 2
@@ -161,26 +169,26 @@ def color_box_raw(
     # Top Border
     if border_map & TOP:
         for _ in range(0, border1_size):
-            row = list(border * width)
+            row = list(border_vec * width)
             p.append(row)
         for _ in range(0, border2_size):
             row = []
             if border_map & LEFT and border_map & RIGHT:
-                row += list(border * border1_size)
-                row += list(border2 * border2_size)
-                row += list(border2 * color_width)
-                row += list(border2 * border2_size)
-                row += list(border * border1_size)
+                row += list(border_vec * border1_size)
+                row += list(border2_vec * border2_size)
+                row += list(border2_vec * color_width)
+                row += list(border2_vec * border2_size)
+                row += list(border_vec * border1_size)
             elif border_map & RIGHT:
-                row += list(border2 * color_width)
-                row += list(border2 * border2_size)
-                row += list(border * border1_size)
+                row += list(border2_vec * color_width)
+                row += list(border2_vec * border2_size)
+                row += list(border_vec * border1_size)
             elif border_map & LEFT:
-                row += list(border * border1_size)
-                row += list(border2 * border2_size)
-                row += list(border2 * color_width)
+                row += list(border_vec * border1_size)
+                row += list(border2_vec * border2_size)
+                row += list(border2_vec * color_width)
             else:
-                row += list(border2 * color_width)
+                row += list(border2_vec * color_width)
             p.append(row)
 
     check_color_y = DARK
@@ -192,9 +200,9 @@ def color_box_raw(
         # Left border
         row = []
         if border_map & LEFT:
-            row += list(border * border1_size)
-            if border2:
-                row += list(border2 * border2_size)
+            row += list(border_vec * border1_size)
+            if border2_vec:
+                row += list(border2_vec * border2_size)
 
         check_color_x = check_color_y
         for x in range(0, color_size_x):
@@ -207,8 +215,8 @@ def color_box_raw(
         if border_map & RIGHT:
             # Right border
             if border2:
-                row += list(border2 * border2_size)
-            row += list(border * border1_size)
+                row += list(border2_vec * border2_size)
+            row += list(border_vec * border1_size)
 
         p.append(row)
 
@@ -217,24 +225,24 @@ def color_box_raw(
         for _ in range(0, border2_size):
             row = []
             if border_map & LEFT and border_map & RIGHT:
-                row += list(border * border1_size)
-                row += list(border2 * border2_size)
-                row += list(border2 * color_width)
-                row += list(border2 * border2_size)
-                row += list(border * border1_size)
+                row += list(border_vec * border1_size)
+                row += list(border2_vec * border2_size)
+                row += list(border2_vec * color_width)
+                row += list(border2_vec * border2_size)
+                row += list(border_vec * border1_size)
             elif border_map & LEFT:
-                row += list(border * border1_size)
-                row += list(border2 * border2_size)
-                row += list(border2 * color_width)
+                row += list(border_vec * border1_size)
+                row += list(border2_vec * border2_size)
+                row += list(border2_vec * color_width)
             elif border_map & RIGHT:
-                row += list(border2 * color_width)
-                row += list(border2 * border2_size)
-                row += list(border * border1_size)
+                row += list(border2_vec * color_width)
+                row += list(border2_vec * border2_size)
+                row += list(border_vec * border1_size)
             else:
-                row += list(border2 * color_width)
+                row += list(border2_vec * color_width)
             p.append(row)
         for _ in range(0, border1_size):
-            row = list(border * width)
+            row = list(border_vec * width)
             p.append(row)
 
     # Create bytes buffer for PNG
@@ -250,9 +258,35 @@ def color_box_raw(
         return f.read()
 
 
-def color_box(*args, **kwargs):
+def color_box(
+    colors: list[Color],
+    border: Color | None = None,
+    border2: Color | None = None,
+    height: int = 32,
+    width: int = 32,
+    border_size: int = 1,
+    check_size: int = 4,
+    max_colors: int = 5,
+    alpha: bool = False,
+    border_map: int = 0xF,
+    gamut_space: str = 'srgb'
+) -> str:
     """Generate palette preview and base64 encode it."""
 
     return '<img src="data:image/png;base64,{}">'.format(
-        base64.b64encode(color_box_raw(*args, **kwargs)).decode('ascii')
+        base64.b64encode(
+            color_box_raw(
+                colors,
+                border,
+                border2,
+                height,
+                width,
+                border_size,
+                check_size,
+                max_colors,
+                alpha,
+                border_map,
+                gamut_space
+            )
+        ).decode('ascii')
     )
