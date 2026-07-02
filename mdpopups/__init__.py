@@ -986,7 +986,7 @@ def new_html_sheet(
     contents: str,
     md: bool = True,
     css: str | None = None,
-    flags: sublime.NewFileFlags = 0,
+    flags: sublime.NewFileFlags = sublime.NewFileFlags.NONE,
     group: int = -1,
     wrapper_class: str | None = None,
     template_vars: dict[str, Any] | None = None,
