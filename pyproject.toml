@@ -97,6 +97,16 @@ exclude_lines = [
     "@overload"
 ]
 
+[tool.mypy]
+files = [
+    "mdpopups/__init__.py"
+]
+strict = true
+ignore_missing_imports = true
+disallow_untyped_calls = false
+follow_imports = "silent"
+show_error_codes = true
+
 [tool.tox]
 legacy_tox_ini = """
     [tox]
@@ -107,7 +117,9 @@ legacy_tox_ini = """
     [testenv]
     deps=
         pytest
+        mypy
     commands=
+        "{envbindir}"/mypy 
         py.test tests
 
     [testenv:documents]

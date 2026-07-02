@@ -77,7 +77,7 @@ def color_box_raw(
     colors, border=None, border2=None, height=32, width=32,
     border_size=1, check_size=4, max_colors=5, alpha=False, border_map=0xF,
     gamut_space='srgb'
-):
+) -> bytes:
     """
     Generate palette preview.
 
@@ -250,7 +250,7 @@ def color_box_raw(
         return f.read()
 
 
-def color_box(*args, **kwargs):
+def color_box(*args, **kwargs) -> str:
     """Generate palette preview and base64 encode it."""
 
     return '<img src="data:image/png;base64,{}">'.format(

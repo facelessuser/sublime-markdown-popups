@@ -11,7 +11,7 @@ import base64
 import io
 
 
-def tint_raw(byte_string, color, opacity=255):
+def tint_raw(byte_string, color, opacity=255) -> bytes:
     """Tint the image and return a byte string."""
 
     # Read the byte string as a RGBA image.
@@ -57,11 +57,11 @@ def tint_raw(byte_string, color, opacity=255):
         return f.read()
 
 
-def tint(byte_string, color, opacity=255, height=None, width=None):
+def tint(byte_string, color, opacity=255, height=None, width=None) -> str:
     """Base64 encode the tint."""
 
     style = ''
-    if width:
+    if width is not None:
         style = 'style="width: {:d}px;"'.format(width)
     if height is not None and style is None:
         style = 'style="height: {:d}px;"'.format(width)

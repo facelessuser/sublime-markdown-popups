@@ -8,6 +8,7 @@ import re
 from .pygments import highlight
 from .pygments.lexers import get_lexer_by_name, guess_lexer
 from .pygments.formatters import find_formatter_class
+from typing import cast
 HtmlFormatter = find_formatter_class('html')
 pygments = True
 
@@ -163,7 +164,7 @@ class SublimeInlineHtmlFormatter(HtmlFormatter):
         yield 0, ''
 
 
-def syntax_hl(src, lang=None, guess_lang=False, inline=False, code_wrap=False):
+def syntax_hl(src, lang=None, guess_lang=False, inline=False, code_wrap=False) -> str:
     """Highlight."""
 
     css_class = 'highlight'
@@ -192,4 +193,4 @@ def syntax_hl(src, lang=None, guess_lang=False, inline=False, code_wrap=False):
         formatter = SublimeBlockFormatter(
             cssclass=css_class
         )
-    return highlight(src, lexer, formatter)
+    return cast(str, highlight(src, lexer, formatter))

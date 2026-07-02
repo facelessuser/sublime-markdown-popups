@@ -23,6 +23,7 @@ from . import jinja2
 from .pygments.formatters import HtmlFormatter
 from collections import OrderedDict
 from .st_clean_css import clean_css
+from typing import Any
 import copy
 import os
 
@@ -250,7 +251,7 @@ class SchemeTemplate(object):
         self.view = None
         self.setup()
 
-    def guess_style(self, view, scope, selected=False, explicit_background=False):
+    def guess_style(self, view, scope, selected=False, explicit_background=False) -> dict[str, Any]:
         """Guess color."""
 
         # Remove leading '.' to account for old style CSS
